@@ -225,6 +225,6 @@ echo "Japanese letters are 表示可能"
 
 type diskinfo >/dev/null 2>&1 && diskinfo
 
-finger sr
+finger $USER
 LANG=C id
 
