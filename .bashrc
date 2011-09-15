@@ -12,7 +12,7 @@ export PS1="\$(prompt_function)\$ "
 export PAGER="less"
 export EDITOR="vim"
 export VISUAL=$EDITOR
-export LESS="-M"
+export LESS="-iRM"
 # export LC_MESSAGES="C"
 # export LANG=ja_JP.UTF-8
 # export CDPATH=".:~"             # 使い方がよく分からない
@@ -93,6 +93,19 @@ dl-my-init-files(){
 }
 port-auto(){
     port selfupdate && port sync && port upgrade installed
+}
+
+mygitconfig(){
+    # export GISTY_DIR="$HOME/dev/gists"
+    git config --global user.name "10sr"
+    git config --global user.email sr10@users.sourceforge.jp
+    git config --global core.autocrlf false
+    git config --global color.ui auto
+    git config --global alias.log-all "log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'"
+    git config --global alias.log-all2 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
+    git config --global alias.log-all3 "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
+    git config --global alias.cmm "commit -m"
+    # git config --global github.token **
 }
 
 prompt_function(){              # used by PS1
@@ -195,6 +208,7 @@ winln(){
     else
         junction "$2" "$1"
     fi
+
 }
 
 ########################
