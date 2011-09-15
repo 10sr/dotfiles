@@ -1291,6 +1291,9 @@ Optional prefix ARG says how many lines to unflag; default is one line."
   "if first arg is omitted open current directory."
   (dired (or dirname ".") switches))
 
+(defun eshell/v ()
+  (view-mode 1))
+
 (defalias 'eshell/type 'eshell/which)
 (defalias 'eshell/vim 'eshell/vi)
 (defalias 'eshell/ff 'find-file)
@@ -1373,6 +1376,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                                       (eshell-goto-prompt)
                                                       (my-keyboard-quit)))
             (define-key eshell-mode-map (kbd "DEL") 'my-eshell-backward-delete-char)
+            (define-key eshell-mode-map (kbd "C-p") 'eshell-previous-matching-input-from-input)
+            (define-key eshell-mode-map (kbd "C-n") 'eshell-next-matching-input-from-input)
             (mapcar (lambda (alias)
                       (add-to-list 'eshell-command-aliases-list
                                    alias))
