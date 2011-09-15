@@ -23,16 +23,16 @@
 
 (setq inhibit-startup-message t)
 (setq frame-title-format (list '(:eval (my-format-time-string))
-                               " | %b "
-                               '(:eval (number-to-string (length (buffer-list-not-start-with-space))))
-                               " buffers ["
-                               invocation-name
-                               " "
-                               emacs-version
-                               " "
-                               (symbol-name system-type)
-                               "] "
-                               '(:eval (symbol-name last-command))))
+                                " | %b "
+                                '(:eval (number-to-string (length (buffer-list-not-start-with-space))))
+                                 " buffers ["
+                                 invocation-name
+                                 " "
+                                 emacs-version
+                                 " "
+                                 (symbol-name system-type)
+                                 "] "
+                                 '(:eval (symbol-name last-command))))
 (defun buffer-list-not-start-with-space ()
   (let ((bl (buffer-list))
         b nbl)
@@ -55,9 +55,9 @@
 (tool-bar-mode 0)
 (set-scroll-bar-mode nil)
 (add-hook 'kill-emacs-hook      ; 終了時に読み込んで壊れてないか調べる
-          (lambda ()
-            (when (file-readable-p "~/.emacs")
-              (load-file "~/.emacs"))))
+           (lambda ()
+             (when (file-readable-p "~/.emacs")
+               (load-file "~/.emacs"))))
 
 (when (eq system-type 'Darwin)
   (mac-set-input-method-parameter ’japanese ’cursor-color ”red”)
@@ -66,9 +66,9 @@
 (when (and (boundp 'input-method-activate-hook) ;ちょっと正しいかわかんない
            (boundp 'input-method-inactivate-hook))
   (add-hook 'input-method-activate-hook
-            (lambda () (set-cursor-color "red")))
+             (lambda () (set-cursor-color "red")))
   (add-hook 'input-method-inactivate-hook
-            (lambda () (set-cursor-color "black"))))
+             (lambda () (set-cursor-color "black"))))
 
 (cd ".")  ; when using windows use / instead of \ in default-directory
 
@@ -92,8 +92,8 @@
 
 ;; kill scratch
 (add-hook 'after-init-hook
-          (lambda ()
-            (kill-buffer "*scratch*")))
+           (lambda ()
+             (kill-buffer "*scratch*")))
 
 (defun my-delete-frame-or-kill-emacs ()
   "delete frame when opening multiple frame, kill emacs when only one."
@@ -117,15 +117,15 @@
 (defun hcz-set-cursor-color-according-to-mode ()
   "change cursor color according to some minor modes."
   ;; set-cursor-color is somewhat costly, so we only call it when needed:
-  (let ((color
-         (if buffer-read-only "blue"
-           (if overwrite-mode "yellow"
-             "black"))))
-    (unless (and
-             (string= color hcz-set-cursor-color-color)
-             (string= (buffer-name) hcz-set-cursor-color-buffer))
-      (set-cursor-color (setq hcz-set-cursor-color-color color))
-      (setq hcz-set-cursor-color-buffer (buffer-name)))))
+     (let ((color
+            (if buffer-read-only "blue"
+              (if overwrite-mode "yellow"
+                "black"))))
+       (unless (and
+                (string= color hcz-set-cursor-color-color)
+                (string= (buffer-name) hcz-set-cursor-color-buffer))
+         (set-cursor-color (setq hcz-set-cursor-color-color color))
+         (setq hcz-set-cursor-color-buffer (buffer-name)))))
 (add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -189,12 +189,12 @@
 (standard-display-ascii ?\n "$\n")
 (defface my-eol-face
   '((t (:foreground "gray")))
-  "eol.")
+   "eol.")
 
 (standard-display-ascii ?\f "---------------------------------------------------------------------------------------^L")
 (defface my-pagebreak-face
   '((t (:foreground "gray")))
-  "pagebreak.")
+   "pagebreak.")
 
 (defvar my-eol-face
   '(("\n" . '(0 my-eol-face t nil))))
@@ -205,10 +205,10 @@
     ("　" . '(0 highlight t nil))))
 
 ;; (defvar my-face
-;;   '(("\t" . 'highlight)
-;;     ("　" . 'highlight)
-;;     ("\n" . '(0 my-eol-face t nil))
-;;     ("\f" . 'my-pagebreak-face)))
+     ;;   '(("\t" . 'highlight)
+            ;;     ("　" . 'highlight)
+                   ;;     ("\n" . '(0 my-eol-face t nil))
+                          ;;     ("\f" . 'my-pagebreak-face)))
 
 (setq font-lock-global-modes
       '(not
@@ -217,9 +217,9 @@
         term-mode))
 
 (add-hook 'font-lock-mode-hook
-          (lambda ()
-            (font-lock-add-keywords nil my-eol-face)
-            (font-lock-add-keywords nil my-highlight-face)))
+           (lambda ()
+             (font-lock-add-keywords nil my-eol-face)
+             (font-lock-add-keywords nil my-highlight-face)))
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
@@ -227,39 +227,39 @@
 ;; fonts
 
 ;; (defun my-w32-set-font ()
-;;   "set font for windows."
-;;   ((lambda (&rest lists)
-;;      (let ((dir "c:/WINDOWS/Fonts")
-;;            lfs)
-;;        (while lists
-;;          (setq lfs (pop lists))
-;;          (when (directory-files dir nil (car lfs))
-;;            (my-set-ascii-and-jp-font-with-size (cdr lfs))
-;;            (setq lists nil)))))
-;;    '("^DejaVuSansMono" "dejavu sans mono" 80 "ms gothic" 12)
-;;    '("^inconsolata" "inconsolata" 100 "ms gothic" 12)))
+     ;;   "set font for windows."
+          ;;   ((lambda (&rest lists)
+                  ;;      (let ((dir "c:/WINDOWS/Fonts")
+                                ;;            lfs)
+                            ;;        (while lists
+                                        ;;          (setq lfs (pop lists))
+                                                    ;;          (when (directory-files dir nil (car lfs))
+                                                                  ;;            (my-set-ascii-and-jp-font-with-size (cdr lfs))
+                                                                                ;;            (setq lists nil)))))
+                ;;    '("^DejaVuSansMono" "dejavu sans mono" 80 "ms gothic" 12)
+                       ;;    '("^inconsolata" "inconsolata" 100 "ms gothic" 12)))
 
 ;; (defun my-w32-set-available-ascii-and-jp-font-with-size (&rest lists)
-;;   ""
-;;   (let ((dir "c:/WINDOWS/Fonts")
-;;         lfs)
-;;     (while lists
-;;       (setq lfs (pop lists))
-;;       (when (directory-files dir nil (car lfs))
-;;         (my-set-ascii-and-jp-font-with-size (cdr lfs))
-;;         (setq lists nil)))))
+     ;;   ""
+          ;;   (let ((dir "c:/WINDOWS/Fonts")
+                     ;;         lfs)
+                 ;;     (while lists
+                          ;;       (setq lfs (pop lists))
+                                   ;;       (when (directory-files dir nil (car lfs))
+                                              ;;         (my-set-ascii-and-jp-font-with-size (cdr lfs))
+                                                         ;;         (setq lists nil)))))
 
 (defun my-set-ascii-and-jp-font-with-size (list)
   ""
   (set-face-attribute 'default nil
-                      :family (nth 0 list)
-                      :height (nth 1 list))
+                       :family (nth 0 list)
+                        :height (nth 1 list))
   (set-fontset-font "fontset-default"
                     'japanese-jisx0208
-                    (font-spec :family (nth 2 list) :size (nth 3 list)))
+                     (font-spec :family (nth 2 list) :size (nth 3 list)))
   (set-fontset-font "fontset-default"
                     'katakana-jisx0201
-                    (font-spec :family (nth 2 list) :size (nth 3 list)))) ; font spec is available in emacs23 and later, cannot used in emacs22
+                     (font-spec :family (nth 2 list) :size (nth 3 list)))) ; font spec is available in emacs23 and later, cannot used in emacs22
 ;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 100 "takaogothic" 14))
 ;; (my-set-ascii-and-jp-font-with-size '("monaco" 75 "takaogothic" 11))
@@ -270,14 +270,14 @@
 (defun my-22-set-ascii-and-jp-font-with-size (list)
   ""
   (set-face-attribute 'default nil
-                      :family (nth 0 list)
-                      :height (nth 1 list))
+                       :family (nth 0 list)
+                        :height (nth 1 list))
   (set-fontset-font "fontset-default"
                     'japanese-jisx0208
-                    (cons (nth 2 list) "jisx0208.*"))
+                     (cons (nth 2 list) "jisx0208.*"))
   (set-fontset-font "fontset-default"
                     'katakana-jisx0201
-                    (cons (nth 2 list) "jisx0201.*")))
+                     (cons (nth 2 list) "jisx0201.*")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode-line
@@ -296,14 +296,14 @@
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 ;; display date
 (add-hook 'after-init-hook
-          (lambda ()
-            (setq display-time-string-forms
-                  '(dayname ", " day " " monthname " " year " " 24-hours ":"minutes ":" seconds))
-            (setq display-time-string-forms
-                  '((my-format-time-string)))
-            (when display-time-mode
-              (display-time-update))
-            ))
+           (lambda ()
+             (setq display-time-string-forms
+                   '(dayname ", " day " " monthname " " year " " 24-hours ":"minutes ":" seconds))
+             (setq display-time-string-forms
+                   '((my-format-time-string)))
+             (when display-time-mode
+               (display-time-update))
+             ))
 (setq display-time-interval 29)
 (setq display-time-day-and-date t)
 (if window-system
@@ -312,19 +312,19 @@
 
 ;; current directory
 (let ((ls (member 'mode-line-buffer-identification
-                  mode-line-format)))
+                   mode-line-format)))
   (setcdr ls
           (cons '(:eval (concat " ("
                                 (abbreviate-file-name default-directory)
                                 ")"))
-                (cdr ls))))
+                 (cdr ls))))
 
 (let ((ls (member 'mode-line-buffer-identification
-                  mode-line-format)))
+                   mode-line-format)))
   (setcdr ls
           (cons '(:eval (concat " "
                                 my-buffer-file-last-modified-time))
-                (cdr ls))))
+                 (cdr ls))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; back up and auto saving
@@ -410,23 +410,23 @@
 ;; (require 'url)
 
 ;; (defun dllib-if-needed (lib url &optional callback bite-compile-p force-download-p) ; dont use it
-;;   "if LIB does not exist, download it from URL and rename to \"~/emacs.d/lisp/LIB.el\".
+     ;;   "if LIB does not exist, download it from URL and rename to \"~/emacs.d/lisp/LIB.el\".
 ;; after download LIB successfully call CALLBACK. if LIB already exist, call CALLBACK immediately."
-;;   (let* ((dir (expand-file-name "~/.emacs.d/lisp/"))
-;;          (lpath (concat dir lib ".el")))
-;;     (and (if (or force-download-p (not (locate-library lib)))
-;;              (condition-case nil
-;;                  (progn (url-copy-file url
-;;                                        lpath
-;;                                        t)
-;;                         (and bite-compile-p
-;;                              (byte-compile-file lpath)
-;;                              t))
-;;                (error (message "downloading %s...something wrong happened!" url)
-;;                       nil))
-;;            t)
-;;          callback
-;;          (funcall callback))))
+          ;;   (let* ((dir (expand-file-name "~/.emacs.d/lisp/"))
+                      ;;          (lpath (concat dir lib ".el")))
+                 ;;     (and (if (or force-download-p (not (locate-library lib)))
+                                 ;;              (condition-case nil
+                                                     ;;                  (progn (url-copy-file url
+                                                                                               ;;                                        lpath
+                                                                                                                                         ;;                                        t)
+                                                                                ;;                         (and bite-compile-p
+                                                                                                                ;;                              (byte-compile-file lpath)
+                                                                                                                                                ;;                              t))
+                                                   ;;                (error (message "downloading %s...something wrong happened!" url)
+                                                                            ;;                       nil))
+                               ;;            t)
+                             ;;          callback
+                                         ;;          (funcall callback))))
 
 (defun dllib-if-unfound (lib url &optional bite-compile-p force-download-p) ; new version
   "if LIB does not exist, download it from URL and locate it to \"~/emacs.d/lisp/LIB.el\".
@@ -471,11 +471,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;; その他のhook
 (add-hook 'after-save-hook
-          'executable-make-buffer-file-executable-if-script-p)
+           'executable-make-buffer-file-executable-if-script-p)
 (add-hook 'find-file-hook
-          (lambda ()
-            (when buffer-read-only
-              (view-mode 1))))
+           (lambda ()
+             (when buffer-read-only
+               (view-mode 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode関連
@@ -483,33 +483,33 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; (ffap-bindings)
 
 (add-hook 'inferior-python-mode-hook
-          (lambda ()
-            (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
-            (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)))
+           (lambda ()
+             (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
+             (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)))
 
 (add-to-list 'Info-default-directory-list (expand-file-name "~/.info/emacs-ja"))
 
 (setq bookmark-default-file "~/.emacs.d/bmk")
 
 (add-hook 'apropos-mode-hook
-          (lambda ()
-            (define-key apropos-mode-map "j" 'next-line)
-            (define-key apropos-mode-map "k" 'previous-line)))
+           (lambda ()
+             (define-key apropos-mode-map "j" 'next-line)
+             (define-key apropos-mode-map "k" 'previous-line)))
 
 (define-key minibuffer-local-map (kbd "C-u") (lambda () (interactive) (delete-region (point-at-bol) (point-at-eol))))
 
 (add-hook 'isearch-mode-hook
-          (lambda ()
-            ;; (define-key isearch-mode-map (kbd "C-j") 'isearch-other-control-char)
-            ;; (define-key isearch-mode-map (kbd "C-k") 'isearch-other-control-char)
-            ;; (define-key isearch-mode-map (kbd "C-h") 'isearch-other-control-char)
-            (define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
-            (define-key isearch-mode-map (kbd "M-r") 'isearch-query-replace-regexp)))
+           (lambda ()
+             ;; (define-key isearch-mode-map (kbd "C-j") 'isearch-other-control-char)
+                ;; (define-key isearch-mode-map (kbd "C-k") 'isearch-other-control-char)
+                   ;; (define-key isearch-mode-map (kbd "C-h") 'isearch-other-control-char)
+                      (define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
+                      (define-key isearch-mode-map (kbd "M-r") 'isearch-query-replace-regexp)))
 
 (add-hook 'outline-mode-hook
-          (lambda ()
-            (if (string-match "\\.md$" buffer-file-name)
-                (set (make-local-variable 'outline-regexp) "#+ "))))
+           (lambda ()
+             (if (string-match "\\.md$" buffer-file-name)
+                 (set (make-local-variable 'outline-regexp) "#+ "))))
 (add-to-list 'auto-mode-alist (cons "\\.ol$" 'outline-mode))
 
 (add-to-list 'auto-mode-alist (cons "\\.md$" 'outline-mode))
@@ -519,25 +519,25 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (add-to-list 'auto-mode-alist (cons "\\.md$" 'markdown-mode))
   (autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files." nil)
   (add-hook 'markdown-mode-hook
-            (lambda ()
-              (outline-minor-mode 1)
-              (set (make-local-variable 'comment-start) ";"))))
+             (lambda ()
+               (outline-minor-mode 1)
+               (set (make-local-variable 'comment-start) ";"))))
 
 ;; (add-hook 'c-mode-hook
-;;           (lambda ()
-;;             (set (make-local-variable 'comment-start) "//")
-;;             (set (make-local-variable 'comment-end) "")))
+              ;;           (lambda ()
+                             ;;             (set (make-local-variable 'comment-start) "//")
+                                            ;;             (set (make-local-variable 'comment-end) "")))
 
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; c-mode
 ;; (setq c-default-style "bsd")
 ;; BackSpace キーを「賢く」し，インデント幅は2桁，タブはスペースに展開
 (add-hook 'c-mode-common-hook
-          (lambda ()
-            (setq c-basic-offset 2
-                  indent-tabs-mode nil)
-            ;; (set-face-foreground 'font-lock-keyword-face "blue")
-            ))
+           (lambda ()
+             (setq c-basic-offset 2
+                   indent-tabs-mode nil)
+             ;; (set-face-foreground 'font-lock-keyword-face "blue")
+                ))
 (defun my-compile-c-this-file ()
   ""
   (interactive)
@@ -551,19 +551,19 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
 ;; (add-hook 'js2-mode-hook
-;;           (lambda ()
-;;             (add-hook 'before-save-hook
-;;                       'my-indent-buffer
-;;                       nil
-;;                       t)))
+              ;;           (lambda ()
+                             ;;             (add-hook 'before-save-hook
+                                                       ;;                       'my-indent-buffer
+                                                                                 ;;                       nil
+                                                                                                          ;;                       t)))
 (add-hook 'js2-mode-hook
-          (lambda ()
-            (define-key js2-mode-map (kbd "C-m") (lambda ()
-                                                   (interactive)
-                                                   (js2-enter-key)
-                                                   (indent-for-tab-command)))
-            (add-hook (kill-local-variable 'before-save-hook)
-                      'js2-before-save)))
+           (lambda ()
+             (define-key js2-mode-map (kbd "C-m") (lambda ()
+                                                    (interactive)
+                                                    (js2-enter-key)
+                                                    (indent-for-tab-command)))
+             (add-hook (kill-local-variable 'before-save-hook)
+                       'js2-before-save)))
 
 (when (require 'zone nil t)
   (zone-when-idle 180))
@@ -574,18 +574,18 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (setq uniquify-min-dir-content 1))
 
 (add-hook 'view-mode-hook
-          (lambda()
-            (define-key view-mode-map "j" (lambda() (interactive) (scroll-up 1)))
-            (define-key view-mode-map "k" (lambda() (interactive) (scroll-down 1)))
-            (define-key view-mode-map "/" 'isearch-forward)
-            (define-key view-mode-map "v" 'toggle-read-only)
-            (define-key view-mode-map "q" 'kill-this-buffer)))
+           (lambda()
+             (define-key view-mode-map "j" (lambda() (interactive) (scroll-up 1)))
+             (define-key view-mode-map "k" (lambda() (interactive) (scroll-down 1)))
+             (define-key view-mode-map "/" 'isearch-forward)
+             (define-key view-mode-map "v" 'toggle-read-only)
+             (define-key view-mode-map "q" 'kill-this-buffer)))
 (global-set-key "\M-r" 'view-mode)
 
 (add-hook 'Man-mode-hook
-          (lambda ()
-            (view-mode 1)
-            (setq truncate-lines nil)))
+           (lambda ()
+             (view-mode 1)
+             (setq truncate-lines nil)))
 (setq Man-notify-method (if window-system
                             'newframe
                           'pushy))
@@ -594,21 +594,21 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'term-mode-hook (lambda ()
                             (define-key term-raw-map "\C-y" 'term-paste)
                             ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
-                            ;; (define-key term-raw-map "\C-r" 'term-send-raw)
-                            ;; (define-key term-raw-map "\C-s" 'term-send-raw)
-                            ;; (define-key term-raw-map "\C-f" 'forward-char)
-                            ;; (define-key term-raw-map "\C-b" 'backward-char)
-                            ;; (define-key term-raw-map "\C-t" 'set-mark-command)
-                            (define-key term-raw-map (kbd "ESC") 'term-send-raw)
-                            (define-key term-raw-map [delete] 'term-send-raw)
-                            (define-key term-raw-map "\C-c" 'term-send-raw)
-                            (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
-                            (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z"))))
+                               ;; (define-key term-raw-map "\C-r" 'term-send-raw)
+                                  ;; (define-key term-raw-map "\C-s" 'term-send-raw)
+                                     ;; (define-key term-raw-map "\C-f" 'forward-char)
+                                        ;; (define-key term-raw-map "\C-b" 'backward-char)
+                                           ;; (define-key term-raw-map "\C-t" 'set-mark-command)
+                                              (define-key term-raw-map (kbd "ESC") 'term-send-raw)
+                                              (define-key term-raw-map [delete] 'term-send-raw)
+                                              (define-key term-raw-map "\C-c" 'term-send-raw)
+                                              (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
+                                              (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z"))))
 
 ;; (when (and (executable-find "git")
-;;            (require 'sgit-mode nil t))
-;;   (add-hook 'find-file-hook
-;;             'sgit-load))
+              ;;            (require 'sgit-mode nil t))
+     ;;   (add-hook 'find-file-hook
+                     ;;             'sgit-load))
 
 (when (require 'gtkbm nil t)
   (global-set-key (kbd "C-x C-d") 'gtkbm))
@@ -618,19 +618,19 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (setq mail-interactive t
       send-mail-function 'smtpmail-send-it
       ;; message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
-      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
-      user-mail-address "8.slashes@gmail.com")
+         smtpmail-smtp-server "smtp.gmail.com"
+         smtpmail-smtp-service 587
+         smtpmail-starttls-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
+         smtpmail-auth-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
+         user-mail-address "8.slashes@gmail.com")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
 
 ;; (add-hook 'kill-buffer-hook
-;;           (lambda ()
-;;             (when buffer-file-name
-;;               (dired "."))))
+              ;;           (lambda ()
+                             ;;             (when buffer-file-name
+                                              ;;               (dired "."))))
 
 (defun kill-buffer-by-major-mode (mode &optional exclude-current-buffer-p) ;mapcarとかつかって全部書き換える
   "kill buffers.
@@ -657,7 +657,7 @@ if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
         (run-with-timer 3 nil 'my-kill-this-buffer-when-hide bf all-frames)
       (kill-buffer bf))))
 ;; (add-hook 'dired-mode-hook
-;;           'my-kill-this-buffer-when-hide)
+              ;;           'my-kill-this-buffer-when-hide)
 
 (defvar my-kill-previous-buffer nil)
 (defun my-kill-previous-buffer ()
@@ -666,7 +666,7 @@ if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
     (kill-buffer my-kill-previous-buffer))
   (setq my-kill-previous-buffer (current-buffer)))
 ;; (add-hook 'dired-mode-hook
-;;           'my-kill-previous-buffer)
+              ;;           'my-kill-previous-buffer)
 
 (defun my-query-kill-this-buffer ()
   ""
@@ -684,11 +684,11 @@ if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
 ;; (add-to-list 'bs-configurations '("processes" nil get-buffer-process ".*" nil nil))
 (add-to-list 'bs-configurations '("same-dir" nil buffer-same-dir-p ".*" nil nil))
 ;; (setq bs-configurations (list '("processes" nil get-buffer-process ".*" nil nil)
-;;                               '("files-and-scratch" "^\\*scratch\\*$" nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)))
+                                  ;;                               '("files-and-scratch" "^\\*scratch\\*$" nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)))
 (setq bs-default-configuration "all")
 (add-hook 'bs-mode-hook
-          (lambda ()
-            (setq bs-default-configuration "all")))
+           (lambda ()
+             (setq bs-default-configuration "all")))
 
 (defun buffer-same-dir-p (bf)
   "return t if BF's dir is same as current dir, otherwise nil."
@@ -798,6 +798,9 @@ if arg is omitted use value of `buffer-list'."
 (unless (executable-find "rcs")
   (setq vc-handled-backends (delq 'RCS vc-handled-backends)))
 
+(unless (executable-find "git")
+  (setq vc-handled-backends (delq 'Git vc-handled-backends)))
+
 (defadvice vc-rcs-register (after rcs-register-non-strict-locking activate)
   ""
   (when (eq (vc-backend (buffer-file-name)) 'RCS)
@@ -831,8 +834,8 @@ if arg is omitted use value of `buffer-list'."
   (scheme-send-region (point-min) (point-max)))
 
 (add-hook 'scheme-mode-hook
-          (lambda ()
-            (define-key scheme-mode-map "\C-c\C-b" 'scheme-send-buffer)))
+           (lambda ()
+             (define-key scheme-mode-map "\C-c\C-b" 'scheme-send-buffer)))
 
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
@@ -845,14 +848,14 @@ if arg is omitted use value of `buffer-list'."
   (autoload 'gauche-mode "gauche-mode" "Major mode for Scheme." t)
   (autoload 'run-scheme "gauche-mode" "Run an inferior Scheme process." t)
   (add-hook 'gauche-mode-hook
-            (lambda ()
-              (define-key scheme-mode-map "\C-c\C-z" 'run-gauche-other-window))))
+             (lambda ()
+               (define-key scheme-mode-map "\C-c\C-z" 'run-gauche-other-window))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
 
 (add-hook 'recentf-dialog-mode-hook
-          'my-recentf-abbrev-list)
+           'my-recentf-abbrev-list)
 
 (defun my-recentf-delete-entry ()
   ""
@@ -867,7 +870,7 @@ if arg is omitted use value of `buffer-list'."
   ""
   (setq recentf-list
         (mapcar 'abbreviate-file-name
-                recentf-list)))
+                 recentf-list)))
 
 (defun my-recentf-view-file ()
   ""
@@ -909,23 +912,23 @@ if arg is omitted use value of `buffer-list'."
 (when (require 'recentf nil t)
   (global-set-key "\C-x\C-r" 'recentf-open-files)
   ;; (add-hook 'find-file-hook
-  ;;           (lambda ()
-  ;;             (recentf-add-file default-directory)))
-  (recentf-mode 1)
-  (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
-  (add-to-list 'recentf-exclude "\\.emacs\\.d/\\.recentf"))
+                ;;           (lambda ()
+                               ;;             (recentf-add-file default-directory)))
+     (recentf-mode 1)
+     (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
+     (add-to-list 'recentf-exclude "\\.emacs\\.d/\\.recentf"))
 
 (add-hook 'recentf-dialog-mode-hook
-          (lambda ()
-            (recentf-save-list)
-            ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f") 'my-recentf-cd-and-find-file)
-            (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
-            (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
-            (define-key recentf-dialog-mode-map "o" 'my-recentf-x-open)
-            (define-key recentf-dialog-mode-map "d" 'my-recentf-delete-entry)
-            (define-key recentf-dialog-mode-map "@" 'my-recentf-dired)
-            (define-key recentf-dialog-mode-map "v" 'my-recentf-view-file)
-            (cd "~/")))
+           (lambda ()
+             (recentf-save-list)
+             ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f") 'my-recentf-cd-and-find-file)
+                (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
+                (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
+                (define-key recentf-dialog-mode-map "o" 'my-recentf-x-open)
+                (define-key recentf-dialog-mode-map "d" 'my-recentf-delete-entry)
+                (define-key recentf-dialog-mode-map "@" 'my-recentf-dired)
+                (define-key recentf-dialog-mode-map "v" 'my-recentf-view-file)
+                (cd "~/")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
@@ -956,8 +959,8 @@ if arg is omitted use value of `buffer-list'."
                                           outfile-default)
                         outfile-default)))
         (apply 'my-compress
-               outfile
-               infiles)
+                outfile
+                infiles)
         (revert-buffer)))
     (dired-unmark-all-marks)))
 
@@ -1006,11 +1009,11 @@ otherwise, return FILENAME with `my-compress-default-extension'"
                  (list efile))))
     (message "uncompressing %s..." file)
     (apply 'call-process
-           com
-           nil
-           (my-pop-to-buffer-erase-noselect "*compressing output*")
-           t
-           args)
+            com
+            nil
+            (my-pop-to-buffer-erase-noselect "*compressing output*")
+            t
+            args)
     (message "uncompressing %s...done." file)))
 
 (defun my-compress (outfile &rest infiles)
@@ -1024,19 +1027,19 @@ otherwise, use `my-compress-default-extension'. for compress."
          (op (nth 2 lst))
          (args (if op
                    (apply 'list
-                          op
-                          outfile-ext
-                          infiles)
+                           op
+                           outfile-ext
+                           infiles)
                  (apply 'list
-                        outfile-ext
-                        infiles))))
+                         outfile-ext
+                         infiles))))
     (message "compressing to %s..." outfile)
     (apply 'call-process
-           com
-           nil
-           (my-pop-to-buffer-erase-noselect "*compressing output*")
-           t
-           args)
+            com
+            nil
+            (my-pop-to-buffer-erase-noselect "*compressing output*")
+            t
+            args)
     (message "compressing to %s...done." outfile)))
 
 (defun my-pop-to-buffer-erase-noselect (buffer-or-name)
@@ -1127,14 +1130,14 @@ otherwise, use `my-compress-default-extension'. for compress."
 (define-minor-mode my-dired-display-all-mode
   ""
   :init-value nil
-  (if my-dired-display-all-mode
-      (setq dired-actual-switches
-            (concat "-A "
-                    dired-actual-switches))
-    (setq dired-actual-switches
-          (replace-regexp-in-string "-A " "" dired-actual-switches)))
-  (when (eq major-mode 'dired-mode)
-    (revert-buffer)))
+   (if my-dired-display-all-mode
+       (setq dired-actual-switches
+             (concat "-A "
+                     dired-actual-switches))
+     (setq dired-actual-switches
+           (replace-regexp-in-string "-A " "" dired-actual-switches)))
+   (when (eq major-mode 'dired-mode)
+     (revert-buffer)))
 
 (put 'dired-find-alternate-file 'disabled nil)
 (require 'ls-lisp)
@@ -1144,51 +1147,51 @@ otherwise, use `my-compress-default-extension'. for compress."
 (setq dired-dwim-target t)
 
 ;; (add-hook 'dired-after-readin-hook
-;;           'my-replace-nasi-none)
+              ;;           'my-replace-nasi-none)
 
 (add-hook 'after-init-hook
-          (lambda ()
-            (dired ".")))
+           (lambda ()
+             (dired ".")))
 
 (add-hook 'dired-mode-hook
-          (lambda ()
-            (define-key dired-mode-map "o" 'my-dired-x-open)
-            (define-key dired-mode-map "i" 'dired-get-du)
-            (define-key dired-mode-map "!" 'shell-command)
-            (define-key dired-mode-map "&" 'async-shell-command)
-            (define-key dired-mode-map "X" 'dired-do-async-shell-command)
-            (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
-            (define-key dired-mode-map "b" 'gtkbm)
-            (define-key dired-mode-map "@" (lambda () (interactive) (my-x-open ".")))
-            (define-key dired-mode-map (kbd "TAB") 'other-window)
-            (define-key dired-mode-map "Z" 'my-dired-do-compress-or-uncompress)
-            (define-key dired-mode-map "a" 'my-dired-display-all-mode)
-            (define-key dired-mode-map "h" 'my-dired-display-all-mode)
-            (substitute-key-definition 'dired-advertised-find-file 'my-dired-find-file dired-mode-map)
-            (substitute-key-definition 'dired-up-directory 'my-dired-up-directory dired-mode-map)
-            (define-key dired-mode-map (kbd "DEL") 'my-dired-up-directory)
-            (substitute-key-definition 'dired-next-line 'my-dired-next-line dired-mode-map)
-            (substitute-key-definition 'dired-previous-line 'my-dired-previous-line dired-mode-map)
-            (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
-            (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
-            (let ((file "._Icon\015"))
-              (when (file-readable-p file)
-                (delete-file file)))))
+           (lambda ()
+             (define-key dired-mode-map "o" 'my-dired-x-open)
+             (define-key dired-mode-map "i" 'dired-get-du)
+             (define-key dired-mode-map "!" 'shell-command)
+             (define-key dired-mode-map "&" 'async-shell-command)
+             (define-key dired-mode-map "X" 'dired-do-async-shell-command)
+             (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
+             (define-key dired-mode-map "b" 'gtkbm)
+             (define-key dired-mode-map "@" (lambda () (interactive) (my-x-open ".")))
+             (define-key dired-mode-map (kbd "TAB") 'other-window)
+             (define-key dired-mode-map "Z" 'my-dired-do-compress-or-uncompress)
+             (define-key dired-mode-map "a" 'my-dired-display-all-mode)
+             (define-key dired-mode-map "h" 'my-dired-display-all-mode)
+             (substitute-key-definition 'dired-advertised-find-file 'my-dired-find-file dired-mode-map)
+             (substitute-key-definition 'dired-up-directory 'my-dired-up-directory dired-mode-map)
+             (define-key dired-mode-map (kbd "DEL") 'my-dired-up-directory)
+             (substitute-key-definition 'dired-next-line 'my-dired-next-line dired-mode-map)
+             (substitute-key-definition 'dired-previous-line 'my-dired-previous-line dired-mode-map)
+             (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
+             (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
+             (let ((file "._Icon\015"))
+               (when (file-readable-p file)
+                 (delete-file file)))))
 
 ;; http://homepage1.nifty.com/blankspace/emacs/dired.html
 ;; (add-hook 'dired-load-hook
-;;           (lambda ()
-;;             (load-library "ls-lisp")
-;;             (setq ls-lisp-dirs-first t)
-;;             (setq dired-listing-switches "-alhF"))) ;これ書く場所間違えてね？
+              ;;           (lambda ()
+                             ;;             (load-library "ls-lisp")
+                                            ;;             (setq ls-lisp-dirs-first t)
+                                                           ;;             (setq dired-listing-switches "-alhF"))) ;これ書く場所間違えてね？
 
 ;; (defadvice dired-next-line (after dired-next-line-print-directory activate)
-;;   "print current directory when go down line"
-;;   (dired-print-current-dir-and-file))
+     ;;   "print current directory when go down line"
+          ;;   (dired-print-current-dir-and-file))
 
 ;; (defadvice dired-previous-line (after dired-previous-line-print-directory activate)
-;;   "print current directory when go up line"
-;;   (dired-print-current-dir-and-file))
+     ;;   "print current directory when go up line"
+          ;;   (dired-print-current-dir-and-file))
 
 ;; http://blog.livedoor.jp/tek_nishi/archives/4693204.html
 
@@ -1246,41 +1249,41 @@ Optional prefix ARG says how many lines to unflag; default is one line."
          bf)))
 
 (add-hook 'eshell-mode-hook
-          (lambda ()
-            (add-to-list 'my-eshell-frame-buffer-alist
-                         (cons (selected-frame) (current-buffer)))))
+           (lambda ()
+             (add-to-list 'my-eshell-frame-buffer-alist
+                           (cons (selected-frame) (current-buffer)))))
 
 (defun my-file-owner-p (file)
   "t if FILE is owned by me."
   (eq (user-uid) (nth 2 (file-attributes file))))
 
-;; http://www.bookshelf.jp/pukiwiki/pukiwiki.php?Eshell%A4%F2%BB%C8%A4%A4%A4%B3%A4%CA%A4%B9
-;; written by Stefan Reichoer <reichoer@web.de>
-(defun eshell/less (&rest args)
-  "Invoke `view-file' on the file.
-\"less +42 foo\" also goes to line 42 in the buffer."
-  (if args
-      (while args
-        (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
-            (let* ((line (string-to-number (match-string 1 (pop args))))
-                   (file (pop args)))
-              (view-file file)
-              (goto-line line))
-          (view-file (pop args))))))
+;; ;; http://www.bookshelf.jp/pukiwiki/pukiwiki.php?Eshell%A4%F2%BB%C8%A4%A4%A4%B3%A4%CA%A4%B9
+;; ;; written by Stefan Reichoer <reichoer@web.de>
+;; (defun eshell/less (&rest args)
+     ;;   "Invoke `view-file' on the file.
+;; \"less +42 foo\" also goes to line 42 in the buffer."
+          ;;   (if args
+                   ;;       (while args
+                              ;;         (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
+                                             ;;             (let* ((line (string-to-number (match-string 1 (pop args))))
+                                                                   ;;                    (file (pop args)))
+                                                              ;;               (view-file file)
+                                                                               ;;               (goto-line line))
+                                           ;;           (view-file (pop args))))))
 
 (defun eshell/o (&optional file)
   (my-x-open (or file ".")))
 
-(defun eshell/vi (&rest args)
-  "Invoke `find-file' on the file.
-\"vi +42 foo\" also goes to line 42 in the buffer."
-  (while args
-    (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
-        (let* ((line (string-to-number (match-string 1 (pop args))))
-               (file (pop args)))
-          (find-file file)
-          (goto-line line))
-      (find-file (pop args)))))
+;; (defun eshell/vi (&rest args)
+     ;;   "Invoke `find-file' on the file.
+;; \"vi +42 foo\" also goes to line 42 in the buffer."
+          ;;   (while args
+                 ;;     (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
+                            ;;         (let* ((line (string-to-number (match-string 1 (pop args))))
+                                              ;;                (file (pop args)))
+                                         ;;           (find-file file)
+                                                      ;;           (goto-line line))
+                          ;;       (find-file (pop args)))))
 
 (defun eshell/clear ()
   "Clear the current buffer, leaving one prompt at the top."
@@ -1295,7 +1298,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
   (view-mode 1))
 
 (defalias 'eshell/type 'eshell/which)
-(defalias 'eshell/vim 'eshell/vi)
+;; (defalias 'eshell/vim 'eshell/vi)
 (defalias 'eshell/ff 'find-file)
 
 (defun eshell-goto-prompt ()
@@ -1312,12 +1315,12 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                           (eshell t)))
     (unless (equal dir (expand-file-name default-directory))
       ;; (cd dir)
-      ;; (eshell-interactive-print (concat "cd " dir "\n"))
-      ;; (eshell-emit-prompt)
-      (goto-char (point-max))
-      (eshell-kill-input)
-      (insert "cd " dir)
-      (eshell-send-input))))
+         ;; (eshell-interactive-print (concat "cd " dir "\n"))
+            ;; (eshell-emit-prompt)
+               (goto-char (point-max))
+               (eshell-kill-input)
+               (insert "cd " dir)
+               (eshell-send-input))))
 
 (setq eshell-directory-name "~/.emacs.d/eshell/")
 (setq eshell-scroll-to-bottom-on-input t)
@@ -1363,51 +1366,51 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                               (point-max))))))
 
 (add-hook 'eshell-mode-hook
-          (lambda ()
-            ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
-            ;;                                               (interactive)
-            ;;                                               (switch-to-buffer (other-buffer))))
-            (define-key eshell-mode-map (kbd "C-u") (lambda ()
-                                                      (interactive)
-                                                      (eshell-goto-prompt)
-                                                      (eshell-kill-input)))
-            (define-key eshell-mode-map (kbd "C-g") (lambda ()
-                                                      (interactive)
-                                                      (eshell-goto-prompt)
-                                                      (my-keyboard-quit)))
-            (define-key eshell-mode-map (kbd "DEL") 'my-eshell-backward-delete-char)
-            (define-key eshell-mode-map (kbd "C-p") 'eshell-previous-matching-input-from-input)
-            (define-key eshell-mode-map (kbd "C-n") 'eshell-next-matching-input-from-input)
-            (mapcar (lambda (alias)
-                      (add-to-list 'eshell-command-aliases-list
-                                   alias))
-                    '(("ll" "ls -l")
-                      ("la" "ls -a")
-                      ("lla" "ls -al")
-                      ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp")
-                      ("aptin" "sudo apt-get install")
-                      ("u" "uname")
-                      ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer)); (view-buffer (get-buffer \"*eshell output*\"))")))
-            (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-            (apply 'eshell/addpath exec-path)
-            (set (make-variable-buffer-local 'scroll-margin) 0)
-            (eshell/export "GIT_PAGER=")
-            (eshell/export "GIT_EDITOR=")
-            (eshell/export "LC_MESSAGES=C")
-            ))
+           (lambda ()
+             ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
+                                                              ;;                                               (interactive)
+                                                                                                               ;;                                               (switch-to-buffer (other-buffer))))
+                (define-key eshell-mode-map (kbd "C-u") (lambda ()
+                                                          (interactive)
+                                                          (eshell-goto-prompt)
+                                                          (eshell-kill-input)))
+                (define-key eshell-mode-map (kbd "C-g") (lambda ()
+                                                          (interactive)
+                                                          (eshell-goto-prompt)
+                                                          (my-keyboard-quit)))
+                (define-key eshell-mode-map (kbd "DEL") 'my-eshell-backward-delete-char)
+                (define-key eshell-mode-map (kbd "C-p") 'eshell-previous-matching-input-from-input)
+                (define-key eshell-mode-map (kbd "C-n") 'eshell-next-matching-input-from-input)
+                (mapcar (lambda (alias)
+                          (add-to-list 'eshell-command-aliases-list
+                                        alias))
+                        '(("ll" "ls -l")
+                          ("la" "ls -a")
+                          ("lla" "ls -al")
+                          ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp")
+                          ("aptin" "sudo apt-get install")
+                          ("u" "uname")
+                          ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer)); (view-buffer (get-buffer \"*eshell output*\"))")))
+                (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+                (apply 'eshell/addpath exec-path)
+                (set (make-variable-buffer-local 'scroll-margin) 0)
+                (eshell/export "GIT_PAGER=")
+                (eshell/export "GIT_EDITOR=")
+                (eshell/export "LC_MESSAGES=C")
+                ))
 
 ;; (eval-after-load "em-alias"
-;;   '(progn ;; (eshell/alias "ll" "ls -l")
-;;      ;; (eshell/alias "la" "ls -a")
-;;      ;; (eshell/alias "lla" "ls -al")
-;;      (eshell/alias "sgcc" (if (eq system-type 'windows-nt)
-;;                               "gcc -o win.$1.exe $1"
-;;                             "gcc -o ${uname}.$1.out $1"))
-;;      (eshell/alias "slmgcc" (if (eq system-type 'windows-nt)
-;;                                 "gcc -lm -o win.$1.exe $1"
-;;                               "gcc -lm -o ${uname}.$1.out $1"))
-;;      ;; (eshell/alias "ut" "ssh g841105@un001.ecc.u-tokyo.ac.jp")
-;;      (add-to-list 'recentf-exclude (concat eshell-directory-name "alias"))))
+     ;;   '(progn ;; (eshell/alias "ll" "ls -l")
+                     ;;      ;; (eshell/alias "la" "ls -a")
+                                ;;      ;; (eshell/alias "lla" "ls -al")
+                                           ;;      (eshell/alias "sgcc" (if (eq system-type 'windows-nt)
+                                                                            ;;                               "gcc -o win.$1.exe $1"
+                                                                          ;;                             "gcc -o ${uname}.$1.out $1"))
+                                                   ;;      (eshell/alias "slmgcc" (if (eq system-type 'windows-nt)
+                                                                                      ;;                                 "gcc -lm -o win.$1.exe $1"
+                                                                                    ;;                               "gcc -lm -o ${uname}.$1.out $1"))
+                                                           ;;      ;; (eshell/alias "ut" "ssh g841105@un001.ecc.u-tokyo.ac.jp")
+                                                                      ;;      (add-to-list 'recentf-exclude (concat eshell-directory-name "alias"))))
 
 (define-key my-prefix-map (kbd "C-s") (lambda ()
                                         (interactive)
@@ -1433,11 +1436,11 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
         (format-time-string "%Y/%m/%d %H:%M" (my-get-file-last-modified-time buffer-file-name))))
 
 (add-hook 'find-file-hook
-          'my-set-buffer-file-last-modified-time)
+           'my-set-buffer-file-last-modified-time)
 (add-hook 'after-save-hook
-          'my-set-buffer-file-last-modified-time)
+           'my-set-buffer-file-last-modified-time)
 (add-hook 'after-revert-hook
-          'my-set-buffer-file-last-modified-time)
+           'my-set-buffer-file-last-modified-time)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; auto saving
@@ -1459,10 +1462,10 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
              (save-buffer)
              (funcall fun "%ssaving... done." cm)))))
 ;; (if (and buffer-file-name
-;;          (not buffer-read-only)
-;;          (buffer-modified-p)
-;;          (file-writable-p buffer-file-name))
-;;     (save-buffer))) ; 静かな方
+            ;;          (not buffer-read-only)
+                        ;;          (buffer-modified-p)
+                                    ;;          (file-writable-p buffer-file-name))
+       ;;     (save-buffer))) ; 静かな方
 
 (defvar my-auto-save-this-buffer nil "auto save timer object")
 
@@ -1523,9 +1526,9 @@ when SEC is nil, stop auto save if enabled."
   (indent-region (point-min)
                  (point-max))) 
 (add-hook 'before-save-hook
-          (lambda ()
-            (when (memq major-mode my-indent-buffer-mode-list)
-              (my-indent-buffer))))
+           (lambda ()
+             (when (memq major-mode my-indent-buffer-mode-list)
+               (my-indent-buffer))))
 
 (defun my-keyboard-quit ()
   ""
@@ -1568,34 +1571,34 @@ this is test, does not rename files"
 ;; (defvar my-execute-func-list nil "func list")
 ;; (defvar my-execute-func-hist-list nil "func hist list")
 ;; (setq my-execute-func-list '("(call-interactively 'my-francaiscd-b)"
-;;                              "(call-interactively 'my-francaiscd-a)"
-;;                              "parsec47"
-;;                              "chromium-browser"
-;;                              "inkscape"
-;;                              "audacious"
-;;                              "gnome-terminal"
-;;                              "zkaicd.py"
-;;                              "glchess"))
+                                ;;                              "(call-interactively 'my-francaiscd-a)"
+                                                                ;;                              "parsec47"
+                                                                                                ;;                              "chromium-browser"
+                                                                                                                                ;;                              "inkscape"
+                                                                                                                                                                ;;                              "audacious"
+                                                                                                                                                                                                ;;                              "gnome-terminal"
+                                                                                                                                                                                                                                ;;                              "zkaicd.py"
+                                                                                                                                                                                                                                                                ;;                              "glchess"))
 
 ;; (defun my-execute-start-process-or-eval-sexp ()
-;;   "execute something"
-;;   (interactive)
-;;   (let ((func (completing-read "command?: " my-execute-func-list nil nil "" my-execute-func-hist-list)))
-;;     (if (string= "(" (substring func 0 1))
-;;         (with-temp-buffer (insert func)
-;;                           (eval-buffer))
-;;       (start-process "ps"
-;;                      nil
-;;                      func))))
+     ;;   "execute something"
+          ;;   (interactive)
+               ;;   (let ((func (completing-read "command?: " my-execute-func-list nil nil "" my-execute-func-hist-list)))
+                      ;;     (if (string= "(" (substring func 0 1))
+                                 ;;         (with-temp-buffer (insert func)
+                                                              ;;                           (eval-buffer))
+                               ;;       (start-process "ps"
+                                                       ;;                      nil
+                                                                               ;;                      func))))
 
 ;; delete-trailing-whitespace
 ;; (defun my-delete-blanks-on-eol ()
-;;   ""
-;;   (interactive)
-;;   (save-excursion
-;;     (goto-char (point-min))
-;;     (while (re-search-forward "[ \t]+$" nil t)
-;;       (replace-match "" nil nil))))
+     ;;   ""
+          ;;   (interactive)
+               ;;   (save-excursion
+                      ;;     (goto-char (point-min))
+                             ;;     (while (re-search-forward "[ \t]+$" nil t)
+                                      ;;       (replace-match "" nil nil))))
 
 (defun my-revert-buffer-if-needed ()
   ""
@@ -1604,10 +1607,10 @@ this is test, does not rename files"
     (revert-buffer t t)))
 
 (add-hook 'window-configuration-change-hook
-          (lambda ()
-            (run-with-timer 0.5
-                            nil
-                            'my-revert-buffer-if-needed)))
+           (lambda ()
+             (run-with-timer 0.5
+                             nil
+                             'my-revert-buffer-if-needed)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
@@ -1618,10 +1621,10 @@ this is test, does not rename files"
   (save-selected-window
     (select-window (window-at 0 0))
     (let ( ;; (window-obj (selected-window))
-          ;; (current-width (window-width))
-          ;; (current-height (window-height))
-          action
-          c)
+              ;; (current-width (window-width))
+                 ;; (current-height (window-height))
+                    action
+                    c)
       (catch 'end-flag
         (while t
           (setq action
@@ -1679,19 +1682,19 @@ this is test, does not rename files"
     (erase-buffer)
     (insert (concat
              ;; 初期値をいじるよりも modify-frame-parameters
-             ;; で変えるだけの方がいい?
-             "(delete 'width default-frame-alist)\n"
-             "(delete 'height default-frame-alist)\n"
-             "(delete 'top default-frame-alist)\n"
-             "(delete 'left default-frame-alist)\n"
-             "(setq default-frame-alist (append (list\n"
-             "'(width . " (int-to-string nCWidth) ")\n"
-             "'(height . " (int-to-string nCHeight) ")\n"
-             "'(top . " (int-to-string tMargin) ")\n"
-             "'(left . " (int-to-string lMargin) "))\n"
-             "default-frame-alist))\n"
-             ;;"(setq default-frame-alist default-frame-alist)"
-             ))
+                ;; で変えるだけの方がいい?
+                   "(delete 'width default-frame-alist)\n"
+                   "(delete 'height default-frame-alist)\n"
+                   "(delete 'top default-frame-alist)\n"
+                   "(delete 'left default-frame-alist)\n"
+                   "(setq default-frame-alist (append (list\n"
+                   "'(width . " (int-to-string nCWidth) ")\n"
+                   "'(height . " (int-to-string nCHeight) ")\n"
+                   "'(top . " (int-to-string tMargin) ")\n"
+                   "'(left . " (int-to-string lMargin) "))\n"
+                   "default-frame-alist))\n"
+                   ;;"(setq default-frame-alist default-frame-alist)"
+                     ))
     (save-buffer)
     ))
 (defun my-window-size-load ()
@@ -1701,30 +1704,30 @@ this is test, does not rename files"
 (when window-system
   (my-window-size-load)
   (add-hook 'after-init-hook      ;何かがframeの大きさ勝手に変えやがる
-            (lambda ()
-              (run-with-timer 1
-                              nil
-                              (lambda ()
-                                (modify-frame-parameters (selected-frame)
-                                                         default-frame-alist))))
-            t)
+             (lambda ()
+               (run-with-timer 1
+                               nil
+                               (lambda ()
+                                 (modify-frame-parameters (selected-frame)
+                                                          default-frame-alist))))
+             t)
   ;; (add-hook 'make-frame-hook
-  ;;           (lambda ()
-  ;;             (run-with-timer 1
-  ;;                             nil
-  ;;                             (lambda ()
-  ;;                               (modify-frame-parameters (selected-frame)
-  ;;                                                        initial-frame-alist))))
-  ;;           t)
-  (add-hook 'kill-emacs-hook
-            'my-window-size-save))
+                ;;           (lambda ()
+                               ;;             (run-with-timer 1
+                                                              ;;                             nil
+                                                                                             ;;                             (lambda ()
+                                                                                                                              ;;                               (modify-frame-parameters (selected-frame)
+                                                                                                                                                                                        ;;                                                        initial-frame-alist))))
+                             ;;           t)
+     (add-hook 'kill-emacs-hook
+                'my-window-size-save))
 
 ;; windowサイズを固定
 ;; setq default-frame-alist
 ;;       (append (list '(width . 80)
-;; 		    '(height . 35)
-;; 	      )
-;; 	      default-frame-alist)
+                        ;; 		    '(height . 35)
+                                     ;; 	      )
+                 ;; 	      default-frame-alist)
 ;; ) ;;デフォルトのフレーム設定
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1735,16 +1738,16 @@ this is test, does not rename files"
       (class color)
       (background dark))
      (:background "midnightblue")) ; :foreground "white")) ;; ハイライトの文字色は変えない方がいいかも
-    (((type x w32)
-      (class color)
-      (background light))
-     (:background "gainsboro"))
-    (t
-     ()))
-  "*Face used by hl-line.")
+(((type x w32)
+  (class color)
+  (background light))
+ (:background "gainsboro"))
+(t
+ ()))
+"*Face used by hl-line.")
 (defface hlline-ul-face
   '((t (:underline "yellow")))
-  "underline yellow")
+   "underline yellow")
 (setq hl-line-face 'hlline-face)
 (global-hl-line-mode 1)
 
@@ -1753,10 +1756,10 @@ this is test, does not rename files"
 ;; ;; 補完させるとき失敗するからなし
 ;; ;; http://e-arrows.sakura.ne.jp/2010/05/emacs-should-be-more-savage.html
 ;; (defadvice message (before message-for-stupid (arg &rest arg2) activate)
-;;   (setq arg
-;;         (concat arg
-;;                 (if (eq nil (string-match "\\. *$" arg)) ".")
-;;                 " And You are a Coward!")))
+     ;;   (setq arg
+                ;;         (concat arg
+                                   ;;                 (if (eq nil (string-match "\\. *$" arg)) ".")
+                                                      ;;                 " And You are a Coward!")))
 
 
 
@@ -1766,24 +1769,24 @@ this is test, does not rename files"
 (defun my-load-scim ()
   "use scim-bridge.el as japanese im."
   ;; Load scim-bridge.
-  (require 'scim-bridge)
-  ;; Turn on scim-mode automatically after loading .emacs
-  (add-hook 'after-init-hook 'scim-mode-on)
-  (setq scim-cursor-color "red")
-  (scim-define-preedit-key ?\^h t)
-  (scim-define-common-key ?\* nil)
-  (scim-define-common-key ?\^/ nil))
+     (require 'scim-bridge)
+     ;; Turn on scim-mode automatically after loading .emacs
+        (add-hook 'after-init-hook 'scim-mode-on)
+        (setq scim-cursor-color "red")
+        (scim-define-preedit-key ?\^h t)
+        (scim-define-common-key ?\* nil)
+        (scim-define-common-key ?\^/ nil))
 
 
 
 (defun my-load-anthy ()
   "use anthy.el as japanese im."
   ;; anthy
-  (require 'anthy)
-  (global-set-key [muhenkan] (lambda () (interactive) (anthy-mode-off)))
-  (global-set-key [henkan] (lambda () (interactive) (anthy-mode-on)))
-  (when (>= emacs-major-version 23)
-    (setq anthy-accept-timeout 1)))
+     (require 'anthy)
+     (global-set-key [muhenkan] (lambda () (interactive) (anthy-mode-off)))
+     (global-set-key [henkan] (lambda () (interactive) (anthy-mode-on)))
+     (when (>= emacs-major-version 23)
+       (setq anthy-accept-timeout 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; windows用設定
@@ -1804,19 +1807,19 @@ this is test, does not rename files"
           args)
   (setenv "PATH"
           (mapconcat 'convert-standard-filename
-                     exec-path
-                     ";")))
+                      exec-path
+                      ";")))
 
 (when (eq system-type 'windows-nt)
   ;; (setq scheme-program-name "\"c:/Program Files/Gauche/bin/gosh.exe\" -i")
-  ;; (setq python-python-command "c:/Python26/python.exe")
+     ;; (setq python-python-command "c:/Python26/python.exe")
 
-  (define-key my-prefix-map (kbd "C-c") 'start-ckw-bash)
-  (my-w32-add-export-path "c:/WINDOWS"
-                          (expand-file-name "~/bin")
-                          (expand-file-name "~/dbx/apps/bin"))
+        (define-key my-prefix-map (kbd "C-c") 'start-ckw-bash)
+        (my-w32-add-export-path "c:/WINDOWS"
+                                (expand-file-name "~/bin")
+                                (expand-file-name "~/dbx/apps/bin"))
 
-  (when window-system
-    (setq w32-enable-synthesized-fonts t))
-  (setq file-name-coding-system 'sjis))
+        (when window-system
+          (setq w32-enable-synthesized-fonts t))
+        (setq file-name-coding-system 'sjis))
 
