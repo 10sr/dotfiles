@@ -36,6 +36,7 @@ type git 1>/dev/null 2>&1 && test ! -f ~/.gitconfig && {
     git config --global alias.log-all "log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'"
     git config --global alias.log-all2 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
     git config --global alias.log-all3 "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
+    git config --global alias.cmm "commit -m"
     # git config --global github.token **
 }
 
