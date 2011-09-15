@@ -113,7 +113,7 @@ prompt_function(){              # used by PS1
     type __git_ps1 >/dev/null 2>&1 && local gitb=$(__git_ps1 GIT:%s)
     type git >/dev/null 2>&1 && local git="[${gitb}]"
     printf " [${c1}${pwd}${cdef}]${git}\n"
-    printf "${c2}${USERNAME}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
+    printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "jobs:${jobnum} last:${lastreturn} "
 }
 
