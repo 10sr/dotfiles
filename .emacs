@@ -1387,6 +1387,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (apply 'eshell/addpath exec-path)
             (set (make-variable-buffer-local 'scroll-margin) 0)
             (eshell/export "GIT_PAGER=")
+            (eshell/export "GIT_EDITOR=")
             (eshell/export "LC_MESSAGES=C")
             ))
 
