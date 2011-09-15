@@ -33,6 +33,9 @@ type git 1>/dev/null 2>&1 && test ! -f ~/.gitconfig && {
     git config --global user.name "10sr"
     git config --global user.email sr10@users.sourceforge.jp
     git config --global core.autocrlf false
+    git config --global alias.log-all "log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'"
+    git config --global alias.log-all2 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
+    git config --global alias.log-all3 "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     # git config --global github.token **
 }
 
