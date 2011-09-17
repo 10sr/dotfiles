@@ -39,6 +39,10 @@ alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 # type trash >/dev/null 2>&1 && alias rm=trash
+
+safe-exec(){
+    type $1 >/dev/null 2>&1 && "$@"
+}
 o(){
     if [ $# -eq 0 ]; then
         local f=.
@@ -91,18 +95,18 @@ dl-my-init-files(){
         fi
     done
 }
-port-auto(){
+port-autosync(){
     port selfupdate && port sync && port upgrade installed
 }
 
-mygitconfig(){
+_mygitconfig(){
     # export GISTY_DIR="$HOME/dev/gists"
     git config --global user.name "10sr"
     git config --global user.email sr10@users.sourceforge.jp
     git config --global core.autocrlf false
     git config --global color.ui auto
     git config --global alias.log-all "log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'"
-    git config --global alias.log-all2 'log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short'
+    git config --global alias.log-all2 "log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short"
     git config --global alias.log-all3 "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     git config --global alias.cmm "commit -m"
     # git config --global github.token **
@@ -123,7 +127,7 @@ prompt_function(){              # used by PS1
     local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
     local date=$(LANG=C date +"%a, %d %b %Y %T %z")
     local jobnum=$(jobs | wc -l)
-    type __git_ps1 >/dev/null 2>&1 && local gitb=$(__git_ps1 GIT:%s)
+    local gitb=$(safe-exec __git_ps1 GIT:%s)
     type git >/dev/null 2>&1 && local git="[${gitb}]"
     printf " [${c1}${pwd}${cdef}]${git}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
@@ -237,7 +241,7 @@ echo "Japanese letters are 表示可能"
 
 #######################
 
-type diskinfo >/dev/null 2>&1 && diskinfo
+safe-exec diskinfo
 
 finger $USER
 LANG=C id
