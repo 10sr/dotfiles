@@ -125,10 +125,9 @@ prompt_function(){              # used by PS1
         local cdef="\e[0m"
     fi
     local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
-    local date=$(LANG=C date +"%a, %d %b %Y %T %z")
+    local date=$(LANG=C safe-exec date +"%a, %d %b %Y %T %z")
     local jobnum=$(jobs | wc -l)
-    local gitb=$(safe-exec __git_ps1 GIT:%s)
-    type git >/dev/null 2>&1 && local git="[${gitb}]"
+    local git=$(safe-exec __git_ps1 [GIT:%s])
     printf " [${c1}${pwd}${cdef}]${git}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "jobs:${jobnum} last:${lastreturn} "
@@ -195,6 +194,10 @@ _echocolors(){
 iswindows(){
     uname | grep -iE 'windows|MINGW' >/dev/null 2>&1
 }
+
+ismsys(){}
+
+iscygwin(){}
 
 isdarwin(){
     uname | grep -E 'Darwin' >/dev/null 2>&1
