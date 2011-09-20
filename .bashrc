@@ -195,9 +195,13 @@ iswindows(){
     uname | grep -iE 'windows|MINGW' >/dev/null 2>&1
 }
 
-ismsys(){}
+ismsys(){
+    :
+}
 
-iscygwin(){}
+iscygwin(){
+    :
+}
 
 isdarwin(){
     uname | grep -E 'Darwin' >/dev/null 2>&1
@@ -248,4 +252,5 @@ safe-exec diskinfo
 
 finger $USER
 LANG=C id
+
 
