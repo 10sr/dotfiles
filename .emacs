@@ -1298,6 +1298,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 (defun eshell/v ()
   (view-mode 1))
 
+(defalias 'eshell/: 'ignore)
 (defalias 'eshell/type 'eshell/which)
 ;; (defalias 'eshell/vim 'eshell/vi)
 (defalias 'eshell/ff 'find-file)
@@ -1744,7 +1745,7 @@ this is test, does not rename files"
       (background light))
      (:background "gainsboro"))
     (t
-     ()))
+     (:underline "yellow")))
   "*Face used by hl-line.")
 (defface hlline-ul-face
   '((t (:underline "yellow")))
