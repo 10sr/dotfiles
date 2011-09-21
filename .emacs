@@ -365,6 +365,7 @@
 (global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
 (global-set-key (kbd "C-<left>") 'scroll-down)
 (global-set-key (kbd "C-<right>") 'scroll-up)
+(global-set-key (kbd "C-x M-x") 'execute-extended-command)
 
 ;; C-h and DEL
 ;; (global-set-key (kbd "C-h") 'backward-delete-char-untabify)
@@ -598,7 +599,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
      (require 'multi-term nil t))
 
 ;; http://d.hatena.ne.jp/goinger/20100416/1271399150
-(setq term-ansi-default-program "/bin/bash")
+(setq term-ansi-default-program shell-file-name)
+(and (require 'term nil t)
+     (setq term-display-table (make-display-table)))
 (add-hook 'term-mode-hook (lambda ()    ; todo: fix around term-display-table
                             (define-key term-raw-map "\C-y" 'term-paste)
                             ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
@@ -612,7 +615,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             (define-key term-raw-map "\C-c" 'term-send-raw)
                             (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
                             (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z"))
-                            ;; (define-key term-raw-map "\M-x" (lookup-key (current-global-map) "\M-x"))
                             (set (make-variable-buffer-local 'scroll-margin) 0)))
 
 ;; (when (and (executable-find "git")
@@ -625,6 +627,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
+
 (setq mail-interactive t
       send-mail-function 'smtpmail-send-it
       ;; message-send-mail-function 'smtpmail-send-it
