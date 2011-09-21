@@ -40,7 +40,7 @@ alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
-safe-exec(){
+safe-cmd(){
     type $1 >/dev/null 2>&1 && "$@"
 }
 o(){
@@ -109,6 +109,7 @@ _mygitconfig(){
     git config --global alias.log-all2 "log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short"
     git config --global alias.log-all3 "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     git config --global alias.cmm "commit -m"
+    git config --global alias.b "branch"
     # git config --global github.token **
 }
 
@@ -125,9 +126,9 @@ prompt_function(){              # used by PS1
         local cdef="\e[0m"
     fi
     local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
-    local date=$(LANG=C safe-exec date +"%a, %d %b %Y %T %z")
+    local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
     local jobnum=$(jobs | wc -l)
-    local git=$(safe-exec __git_ps1 [GIT:%s])
+    local git=$(safe-cmd __git_ps1 [GIT:%s])
     printf " [${c1}${pwd}${cdef}]${git}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "jobs:${jobnum} last:${lastreturn} "
@@ -248,7 +249,7 @@ echo "Japanese letters are 表示可能"
 
 #######################
 
-safe-exec diskinfo
+safe-cmd diskinfo
 
 finger $USER
 LANG=C id
