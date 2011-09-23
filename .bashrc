@@ -105,9 +105,11 @@ _mygitconfig(){
     git config --global user.email sr10@users.sourceforge.jp
     git config --global core.autocrlf false
     git config --global color.ui auto
+    git config --global status.relativePaths false
+    git config --global status.showUntrackedFiles no
     git config --global alias.log-all "log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'"
     git config --global alias.log-all2 "log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short"
-    git config --global alias.log-all3 "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     git config --global alias.cmm "commit -m"
     git config --global alias.b "branch"
     git config --global alias.cm "commit --verbose"
