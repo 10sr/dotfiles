@@ -366,6 +366,7 @@
 (global-set-key (kbd "C-<left>") 'scroll-down)
 (global-set-key (kbd "C-<right>") 'scroll-up)
 (global-set-key (kbd "C-x M-x") 'execute-extended-command)
+(global-set-key (kbd "C-x M-:") 'eval-expression)
 
 ;; C-h and DEL
 ;; (global-set-key (kbd "C-h") 'backward-delete-char-untabify)
@@ -568,7 +569,12 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                       'js2-before-save)))
 
 (when (require 'zone nil t)
-  (zone-when-idle 180))
+  ;; (zone-when-idle 180)
+  (run-with-idle-timer 180 t (lambda ()
+                               (unless (memq major-mode
+                                             '(term-mode))
+                                 (zone))))
+  )
 
 (when (require 'uniquify nil t)
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
@@ -602,7 +608,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (setq term-ansi-default-program shell-file-name)
 (and (require 'term nil t)
      (setq term-display-table (make-display-table)))
-(add-hook 'term-mode-hook (lambda ()    ; todo: fix around term-display-table
+(add-hook 'term-mode-hook (lambda ()
                             (define-key term-raw-map "\C-y" 'term-paste)
                             ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
                             ;; (define-key term-raw-map "\C-r" 'term-send-raw)
