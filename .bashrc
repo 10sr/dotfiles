@@ -251,7 +251,7 @@ echo "Japanese letters are 表示可能"
 
 safe-cmd diskinfo
 
-finger $USER
-LANG=C id
+safe-cmd finger $USER
+LANG=C safe-cmd id
 
 
