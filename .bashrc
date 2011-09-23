@@ -110,6 +110,7 @@ _mygitconfig(){
     git config --global alias.log-all3 "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     git config --global alias.cmm "commit -m"
     git config --global alias.b "branch"
+    git config --global alias.cm "commit --verbose"
     # git config --global github.token **
 }
 
