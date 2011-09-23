@@ -50,7 +50,8 @@
   (add-to-list 'default-frame-alist '(cursor-type . box))
   (add-to-list 'default-frame-alist '(background-color . "white"))
   (add-to-list 'default-frame-alist '(foreground-color . "gray10"))
-  (add-to-list 'default-frame-alist '(alpha . (80 100 100 100)))) ;聞いてないみたい
+  ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100))) ;聞いてないみたい
+  )
 (if window-system (menu-bar-mode 1) (menu-bar-mode 0))
 (tool-bar-mode 0)
 (set-scroll-bar-mode nil)
@@ -178,7 +179,7 @@
                               (call-interactively (key-binding (kbd "M-TAB")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; letters and font-lock-mode
+;; letters, font-lock mode and fonts
 
 (show-paren-mode 1)
 (setq show-paren-style 'mixed)
@@ -209,6 +210,26 @@
 ;;     ("　" . 'highlight)
 ;;     ("\n" . '(0 my-eol-face t nil))
 ;;     ("\f" . 'my-pagebreak-face)))
+
+;; 現在行をハイライト
+;; http://wiki.riywo.com/index.php?Meadow
+(defface hlline-face
+  '((((type x w32)
+      (class color)
+      (background dark))
+     (:background "midnightblue")) ; :foreground "white")) ;; ハイライトの文字色は変えない方がいいかも
+    (((type x w32)
+      (class color)
+      (background light))
+     (:background "gainsboro"))
+    (t
+     (:underline "black")))
+  "*Face used by hl-line.")
+;; (defface hlline-ul-face
+;;   '((t (:underline "yellow")))
+;;   "underline yellow")
+(setq hl-line-face 'hlline-face) ;; (setq hl-line-face nil)
+(global-hl-line-mode 1) ;; (hl-line-mode 1)
 
 (setq font-lock-global-modes
       '(not
@@ -598,16 +619,16 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             'newframe
                           'pushy))
 
-(setq multi-term-program shell-file-name)
+;; (setq multi-term-program shell-file-name)
 (and (dllib-if-unfound "multi-term"
                        "http://www.emacswiki.org/emacs/download/multi-term.el"
                        t)
      (require 'multi-term nil t))
 
 ;; http://d.hatena.ne.jp/goinger/20100416/1271399150
-(setq term-ansi-default-program shell-file-name)
-(and (require 'term nil t)
-     (setq term-display-table (make-display-table)))
+;; (setq term-ansi-default-program shell-file-name)
+(add-hook 'term-setup-hook (lambda ()
+                             (setq term-display-table (make-display-table))))
 (add-hook 'term-mode-hook (lambda ()
                             (define-key term-raw-map "\C-y" 'term-paste)
                             ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
@@ -622,6 +643,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
                             (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z"))
                             (set (make-variable-buffer-local 'scroll-margin) 0)))
+;; (add-hook 'term-exec-hook 'forward-char)
 
 ;; (when (and (executable-find "git")
 ;;            (require 'sgit-mode nil t))
@@ -1749,27 +1771,6 @@ this is test, does not rename files"
 ;; 	      )
 ;; 	      default-frame-alist)
 ;; ) ;;デフォルトのフレーム設定
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 現在行をハイライト
-;; http://wiki.riywo.com/index.php?Meadow
-(defface hlline-face
-  '((((type x w32)
-      (class color)
-      (background dark))
-     (:background "midnightblue")) ; :foreground "white")) ;; ハイライトの文字色は変えない方がいいかも
-    (((type x w32)
-      (class color)
-      (background light))
-     (:background "gainsboro"))
-    (t
-     (:underline "yellow")))
-  "*Face used by hl-line.")
-(defface hlline-ul-face
-  '((t (:underline "yellow")))
-  "underline yellow")
-(setq hl-line-face 'hlline-face)
-(global-hl-line-mode 1)
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; emacsを殺伐とさせる
