@@ -40,6 +40,12 @@ alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
+p(){
+    "$@" | $PAGER
+}
+c(){
+    "$@" | cat
+}
 safe-cmd(){
     type $1 >/dev/null 2>&1 && "$@"
 }
