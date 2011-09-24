@@ -113,7 +113,6 @@ _mygitconfig(){
     git config --global alias.cmm "commit -m"
     git config --global alias.b "branch"
     git config --global alias.cm "commit --verbose"
-    # git config --global github.token **
 }
 
 prompt_function(){              # used by PS1
