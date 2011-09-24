@@ -991,16 +991,17 @@ if arg is omitted use value of `buffer-list'."
           (my-uncompress onefile)
           (revert-buffer))
       (let* ((dir-default (dired-dwim-target-directory))
-             (outfile-default (my-compress-file-extension (concat dir-default
-                                                                  (file-name-nondirectory (car infiles)))))
-             (outfile (if (interactive-p)
-                          (read-file-name (format "Output file to compress (default for %s) : "
-                                                  outfile-default)
+             (archive-default (my-compress-file-extension (file-name-nondirectory (car infiles))))
+             (archive (if (interactive-p)
+                          (read-file-name "Output file to compress : " ;; (format "Output file to compress (default for %s) : "
+                                          ;;         archive-default)
                                           dir-default
-                                          outfile-default)
-                        outfile-default)))
+                                          nil ;; archive-default
+                                          nil
+                                          archive-default)
+                        (concat dir-default archive-default))))
         (apply 'my-compress
-               outfile
+               archive
                infiles)
         (revert-buffer)))
     (dired-unmark-all-marks)))
@@ -1036,32 +1037,32 @@ otherwise, return FILENAME with `my-compress-default-extension'"
     ("txz" "tar" "cJf" "tar" "xJf")
     ("zip" "zip" "-r" "unzip" nil)))
 
-(defun my-uncompress (file)
+(defun my-uncompress (archive)
   ""
-  (interactive "fFile to extract: ")
-  (let* ((efile (expand-file-name file))
-         (ext (file-name-extension efile))
+  (interactive "fArchive to extract: ")
+  (let* ((earchive (expand-file-name archive))
+         (ext (file-name-extension earchive))
          (lst (assoc ext
                      my-compress-program-alist))
          (com (nth 3 lst))
          (op (nth 4 lst))
          (args (if op
-                   (list op efile)
-                 (list efile))))
-    (message "uncompressing %s..." file)
+                   (list op earchive)
+                 (list earchive))))
+    (message "uncompressing %s..." archive)
     (apply 'call-process
            com
            nil
            (my-pop-to-buffer-erase-noselect "*compressing output*")
            t
            args)
-    (message "uncompressing %s...done." file)))
+    (message "uncompressing %s...done." archive)))
 
-(defun my-compress (outfile &rest infiles)
-  "if outfile have extension for compress, use it.
+(defun my-compress (archive &rest files)
+  "if archive have extension for compress, use it.
 otherwise, use `my-compress-default-extension'. for compress."
-  (let* ((outfile-ext (my-compress-file-extension (expand-file-name outfile)))
-         (ext (file-name-extension outfile-ext))
+  (let* ((archive-ext (my-compress-file-extension (expand-file-name archive)))
+         (ext (file-name-extension archive-ext))
          (lst (assoc ext
                      my-compress-program-alist))
          (com (nth 1 lst))
@@ -1069,19 +1070,19 @@ otherwise, use `my-compress-default-extension'. for compress."
          (args (if op
                    (apply 'list
                           op
-                          outfile-ext
-                          infiles)
+                          archive-ext
+                          files)
                  (apply 'list
-                        outfile-ext
-                        infiles))))
-    (message "compressing to %s..." outfile)
+                        archive-ext
+                        files))))
+    (message "compressing to %s..." archive)
     (apply 'call-process
            com
            nil
            (my-pop-to-buffer-erase-noselect "*compressing output*")
            t
            args)
-    (message "compressing to %s...done." outfile)))
+    (message "compressing to %s...done." archive)))
 
 (defun my-pop-to-buffer-erase-noselect (buffer-or-name)
   "pop up buffer using `display-buffer' and return that buffer."
