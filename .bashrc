@@ -42,12 +42,30 @@ alias pacome="sudo \paco -D"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
 catclip(){
-    :
+    if iscygwin
+    then
+        cat /dev/clipboard | tr -d \\r
+    else
+        xclip -o
+    fi
 }
 setclip(){
-    if test $# -eq 0
+    if iscygwin
     then
-        :
+        if test $# -eq 0
+        then
+            sed -e 's/$/\r/' | tee /dev/clipboard
+        else
+            cat "$@" | sed -e 's/$/\r/' | tee /dev/clipboard
+        fi
+    else
+        if test $# -eq 0
+        then
+            xclip -i -f -selection "primary" | xclip -i -selection "clipboard"
+        else
+            cat "$@" | xclip -i -f -selection "primary" | xclip -i -selection "clipboard"
+        fi
+    fi
 }
 p(){
     "$@" | $PAGER
@@ -214,11 +232,11 @@ iswindows(){
 }
 
 ismsys(){
-    :
+    return 1
 }
 
 iscygwin(){
-    :
+    return 1
 }
 
 isdarwin(){
@@ -241,20 +259,10 @@ winln(){
 }
 
 ########################
-if [ "${CYGWIN}" = "t" ]; then  # cygwin判定ってどうやるんだろ 多分unameとか使う
+if iscygwin; then  # cygwin判定ってどうやるんだろ 多分unameとか使う
         # for cygwin
     export TMP=/tmp
     export TEMP=/tmp
-    catclip(){
-        cat /dev/clipboard | tr -d \\r
-    }
-    setclip(){
-        if [ $# -eq 0 ]; then       # 引数があるかを判定
-            sed -e 's/$/\r/' | tee /dev/clipboard
-        else
-            cat $1 | sed -e 's/$/\r/' | tee /dev/clipboard
-        fi
-    }
         # alias setclip="tee /dev/clipboard"
         # alias catclip="cat /dev/clipboard | tr -d \\r"
     alias cygsu="cygstart /cygwinsetup.exe"
@@ -262,13 +270,12 @@ if [ "${CYGWIN}" = "t" ]; then  # cygwin判定ってどうやるんだろ 多分
     echo "cygwin bash"
 fi
 
-echo "Japanese letters are 表示可能"
-
 #######################
+
+echo "Japanese letters are 表示可能"
 
 safe-cmd diskinfo
 
 safe-cmd finger $USER
 LANG=C safe-cmd id
-
 
