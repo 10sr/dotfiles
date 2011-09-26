@@ -34,12 +34,21 @@ alias lla="ls -Al"
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias emacs="emacs -nw"
 alias aptin="sudo apt-get install"
+alias aptsearch="apt-cache search"
 alias ut="slogin t110414@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
+catclip(){
+    :
+}
+setclip(){
+    if test $# -eq 0
+    then
+        :
+}
 p(){
     "$@" | $PAGER
 }
