@@ -46,7 +46,7 @@ catclip(){
     then
         cat /dev/clipboard | tr -d \\r
     else
-        xclip -o
+        xclip -o -selection "clipboard"
     fi
 }
 setclip(){
