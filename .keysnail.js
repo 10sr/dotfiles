@@ -29,6 +29,7 @@ function ignore(k, i) [k, null];
 ///////////////////////////////////////////
 //// firefox
 // style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
+
 util.setPrefs(
     {
         "browser.tabs.loadDivertedInBackground": true,
@@ -41,10 +42,10 @@ util.setPrefs(
         "browser.download.manager.closeWhenDone":true,
         "browser.download.useDownloadDir":false,
         "browser.tabs.closeWindowWithLastTab":false,
-        "network.dns.disableIPv6":true
+        "network.dns.disableIPv6":true,
+        "browser.urlbar.trimURLs":false,
     }
 );
-
 
 ///////////////////////////////////
 //検索エンジン
