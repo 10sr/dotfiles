@@ -5,6 +5,9 @@
 ##########################################
 test -r /etc/bashrc && . /etc/bashrc
 
+safe-cmd(){
+    type $1 >/dev/null 2>&1 && "$@"
+}
 # export PS1="\[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
 # export PS1="[\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
 export PS1="\$(prompt_function)\$ "
@@ -33,7 +36,8 @@ alias la="ls -A"
 alias lla="ls -Al"
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias emacs="emacs -nw"
-alias aptin="sudo apt-get install"
+alias apt-get="sudo apt-get"
+alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
 alias ut="slogin t110414@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
@@ -72,9 +76,6 @@ p(){
 }
 c(){
     "$@" | cat
-}
-safe-cmd(){
-    type $1 >/dev/null 2>&1 && "$@"
 }
 o(){
     if [ $# -eq 0 ]; then
@@ -222,6 +223,7 @@ _echocolors(){
         "\e[0m"
 }
 
+safe-cmd stty stop undef        # unbind C-s to stop displaying output
 
 ##########################
 # system type
