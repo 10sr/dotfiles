@@ -7,12 +7,12 @@ if !isdirectory(expand('~/.vim'))
 endif
 
 """""""""""""""""""""""""""""""""""
+filetype plugin indent on
 "set nocompatible "vi互換にしない
 "バックアップファイルを作るディレクトリ
 if !isdirectory(expand('~/.vim/backup'))
    call mkdir(expand('~/.vim/backup'))
 endif
-filetype plugin indent on
 set backup "バックアップ
 set backupdir=$HOME/.vim/backup
 set swapfile "スワップファイル用のディレクトリ
@@ -25,12 +25,12 @@ set ignorecase
 set smartcase "検索時に大文字を含んでいたら大/小を区別
 set whichwrap=b,s,h,l,<,>,[,] "カーソルを行頭、行末で止まらないようにする
 set showmode "モード表示
-"set title "編集中のファイル名を表示
+set notitle " do not display editting file on titlebar
 set incsearch
 set wrapscan "折り返し検索
 set showmatch "括弧を閉じた時、対になる括弧を一瞬ハイライトする
 set ruler "行番号、カーソル位置を表示
-"set number
+set nonumber " do not show line number at left side
 set laststatus=2 "ステータスラインを常に表示
 set showcmd
 set scrolloff=2 "常に前後2行を表示
