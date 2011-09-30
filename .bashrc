@@ -158,7 +158,7 @@ prompt_function(){              # used by PS1
         local cdef=""
     else
         local c1="\e[33m"
-        local c2="\e[32m"
+        local c2="\e[36m"
         local cdef="\e[0m"
     fi
     local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
@@ -249,7 +249,8 @@ isdarwin(){
 # for windose
 
 winln(){
-    if [ $# -eq 0 ]; then
+    if [ $# -eq 0 ]
+    then
         echo "usage: winln TARGET LINK_NAME"
         echo "Create a link to TARGET with the name LINK_NAME (that is, TARGET must already exist)."
         echo "About other features run 'junction'."
