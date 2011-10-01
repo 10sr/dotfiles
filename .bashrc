@@ -167,7 +167,7 @@ prompt_function(){              # used by PS1
     local git=$(safe-cmd __git_ps1 [GIT:%s])
     printf " [${c1}${pwd}${cdef}]${git}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
-    printf "jobs:${jobnum} last:${lastreturn} "
+    printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
 
 # type date >/dev/null 2>&1 || alias date=":" # "cmd /c echo %time%"
