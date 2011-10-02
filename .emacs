@@ -287,7 +287,7 @@
 ;; (my-set-ascii-and-jp-font-with-size '("monaco" 75 "takaogothic" 11))
 ;; (my-set-ascii-and-jp-font-with-size '("monaco" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
-;; あ
+;; あ a
 
 (defun my-22-set-ascii-and-jp-font-with-size (list)
   ""
@@ -496,10 +496,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; その他のhook
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
-(add-hook 'find-file-hook
-          (lambda ()
-            (when buffer-read-only
-              (view-mode 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode関連
@@ -594,8 +590,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (run-with-idle-timer 180 t (lambda ()
                                (unless (memq major-mode
                                              '(term-mode))
-                                 (zone))))
-  )
+                                 (zone)))))
 
 (when (require 'uniquify nil t)
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
@@ -610,6 +605,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (define-key view-mode-map "v" 'toggle-read-only)
             (define-key view-mode-map "q" 'kill-this-buffer)))
 (global-set-key "\M-r" 'view-mode)
+(setq view-read-only t)
+;; (add-hook 'find-file-hook
+;;           (lambda ()
+;;             (when buffer-read-only
+;;               (view-mode 1))))
 
 (add-hook 'Man-mode-hook
           (lambda ()
