@@ -630,18 +630,20 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'term-setup-hook (lambda ()
                              (setq term-display-table (make-display-table))))
 (add-hook 'term-mode-hook (lambda ()
-                            (define-key term-raw-map "\C-y" 'term-paste)
-                            ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
-                            ;; (define-key term-raw-map "\C-r" 'term-send-raw)
-                            ;; (define-key term-raw-map "\C-s" 'term-send-raw)
-                            ;; (define-key term-raw-map "\C-f" 'forward-char)
-                            ;; (define-key term-raw-map "\C-b" 'backward-char)
-                            ;; (define-key term-raw-map "\C-t" 'set-mark-command)
-                            (define-key term-raw-map (kbd "ESC") 'term-send-raw)
-                            (define-key term-raw-map [delete] 'term-send-raw)
-                            (define-key term-raw-map "\C-c" 'term-send-raw)
-                            (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
-                            (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z"))
+                            (unless (memq (current-buffer) (and (require 'multi-term nil t) ; current buffer is not multi-term buffer
+                                                                (multi-term-list)))
+                              (define-key term-raw-map "\C-y" 'term-paste)
+                              ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
+                              ;; (define-key term-raw-map "\C-r" 'term-send-raw)
+                              ;; (define-key term-raw-map "\C-s" 'term-send-raw)
+                              ;; (define-key term-raw-map "\C-f" 'forward-char)
+                              ;; (define-key term-raw-map "\C-b" 'backward-char)
+                              ;; (define-key term-raw-map "\C-t" 'set-mark-command)
+                              (define-key term-raw-map (kbd "ESC") 'term-send-raw)
+                              (define-key term-raw-map [delete] 'term-send-raw)
+                              (define-key term-raw-map "\C-c" 'term-send-raw)
+                              (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
+                              (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z")))
                             (set (make-variable-buffer-local 'scroll-margin) 0)))
 ;; (add-hook 'term-exec-hook 'forward-char)
 
@@ -721,7 +723,9 @@ if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
 ;; buffer switching
 
 (when (require 'bs nil t)
-  (global-set-key "\C-x\C-b" 'bs-show))
+  ;; (global-set-key "\C-x\C-b" 'bs-show)
+  (defalias 'list-buffers 'bs-show))
+
 ;; (add-to-list 'bs-configurations '("processes" nil get-buffer-process ".*" nil nil))
 (add-to-list 'bs-configurations '("same-dir" nil buffer-same-dir-p ".*" nil nil))
 ;; (setq bs-configurations (list '("processes" nil get-buffer-process ".*" nil nil)
@@ -1440,6 +1444,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (eshell/export "GIT_PAGER=")
             (eshell/export "GIT_EDITOR=")
             (eshell/export "LC_MESSAGES=C")
+            (eshell/export "TERM=xterm")
             ))
 
 ;; (eval-after-load "em-alias"
