@@ -91,19 +91,6 @@ o(){
         xdg-open "$f"
     fi
 }
-sgcc(){
-    if iswindows; then
-        gcc -o win.$1.exe $1
-    else
-        gcc -o $(uname).$1.out $1
-    fi
-}
-sggcc(){
-    gcc -g -o $(uname).$1.out $1
-}
-slmggcc(){
-    gcc -g -lm -o $(uname).$1.out $1
-}
 convmv-sjis2utf8-test(){
     convmv -r -f sjis -t utf8 *
 }
@@ -258,7 +245,6 @@ winln(){
     else
         junction "$2" "$1"
     fi
-
 }
 
 ########################
