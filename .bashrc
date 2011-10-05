@@ -45,6 +45,12 @@ alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
+gitls(){
+    for file in `\ls`
+    do
+        :
+    done
+}
 catclip(){
     if iscygwin
     then
@@ -121,19 +127,20 @@ port-autosync(){
 }
 
 _mygitconfig(){
-    # export GISTY_DIR="$HOME/dev/gists"
     git config --global user.name "10sr"
     git config --global user.email sr10@users.sourceforge.jp
     git config --global core.autocrlf false
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles no
-    git config --global alias.log-all "log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'"
-    git config --global alias.log-all2 "log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short"
     git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
-    git config --global alias.cmm "commit -m"
+    git config --global alias.st "status"
     git config --global alias.b "branch"
-    git config --global alias.cm "commit --verbose"
+    git config --global alias.ci "commit --verbose"
+    git config --global alias.co "checkout"
+    git config --global alias.cm "commit --verbose -m"
+    git config --global alias.ls "!git ls-files | xargs ls -CFG --color=auto --time-style=long-iso"
+    git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
 }
 
 prompt_function(){              # used by PS1
@@ -236,11 +243,13 @@ isdarwin(){
 # for windose
 
 winln(){
-    if [ $# -eq 0 ]
+    if test $# -eq 0
     then
-        echo "usage: winln TARGET LINK_NAME"
-        echo "Create a link to TARGET with the name LINK_NAME (that is, TARGET must already exist)."
-        echo "About other features run 'junction'."
+        {
+            echo "usage: winln TARGET LINK_NAME"
+            echo "Create a link to TARGET with the name LINK_NAME (that is, TARGET must already exist)."
+            echo "About other features run 'junction'."
+        } 1>&2
         return 1
     else
         junction "$2" "$1"
@@ -248,6 +257,7 @@ winln(){
 }
 
 ########################
+
 if iscygwin; then  # cygwin判定ってどうやるんだろ 多分unameとか使う
         # for cygwin
     export TMP=/tmp
