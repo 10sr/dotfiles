@@ -86,6 +86,9 @@
 
 ;; (comint-show-maximum-output)
 
+(setq delete-by-moving-to-trash t
+      trash-directory "~/.emacs.d/trash")
+
 ;; change color for border
 (set-face-foreground (make-face 'vertical-border-face) "red")
 (set-display-table-slot standard-display-table 'vertical-border
@@ -230,6 +233,7 @@
 ;;   "underline yellow")
 (setq hl-line-face 'hlline-face) ;; (setq hl-line-face nil)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
+(setq hl-line-global-modes nil)
 
 (setq font-lock-global-modes
       '(not
@@ -557,6 +561,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (setq c-basic-offset 2
                   indent-tabs-mode nil)
             ;; (set-face-foreground 'font-lock-keyword-face "blue")
+            (c-toggle-hungry-state 1)
             ))
 (defun my-compile-c-this-file ()
   ""
@@ -564,6 +569,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (compile (format "gcc -Wall -g -o %s %s"
                    (file-name-sans-extension buffer-file-name)
                    buffer-file-name)))
+;; (define-key c-mode-base-map "\C-h" 'c-electric-backspace)
+;; (when (require 'c nil t)(c-toggle-hungry-state t)
 
 (when (dllib-if-unfound "js2-mode"
                         "https://github.com/mooz/js2-mode/raw/master/js2-mode.el"
@@ -840,22 +847,7 @@ if arg is omitted use value of `buffer-list'."
 ;; vc
 ;; (require 'vc)
 
-(unless (executable-find "rcs")
-  (setq vc-handled-backends (delq 'RCS vc-handled-backends)))
-
-(unless (executable-find "git")
-  (setq vc-handled-backends (delq 'Git vc-handled-backends)))
-
-(defadvice vc-rcs-register (after rcs-register-non-strict-locking activate)
-  ""
-  (when (eq (vc-backend (buffer-file-name)) 'RCS)
-    (vc-rcs-set-non-strict-locking (buffer-file-name))))
-
-(defadvice vc-next-action (before rcs-save-before-next-action activate)
-  ""
-  (save-buffer))
-
-(setq vc-command-messages t)
+(setq vc-handled-backends nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gauche-mode
