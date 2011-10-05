@@ -651,6 +651,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                               (define-key term-raw-map "\C-c" 'term-send-raw)
                               (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
                               (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z")))
+                            ;; (define-key term-raw-map "\C-d" 'delete-char)
                             (set (make-variable-buffer-local 'scroll-margin) 0)))
 ;; (add-hook 'term-exec-hook 'forward-char)
 
