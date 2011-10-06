@@ -86,9 +86,6 @@
 
 ;; (comint-show-maximum-output)
 
-(setq delete-by-moving-to-trash t
-      trash-directory "~/.emacs.d/trash")
-
 ;; change color for border
 (set-face-foreground (make-face 'vertical-border-face) "red")
 (set-display-table-slot standard-display-table 'vertical-border
@@ -233,7 +230,9 @@
 ;;   "underline yellow")
 (setq hl-line-face 'hlline-face) ;; (setq hl-line-face nil)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
-(setq hl-line-global-modes nil)
+(setq hl-line-global-modes
+      '(not
+        term-mode))
 
 (setq font-lock-global-modes
       '(not
@@ -353,7 +352,7 @@
                 (cdr ls))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; back up and auto saving
+;; file handling
 ;; http://www.bookshelf.jp/soft/meadow_24.html#SEC260
 (setq make-backup-files t)
 ;; (make-directory (expand-file-name "~/.emacsbackup"))
@@ -365,6 +364,9 @@
 
 (setq auto-save-list-file-prefix (expand-file-name "~/.emacs.d/autosave/"))
 (setq delete-auto-save-files t)
+
+(setq delete-by-moving-to-trash t
+      trash-directory "~/.emacs.d/trash")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; for emacsclient
@@ -563,6 +565,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             ;; (set-face-foreground 'font-lock-keyword-face "blue")
             (c-toggle-hungry-state 1)
             ))
+
 (defun my-compile-c-this-file ()
   ""
   (interactive)
@@ -639,7 +642,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'term-mode-hook (lambda ()
                             (unless (memq (current-buffer) (and (require 'multi-term nil t) ; current buffer is not multi-term buffer
                                                                 (multi-term-list)))
-                              (define-key term-raw-map "\C-y" 'term-paste)
                               ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
                               ;; (define-key term-raw-map "\C-r" 'term-send-raw)
                               ;; (define-key term-raw-map "\C-s" 'term-send-raw)
@@ -651,6 +653,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                               (define-key term-raw-map "\C-c" 'term-send-raw)
                               (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
                               (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z")))
+                            (define-key term-raw-map "\C-y" 'term-paste)
                             ;; (define-key term-raw-map "\C-d" 'delete-char)
                             (set (make-variable-buffer-local 'scroll-margin) 0)))
 ;; (add-hook 'term-exec-hook 'forward-char)
@@ -821,7 +824,7 @@ if arg is omitted use value of `buffer-list'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sdic
 
-(defun sdic-describe-word-echo ()
+(defun sdic-describe-word-at-point-echo ()
   ""
   (interactive)
   (save-window-excursion
@@ -840,9 +843,8 @@ if arg is omitted use value of `buffer-list'."
 (setq sdic-disable-select-window t)
 (setq sdic-window-height 7)
 (when (require 'sdic nil t)
-  (global-set-key "\C-cw" 'sdic-describe-word)
-  (global-set-key "\C-ct" 'sdic-describe-word-at-point)
-  (global-set-key "\C-t" 'sdic-describe-word-echo))
+  ;; (define-key my-prefix-map "\C-w" 'sdic-describe-word)
+  (define-key my-prefix-map "\C-t" 'sdic-describe-word-at-point-echo))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vc
