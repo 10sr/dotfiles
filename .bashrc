@@ -43,6 +43,7 @@ alias ut="slogin t110414@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
+alias destroy="rm -rf"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
 gitls(){
@@ -139,6 +140,7 @@ _mygitconfig(){
     git config --global alias.ci "commit --verbose"
     git config --global alias.co "checkout"
     git config --global alias.cm "commit --verbose -m"
+    git config --global alias.di "diff"
     git config --global alias.ls "!git ls-files | xargs ls -CFG --color=auto --time-style=long-iso"
     git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
 }
