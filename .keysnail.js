@@ -174,6 +174,7 @@ plugins.options["twitter_client.tweet_keymap"] = {
 
 plugins.options["twitter_client.jmp_id"] = "10sr";
 plugins.options["twitter_client.jmp_key"] = "R_c51f889a77cb4b4e993ed868f65083f5";
+plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
 // エクステ
