@@ -648,11 +648,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                               ;; (define-key term-raw-map "\C-f" 'forward-char)
                               ;; (define-key term-raw-map "\C-b" 'backward-char)
                               ;; (define-key term-raw-map "\C-t" 'set-mark-command)
-                              (define-key term-raw-map (kbd "ESC") 'term-send-raw)
-                              (define-key term-raw-map [delete] 'term-send-raw)
-                              (define-key term-raw-map "\C-c" 'term-send-raw)
                               (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
                               (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z")))
+                            (define-key term-raw-map (kbd "ESC") 'term-send-raw)
+                            (define-key term-raw-map [delete] 'term-send-raw)
+                            (define-key term-raw-map "\C-c" 'term-send-raw)
                             (define-key term-raw-map "\C-y" 'term-paste)
                             ;; (define-key term-raw-map "\C-d" 'delete-char)
                             (set (make-variable-buffer-local 'scroll-margin) 0)))
@@ -1562,16 +1562,19 @@ when SEC is nil, stop auto save if enabled."
     sh-mode
     js-mode
     sgml-mode
-    c-mode))
+    c-mode
+    c++-mode))
 (defun my-indent-buffer ()
-  ""
+  "indent whole buffer."
   (interactive)
   (indent-region (point-min)
-                 (point-max))) 
+                 (point-max)))
+(defun my-auto-indent-buffer ()
+  ""
+  (when (memq major-mode my-indent-buffer-mode-list)
+    (my-indent-buffer)))
 (add-hook 'before-save-hook
-          (lambda ()
-            (when (memq major-mode my-indent-buffer-mode-list)
-              (my-indent-buffer))))
+          'my-auto-indent-buffer)
 
 (defun my-keyboard-quit ()
   ""
