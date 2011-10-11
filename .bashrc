@@ -22,9 +22,6 @@ export LESS="-iRM"
 export GIT_PAGER=$PAGER
 export GIT_EDITOR=$EDITOR
 
-mkunfddir(){                    # create dir if unfound. ?
-    test -e "$1" || mkdir "$1"
-}
 if test "${TERM}" == dumb
 then
     alias ls="ls -CFG --time-style=long-iso"
@@ -44,8 +41,22 @@ alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 alias destroy="rm -rf"
+alias psall="ps auxww"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
+throw-away(){
+    for file in "$@"
+    do
+        mv $file ~/bu/tb
+    done
+}
+mkcd(){
+    mkdir $1
+    cd $1
+}
+mkunfddir(){                    # create dir if unfound. ?
+    test -e "$1" || mkdir "$1"
+}
 gitls(){
     for file in `\ls`
     do
@@ -72,9 +83,9 @@ setclip(){
     else
         if test $# -eq 0
         then
-            xclip -i -f -selection "primary" | xclip -i -selection "clipboard"
+            xclip -i -f -selection "primary" | xclip -i -f -selection "clipboard"
         else
-            cat "$@" | xclip -i -f -selection "primary" | xclip -i -selection "clipboard"
+            cat "$@" | xclip -i -f -selection "primary" | xclip -i -f -selection "clipboard"
         fi
     fi
 }
@@ -85,14 +96,17 @@ c(){
     "$@" | cat
 }
 o(){
-    if [ $# -eq 0 ]; then
+    if [ $# -eq 0 ]
+    then
         local f=.
     else
         local f="$1"
     fi
-    if iswindows; then
+    if iswindows
+    then
         cmd.exe //c start "" "$f"
-    elif isdarwin; then
+    elif isdarwin
+    then
         open "$f"
     else
         xdg-open "$f"
@@ -151,17 +165,20 @@ prompt_function(){              # used by PS1
     then
         local c1=""
         local c2=""
+        local c3=""
         local cdef=""
     else
         local c1="\e[33m"
         local c2="\e[36m"
+        local c3="\e[37m"
         local cdef="\e[0m"
     fi
     local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
+    local oldpwd=$(echo "${OLDPWD}/" | sed -e "s:${HOME}:~:")
     local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
     local jobnum=$(jobs | wc -l)
     local git=$(safe-cmd __git_ps1 [GIT:%s])
-    printf " [${c1}${pwd}${cdef}]${git}\n"
+    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
@@ -169,7 +186,7 @@ prompt_function(){              # used by PS1
 # type date >/dev/null 2>&1 || alias date=":" # "cmd /c echo %time%"
 
 if [ "${EMACS}" = "t" ]; then   # emacs shell用
-    export PS1="\u@\H \d \t \w\nemacs shell\$ "
+    : export PS1="\u@\H \d \t \w\nemacs shell\$ "
 elif echo "$EMACS" | grep term >/dev/null 2>&1; then # emacs term用
     echo "emacs term"
 fi
@@ -234,7 +251,7 @@ ismsys(){
 }
 
 iscygwin(){
-    return 1
+    uname | grep -E "^CYGWIN" >/dev/null 2>&1
 }
 
 isdarwin(){
@@ -260,12 +277,12 @@ winln(){
 
 ########################
 
-if iscygwin; then  # cygwin判定ってどうやるんだろ 多分unameとか使う
-        # for cygwin
+if iscygwin; then
+    # for cygwin
     export TMP=/tmp
     export TEMP=/tmp
-        # alias setclip="tee /dev/clipboard"
-        # alias catclip="cat /dev/clipboard | tr -d \\r"
+    : alias setclip="tee /dev/clipboard"
+    : alias catclip="cat /dev/clipboard | tr -d \\r"
     alias cygsu="cygstart /cygwinsetup.exe"
     alias emacs="CYGWIN=tty emacs"
     echo "cygwin bash"
