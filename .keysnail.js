@@ -241,8 +241,7 @@ ext.add("restart-firefox-add-menu", function(){
     var elm = document.createElementNS(XUL_NS, "menuitem");
     elm.setAttribute("label", "Restart Firefox");
     elm.setAttribute("id", "menu_RestartFirefoxKs")
-    elm.setAttribute("oncommand", function(){
-        ext.exec("restart-firefox");});
+    elm.setAttribute("oncommand", "ext.exec('restart-firefox');");
     var menu = document.getElementById("menu_FilePopup");
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
     menu.appendChild(elm);
