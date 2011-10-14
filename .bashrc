@@ -148,7 +148,7 @@ _mygitconfig(){
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles no
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short --stat"
     git config --global alias.st "status"
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"
