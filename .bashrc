@@ -157,6 +157,7 @@ _mygitconfig(){
     git config --global alias.di "diff"
     git config --global alias.ls "!git ls-files | xargs ls -CFG --color=auto --time-style=long-iso"
     git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
+    git config --global alias.addi "add -i"
 }
 
 prompt_function(){              # used by PS1
