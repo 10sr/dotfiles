@@ -379,6 +379,8 @@
 
 (define-key my-prefix-map (kbd "C-f") 'make-frame-command)
 (define-key my-prefix-map (kbd "C-o") 'occur)
+(define-key my-prefix-map (kbd "C-s") (or (require 'multi-term)
+                                          'ansi-term))
 
 ;; moving around
 ;; (global-set-key (kbd "M-j") 'next-line)
@@ -394,6 +396,7 @@
 (global-set-key (kbd "C-<right>") 'scroll-up)
 (global-set-key (kbd "C-x M-x") 'execute-extended-command)
 (global-set-key (kbd "C-x M-:") 'eval-expression)
+(global-set-key (kbd "<select>") 'previous-line-mark)
 
 ;; C-h and DEL
 ;; (global-set-key (kbd "C-h") 'backward-delete-char-untabify)
@@ -507,6 +510,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; mode関連
 
 ;; (ffap-bindings)
+
+(add-hook 'sh-mode-hook
+          (lambda ()
+            (define-key sh-mode-map (kbd "C-x C-e") 'my-execute-shell-command-current-line)))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
@@ -1455,10 +1462,10 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;      ;; (eshell/alias "ut" "ssh g841105@un001.ecc.u-tokyo.ac.jp")
 ;;      (add-to-list 'recentf-exclude (concat eshell-directory-name "alias"))))
 
-(define-key my-prefix-map (kbd "C-s") (lambda ()
-                                        (interactive)
-                                        (eshell-cd-default-directory (buffer-name (or (my-eshell-frame-buffer (selected-frame))
-                                                                                      (eshell t))))))
+;; (define-key my-prefix-map (kbd "C-s") (lambda ()
+;;                                         (interactive)
+;;                                         (eshell-cd-default-directory (buffer-name (or (my-eshell-frame-buffer (selected-frame))
+;;                                                                                       (eshell t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 最終更新日時を得る
@@ -1530,6 +1537,12 @@ when SEC is nil, stop auto save if enabled."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
+
+(defun my-execute-shell-command-current-line ()
+  ""
+  (interactive)
+  (shell-command (buffer-substring-no-properties (point-at-bol)
+                                                 (point-at-eol))))
 
 (defun my-format-time-string (&optional time)
   ""
