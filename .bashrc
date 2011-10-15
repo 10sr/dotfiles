@@ -153,7 +153,7 @@ _mygitconfig(){
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"
     git config --global alias.co "checkout"
-    git config --global alias.cm "commit --verbose -m"
+    git config --global alias.cim "commit --verbose -m"
     git config --global alias.di "diff"
     git config --global alias.ls "!git ls-files | xargs ls -CFG --color=auto --time-style=long-iso"
     git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
