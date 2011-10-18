@@ -238,13 +238,21 @@ plugins.options["twitter_client.use_jmp"] = true;
 //
 ext.add("restart-firefox-add-menu", function(){
     const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-    var elm = document.createElementNS(XUL_NS, "menuitem");
-    elm.setAttribute("label", "Restart Firefox");
-    elm.setAttribute("id", "menu_RestartFirefoxKs")
-    elm.setAttribute("oncommand", "ext.exec('restart-firefox');");
+
+    var cmdelm = document.createElementNS(XUL_NS, "command");
+    cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs")
+    cmdelm.setAttribute("oncommand", "ext.exec('restart-firefox');");
+    var commandset = document.getElementById("mainCommandSet");
+    // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
+    commandset.appendChild(cmdelm);
+
+    var menuelm = document.createElementNS(XUL_NS, "menuitem");
+    menuelm.setAttribute("label", "Restart Firefox");
+    menuelm.setAttribute("id", "my_menu_restartFirefoxKs")
+    menuelm.setAttribute("command", "my_cmd_restartFirefoxKs");
     var menu = document.getElementById("menu_FilePopup");
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
-    menu.appendChild(elm);
+    menu.appendChild(menuelm);
 }, "add restart firefox menu");
 
 //////////////////////////////////////
