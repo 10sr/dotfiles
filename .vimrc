@@ -46,6 +46,7 @@ set visualbell "ビープしない
 set browsedir=buffer "バッファで開いているファイルのディレクトリ
 
 set tabstop=4 "タブの画面上での幅
+set softtabstop=4
 set shiftwidth=4 "width of indent
 set expandtab "タブをスペースに展開する
 set autoindent "オートインデント
@@ -117,21 +118,21 @@ augroup END
 
 " save window position and size
 if has('gui_running')
-let g:save_window_file = expand('~/.vimwinpos')
-augroup SaveWindow
-  autocmd!
-  autocmd VimLeavePre * call s:save_window()
-  function! s:save_window()
-    let options = [
-      \ 'set columns=' . &columns,
-      \ 'set lines=' . &lines,
-      \ 'winpos ' . getwinposx() . ' ' . getwinposy(),
-      \ ]
-    call writefile(options, g:save_window_file)
-  endfunction
-augroup END
+    let g:save_window_file = expand('~/.vimwinpos')
+    augroup SaveWindow
+      autocmd!
+      autocmd VimLeavePre * call s:save_window()
+      function! s:save_window()
+        let options = [
+          \ 'set columns=' . &columns,
+          \ 'set lines=' . &lines,
+          \ 'winpos ' . getwinposx() . ' ' . getwinposy(),
+          \ ]
+        call writefile(options, g:save_window_file)
+      endfunction
+    augroup END
 
-if filereadable(g:save_window_file)
-  execute 'source' g:save_window_file
-endif
+    if filereadable(g:save_window_file)
+      execute 'source' g:save_window_file
+    endif
 endif
