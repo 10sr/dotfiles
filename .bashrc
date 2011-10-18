@@ -22,12 +22,7 @@ export LESS="-iRM"
 export GIT_PAGER=$PAGER
 export GIT_EDITOR=$EDITOR
 
-if test "${TERM}" == dumb
-then
-    alias ls="ls -CFG --time-style=long-iso"
-else
-    alias ls="ls -CFG --color=auto --time-style=long-iso"
-fi
+alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
 alias ll="ls -l"
 alias la="ls -A"
 alias lla="ls -Al"
@@ -36,14 +31,22 @@ alias emacs="emacs -nw"
 alias apt-get="sudo apt-get"
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
+alias aptshow="apt-cache show"
 alias ut="slogin t110414@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 alias destroy="rm -rf"
 alias psall="ps auxww"
+alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
+memo(){
+    _MEMO="# $*\n"
+}
+rmmemo(){
+    _MEMO=""
+}
 throw-away(){
     for file in "$@"
     do
@@ -179,6 +182,7 @@ prompt_function(){              # used by PS1
     local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
     local jobnum=$(jobs | wc -l)
     local git=$(safe-cmd __git_ps1 [GIT:%s])
+    printf "${_MEMO}"
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
