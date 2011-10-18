@@ -379,7 +379,7 @@
 
 (define-key my-prefix-map (kbd "C-f") 'make-frame-command)
 (define-key my-prefix-map (kbd "C-o") 'occur)
-(define-key my-prefix-map (kbd "C-s") (or (require 'multi-term)
+(define-key my-prefix-map (kbd "C-s") (or (require 'multi-term nil t)
                                           'ansi-term))
 
 ;; moving around
