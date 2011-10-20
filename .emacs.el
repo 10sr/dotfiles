@@ -1178,14 +1178,20 @@ otherwise, use `my-compress-default-extension'. for compress."
 (define-minor-mode my-dired-display-all-mode
   ""
   :init-value nil
+  :global t
+  (my-dired-display-all-set)
+  (when (eq major-mode 'dired-mode)
+    (revert-buffer)))
+(defun my-dired-display-all-set ()
+  ""
   (if my-dired-display-all-mode
       (setq dired-actual-switches
             (concat "-A "
                     dired-actual-switches))
     (setq dired-actual-switches
-          (replace-regexp-in-string "-A " "" dired-actual-switches)))
-  (when (eq major-mode 'dired-mode)
-    (revert-buffer)))
+          (replace-regexp-in-string "-A " "" dired-actual-switches))))
+(add-hook 'dired-mode-hook
+          'my-dired-display-all-set)
 
 (put 'dired-find-alternate-file 'disabled nil)
 (require 'ls-lisp)
