@@ -15,7 +15,7 @@
 
 (defvar my-prefix-map
   (make-sparse-keymap))
-(global-set-key (kbd "C-z") my-prefix-map)
+(global-set-key (kbd "C-q") my-prefix-map)
 (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -160,6 +160,7 @@
 (setq-default indent-tabs-mode nil)
 (pc-selection-mode 1)
 (delete-selection-mode 1)
+(cua-mode 0)
 
 ;; key bindings
 (global-set-key (kbd "C-m") 'newline-and-indent)
@@ -659,8 +660,12 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                               (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z")))
                             (define-key term-raw-map (kbd "ESC") 'term-send-raw)
                             (define-key term-raw-map [delete] 'term-send-raw)
+                            (define-key term-mode-map "\C-c" 'term-send-raw)
                             (define-key term-raw-map "\C-c" 'term-send-raw)
+                            (define-key term-raw-map "\C-h" 'term-send-backspace)
                             (define-key term-raw-map "\C-y" 'term-paste)
+                            ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
+                            ;;   (define-key term-raw-map (kbd key) 'term-send-raw))
                             ;; (define-key term-raw-map "\C-d" 'delete-char)
                             (set (make-variable-buffer-local 'scroll-margin) 0)))
 ;; (add-hook 'term-exec-hook 'forward-char)
