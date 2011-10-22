@@ -15,7 +15,8 @@
 
 (defvar my-prefix-map
   (make-sparse-keymap))
-(global-set-key (kbd "C-q") my-prefix-map)
+(global-set-key (kbd "C-z") my-prefix-map)
+(define-key my-prefix-map (kbd "C-q") 'quoted-insert)
 (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -46,6 +47,7 @@
     nbl))
 (setq confirm-kill-emacs 'y-or-n-p)
 (setq gc-cons-threshold (* 1024 1024 4))
+
 (when window-system
   (add-to-list 'default-frame-alist '(cursor-type . box))
   (add-to-list 'default-frame-alist '(background-color . "white"))
@@ -59,17 +61,6 @@
           (lambda ()
             (when (file-readable-p "~/.emacs")
               (load-file "~/.emacs"))))
-
-(when (eq system-type 'Darwin)
-  (mac-set-input-method-parameter ’japanese ’cursor-color ”red”)
-  (mac-set-input-method-parameter ’roman ’cursor-color ”black”))
-
-(when (and (boundp 'input-method-activate-hook) ;ちょっと正しいかわかんない
-           (boundp 'input-method-inactivate-hook))
-  (add-hook 'input-method-activate-hook
-            (lambda () (set-cursor-color "red")))
-  (add-hook 'input-method-inactivate-hook
-            (lambda () (set-cursor-color "black"))))
 
 (cd ".")  ; when using windows use / instead of \ in default-directory
 
@@ -85,11 +76,6 @@
 (setq ring-bell-function 'ignore)
 
 ;; (comint-show-maximum-output)
-
-;; change color for border
-(set-face-foreground (make-face 'vertical-border-face) "red")
-(set-display-table-slot standard-display-table 'vertical-border
-                        (make-glyph-code #x3a 'vertical-border-face))
 
 ;; kill scratch
 (add-hook 'after-init-hook
@@ -163,11 +149,40 @@
 (cua-mode 0)
 
 ;; key bindings
+;; moving around
+;; (global-set-key (kbd "M-j") 'next-line)
+;; (global-set-key (kbd "M-k") 'previous-line)
+;; (global-set-key (kbd "M-h") 'backward-char)
+;; (global-set-key (kbd "M-l") 'forward-char)
+;;(keyboard-translate ?\M-j ?\C-j)
+(global-set-key (kbd "M-p") 'backward-paragraph)
+(global-set-key (kbd "M-n") 'forward-paragraph)
+(global-set-key (kbd "C-<up>") (lambda () (interactive)(scroll-down 1)))
+(global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
+(global-set-key (kbd "C-<left>") 'scroll-down)
+(global-set-key (kbd "C-<right>") 'scroll-up)
+(global-set-key (kbd "C-x M-x") 'execute-extended-command)
+(global-set-key (kbd "C-x M-:") 'eval-expression)
+(global-set-key (kbd "<select>") 'previous-line-mark)
+
+;; C-h and DEL
+(global-set-key (kbd "C-h") (kbd "DEL"))
+;; (global-set-key (kbd "C-h") 'backward-delete-char-untabify)
+;; (global-set-key (kbd "DEL") help-map)
+;; (global-set-key (kbd "C-h") (lambda ()
+;;                               (interactive)
+;;                               (call-interactively (key-binding (kbd "DEL")))))
+;; (keyboard-translate ?\^h ?\^?) ; scimにはC-hを送りたい
+;; (keyboard-translate ?\b ?\^h)          ; dont translate backspace
+
 (global-set-key (kbd "C-m") 'newline-and-indent)
-(global-set-key (kbd "C-o") (lambda ()
-                              (interactive)
-                              (goto-char (point-at-eol))
-                              (newline-and-indent)))
+(global-set-key (kbd "C-o")
+                ;; (lambda ()
+                ;;   (interactive)
+                ;;   (move-end-of-line nil)
+                ;;   (newline-and-indent))
+                (kbd "C-e C-m")
+                )
 (global-set-key (kbd "C-k") 'kill-whole-line)
 (global-set-key (kbd "M-k") 'my-copy-whole-line)
 ;; (global-set-key "\C-z" 'undo) ; undo is C-/
@@ -175,12 +190,38 @@
 (global-set-key (kbd "M-u") 'undo)
 (global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "M-i") (lambda ()
-                              (interactive)
-                              (call-interactively (key-binding (kbd "M-TAB")))))
+(global-set-key (kbd "M-i")
+                (lambda ()
+                  (interactive)
+                  (call-interactively (key-binding (kbd "M-TAB"))))
+                ;; (kbd "M-TAB")
+                )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
+
+;; change color for border
+;; (set-face-foreground (make-face 'vertical-border-face) "white")
+;; (set-face-background 'vertical-border-face "black")
+(defface vertical-border-face
+  `((((background dark))
+     (:background "white"))
+    (((background light))
+     (:background "black")))
+  "vertical border")
+(set-display-table-slot standard-display-table 'vertical-border
+                        (make-glyph-code #x3a 'vertical-border-face))
+
+(when (eq system-type 'Darwin)
+  (mac-set-input-method-parameter 'japanese 'cursor-color ”red”)
+  (mac-set-input-method-parameter 'roman 'cursor-color ”black”))
+
+(when (and (boundp 'input-method-activate-hook) ;ちょっと正しいかわかんない
+           (boundp 'input-method-inactivate-hook))
+  (add-hook 'input-method-activate-hook
+            (lambda () (set-cursor-color "red")))
+  (add-hook 'input-method-inactivate-hook
+            (lambda () (set-cursor-color "black"))))
 
 (show-paren-mode 1)
 (setq show-paren-style 'mixed)
@@ -190,7 +231,7 @@
 
 (standard-display-ascii ?\n "$\n")
 (defface my-eol-face
-  '((t (:foreground "gray")))
+  '((t (:foreground "green")))
   "eol.")
 
 (standard-display-ascii ?\f "---------------------------------------------------------------------------------------^L")
@@ -308,6 +349,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode-line
 
+(setq eol-mnemonic-dos "(CRLF)")
+(setq eol-mnemonic-mac "(CR)")
+(setq eol-mnemonic-unix "(LF)")
+
 (which-function-mode 0)
 
 (line-number-mode 0)
@@ -354,6 +399,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
+
+;; カーソルの場所を保存する
+(when (require 'saveplace nil t)
+  (setq-default save-place t))
+
 ;; http://www.bookshelf.jp/soft/meadow_24.html#SEC260
 (setq make-backup-files t)
 ;; (make-directory (expand-file-name "~/.emacsbackup"))
@@ -382,31 +432,6 @@
 (define-key my-prefix-map (kbd "C-o") 'occur)
 (define-key my-prefix-map (kbd "C-s") (or (require 'multi-term nil t)
                                           'ansi-term))
-
-;; moving around
-;; (global-set-key (kbd "M-j") 'next-line)
-;; (global-set-key (kbd "M-k") 'previous-line)
-;; (global-set-key (kbd "M-h") 'backward-char)
-;; (global-set-key (kbd "M-l") 'forward-char)
-;;(keyboard-translate ?\M-j ?\C-j)
-(global-set-key (kbd "M-p") 'backward-paragraph)
-(global-set-key (kbd "M-n") 'forward-paragraph)
-(global-set-key (kbd "C-<up>") (lambda () (interactive)(scroll-down 1)))
-(global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
-(global-set-key (kbd "C-<left>") 'scroll-down)
-(global-set-key (kbd "C-<right>") 'scroll-up)
-(global-set-key (kbd "C-x M-x") 'execute-extended-command)
-(global-set-key (kbd "C-x M-:") 'eval-expression)
-(global-set-key (kbd "<select>") 'previous-line-mark)
-
-;; C-h and DEL
-;; (global-set-key (kbd "C-h") 'backward-delete-char-untabify)
-;; (global-set-key (kbd "DEL") help-map)
-(global-set-key (kbd "C-h") (lambda ()
-                              (interactive)
-                              (call-interactively (key-binding (kbd "DEL")))))
-;; (keyboard-translate ?\^h ?\^?) ; scimにはC-hを送りたい
-;; (keyboard-translate ?\b ?\^h)          ; dont translate backspace
 
 ;; (define-key my-prefix-map (kbd "C-h") help-map)
 (global-set-key (kbd "C-\\") help-map)
@@ -499,10 +524,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
      (require 'xclip nil t)
      (turn-on-xclip))
 
-;; カーソルの場所を保存する
-(when (require 'saveplace nil t)
-  (setq-default save-place t))
-
 ;; その他のhook
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
@@ -580,7 +601,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (compile (format "gcc -Wall -g -o %s %s"
                    (file-name-sans-extension buffer-file-name)
                    buffer-file-name)))
-;; (define-key c-mode-base-map "\C-h" 'c-electric-backspace)
 ;; (when (require 'c nil t)(c-toggle-hungry-state t)
 
 (when (dllib-if-unfound "js2-mode"
@@ -660,15 +680,21 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                               (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z")))
                             (define-key term-raw-map (kbd "ESC") 'term-send-raw)
                             (define-key term-raw-map [delete] 'term-send-raw)
-                            (define-key term-mode-map "\C-c" 'term-send-raw)
-                            (define-key term-raw-map "\C-c" 'term-send-raw)
                             (define-key term-raw-map "\C-h" 'term-send-backspace)
                             (define-key term-raw-map "\C-y" 'term-paste)
                             ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
                             ;;   (define-key term-raw-map (kbd key) 'term-send-raw))
                             ;; (define-key term-raw-map "\C-d" 'delete-char)
-                            (set (make-variable-buffer-local 'scroll-margin) 0)))
+                            (set (make-variable-buffer-local 'scroll-margin) 0)
+                            ;; (set (make-variable-buffer-local 'cua-enable-cua-keys) nil)
+                            ;; (cua-mode 0)
+                            ;; (and cua-mode
+                            ;;      (local-unset-key (kbd "C-c")))
+                            ;; (define-key cua--prefix-override-keymap "\C-c" 'term-interrupt-subjob)
+                            ))
 ;; (add-hook 'term-exec-hook 'forward-char)
+
+
 
 ;; (when (and (executable-find "git")
 ;;            (require 'sgit-mode nil t))
@@ -1329,6 +1355,10 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 ;;               (view-file file)
 ;;               (goto-line line))
 ;;           (view-file (pop args))))))
+
+(defun eshell/git (&rest args)
+  ""
+  nil)
 
 (defun eshell/o (&optional file)
   (my-x-open (or file ".")))
