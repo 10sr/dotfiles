@@ -38,9 +38,18 @@ alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 alias destroy="rm -rf"
 alias psall="ps auxww"
-alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
+# alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
+di(){
+    if type colordiff >/dev/null 2>&1 && test $TERM != dumb
+    then
+        local diffcmd=colordiff
+    else
+        local diffcmd=diff
+    fi
+    ${diffcmd} -u "$@" | ${PAGER}
+}
 memo(){
     _MEMO="# $*\n"
 }
@@ -151,7 +160,7 @@ _mygitconfig(){
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles no
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short --stat"
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     git config --global alias.st "status"
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"
@@ -252,7 +261,7 @@ iswindows(){
 }
 
 ismsys(){
-    return 1
+    false
 }
 
 iscygwin(){
