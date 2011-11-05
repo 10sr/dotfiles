@@ -494,8 +494,7 @@ if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
 
 (define-key my-prefix-map (kbd "C-f") 'make-frame-command)
 (define-key my-prefix-map (kbd "C-o") 'occur)
-(define-key my-prefix-map (kbd "C-s") (or (require 'multi-term nil t)
-                                          'ansi-term))
+(define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
 
 ;; (define-key my-prefix-map (kbd "C-h") help-map)
 (global-set-key (kbd "C-\\") help-map)
@@ -760,6 +759,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             (define-key term-raw-map [delete] 'term-send-raw)
                             (define-key term-raw-map "\C-h" 'term-send-backspace)
                             (define-key term-raw-map "\C-y" 'term-paste)
+                            (define-key term-raw-map "\C-c" 'term-interrupt-subjob)
                             ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
                             ;;   (define-key term-raw-map (kbd key) 'term-send-raw))
                             ;; (define-key term-raw-map "\C-d" 'delete-char)
@@ -1593,6 +1593,19 @@ when SEC is nil, stop auto save if enabled."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(defvar my-desktop-terminal "roxterm")
+(defun my-execute-terminal ()
+  ""
+  (interactive)
+  (if window-system
+      (let ((process-environment (cons "TERM=xterm" process-environment)))
+        (start-process "terminal"
+                       nil
+                       my-desktop-terminal))
+    (if (require 'multi-term nil t)
+        (multi-term)
+      (ansi-term))))
+
 (defun my-execute-shell-command-current-line ()
   ""
   (interactive)
@@ -1869,8 +1882,6 @@ this is test, does not rename files"
   (scim-define-preedit-key ?\^h t)
   (scim-define-common-key ?\* nil)
   (scim-define-common-key ?\^/ nil))
-
-
 
 (defun my-load-anthy ()
   "use anthy.el as japanese im."
