@@ -1027,6 +1027,15 @@ if arg is omitted use value of `buffer-list'."
 
 (require 'dired)
 
+(defun my-dired-diff ()
+  ""
+  (interactive)
+  (let ((files (dired-get-marked-files nil nil nil t)))
+    (if (eq (car files)
+            t)
+        (diff (cadr files) (dired-get-filename))
+      (message "One files must be marked!"))))
+
 (require 'dired-aux) ;; needed to use dired-dwim-target-directory
 (defun my-dired-do-compress-or-uncompress ()
   ""
