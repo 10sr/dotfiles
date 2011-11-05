@@ -53,6 +53,7 @@ plugins.options["search-url-list"] = [
     ["bing","http://bing.com/search?q=%q"],
     ["yatwitter search","http://yats-data.com/yats/search?query=%q"],
     ["twitter search","http://search.twitter.com/search?q=%q&lang=all"],
+    ["tospy", "http://topsy.com/s?allow_lang=ja&q=%q"],
     ["2ch","http://2ch-ranking.net/search.php?q=%q&imp=and&order=time"],
     ["I\'m feelig lucky!","http://www.google.co.jp/search?q=%q&btnI=kudos"],
     ["uncyclopedia","http://ja.uncyclopedia.info/wiki/%q"],
@@ -178,6 +179,7 @@ plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
 // エクステ
+
 
 /////////////////////////////////////
 // google itranslate
