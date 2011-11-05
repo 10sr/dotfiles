@@ -572,6 +572,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;requireが必要なelispおよびhook
 
+(require 'simple nil t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 (when (or window-system
@@ -1037,7 +1039,7 @@ if arg is omitted use value of `buffer-list'."
       (message "One files must be marked!"))))
 
 (require 'dired-aux) ;; needed to use dired-dwim-target-directory
-(defun my-dired-do-compress-or-uncompress ()
+(defun my-dired-do-pack-or-unpack ()
   ""
   (interactive)
   (let* ((infiles (dired-get-marked-files t))
@@ -1046,21 +1048,21 @@ if arg is omitted use value of `buffer-list'."
                        (car infiles))))
     (if (and onefile
              (assoc (file-name-extension onefile)
-                    my-compress-program-alist))
-        (when (y-or-n-p (format "uncompress %s? " onefile))
-          (my-uncompress onefile)
+                    my-pack-program-alist))
+        (when (y-or-n-p (format "unpack %s? " onefile))
+          (my-unpack onefile)
           (revert-buffer))
       (let* ((dir-default (dired-dwim-target-directory))
-             (archive-default (my-compress-file-extension (file-name-nondirectory (car infiles))))
+             (archive-default (my-pack-file-extension (file-name-nondirectory (car infiles))))
              (archive (if (interactive-p)
-                          (read-file-name "Output file to compress : " ;; (format "Output file to compress (default for %s) : "
+                          (read-file-name "Output file to pack : " ;; (format "Output file to pack (default for %s) : "
                                           ;;         archive-default)
                                           dir-default
                                           nil ;; archive-default
                                           nil
                                           archive-default)
                         (concat dir-default archive-default))))
-        (apply 'my-compress
+        (apply 'my-pack
                archive
                infiles)
         (revert-buffer)))
@@ -1074,57 +1076,57 @@ otherwise, return extension normally."
               (file-name-extension filename))
     (file-name-extension filename)))
 
-(defun my-compress-file-extension (filename)
-  "if FILENAME has extension and it can be used for compress, return FILENAME.
-otherwise, return FILENAME with `my-compress-default-extension'"
+(defun my-pack-file-extension (filename)
+  "if FILENAME has extension and it can be used for pack, return FILENAME.
+otherwise, return FILENAME with `my-pack-default-extension'"
   (if (assoc (file-name-extension filename)
-             my-compress-program-alist)
+             my-pack-program-alist)
       filename
-    (concat filename "." my-compress-default-extension)))
+    (concat filename "." my-pack-default-extension)))
 
 (defvar my-7z-program
   (or (executable-find "7z")
       (executable-find "7za")
       (executable-find "7zr")))
 
-(defvar my-compress-default-extension
+(defvar my-pack-default-extension
   "7z")
 
-(defvar my-compress-program-alist
+(defvar my-pack-program-alist
   `(("7z" ,my-7z-program "a" ,my-7z-program "x")
     ("tar" "tar" "cvf" "tar" "xvf")
     ("tgz" "tar" "czf" "tar" "xzf")
     ("txz" "tar" "cJf" "tar" "xJf")
     ("zip" "zip" "-r" "unzip" nil)))
 
-(defun my-uncompress (archive)
+(defun my-unpack (archive)
   ""
   (interactive "fArchive to extract: ")
   (let* ((earchive (expand-file-name archive))
          (ext (file-name-extension earchive))
          (lst (assoc ext
-                     my-compress-program-alist))
+                     my-pack-program-alist))
          (com (nth 3 lst))
          (op (nth 4 lst))
          (args (if op
                    (list op earchive)
                  (list earchive))))
-    (message "uncompressing %s..." archive)
+    (message "unpacking %s..." archive)
     (apply 'call-process
            com
            nil
-           (my-pop-to-buffer-erase-noselect "*compressing output*")
+           (my-pop-to-buffer-erase-noselect "*packing output*")
            t
            args)
-    (message "uncompressing %s...done." archive)))
+    (message "unpacking %s...done." archive)))
 
-(defun my-compress (archive &rest files)
-  "if archive have extension for compress, use it.
-otherwise, use `my-compress-default-extension'. for compress."
-  (let* ((archive-ext (my-compress-file-extension (expand-file-name archive)))
+(defun my-pack (archive &rest files)
+  "if archive have extension for pack, use it.
+otherwise, use `my-pack-default-extension'. for pack."
+  (let* ((archive-ext (my-pack-file-extension (expand-file-name archive)))
          (ext (file-name-extension archive-ext))
          (lst (assoc ext
-                     my-compress-program-alist))
+                     my-pack-program-alist))
          (com (nth 1 lst))
          (op (nth 2 lst))
          (args (if op
@@ -1135,14 +1137,14 @@ otherwise, use `my-compress-default-extension'. for compress."
                  (apply 'list
                         archive-ext
                         files))))
-    (message "compressing to %s..." archive)
+    (message "packing to %s..." archive)
     (apply 'call-process
            com
            nil
-           (my-pop-to-buffer-erase-noselect "*compressing output*")
+           (my-pop-to-buffer-erase-noselect "*packing output*")
            t
            args)
-    (message "compressing to %s...done." archive)))
+    (message "packing to %s...done." archive)))
 
 (defun my-pop-to-buffer-erase-noselect (buffer-or-name)
   "pop up buffer using `display-buffer' and return that buffer."
@@ -1218,7 +1220,7 @@ otherwise, use `my-compress-default-extension'. for compress."
   (my-dired-find-file ".."))
 
 (defun my-dired-find-file (&optional filename)
-  ""
+  "if the file to open is a directory, kill current buffer after opening that file."
   (interactive)
   (let ((f (expand-file-name (or filename
                                  (dired-get-filename))))
@@ -1268,11 +1270,12 @@ otherwise, use `my-compress-default-extension'. for compress."
             (define-key dired-mode-map "!" 'shell-command)
             (define-key dired-mode-map "&" 'async-shell-command)
             (define-key dired-mode-map "X" 'dired-do-async-shell-command)
+            (define-key dired-mode-map "=" 'my-dired-diff)
             (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
             (define-key dired-mode-map "b" 'gtkbm)
             (define-key dired-mode-map "@" (lambda () (interactive) (my-x-open ".")))
             (define-key dired-mode-map (kbd "TAB") 'other-window)
-            (define-key dired-mode-map "Z" 'my-dired-do-compress-or-uncompress)
+            (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
             (define-key dired-mode-map "a" 'my-dired-display-all-mode)
             (define-key dired-mode-map "h" 'my-dired-display-all-mode)
             (substitute-key-definition 'dired-advertised-find-file 'my-dired-find-file dired-mode-map)
@@ -1381,7 +1384,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 
 (defun eshell/git (&rest args)
   ""
-  nil)
+  (eshell-parse-arguments (point-at-bol) (point-at-eol)))
 
 (defun eshell/o (&optional file)
   (my-x-open (or file ".")))
