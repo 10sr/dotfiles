@@ -419,6 +419,70 @@
 (setq delete-by-moving-to-trash t
       trash-directory "~/.emacs.d/trash")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; gmail
+
+(setq mail-interactive t
+      send-mail-function 'smtpmail-send-it
+      ;; message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-service 587
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
+      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
+      user-mail-address "8.slashes@gmail.com")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; buffer killing
+
+;; (add-hook 'kill-buffer-hook
+;;           (lambda ()
+;;             (when buffer-file-name
+;;               (dired "."))))
+
+(defun kill-buffer-by-major-mode (mode &optional exclude-current-buffer-p) ;mapcarとかつかって全部書き換える
+  "kill buffers.
+if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
+  (interactive "xmajor mode of buffer to kill: ")
+  (save-excursion
+    (let ((bflist (buffer-list))
+          (cbf (current-buffer))
+          bf)
+      (while bflist
+        (setq bf (pop bflist))
+        (set-buffer bf)
+        (if (and (eq mode major-mode)   ;メジャーモードが一致し、かつ
+                 (not (and exclude-current-buffer-p ;今のバッファを除外、今のバッファと一致 がともには満たされない
+                           (eq bf cbf))))
+            (kill-buffer bf))))))
+
+(defun my-kill-this-buffer-when-hide (&optional buffer all-frames)
+  ""
+  (interactive)
+  (let ((bf (or buffer
+                (current-buffer))))
+    (if (or (not buffer) (get-buffer-window bf all-frames))
+        (run-with-timer 3 nil 'my-kill-this-buffer-when-hide bf all-frames)
+      (kill-buffer bf))))
+;; (add-hook 'dired-mode-hook
+;;           'my-kill-this-buffer-when-hide)
+
+(defvar my-kill-previous-buffer nil)
+(defun my-kill-previous-buffer ()
+  ""
+  (when my-kill-previous-buffer
+    (kill-buffer my-kill-previous-buffer))
+  (setq my-kill-previous-buffer (current-buffer)))
+;; (add-hook 'dired-mode-hook
+;;           'my-kill-previous-buffer)
+
+(defun my-query-kill-this-buffer ()
+  ""
+  (interactive)
+  (if (y-or-n-p (concat "kill this buffer? :"))
+      (kill-buffer (current-buffer))))
+(substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
+;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; for emacsclient
 ;; (if window-system (server-start))
@@ -703,70 +767,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (when (require 'gtkbm nil t)
   (global-set-key (kbd "C-x C-d") 'gtkbm))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; gmail
-
-(setq mail-interactive t
-      send-mail-function 'smtpmail-send-it
-      ;; message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
-      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
-      user-mail-address "8.slashes@gmail.com")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; buffer killing
-
-;; (add-hook 'kill-buffer-hook
-;;           (lambda ()
-;;             (when buffer-file-name
-;;               (dired "."))))
-
-(defun kill-buffer-by-major-mode (mode &optional exclude-current-buffer-p) ;mapcarとかつかって全部書き換える
-  "kill buffers.
-if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
-  (interactive "xmajor mode of buffer to kill: ")
-  (save-excursion
-    (let ((bflist (buffer-list))
-          (cbf (current-buffer))
-          bf)
-      (while bflist
-        (setq bf (pop bflist))
-        (set-buffer bf)
-        (if (and (eq mode major-mode)   ;メジャーモードが一致し、かつ
-                 (not (and exclude-current-buffer-p ;今のバッファを除外、今のバッファと一致 がともには満たされない
-                           (eq bf cbf))))
-            (kill-buffer bf))))))
-
-(defun my-kill-this-buffer-when-hide (&optional buffer all-frames)
-  ""
-  (interactive)
-  (let ((bf (or buffer
-                (current-buffer))))
-    (if (or (not buffer) (get-buffer-window bf all-frames))
-        (run-with-timer 3 nil 'my-kill-this-buffer-when-hide bf all-frames)
-      (kill-buffer bf))))
-;; (add-hook 'dired-mode-hook
-;;           'my-kill-this-buffer-when-hide)
-
-(defvar my-kill-previous-buffer nil)
-(defun my-kill-previous-buffer ()
-  ""
-  (when my-kill-previous-buffer
-    (kill-buffer my-kill-previous-buffer))
-  (setq my-kill-previous-buffer (current-buffer)))
-;; (add-hook 'dired-mode-hook
-;;           'my-kill-previous-buffer)
-
-(defun my-query-kill-this-buffer ()
-  ""
-  (interactive)
-  (if (y-or-n-p (concat "kill this buffer? :"))
-      (kill-buffer (current-buffer))))
-(substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
-;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer switching
