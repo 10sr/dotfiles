@@ -181,6 +181,17 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // エクステ
 
+ext.add('send-escape', function (ev, arg) {
+    ev.target.dispatchEvent(key.stringToKeyEvent("ESC", true));
+}, 'escape');
+
+
+
+ext.add("open-hatebu-comment", function (ev, arg) {
+    if (window.loadURI) {
+        loadURI("javascript:location.href='http://b.hatena.ne.jp/entry?mode=more&url='+escape(location.href);");
+    }
+}, 'hatebu');
 
 /////////////////////////////////////
 // google itranslate
@@ -321,10 +332,11 @@ ext.add("copy-url", function () {
 ///////////////////////////////////////
 // 評価しちゃうっぽい とりあえずこんな感じで
 ext.add("keysnail-setting-menu",function(){
-    var settingmenulist = [["keysnail setting dialogue",function(){return function(){KeySnail.openPreference();};}],
-                           ["firefox addon manager",function(){return function(){BrowserOpenAddonsMgr();};}],
-                           ["reload .keysnail.js",function(){return function() {userscript.reload();};}],
-                           ["check for plugins update",function(){return function(){ext.exec("check-for-plugins-update");};}],
+    var settingmenulist = [["keysnail setting dialogue", function(){return function(){KeySnail.openPreference();};}],
+                           ["firefox addon manager", function(){return function(){BrowserOpenAddonsMgr();};}],
+                           ["reload .keysnail.js", function(){return function() {userscript.reload();};}],
+                           ["check for plugins update", function(){return function(){ext.exec("check-for-plugins-update");};}],
+                           ["restart firefox", function(){return function(){ext.exec("restart-firefox");};}],
                           ];
     prompt.selector(
         {
@@ -505,7 +517,7 @@ ext.add("hide-sidebar", function(){
 
 // ========================= Special key settings ========================== //
 
-key.quitKey              = "ESC";
+key.quitKey              = "<delete>";
 key.helpKey              = "C-h";
 key.escapeKey            = "C-q";
 key.macroStartKey        = "";
@@ -519,7 +531,7 @@ key.suspendKey           = "Not defined";
 // ================================= Hooks ================================= //
 
 hook.setHook('KeySnailInitialized', function () {
-    ext.exec("shiitake-toggle-style");
+    ext.exec("shiitake-enable-style");
 });
 
 hook.setHook('KeyBoardQuit', function (aEvent) {
@@ -533,6 +545,9 @@ hook.setHook('KeyBoardQuit', function (aEvent) {
 });
 hook.addToHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
 });
 
 hook.setHook('Unload', function () {
@@ -549,10 +564,6 @@ hook.setHook('Unload', function () {
 
 
 // ============================= Key bindings ============================== //
-
-key.setGlobalKey([['<delete>'], ['\\']], function (ev, arg) {
-    ev.target.dispatchEvent(key.stringToKeyEvent("ESC", true));
-}, 'escape');
 
 key.setGlobalKey('C-<right>', function () {
     gBrowser.mTabContainer.advanceSelectedTab(1, true);
@@ -583,10 +594,6 @@ key.setGlobalKey('C-<down>', function () {
 key.setGlobalKey('M-:', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
-
-key.setGlobalKey('C-g', function (ev, arg) {
-    return;
-}, 'ignore');
 
 key.setViewKey('0', function (ev, arg) {
     var n = gBrowser.mCurrentTab._tPos;
@@ -758,3 +765,15 @@ key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
     return;
 }, 'ignore');
 
+key.setViewKey(':', function (ev, arg) {
+    return !document.getElementById("keysnail-prompt").hidden &&
+        document.getElementById("keysnail-prompt-textbox").focus();
+}, 'KeySnail のプロンプトへフォーカス', true);
+
+key.setViewKey('H', function (ev, arg) {
+    ext.exec("open-hatebu-comment", arg, ev);
+}, 'hatebu', true);
+
+key.setEditKey('C-<tab>', function (ev) {
+    command.walkInputElement(command.elementsRetrieverTextarea, true, true);
+}, '次のテキストエリアへフォーカス');
