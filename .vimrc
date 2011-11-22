@@ -8,7 +8,7 @@ endif
 
 """""""""""""""""""""""""""""""""""
 filetype plugin indent on
-"set nocompatible "vi互換にしない
+set compatible "vi互換
 "バックアップファイルを作るディレクトリ
 if !isdirectory(expand('~/.vim/backup'))
    call mkdir(expand('~/.vim/backup'))
