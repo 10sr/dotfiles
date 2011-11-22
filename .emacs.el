@@ -586,7 +586,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (and x-select-enable-clipboard
      (executable-find "xclip")
      (dllib-if-unfound "xclip" "http://www.emacswiki.org/emacs/download/xclip.el" t)
-     (require 'xclip nil t)
+     nil (require 'xclip nil t) ;; strange behavior: clipboard change unexpecdtedly; after copy on emacs, when copying on firefox soon clipboard content change back
      (turn-on-xclip))
 
 ;; その他のhook
@@ -615,6 +615,12 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'sh-mode-hook
           (lambda ()
             (define-key sh-mode-map (kbd "C-x C-e") 'my-execute-shell-command-current-line)))
+(defun my-execute-shell-command-curre
+  nt-line ()
+  ""
+  (interactive)
+  (shell-command (buffer-substring-no-properties (point-at-bol)
+                                                 (point))))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
@@ -1094,7 +1100,7 @@ otherwise, return FILENAME with `my-pack-default-extension'"
 
 (defvar my-pack-program-alist
   `(("7z" ,my-7z-program "a" ,my-7z-program "x")
-    ("tar" "tar" "cvf" "tar" "xvf")
+    ("tar" "tar" "cf" "tar" "xf")
     ("tgz" "tar" "czf" "tar" "xzf")
     ("txz" "tar" "cJf" "tar" "xJf")
     ("zip" "zip" "-r" "unzip" nil)))
@@ -1618,12 +1624,6 @@ when SEC is nil, stop auto save if enabled."
         (multi-term)
       (ansi-term))))
 
-(defun my-execute-shell-command-current-line ()
-  ""
-  (interactive)
-  (shell-command (buffer-substring-no-properties (point-at-bol)
-                                                 (point-at-eol))))
-
 (defun my-format-time-string (&optional time)
   ""
   (let ((system-time-locale "C"))
@@ -1650,7 +1650,7 @@ when SEC is nil, stop auto save if enabled."
   (recentf-add-file file)
   (message "Opening %s...done" file))
 
-(defvar my-indent-buffer-mode-list
+(defvar my-auto-indent-buffer-mode-list
   '(emacs-lisp-mode
     sh-mode
     js-mode
@@ -1664,7 +1664,7 @@ when SEC is nil, stop auto save if enabled."
                  (point-max)))
 (defun my-auto-indent-buffer ()
   ""
-  (when (memq major-mode my-indent-buffer-mode-list)
+  (when (memq major-mode my-auto-indent-buffer-mode-list)
     (my-indent-buffer)))
 (add-hook 'before-save-hook
           'my-auto-indent-buffer)
@@ -1673,8 +1673,9 @@ when SEC is nil, stop auto save if enabled."
   ""
   (interactive)
   (run-hooks 'before-keyboard-quit-hook)
-  (redisplay)
-  (keyboard-quit)
+  (call-interactively 'keyboard-quit)
+  ;; (redisplay t)
+  (redraw-display)
   (run-hooks 'after-keyboard-quit-hook))
 (substitute-key-definition 'keyboard-quit 'my-keyboard-quit global-map)
 ;; (global-set-key (kbd "C-g") 'my-keyboard-quit)
