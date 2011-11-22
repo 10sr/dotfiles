@@ -3,11 +3,12 @@
 # test -r ~/filepath && . ~/filepath
 # ln SRC DST
 ##########################################
-test -r /etc/bashrc && . /etc/bashrc
-
 safe-cmd(){
     type $1 >/dev/null 2>&1 && "$@"
 }
+
+test -r /etc/bashrc && . /etc/bashrc
+
 # export PS1="\[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
 # export PS1="[\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
 export PS1="\$(prompt_function)\$ "
@@ -38,9 +39,18 @@ alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 alias destroy="rm -rf"
 alias psall="ps auxww"
+alias g=git
+alias q=exit
+alias pcalc="python -i -c 'from math import *' "
 # alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
+bak(){
+    for file in "$@"
+    do
+        cp ${file} ${file}.bak
+    done
+}
 di(){
     if type colordiff >/dev/null 2>&1 && test $TERM != dumb
     then
@@ -161,15 +171,28 @@ _mygitconfig(){
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles no
     git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
-    git config --global alias.st "status"
+    git config --global alias.st "status -s"
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"
     git config --global alias.co "checkout"
     git config --global alias.cim "commit --verbose -m"
     git config --global alias.di "diff"
+    git config --global alias.merge "merge --no-ff --stat -v"
     git config --global alias.ls "!git ls-files | xargs ls -CFG --color=auto --time-style=long-iso"
     git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
+}
+
+__my_parse_svn_branch() {
+    local LANG=C
+    local svn_url=$(svn info 2>/dev/null | sed -ne 's#^URL: ##p')
+    local svn_repository_root=$(svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p')
+    echo ${svn_url} | sed -e 's#^'"${svn_repository_root}"'##g' | awk '{print $1}'
+}
+
+__my_svn_ps1(){
+    local svn_branch=$(__my_parse_svn_branch)
+    test "${svn_branch}" == "" || echo ${svn_branch} | xargs printf "$1"
 }
 
 prompt_function(){              # used by PS1
@@ -191,8 +214,9 @@ prompt_function(){              # used by PS1
     local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
     local jobnum=$(jobs | wc -l)
     local git=$(safe-cmd __git_ps1 [GIT:%s])
+    local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
     printf "${_MEMO}"
-    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}\n"
+    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
@@ -205,27 +229,26 @@ elif echo "$EMACS" | grep term >/dev/null 2>&1; then # emacs term用
     echo "emacs term"
 fi
 
-# #Change ANSI Colors
-# if [ $TERM = "xterm" ]
-# then
-#     echo -e \
-#         "\e]P0000000" \
-#         "\e]P1cd0000" \
-#         "\e]P200cd00" \
-#         "\e]P3cdcd00" \
-#         "\e]P41e90ff" \
-#         "\e]P5cd00cd" \
-#         "\e]P600cdcd" \
-#         "\e]P7353535" \
-#         "\e]P8666666" \
-#         "\e]P9ff9999" \
-#         "\e]Pa99ff99" \
-#         "\e]Pbffff99" \
-#         "\e]Pc9999ff" \
-#         "\e]Pdff99ff" \
-#         "\e]Pe99ffff" \
-#         "\e]Pfffffff"
-# fi
+#Change ANSI Colors
+_chengecolors(){
+    echo -e \
+        "\e]P0000000" \
+        "\e]P1cd0000" \
+        "\e]P200cd00" \
+        "\e]P3cdcd00" \
+        "\e]P41e90ff" \
+        "\e]P5cd00cd" \
+        "\e]P600cdcd" \
+        "\e]P7353535" \
+        "\e]P8666666" \
+        "\e]P9ff9999" \
+        "\e]Pa99ff99" \
+        "\e]Pbffff99" \
+        "\e]Pc9999ff" \
+        "\e]Pdff99ff" \
+        "\e]Pe99ffff" \
+        "\e]Pfffffff"
+}
 
 # printf "\e]P7353535" \
 
