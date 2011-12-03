@@ -335,7 +335,7 @@ ext.add("keysnail-setting-menu",function(){
     var settingmenulist = [["keysnail setting dialogue", function(){return function(){KeySnail.openPreference();};}],
                            ["firefox addon manager", function(){return function(){BrowserOpenAddonsMgr();};}],
                            ["reload .keysnail.js", function(){return function() {userscript.reload();};}],
-                           ["check for plugins update", function(){return function(){ext.exec("check-for-plugins-update");};}],
+                           // ["check for plugins update", function(){return function(){ext.exec("check-for-plugins-update");};}],
                            ["restart firefox", function(){return function(){ext.exec("restart-firefox");};}],
                           ];
     prompt.selector(
@@ -346,11 +346,11 @@ ext.add("keysnail-setting-menu",function(){
         });
 },"open keysnail setting menu");
 
-//////////////////////////
-//プラグイン一括アップデート
-ext.add("check-for-plugins-update", function () {
-    [p for (p in plugins.context)].forEach(function (p) { try { userscript.updatePlugin(p); } catch(e) {} });
-}, "Check for all plugin's update");
+// //////////////////////////
+// //プラグイン一括アップデート
+// ext.add("check-for-plugins-update", function () {
+//     [p for (p in plugins.context)].forEach(function (p) { try { userscript.updatePlugin(p); } catch(e) {} });
+// }, "Check for all plugin's update");
 
 ////////////////////////
 //マルチプルタブハンドラ
