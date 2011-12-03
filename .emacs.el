@@ -748,6 +748,26 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                        t)
      (require 'multi-term nil t))
 
+(defun my-term ()
+  ""
+  (interactive)
+  (if (require 'multi-term nil t)
+      (multi-term)
+    (ansi-term "/bin/bash")))
+
+(defvar my-frame-term-plist nil)
+(setplist my-frame-term-plist nil)
+(defun my-execute-or-find-term ()
+  ""
+  (interactive)
+  (let* ((buf (get 'my-frame-term-plist (selected-frame))))
+    (if (and buf
+             (buffer-name buf))
+        (switch-to-buffer buf)
+      (put 'my-frame-term-plist
+           (selected-frame)
+           (my-term)))))
+
 ;; http://d.hatena.ne.jp/goinger/20100416/1271399150
 ;; (setq term-ansi-default-program shell-file-name)
 (add-hook 'term-setup-hook (lambda ()
@@ -1422,6 +1442,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 (defalias 'eshell/type 'eshell/which)
 ;; (defalias 'eshell/vim 'eshell/vi)
 (defalias 'eshell/ff 'find-file)
+(defalias 'eshell/q 'eshell/exit)
 
 (defun eshell-goto-prompt ()
   ""
@@ -1480,10 +1501,10 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                       " $ "))
             (add-text-properties p1
                                  p2
-                                 '(face ((foreground-color . "red"))))
+                                 '(face ((foreground-color . "yellow"))))
             (add-text-properties p3
                                  p4
-                                 '(face ((foreground-color . "blue"))))
+                                 '(face ((foreground-color . "cyan"))))
             (buffer-substring (point-min)
                               (point-max))))))
 
@@ -1612,6 +1633,16 @@ when SEC is nil, stop auto save if enabled."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(defvar my-frame-buffer-alist nil)
+
+(defun my-frame-buffer-add-buffer (buffer)
+  ""
+  (let ((list (or (assq (selected-frame) my-frame-buffer-alist)
+                  (progn (add-to-list 'my-frame-buffer-alist
+                                      (list (selected-frame)))
+                         (assq (selected-frame) my-frame-buffer-alist)))))
+    ))
+
 (defvar my-desktop-terminal "roxterm")
 (defun my-execute-terminal ()
   ""
@@ -1621,9 +1652,7 @@ when SEC is nil, stop auto save if enabled."
         (start-process "terminal"
                        nil
                        my-desktop-terminal))
-    (if (require 'multi-term nil t)
-        (multi-term)
-      (ansi-term))))
+    (my-execute-or-find-term)))
 
 (defun my-format-time-string (&optional time)
   ""
