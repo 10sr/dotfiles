@@ -175,7 +175,7 @@
 ;; (keyboard-translate ?\^h ?\^?) ; scimにはC-hを送りたい
 ;; (keyboard-translate ?\b ?\^h)          ; dont translate backspace
 
-(global-set-key (kbd "C-m") 'newline-and-indent)
+(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
 (global-set-key (kbd "C-o")
                 ;; (lambda ()
                 ;;   (interactive)
@@ -381,21 +381,22 @@
     (display-time-mode 0)
   (display-time-mode 1))
 
-;; current directory
-(let ((ls (member 'mode-line-buffer-identification
-                  mode-line-format)))
-  (setcdr ls
-          (cons '(:eval (concat " ("
-                                (abbreviate-file-name default-directory)
-                                ")"))
-                (cdr ls))))
+;; ;; current directory
+;; (let ((ls (member 'mode-line-buffer-identification
+;;                   mode-line-format)))
+;;   (setcdr ls
+;;           (cons '(:eval (concat " ("
+;;                                 (abbreviate-file-name default-directory)
+;;                                 ")"))
+;;                 (cdr ls))))
 
-(let ((ls (member 'mode-line-buffer-identification
-                  mode-line-format)))
-  (setcdr ls
-          (cons '(:eval (concat " "
-                                my-buffer-file-last-modified-time))
-                (cdr ls))))
+;; ;; display last modified time
+;; (let ((ls (member 'mode-line-buffer-identification
+;;                   mode-line-format)))
+;;   (setcdr ls
+;;           (cons '(:eval (concat " "
+;;                                 my-buffer-file-last-modified-time))
+;;                 (cdr ls))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
@@ -615,8 +616,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'sh-mode-hook
           (lambda ()
             (define-key sh-mode-map (kbd "C-x C-e") 'my-execute-shell-command-current-line)))
-(defun my-execute-shell-command-curre
-  nt-line ()
+(defun my-execute-shell-command-current-line ()
   ""
   (interactive)
   (shell-command (buffer-substring-no-properties (point-at-bol)
@@ -1578,6 +1578,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                 'message))))
     (cond ((active-minibuffer-window) nil)
           ((not buffer-file-name) (funcall fun "%ssaving... this buffer doesn't visit any file." cm) nil)
+          ((not (file-exists-p buffer-file-name)) (funcall fun "%ssaving... file not exist. save manually first." com) nil)
           (buffer-read-only (funcall fun "%ssaving... this buffer is read-only." cm) nil)
           ((not (buffer-modified-p)) (funcal fun "%ssaving... not modified yet." cm) nil)
           ((not (file-writable-p buffer-file-name)) (funcall fun "%ssaving... you cannot change this file." cm) nil)
@@ -1657,6 +1658,7 @@ when SEC is nil, stop auto save if enabled."
     sgml-mode
     c-mode
     c++-mode))
+(setq my-auto-indent-buffer-mode-list nil)
 (defun my-indent-buffer ()
   "indent whole buffer."
   (interactive)
