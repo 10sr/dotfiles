@@ -203,18 +203,20 @@
 ;; change color for border
 ;; (set-face-foreground (make-face 'vertical-border-face) "white")
 ;; (set-face-background 'vertical-border-face "black")
-(defface vertical-border-face
-  `((((background dark))
-     (:background "white"))
-    (((background light))
-     (:background "black")))
-  "vertical border")
-(set-display-table-slot standard-display-table 'vertical-border
-                        (make-glyph-code #x3a 'vertical-border-face))
+;; (defface vertical-border-face
+;;   `((((background dark))
+;;      (:background "white"))
+;;     (((background light))
+;;      (:background "black")))
+;;   "vertical border")
+;; (set-display-table-slot standard-display-table 'vertical-border
+;;                         (make-glyph-code #x3a 'vertical-border-face))
+;; (set-face-foreground 'vertical-border "default")
+;; (set-face-background 'vertical-border "white")
 
 (when (eq system-type 'Darwin)
-  (mac-set-input-method-parameter 'japanese 'cursor-color ”red”)
-  (mac-set-input-method-parameter 'roman 'cursor-color ”black”))
+  (mac-set-input-method-parameter 'japanese 'cursor-color "red")
+  (mac-set-input-method-parameter 'roman 'cursor-color "black"))
 
 (when (and (boundp 'input-method-activate-hook) ;ちょっと正しいかわかんない
            (boundp 'input-method-inactivate-hook))
@@ -742,6 +744,57 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             'newframe
                           'pushy))
 
+;; (when (and (executable-find "git")
+;;            (require 'sgit-mode nil t))
+;;   (add-hook 'find-file-hook
+;;             'sgit-load))
+
+(require 'session nil t)
+
+(when (require 'gtkbm nil t)
+  (global-set-key (kbd "C-x C-d") 'gtkbm))
+
+(defvar my-frame-buffer-plist nil)
+(setplist my-frame-buffer-plist nil)
+
+(defun my-frame-buffer-add ()
+  ""
+  (put 'my-frame-buffer-plist
+       (selected-frame)
+       (let ((lst (my-frame-buffer-get)))
+         (if lst
+             (add-to-list 'lst
+                          (current-buffer))
+           (list (current-buffer))))))
+
+(defun my-frame-buffer-remove ()
+  ""
+  (put 'my-frame-buffer-plist
+       (selected-frame)
+       (delq (current-buffer)
+             (my-frame-buffer-get))))
+
+(defun my-frame-buffer-get (&optional frame)
+  ""
+  (get 'my-frame-buffer-plist
+       (or frame
+           (selected-frame))))
+
+(defun my-frame-buffer-kill-all-buffer (frame)
+  ""
+  (mapcar 'kill-buffer
+          (my-frame-buffer-get frame)))
+
+(add-hook 'find-file-hook
+          'my-frame-buffer-add)
+(add-hook 'kill-buffer-hook
+          'my-frame-buffer-remove)
+(add-hook 'delete-frame-functions
+          'my-frame-buffer-kill-all-buffer)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; term mode
+
 ;; (setq multi-term-program shell-file-name)
 (and (dllib-if-unfound "multi-term"
                        "http://www.emacswiki.org/emacs/download/multi-term.el"
@@ -800,16 +853,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             ))
 ;; (add-hook 'term-exec-hook 'forward-char)
 
-
-
-;; (when (and (executable-find "git")
-;;            (require 'sgit-mode nil t))
-;;   (add-hook 'find-file-hook
-;;             'sgit-load))
-
-(when (require 'gtkbm nil t)
-  (global-set-key (kbd "C-x C-d") 'gtkbm))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer switching
 
@@ -819,12 +862,14 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;; (add-to-list 'bs-configurations '("processes" nil get-buffer-process ".*" nil nil))
 (add-to-list 'bs-configurations '("same-dir" nil buffer-same-dir-p ".*" nil nil))
+(add-to-list 'bs-configurations '("this-frame" nil (lambda (buf) (memq buf (my-frame-buffer-get))) ".*" nil nil))
 ;; (setq bs-configurations (list '("processes" nil get-buffer-process ".*" nil nil)
 ;;                               '("files-and-scratch" "^\\*scratch\\*$" nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)))
-(setq bs-default-configuration "all")
+(setq bs-default-configuration "this-frame")
+(setq bs-default-sort-name "by name")
 (add-hook 'bs-mode-hook
           (lambda ()
-            (setq bs-default-configuration "all")))
+            (setq bs-default-configuration "this-frame")))
 
 (defun buffer-same-dir-p (bf)
   "return t if BF's dir is same as current dir, otherwise nil."
