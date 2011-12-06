@@ -232,9 +232,11 @@
 (global-font-lock-mode 1)
 
 (standard-display-ascii ?\n "$\n")
-(defface my-eol-face
-  '((t (:foreground "green")))
-  "eol.")
+(copy-face 'default 'my-eol-face)
+(set-face-foreground 'my-eol-face "green")
+;; (defface my-eol-face
+;;   '((t (:foreground "green")))
+;;   "eol.")
 
 (standard-display-ascii ?\f "---------------------------------------------------------------------------------------^L")
 (defface my-pagebreak-face
@@ -242,7 +244,8 @@
   "pagebreak.")
 
 (defvar my-eol-face
-  '(("\n" . '(0 my-eol-face t nil))))
+  '(("\n" . (0 my-eol-face t nil)))
+  )
 (defvar my-pagebreak-face
   '(("\f" . 'my-pagebreak-face)))
 (defvar my-highlight-face
@@ -287,8 +290,9 @@
 
 (add-hook 'font-lock-mode-hook
           (lambda ()
-            (font-lock-add-keywords nil my-eol-face)
-            (font-lock-add-keywords nil my-highlight-face)))
+            ;; (font-lock-add-keywords nil my-eol-face)
+            ;; (font-lock-add-keywords nil my-highlight-face)
+            ))
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
@@ -351,9 +355,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode-line
 
-(setq eol-mnemonic-dos "(CRLF)")
-(setq eol-mnemonic-mac "(CR)")
-(setq eol-mnemonic-unix "(LF)")
+(setq eol-mnemonic-dos "CL")
+(setq eol-mnemonic-mac "CR")
+(setq eol-mnemonic-unix "LF")
 
 (which-function-mode 0)
 
@@ -413,7 +417,7 @@
 (setq backup-directory-alist
       (cons (cons "\\.*$" (expand-file-name "~/.emacs.d/backup"))
             backup-directory-alist))
-(setq version-control t)
+(setq version-control 'never)
 (setq delete-old-versions t)
 
 (setq auto-save-list-file-prefix (expand-file-name "~/.emacs.d/autosave/"))
@@ -436,11 +440,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
-
-;; (add-hook 'kill-buffer-hook
-;;           (lambda ()
-;;             (when buffer-file-name
-;;               (dired "."))))
 
 (defun kill-buffer-by-major-mode (mode &optional exclude-current-buffer-p) ;mapcarとかつかって全部書き換える
   "kill buffers.
@@ -754,6 +753,13 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (when (require 'gtkbm nil t)
   (global-set-key (kbd "C-x C-d") 'gtkbm))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; frame buffer
+
+;; (add-hook 'after-make-frame-functions
+;;           (lambda (frame)
+;;             (recentf-open-files)))
+
 (defvar my-frame-buffer-plist nil)
 (setplist my-frame-buffer-plist nil)
 
@@ -780,6 +786,17 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
        (or frame
            (selected-frame))))
 
+(defun my-frame-buffer-get2 (&optional frame)
+  ""
+  (delq nil (mapcar (lambda (buf)
+                      (if (or t (buffer-file-name buf))
+                          buf
+                        nil))
+                    (cdr (assq 'buffer-list
+                               (frame-parameters (or frame
+                                                     (selected-frame))))))))
+(my-frame-buffer-get2)
+
 (defun my-frame-buffer-kill-all-buffer (frame)
   ""
   (mapcar 'kill-buffer
@@ -787,10 +804,16 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (add-hook 'find-file-hook
           'my-frame-buffer-add)
+(add-hook 'dired-mode-hook
+          'my-frame-buffer-add)
+(add-hook 'term-mode-hook
+          'my-frame-buffer-add)
 (add-hook 'kill-buffer-hook
           'my-frame-buffer-remove)
 (add-hook 'delete-frame-functions
           'my-frame-buffer-kill-all-buffer)
+
+(frame-parameters (selected-frame))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
@@ -799,7 +822,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (and (dllib-if-unfound "multi-term"
                        "http://www.emacswiki.org/emacs/download/multi-term.el"
                        t)
-     (require 'multi-term nil t))
+     (require 'multi-term nil t)
+     (setq multi-term-switch-after-close nil))
 
 (defun my-term ()
   ""
@@ -840,7 +864,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             (define-key term-raw-map [delete] 'term-send-raw)
                             (define-key term-raw-map "\C-h" 'term-send-backspace)
                             (define-key term-raw-map "\C-y" 'term-paste)
-                            (define-key term-raw-map "\C-c" 'term-interrupt-subjob)
+                            (define-key term-raw-map "\C-c" 'term-send-raw) ;; 'term-interrupt-subjob)
                             ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
                             ;;   (define-key term-raw-map (kbd key) 'term-send-raw))
                             ;; (define-key term-raw-map "\C-d" 'delete-char)
@@ -863,13 +887,16 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; (add-to-list 'bs-configurations '("processes" nil get-buffer-process ".*" nil nil))
 (add-to-list 'bs-configurations '("same-dir" nil buffer-same-dir-p ".*" nil nil))
 (add-to-list 'bs-configurations '("this-frame" nil (lambda (buf) (memq buf (my-frame-buffer-get))) ".*" nil nil))
+(add-to-list 'bs-configurations '("this-frame2" nil (lambda (buf) (memq buf (my-frame-buffer-get2))) ".*" nil nil))
 ;; (setq bs-configurations (list '("processes" nil get-buffer-process ".*" nil nil)
 ;;                               '("files-and-scratch" "^\\*scratch\\*$" nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)))
 (setq bs-default-configuration "this-frame")
 (setq bs-default-sort-name "by name")
 (add-hook 'bs-mode-hook
           (lambda ()
-            (setq bs-default-configuration "this-frame")))
+            (setq bs-default-configuration "this-frame")
+            (set (make-variable-buffer-local 'scroll-margin) 0)
+            ))
 
 (defun buffer-same-dir-p (bf)
   "return t if BF's dir is same as current dir, otherwise nil."
@@ -1118,26 +1145,31 @@ if arg is omitted use value of `buffer-list'."
                            (length infiles))
                        (car infiles))))
     (if (and onefile
-             (assoc (file-name-extension onefile)
-                    my-pack-program-alist))
+             (my-pack-file-name-association onefile))
         (when (y-or-n-p (format "unpack %s? " onefile))
-          (my-unpack onefile)
-          (revert-buffer))
+          (my-unpack onefile))
       (let* ((dir-default (dired-dwim-target-directory))
              (archive-default (my-pack-file-extension (file-name-nondirectory (car infiles))))
-             (archive (if (interactive-p)
-                          (read-file-name "Output file to pack : " ;; (format "Output file to pack (default for %s) : "
-                                          ;;         archive-default)
-                                          dir-default
-                                          nil ;; archive-default
-                                          nil
-                                          archive-default)
-                        (concat dir-default archive-default))))
-        (apply 'my-pack
-               archive
-               infiles)
-        (revert-buffer)))
-    (dired-unmark-all-marks)))
+             (archive ;; (if (interactive-p)
+              (read-file-name "Output file to pack : " ;; (format "Output file to pack (default for %s) : "
+                              ;;         archive-default)
+                              dir-default
+                              nil ;; archive-default
+                              nil
+                              archive-default)
+              ;; (concat dir-default archive-default)
+              )))
+      (apply 'my-pack
+             archive
+             infiles)))
+  (revert-buffer)
+  ;; (dired-unmark-all-marks)
+  )
+
+(defun my-pack-file-name-association (filename)
+  ""
+  (assoc (my-file-name-extension-with-tar filename)
+         my-pack-program-alist))
 
 (defun my-file-name-extension-with-tar (filename)
   "if FILENAME has extension with tar, like \"tar.gz\", return that.
@@ -1150,12 +1182,11 @@ otherwise, return extension normally."
 (defun my-pack-file-extension (filename)
   "if FILENAME has extension and it can be used for pack, return FILENAME.
 otherwise, return FILENAME with `my-pack-default-extension'"
-  (if (assoc (file-name-extension filename)
-             my-pack-program-alist)
+  (if (my-pack-file-name-association filename)
       filename
     (concat filename "." my-pack-default-extension)))
 
-(defvar my-7z-program
+(defvar my-7z-program-name
   (or (executable-find "7z")
       (executable-find "7za")
       (executable-find "7zr")))
@@ -1164,58 +1195,43 @@ otherwise, return FILENAME with `my-pack-default-extension'"
   "7z")
 
 (defvar my-pack-program-alist
-  `(("7z" ,my-7z-program "a" ,my-7z-program "x")
-    ("tar" "tar" "cf" "tar" "xf")
-    ("tgz" "tar" "czf" "tar" "xzf")
-    ("txz" "tar" "cJf" "tar" "xJf")
-    ("zip" "zip" "-r" "unzip" nil)))
+  (list (list "7z" (concat my-7z-program-name " a") (concat my-7z-program-name " x"))
+        '("tar" "tar cf" "tar xf")
+        '("tgz" "tar czf" "tar xzf")
+        '("txz" "tar cJf" "tar xJf")
+        '("zip" "zip -r" "unzip")))
+(string-match-p "\\.gz\\'" "aaa.gz")    ; \' matches string end, $ may match the point before newline.
+;; (case-fold-search nil)
 
 (defun my-unpack (archive)
   ""
   (interactive "fArchive to extract: ")
   (let* ((earchive (expand-file-name archive))
-         (ext (file-name-extension earchive))
-         (lst (assoc ext
-                     my-pack-program-alist))
-         (com (nth 3 lst))
-         (op (nth 4 lst))
-         (args (if op
-                   (list op earchive)
-                 (list earchive))))
-    (message "unpacking %s..." archive)
-    (apply 'call-process
-           com
-           nil
-           (my-pop-to-buffer-erase-noselect "*packing output*")
-           t
-           args)
-    (message "unpacking %s...done." archive)))
+         (lst (my-pack-file-name-association earchive))
+         )
+    (if lst
+        (shell-command (concat (nth 2
+                                    lst)
+                               " "
+                               (shell-quote-argument earchive)))
+      (message "this is not archive file defined in `pack-program-alist'!"))))
 
 (defun my-pack (archive &rest files)
-  "if archive have extension for pack, use it.
-otherwise, use `my-pack-default-extension'. for pack."
+  "pack files FILES into file ARCHIVE.
+if ARCHIVE have extension defined in `pack-program-alist', use that command.
+otherwise, use `pack-default-extension'. for pack."
   (let* ((archive-ext (my-pack-file-extension (expand-file-name archive)))
-         (ext (file-name-extension archive-ext))
-         (lst (assoc ext
-                     my-pack-program-alist))
-         (com (nth 1 lst))
-         (op (nth 2 lst))
-         (args (if op
-                   (apply 'list
-                          op
-                          archive-ext
-                          files)
-                 (apply 'list
-                        archive-ext
-                        files))))
-    (message "packing to %s..." archive)
-    (apply 'call-process
-           com
-           nil
-           (my-pop-to-buffer-erase-noselect "*packing output*")
-           t
-           args)
-    (message "packing to %s...done." archive)))
+         (lst (my-pack-file-name-association archive-ext))
+         )
+    (if lst
+        (shell-command (concat (nth 1 lst)
+                               " "
+                               (shell-quote-argument archive-ext)
+                               " "
+                               (mapconcat 'shell-quote-argument
+                                          files
+                                          " ")))
+      (message "invalid extension for packing!"))))
 
 (defun my-pop-to-buffer-erase-noselect (buffer-or-name)
   "pop up buffer using `display-buffer' and return that buffer."
@@ -1537,7 +1553,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (setq p4 (point))
             (insert " "
                     (format-time-string "%a, %d %b %Y %T %z")
-                    " ESHELL\n"
+                    " eshell\n"
                     "last:"
                     (number-to-string eshell-last-command-status)
                     (if (= (user-uid)
@@ -1677,16 +1693,6 @@ when SEC is nil, stop auto save if enabled."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
-
-(defvar my-frame-buffer-alist nil)
-
-(defun my-frame-buffer-add-buffer (buffer)
-  ""
-  (let ((list (or (assq (selected-frame) my-frame-buffer-alist)
-                  (progn (add-to-list 'my-frame-buffer-alist
-                                      (list (selected-frame)))
-                         (assq (selected-frame) my-frame-buffer-alist)))))
-    ))
 
 (defvar my-desktop-terminal "roxterm")
 (defun my-execute-terminal ()
@@ -1848,7 +1854,7 @@ this is test, does not rename files"
       (catch 'end-flag
         (while t
           (setq action
-                (read-key-sequence-vector (format "size[%dx%d] 1 to maximize; 2, 3 to split; 0 to delete; o to select other; j, l to enlarge; h, k to shrink; q to quit."
+                (read-key-sequence-vector (format "size[%dx%d] 1: maximize; 2, 3: split; 0: delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
                                                   (window-width)
                                                   (window-height))))
           (setq c (aref action 0))
