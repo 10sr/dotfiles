@@ -209,10 +209,12 @@ prompt_function(){              # used by PS1
         local c3="\e[37m"
         local cdef="\e[0m"
     fi
-    local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
-    local oldpwd=$(echo "${OLDPWD}/" | sed -e "s:${HOME}:~:")
-    local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
-    local jobnum=$(jobs | wc -l)
+    iscygwin || {
+        local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
+        local oldpwd=$(echo "${OLDPWD}/" | sed -e "s:${HOME}:~:")
+        local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
+        local jobnum=$(jobs | wc -l)
+    }
     local git=$(safe-cmd __git_ps1 [GIT:%s])
     local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
     printf "${_MEMO}"
