@@ -1151,25 +1151,27 @@ if arg is omitted use value of `buffer-list'."
       (let* ((dir-default (dired-dwim-target-directory))
              (archive-default (my-pack-file-extension (file-name-nondirectory (car infiles))))
              (archive ;; (if (interactive-p)
-              (read-file-name "Output file to pack : " ;; (format "Output file to pack (default for %s) : "
-                              ;;         archive-default)
+              (read-file-name "Output file to pack : "
                               dir-default
-                              nil ;; archive-default
+                              nil
                               nil
                               archive-default)
               ;; (concat dir-default archive-default)
-              )))
-      (apply 'my-pack
-             archive
-             infiles)))
+              ))
+        (apply 'my-pack
+               archive
+               infiles))))
   (revert-buffer)
   ;; (dired-unmark-all-marks)
   )
 
 (defun my-pack-file-name-association (filename)
   ""
-  (assoc (my-file-name-extension-with-tar filename)
-         my-pack-program-alist))
+  (let ((case-fold-search nil))
+    (assoc-default filename
+                   my-pack-program-alist
+                   'string-match-p
+                   nil)))
 
 (defun my-file-name-extension-with-tar (filename)
   "if FILENAME has extension with tar, like \"tar.gz\", return that.
@@ -1195,13 +1197,11 @@ otherwise, return FILENAME with `my-pack-default-extension'"
   "7z")
 
 (defvar my-pack-program-alist
-  (list (list "7z" (concat my-7z-program-name " a") (concat my-7z-program-name " x"))
-        '("tar" "tar cf" "tar xf")
-        '("tgz" "tar czf" "tar xzf")
-        '("txz" "tar cJf" "tar xJf")
-        '("zip" "zip -r" "unzip")))
-(string-match-p "\\.gz\\'" "aaa.gz")    ; \' matches string end, $ may match the point before newline.
-;; (case-fold-search nil)
+  `(("\\.7z\\'" ,(concat my-7z-program-name " a"), (concat my-7z-program-name " x"))
+    ("\\.tar\\'" "tar cf" "tar xf")
+    ("\\.tgz\\'" "tar czf" "tar xzf")
+    ("\\.zip\\'" "zip -r" "unzip")))
+(string-match-p "\\.gz\\'" "aaa.gz")    ; \' matches string end, $ also matches the point before newline.
 
 (defun my-unpack (archive)
   ""
@@ -1210,7 +1210,7 @@ otherwise, return FILENAME with `my-pack-default-extension'"
          (lst (my-pack-file-name-association earchive))
          )
     (if lst
-        (shell-command (concat (nth 2
+        (shell-command (concat (nth 1
                                     lst)
                                " "
                                (shell-quote-argument earchive)))
@@ -1219,12 +1219,12 @@ otherwise, return FILENAME with `my-pack-default-extension'"
 (defun my-pack (archive &rest files)
   "pack files FILES into file ARCHIVE.
 if ARCHIVE have extension defined in `pack-program-alist', use that command.
-otherwise, use `pack-default-extension'. for pack."
+otherwise, use `pack-default-extension' for pack."
   (let* ((archive-ext (my-pack-file-extension (expand-file-name archive)))
          (lst (my-pack-file-name-association archive-ext))
          )
     (if lst
-        (shell-command (concat (nth 1 lst)
+        (shell-command (concat (nth 0 lst)
                                " "
                                (shell-quote-argument archive-ext)
                                " "
