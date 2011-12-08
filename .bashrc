@@ -280,11 +280,12 @@ safe-cmd stty stop undef        # unbind C-s to stop displaying output
 # $OSTYPEとか使えるのかな
 
 iswindows(){
-    uname | grep -iE 'windows|MINGW' >/dev/null 2>&1
+    # uname | grep -iE 'windows|MINGW' >/dev/null 2>&1
+    iscygwin || ismsys
 }
 
 ismsys(){
-    false
+    uname | grep -E "^MINGW32" >/dev/null 2>&1
 }
 
 iscygwin(){
@@ -321,8 +322,11 @@ if iscygwin; then
     : alias setclip="tee /dev/clipboard"
     : alias catclip="cat /dev/clipboard | tr -d \\r"
     alias cygsu="cygstart /cygwinsetup.exe"
-    alias em="CYGWIN=tty emacs -nw"
+    alias emacs="CYGWIN=tty emacs -nw"
     echo "cygwin bash"
+fi
+
+if iswindows; then
     # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
     export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
 fi
