@@ -1680,8 +1680,10 @@ when SEC is nil, stop auto save if enabled."
 (defun my-execute-terminal ()
   ""
   (interactive)
-  (if (and window-system
-           (not (eq window-system 'w32)))
+  (if (and (or (eq system-type 'windows-nt)
+               window-system)
+           my-desktop-terminal
+           )
       (let ((process-environment (cons "TERM=xterm" process-environment)))
         (start-process "terminal"
                        nil
@@ -1691,7 +1693,7 @@ when SEC is nil, stop auto save if enabled."
 (defun my-term ()
   ""
   (interactive)
-  (if (eq window-system 'w32)
+  (if (eq system-type 'windows-nt)
       (eshell t)
     (if (featurep 'multi-term)
         (multi-term)
