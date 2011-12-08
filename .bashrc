@@ -9,8 +9,6 @@ safe-cmd(){
 
 test -r /etc/bashrc && . /etc/bashrc
 
-# export PS1="\[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
-# export PS1="[\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
 export PS1="\$(prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
 export PAGER="less"
@@ -209,10 +207,12 @@ prompt_function(){              # used by PS1
         local c3="\e[37m"
         local cdef="\e[0m"
     fi
-    local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
-    local oldpwd=$(echo "${OLDPWD}/" | sed -e "s:${HOME}:~:")
-    local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
-    local jobnum=$(jobs | wc -l)
+    iscygwin || {
+        local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
+        local oldpwd=$(echo "${OLDPWD}/" | sed -e "s:${HOME}:~:")
+        local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
+        local jobnum=$(jobs | wc -l)
+    }
     local git=$(safe-cmd __git_ps1 [GIT:%s])
     local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
     printf "${_MEMO}"
@@ -321,8 +321,10 @@ if iscygwin; then
     : alias setclip="tee /dev/clipboard"
     : alias catclip="cat /dev/clipboard | tr -d \\r"
     alias cygsu="cygstart /cygwinsetup.exe"
-    alias emacs="CYGWIN=tty emacs"
+    alias em="CYGWIN=tty emacs -nw"
     echo "cygwin bash"
+    # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
+    export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
 fi
 
 #######################

@@ -335,6 +335,7 @@
                     (font-spec :family (nth 2 list) :size (nth 3 list)))) ; font spec is available in emacs23 and later, cannot used in emacs22
 ;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 100 "takaogothic" 14))
+;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 100 "ms gothic" 14))
 ;; (my-set-ascii-and-jp-font-with-size '("monaco" 75 "takaogothic" 11))
 ;; (my-set-ascii-and-jp-font-with-size '("monaco" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
@@ -825,32 +826,12 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
      (require 'multi-term nil t)
      (setq multi-term-switch-after-close nil))
 
-(defun my-term ()
-  ""
-  (interactive)
-  (if (require 'multi-term nil t)
-      (multi-term)
-    (ansi-term "/bin/bash")))
-
-(defvar my-frame-term-plist nil)
-(setplist my-frame-term-plist nil)
-(defun my-execute-or-find-term ()
-  ""
-  (interactive)
-  (let* ((buf (get 'my-frame-term-plist (selected-frame))))
-    (if (and buf
-             (buffer-name buf))
-        (switch-to-buffer buf)
-      (put 'my-frame-term-plist
-           (selected-frame)
-           (my-term)))))
-
 ;; http://d.hatena.ne.jp/goinger/20100416/1271399150
 ;; (setq term-ansi-default-program shell-file-name)
 (add-hook 'term-setup-hook (lambda ()
                              (setq term-display-table (make-display-table))))
 (add-hook 'term-mode-hook (lambda ()
-                            (unless (memq (current-buffer) (and (require 'multi-term nil t) ; current buffer is not multi-term buffer
+                            (unless (memq (current-buffer) (and (featurep 'multi-term) ; current buffer is not multi-term buffer
                                                                 (multi-term-list)))
                               ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
                               ;; (define-key term-raw-map "\C-r" 'term-send-raw)
@@ -1471,9 +1452,9 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 ;;               (goto-line line))
 ;;           (view-file (pop args))))))
 
-(defun eshell/git (&rest args)
-  ""
-  (eshell-parse-arguments (point-at-bol) (point-at-eol)))
+;; (defun eshell/git (&rest args)
+;;   ""
+;;   (eshell-parse-arguments (point-at-bol) (point-at-eol)))
 
 (defun eshell/o (&optional file)
   (my-x-open (or file ".")))
@@ -1596,7 +1577,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                       ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp")
                       ("aptin" "sudo apt-get install")
                       ("u" "uname")
-                      ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer"
+                      ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer)); (view-buffer (get-buffer \"*eshell output*\"))")
+                      ("g" "git")))
             (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
             (apply 'eshell/addpath exec-path)
             (set (make-variable-buffer-local 'scroll-margin) 0)
@@ -1700,12 +1682,37 @@ when SEC is nil, stop auto save if enabled."
 (defun my-execute-terminal ()
   ""
   (interactive)
-  (if window-system
+  (if (and (or (eq system-type 'windows-nt)
+               window-system)
+           my-desktop-terminal
+           )
       (let ((process-environment (cons "TERM=xterm" process-environment)))
         (start-process "terminal"
                        nil
                        my-desktop-terminal))
     (my-execute-or-find-term)))
+
+(defun my-term ()
+  ""
+  (interactive)
+  (if (eq system-type 'windows-nt)
+      (eshell t)
+    (if (featurep 'multi-term)
+        (multi-term)
+      (ansi-term "/bin/bash"))))
+
+(defvar my-frame-term-plist nil)
+(setplist my-frame-term-plist nil)
+(defun my-execute-or-find-term ()
+  ""
+  (interactive)
+  (let* ((buf (get 'my-frame-term-plist (selected-frame))))
+    (if (and buf
+             (buffer-name buf))
+        (switch-to-buffer buf)
+      (put 'my-frame-term-plist
+           (selected-frame)
+           (my-term)))))
 
 (defun my-format-time-string (&optional time)
   ""
@@ -2010,7 +2017,7 @@ this is test, does not rename files"
   ""
   (mapcar (lambda (path)
             (add-to-list 'exec-path (expand-file-name path)))
-          args)
+          (reverse args))
   (setenv "PATH"
           (mapconcat 'convert-standard-filename
                      exec-path
