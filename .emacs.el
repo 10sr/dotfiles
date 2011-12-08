@@ -1191,20 +1191,22 @@ otherwise, return FILENAME with `my-pack-default-extension'"
 (defvar my-7z-program-name
   (or (executable-find "7z")
       (executable-find "7za")
-      (executable-find "7zr")))
+      (executable-find "7zr"))
+  "path to 7z program.")
 
 (defvar my-pack-default-extension
-  "7z")
+  "7z"
+  "default suffix for packing. filename with this suffix must matches `pack-program-alist'")
 
 (defvar my-pack-program-alist
   `(("\\.7z\\'" ,(concat my-7z-program-name " a"), (concat my-7z-program-name " x"))
     ("\\.tar\\'" "tar cf" "tar xf")
     ("\\.tgz\\'" "tar czf" "tar xzf")
     ("\\.zip\\'" "zip -r" "unzip")))
-(string-match-p "\\.gz\\'" "aaa.gz")    ; \' matches string end, $ also matches the point before newline.
+;; (string-match-p "\\.gz\\'" "aaa.gz")    ; \' matches string end, $ also matches the point before newline.
 
 (defun my-unpack (archive)
-  ""
+  "unpack ARCHIVE. command for unpacking is defined in `pack-program-alist'"
   (interactive "fArchive to extract: ")
   (let* ((earchive (expand-file-name archive))
          (lst (my-pack-file-name-association earchive))
@@ -1217,7 +1219,7 @@ otherwise, return FILENAME with `my-pack-default-extension'"
       (message "this is not archive file defined in `pack-program-alist'!"))))
 
 (defun my-pack (archive &rest files)
-  "pack files FILES into file ARCHIVE.
+  "pack FILES into ARCHIVE.
 if ARCHIVE have extension defined in `pack-program-alist', use that command.
 otherwise, use `pack-default-extension' for pack."
   (let* ((archive-ext (my-pack-file-extension (expand-file-name archive)))
@@ -1235,7 +1237,7 @@ otherwise, use `pack-default-extension' for pack."
 
 (defun my-pop-to-buffer-erase-noselect (buffer-or-name)
   "pop up buffer using `display-buffer' and return that buffer."
-  (let ((bf (get-buffer-create buffer-or-name))) 
+  (let ((bf (get-buffer-create buffer-or-name)))
     (with-current-buffer bf
       (cd ".")
       (erase-buffer))
@@ -1594,7 +1596,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                       ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp")
                       ("aptin" "sudo apt-get install")
                       ("u" "uname")
-                      ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer)); (view-buffer (get-buffer \"*eshell output*\"))")))
+                      ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer"
             (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
             (apply 'eshell/addpath exec-path)
             (set (make-variable-buffer-local 'scroll-margin) 0)
@@ -1602,7 +1604,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (eshell/export "GIT_EDITOR=")
             (eshell/export "LC_MESSAGES=C")
             (eshell/export "TERM=xterm")
-            ))
+            )))))
 
 ;; (eval-after-load "em-alias"
 ;;   '(progn ;; (eshell/alias "ll" "ls -l")
@@ -1841,6 +1843,7 @@ this is test, does not rename files"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
 (define-key my-prefix-map (kbd "C-w") 'my-window-organizer)
+
 (defun my-window-organizer ()
   "Control window size and position."
   (interactive)
@@ -2025,4 +2028,5 @@ this is test, does not rename files"
   (when window-system
     (setq w32-enable-synthesized-fonts t))
   (setq file-name-coding-system 'sjis))
+
 
