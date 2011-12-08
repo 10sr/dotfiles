@@ -9,8 +9,6 @@ safe-cmd(){
 
 test -r /etc/bashrc && . /etc/bashrc
 
-# export PS1="\[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
-# export PS1="[\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
 export PS1="\$(prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
 export PAGER="less"
@@ -323,8 +321,9 @@ if iscygwin; then
     : alias setclip="tee /dev/clipboard"
     : alias catclip="cat /dev/clipboard | tr -d \\r"
     alias cygsu="cygstart /cygwinsetup.exe"
-    alias emacs="CYGWIN=tty emacs"
+    alias em="CYGWIN=tty emacs -nw"
     echo "cygwin bash"
+    # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
     export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
 fi
 
