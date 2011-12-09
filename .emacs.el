@@ -1528,7 +1528,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                     "@"
                     (or (getenv "HOSTNAME")
                         (substring (shell-command-to-string (or (executable-find "hostname")
-                                                                ":"))
+                                                                "echo ''"))
                                    0
                                    -1)))
             (setq p4 (point))

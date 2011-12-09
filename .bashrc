@@ -329,6 +329,7 @@ fi
 if iswindows; then
     # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
     export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
+    alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto)"
 fi
 
 #######################
