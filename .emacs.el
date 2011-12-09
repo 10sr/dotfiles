@@ -710,12 +710,13 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (add-hook (kill-local-variable 'before-save-hook)
                       'js2-before-save)))
 
-(when (require 'zone nil t)
-  ;; (zone-when-idle 180)
-  (run-with-idle-timer 180 t (lambda ()
-                               (unless (memq major-mode
-                                             '(term-mode))
-                                 (zone)))))
+(and (require 'zone nil t)
+     (not (eq system-type 'windows-nt))
+     ;; (zone-when-idle 180)
+     (run-with-idle-timer 180 t (lambda ()
+                                  (unless (memq major-mode
+                                                '(term-mode))
+                                    (zone)))))
 
 (when (require 'uniquify nil t)
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
@@ -1586,7 +1587,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (eshell/export "GIT_EDITOR=")
             (eshell/export "LC_MESSAGES=C")
             (eshell/export "TERM=xterm")
-            )))))
+            ))
 
 ;; (eval-after-load "em-alias"
 ;;   '(progn ;; (eshell/alias "ll" "ls -l")
