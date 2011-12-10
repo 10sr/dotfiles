@@ -167,7 +167,7 @@ _mygitconfig(){
     git config --global core.autocrlf false
     git config --global color.ui auto
     git config --global status.relativePaths false
-    git config --global status.showUntrackedFiles no
+    git config --global status.showUntrackedFiles normal
     git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     git config --global alias.st "status -s"
     git config --global alias.b "branch"
