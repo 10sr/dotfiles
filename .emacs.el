@@ -340,7 +340,7 @@
 ;; (my-set-ascii-and-jp-font-with-size '("monaco" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
-
+emacs-major-version
 (defun my-22-set-ascii-and-jp-font-with-size (list)
   ""
   (set-face-attribute 'default nil
@@ -1586,7 +1586,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (eshell/export "GIT_EDITOR=")
             (eshell/export "LC_MESSAGES=C")
             (eshell/export "TERM=xterm")
-            )))))
+            ))
 
 ;; (eval-after-load "em-alias"
 ;;   '(progn ;; (eshell/alias "ll" "ls -l")
