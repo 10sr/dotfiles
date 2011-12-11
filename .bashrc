@@ -179,6 +179,9 @@ _mygitconfig(){
     git config --global alias.ls "!git ls-files | xargs ls -CFG --color=auto --time-style=long-iso"
     git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
+    if iswindows; then
+        git config --global core.fileMode false
+    fi
 }
 
 __my_parse_svn_branch() {
