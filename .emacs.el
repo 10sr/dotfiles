@@ -340,7 +340,7 @@
 ;; (my-set-ascii-and-jp-font-with-size '("monaco" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
-
+emacs-major-version
 (defun my-22-set-ascii-and-jp-font-with-size (list)
   ""
   (set-face-attribute 'default nil
@@ -1120,7 +1120,9 @@ if arg is omitted use value of `buffer-list'."
 
 (require 'dired-aux) ;; needed to use dired-dwim-target-directory
 (defun my-dired-do-pack-or-unpack ()
-  ""
+  "pack or unpack files.
+if targetting one file and that is archive file defined in `pack-program-alist', unpack that.
+otherwise, pack marked files. prompt user to decide filename for archive."
   (interactive)
   (let* ((infiles (dired-get-marked-files t))
          (onefile (and (eq 1 ; filename if only one file targeted, otherwise nil.
@@ -1147,14 +1149,6 @@ if arg is omitted use value of `buffer-list'."
   ;; (dired-unmark-all-marks)
   )
 
-(defun my-pack-file-name-association (filename)
-  ""
-  (let ((case-fold-search nil))
-    (assoc-default filename
-                   my-pack-program-alist
-                   'string-match-p
-                   nil)))
-
 (defun my-file-name-extension-with-tar (filename)
   "if FILENAME has extension with tar, like \"tar.gz\", return that.
 otherwise, return extension normally."
@@ -1174,28 +1168,44 @@ otherwise, return FILENAME with `my-pack-default-extension'"
   (or (executable-find "7z")
       (executable-find "7za")
       (executable-find "7zr"))
-  "path to 7z program.")
+  "7z program.")
 
 (defvar my-pack-default-extension
   "7z"
-  "default suffix for packing. filename with this suffix must matches `pack-program-alist'")
+  "default suffix for packing. filename with this suffix must matches one of `pack-program-alist'")
+
+(defun my-pack-file-name-association (filename)
+  "if the pattern matching FILENAME is found at car of the list in `pack-program-alist', return cdr of that list.
+otherwise, return nil."
+  (let ((case-fold-search nil))
+    (assoc-default filename
+                   my-pack-program-alist
+                   'string-match-p
+                   nil)))
 
 (defvar my-pack-program-alist
-  `(("\\.7z\\'" ,(concat my-7z-program-name " a"), (concat my-7z-program-name " x"))
+  `(
+    ("\\.7z\\'" ,(concat my-7z-program-name " a") ,(concat my-7z-program-name " x"))
+    ("\\.zip\\'" "zip -r" "unzip")
     ("\\.tar\\'" "tar cf" "tar xf")
     ("\\.tgz\\'" "tar czf" "tar xzf")
-    ("\\.zip\\'" "zip -r" "unzip")))
+    ("\\.tar\\.gz\\'" "tar czf" "tar xzf")
+    )
+  "Alist of filename patterns, command for pack and unpack.
+Each element looks like (REGEXP PACKING-COMMAND UNPACKING-COMMAND).
+PACKING-COMMAND and UNPACKING-COMMAND can be nil if the command is not available.
+alist is searched from the beginning so pattern for \".tar.gz\" should be ahead of pattern for \".gz\"")
 ;; (string-match-p "\\.gz\\'" "aaa.gz")    ; \' matches string end, $ also matches the point before newline.
 
 (defun my-unpack (archive)
   "unpack ARCHIVE. command for unpacking is defined in `pack-program-alist'"
   (interactive "fArchive to extract: ")
   (let* ((earchive (expand-file-name archive))
-         (lst (my-pack-file-name-association earchive))
+         (cmd (nth 1
+                   (my-pack-file-name-association earchive)))
          )
-    (if lst
-        (shell-command (concat (nth 1
-                                    lst)
+    (if cmd
+        (shell-command (concat cmd 
                                " "
                                (shell-quote-argument earchive)))
       (message "this is not archive file defined in `pack-program-alist'!"))))
@@ -1205,10 +1215,10 @@ otherwise, return FILENAME with `my-pack-default-extension'"
 if ARCHIVE have extension defined in `pack-program-alist', use that command.
 otherwise, use `pack-default-extension' for pack."
   (let* ((archive-ext (my-pack-file-extension (expand-file-name archive)))
-         (lst (my-pack-file-name-association archive-ext))
+         (cmd (car (my-pack-file-name-association archive-ext)))
          )
-    (if lst
-        (shell-command (concat (nth 0 lst)
+    (if cmd
+        (shell-command (concat cmd
                                " "
                                (shell-quote-argument archive-ext)
                                " "

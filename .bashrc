@@ -167,7 +167,7 @@ _mygitconfig(){
     git config --global core.autocrlf false
     git config --global color.ui auto
     git config --global status.relativePaths false
-    git config --global status.showUntrackedFiles no
+    git config --global status.showUntrackedFiles normal
     git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     git config --global alias.st "status -s"
     git config --global alias.b "branch"
@@ -179,6 +179,9 @@ _mygitconfig(){
     git config --global alias.ls "!git ls-files | xargs ls -CFG --color=auto --time-style=long-iso"
     git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
+    if iswindows; then
+        git config --global core.fileMode false
+    fi
 }
 
 __my_parse_svn_branch() {
