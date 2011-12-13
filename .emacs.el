@@ -580,9 +580,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 (when (or window-system
-          (ignore 'getenv "DESKTOP_SESSION"))
-  (setq x-select-enable-clipboard t
-        x-select-enable-primary nil))
+          ;; (getenv "DESKTOP_SESSION")
+          )
+  (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal
+        x-select-enable-primary nil)
+  (global-set-key "\C-y" 'x-clipboard-yank))
 
 ;; urlに細かい説明あり。でも設定は上記だけでよさそう
 ;; http://garin.jp/doc/Linux/xwindow_clipboard
@@ -590,7 +592,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (and (not x-select-enable-clipboard)
      (executable-find "xclip")
      (dllib-if-unfound "xclip" "http://www.emacswiki.org/emacs/download/xclip.el" t)
-     (require 'xclip nil t) ;; strange behavior: clipboard change unexpecdtedly; after copy on emacs, when copying on firefox soon clipboard content change back
+     (require 'xclip nil t)
      (turn-on-xclip))
 
 ;; その他のhook
