@@ -580,16 +580,17 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 (when (or window-system
-          (getenv "DESKTOP_SESSION"))
-  (setq x-select-enable-clipboard t))
+          (ignore 'getenv "DESKTOP_SESSION"))
+  (setq x-select-enable-clipboard t
+        x-select-enable-primary nil))
 
 ;; urlに細かい説明あり。でも設定は上記だけでよさそう
 ;; http://garin.jp/doc/Linux/xwindow_clipboard
 
-(and x-select-enable-clipboard
+(and (not x-select-enable-clipboard)
      (executable-find "xclip")
      (dllib-if-unfound "xclip" "http://www.emacswiki.org/emacs/download/xclip.el" t)
-     nil (require 'xclip nil t) ;; strange behavior: clipboard change unexpecdtedly; after copy on emacs, when copying on firefox soon clipboard content change back
+     (require 'xclip nil t) ;; strange behavior: clipboard change unexpecdtedly; after copy on emacs, when copying on firefox soon clipboard content change back
      (turn-on-xclip))
 
 ;; その他のhook
