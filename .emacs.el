@@ -728,7 +728,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (define-key view-mode-map "k" (lambda() (interactive) (scroll-down 1)))
             (define-key view-mode-map "/" 'isearch-forward)
             (define-key view-mode-map "v" 'toggle-read-only)
-            (define-key view-mode-map "q" 'kill-this-buffer)))
+            (define-key view-mode-map "q" 'bury-buffer)))
 (global-set-key "\M-r" 'view-mode)
 (setq view-read-only t)
 ;; (add-hook 'find-file-hook
