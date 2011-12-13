@@ -162,8 +162,8 @@ port-autosync(){
 }
 
 _mygitconfig(){
-    git config --global user.name "10sr"
-    git config --global user.email sr10@users.sourceforge.jp
+    git config --global user.name '10sr'
+    git config --global user.email '8slashes+git@gmail.com'
     git config --global core.autocrlf false
     git config --global color.ui auto
     git config --global status.relativePaths false
