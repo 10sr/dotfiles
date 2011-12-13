@@ -160,7 +160,6 @@ dl-my-init-files(){
 port-autosync(){
     port selfupdate && port sync && port upgrade installed
 }
-
 _mygitconfig(){
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
