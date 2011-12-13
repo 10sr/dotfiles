@@ -84,7 +84,7 @@ gitls(){
     done
 }
 catclip(){
-    if iscygwin
+    if iswindows
     then
         cat /dev/clipboard | tr -d \\r
     else
@@ -92,7 +92,7 @@ catclip(){
     fi
 }
 setclip(){
-    if iscygwin
+    if iswindows
     then
         if test $# -eq 0
         then
