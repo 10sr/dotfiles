@@ -71,6 +71,46 @@ alias pcalc="python -i -c 'from math import *' "
 # alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
+export __MYGITBAREREP="${HOME}/dbx/.git-bare"
+git-make-bare-rep(){
+    test $# -eq 0 && {
+        echo "specify repository name." 1>&2
+        return 1
+    }
+
+    dir="${__MYGITBAREREP}/$1.git"
+
+    if test -d "$dir"
+    then
+        echo "dir $dir already exist!" 1>&2
+    else
+        mkdir -p "$dir" &&
+        pushd "$dir" &&
+        git init --bare
+        popd
+    fi
+}
+
+git-add-bare-rep(){
+    test $# -ne 2 && {
+        echo "specify repository name and shortname." 1>&2
+        return 1
+    }
+
+    dir="${__MYGITBAREREP}/$2.git"
+    git-make-bare-rep $2 &&
+    git remote add $1 "$dir"
+    git remote -v
+
+    # if test -d "$dir"
+    # then
+    #     git remote add $1 "$dir"
+    #     git remote -v
+    # else
+    #     echo "dir $dir does not exist!" 1>&2
+    # fi
+}
+
 bak(){
     for file in "$@"
     do
