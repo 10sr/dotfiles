@@ -2,6 +2,34 @@
 # 外部ファイルの読み込み
 # test -r ~/filepath && . ~/filepath
 # ln SRC DST
+
+##########################
+# system type
+# $OSTYPEとか使えるのかな
+
+if uname | grep -E "^MINGW32" >/dev/null 2>&1
+then
+    alias ismsys=true
+else
+    alias ismsys=false
+fi
+
+if uname | grep -E "^CYGWIN" >/dev/null 2>&1
+then
+    alias iscygwin=true
+else
+    alias iscygwin=false
+fi
+
+alias iswindows="iscygwin || ismsys"
+
+if uname | grep -E 'Darwin' >/dev/null 2>&1
+then
+    alias isdarwin=true
+else
+    alias isdarwin=false
+fi
+
 ##########################################
 safe-cmd(){
     type $1 >/dev/null 2>&1 && "$@"
@@ -12,7 +40,7 @@ test -r /etc/bashrc && . /etc/bashrc
 export PS1="\$(prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
 export PAGER="less"
-export EDITOR="vim"
+export EDITOR="vi"
 export VISUAL=$EDITOR
 export LESS="-iRM"
 # export LC_MESSAGES="C"
@@ -276,27 +304,6 @@ _echocolors(){
 }
 
 safe-cmd stty stop undef        # unbind C-s to stop displaying output
-
-##########################
-# system type
-# $OSTYPEとか使えるのかな
-
-iswindows(){
-    # uname | grep -iE 'windows|MINGW' >/dev/null 2>&1
-    iscygwin || ismsys
-}
-
-ismsys(){
-    uname | grep -E "^MINGW32" >/dev/null 2>&1
-}
-
-iscygwin(){
-    uname | grep -E "^CYGWIN" >/dev/null 2>&1
-}
-
-isdarwin(){
-    uname | grep -E 'Darwin' >/dev/null 2>&1
-}
 
 #########################
 # for windose
