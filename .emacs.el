@@ -811,8 +811,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
           'my-frame-buffer-add)
 (add-hook 'dired-mode-hook
           'my-frame-buffer-add)
-(add-hook 'term-mode-hook
-          'my-frame-buffer-add)
 (add-hook 'kill-buffer-hook
           'my-frame-buffer-remove)
 (add-hook 'delete-frame-functions
@@ -1707,7 +1705,7 @@ when SEC is nil, stop auto save if enabled."
     (my-execute-or-find-term)))
 
 (defun my-term ()
-  ""
+  "open terminal buffer and return that buffer."
   (interactive)
   (if (eq system-type 'windows-nt)
       (eshell t)
