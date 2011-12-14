@@ -98,17 +98,18 @@ git-add-bare-rep(){
     }
 
     dir="${__MYGITBAREREP}/$2.git"
-    git-make-bare-rep $2 &&
-    git remote add $1 "$dir"
-    git remote -v
 
-    # if test -d "$dir"
-    # then
-    #     git remote add $1 "$dir"
-    #     git remote -v
-    # else
-    #     echo "dir $dir does not exist!" 1>&2
-    # fi
+    # git-make-bare-rep $2 &&
+    # git remote add $1 "$dir"
+    # git remote -v
+
+    if test -d "$dir"
+    then
+        git remote add $1 "$dir"
+        git remote -v
+    else
+        echo "dir $dir does not exist!" 1>&2
+    fi
 }
 
 bak(){
