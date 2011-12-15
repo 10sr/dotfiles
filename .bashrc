@@ -34,6 +34,9 @@ fi
 safe-cmd(){
     type $1 >/dev/null 2>&1 && "$@"
 }
+replace-cmd(){
+    type $1 1>/dev/null || alias $1=:
+}
 
 test -r /etc/bashrc && . /etc/bashrc
 
@@ -264,6 +267,10 @@ __my_svn_ps1(){
     test "${svn_branch}" == "" || echo ${svn_branch} | xargs printf "$1"
 }
 
+replace-cmd date
+replace-cmd __my_svn_ps1
+
+
 prompt_function(){              # used by PS1
     local lastreturn=$?
     if test "${TERM}" == dumb
@@ -278,13 +285,23 @@ prompt_function(){              # used by PS1
         local c3="\e[37m"
         local cdef="\e[0m"
     fi
-    iscygwin || {
-        local pwd=$(echo "${PWD}/" | sed -e "s:${HOME}:~:")
-        local oldpwd=$(echo "${OLDPWD}/" | sed -e "s:${HOME}:~:")
-        local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
+    if iswindows
+    then
+        local pwd=$PWD
+        local oldpwd=$OLDPWD
+        if git status >/dev/null 2>&1
+        then
+            local git="[GIT]"
+        else
+            local git=""
+        fi
+    else
+        local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
+        local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
         local jobnum=$(jobs | wc -l)
-    }
-    local git=$(safe-cmd __git_ps1 [GIT:%s])
+        local git=$(safe-cmd __git_ps1 [GIT:%s])
+    fi
+    local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
     local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
     printf "${_MEMO}"
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
@@ -378,7 +395,7 @@ fi
 
 if iswindows; then
     # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
-    export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
+    # export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
     alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto)"
 fi
 
@@ -391,6 +408,6 @@ safe-cmd diskinfo
 type xrandr >/dev/null 2>&1 && {
     xrandr | grep --color=never ^Screen
 }
-safe-cmd finger $USER
+iswindows || safe-cmd finger $USER
 LANG=C safe-cmd id
 
