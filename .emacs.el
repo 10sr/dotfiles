@@ -809,8 +809,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (add-hook 'find-file-hook
           'my-frame-buffer-add)
-(add-hook 'dired-mode-hook
-          'my-frame-buffer-add)
+;; (add-hook 'dired-mode-hook
+;;           'my-frame-buffer-add)
 (add-hook 'kill-buffer-hook
           'my-frame-buffer-remove)
 (add-hook 'delete-frame-functions
