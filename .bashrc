@@ -275,10 +275,10 @@ prompt_function(){              # used by PS1
     local lastreturn=$?
     if test "${TERM}" == dumb
     then
-        local c1=""
-        local c2=""
-        local c3=""
-        local cdef=""
+        local c1=
+        local c2=
+        local c3=
+        local cdef=
     else
         local c1="\e[33m"
         local c2="\e[36m"
@@ -289,19 +289,22 @@ prompt_function(){              # used by PS1
     then
         local pwd=$PWD
         local oldpwd=$OLDPWD
-        if git status >/dev/null 2>&1
+        local jobnum=
+        if git branch >/dev/null 2>&1
         then
             local git="[GIT]"
         else
-            local git=""
+            local git=
         fi
+        local date=$(/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%')
+        :
     else
         local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
         local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
         local jobnum=$(jobs | wc -l)
         local git=$(safe-cmd __git_ps1 [GIT:%s])
+        local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
     fi
-    local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
     local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
     printf "${_MEMO}"
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
