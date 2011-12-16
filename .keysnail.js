@@ -45,6 +45,7 @@ util.setPrefs(
         "network.dns.disableIPv6":true,
         "browser.urlbar.trimURLs":false,
         "browser.fullscreen.autohide":false,
+        "keyword.URL":"http://www.bing.com/search?q=",
     }
 );
 
@@ -669,12 +670,6 @@ key.setViewKey('T', function (ev, arg) {
     ext.exec("google-itranslate", arg, ev);
 }, 'google itranslate', true);
 
-key.setViewKey('l', function (ev, arg) {
-    var n = gBrowser.mCurrentTab._tPos;
-    gBrowser.moveTabTo(gBrowser.mCurrentTab, gBrowser.mTabContainer.childNodes.length - 1);
-    gBrowser.selectedTab = gBrowser.mTabs[n];
-}, 'このタブを後回し');
-
 key.setViewKey('C-SPC', function (ev, arg) {
     MultipleTabService.toggleSelection(gBrowser.selectedTab);
 }, 'タブの選択をトグル');
@@ -777,3 +772,7 @@ key.setViewKey('H', function (ev, arg) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setViewKey('l', function (ev) {
+    command.focusToById("urlbar");
+}, 'ロケーションバーへフォーカス', true);
