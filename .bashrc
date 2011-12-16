@@ -131,12 +131,13 @@ di(){
     ${diffcmd} -u "$@" | ${PAGER}
 }
 memo(){
-    _MEMO="# $*\n"
+    __MYMEMO="# $*\n"
 }
 rmmemo(){
-    _MEMO=""
+    __MYMEMO=""
 }
 throw-away(){
+    mkdir -p ~/bu/tb
     for file in "$@"
     do
         mv $file ~/bu/tb
@@ -248,6 +249,7 @@ _mygitconfig(){
     git config --global alias.di "diff"
     git config --global alias.me "merge --no-ff --stat -v"
     git config --global alias.ls "ls-files"
+    # git config --global alias.my-ls "ls-files | xargs ls"
     # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
     if iswindows; then
