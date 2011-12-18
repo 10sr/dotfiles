@@ -89,7 +89,7 @@ git-make-bare-rep(){
     else
         mkdir -p "$dir" &&
         pushd "$dir" &&
-        git init --bare
+        git init --bare --shared=all
         popd
     fi
 }
@@ -144,17 +144,8 @@ throw-away(){
     done
 }
 mkcd(){
-    mkdir $1
+    mkdir -p $1
     cd $1
-}
-mkunfddir(){                    # create dir if unfound. ?
-    test -e "$1" || mkdir "$1"
-}
-gitls(){
-    for file in `\ls`
-    do
-        :
-    done
 }
 catclip(){
     if iswindows
