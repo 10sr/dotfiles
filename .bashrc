@@ -257,7 +257,7 @@ __my_parse_svn_branch() {
 
 __my_svn_ps1(){
     local svn_branch=$(__my_parse_svn_branch)
-    test "${svn_branch}" == "" || echo ${svn_branch} | xargs printf "$1"
+    test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
 }
 
 replace-cmd date
@@ -379,20 +379,18 @@ winln(){
 ########################
 
 if iscygwin; then
-    # for cygwin
-    export TMP=/tmp
-    export TEMP=/tmp
-    : alias setclip="tee /dev/clipboard"
-    : alias catclip="cat /dev/clipboard | tr -d \\r"
     alias cygsu="cygstart /cygwinsetup.exe"
     alias emacs="CYGWIN=tty emacs -nw"
     echo "cygwin bash"
 fi
 
 if iswindows; then
+    # export TMP=/tmp
+    # export TEMP=/tmp
     # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
     # export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
     alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto)"
+    export USER=$USERNAME
 fi
 
 #######################
