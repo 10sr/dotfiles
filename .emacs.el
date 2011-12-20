@@ -602,6 +602,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode関連
 
+(add-hook 'verilog-mode-hook
+          (lambda ()
+            (define-key verilog-mode-map ";" 'self-insert-command)))
+
 (setq diff-switches "-u")
 (add-hook 'diff-mode-hook
           (lambda ()
