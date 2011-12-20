@@ -62,7 +62,7 @@ alias apt-get="sudo apt-get"
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
-alias ut="slogin t110414@un001.ecc.u-tokyo.ac.jp"
+alias ut="ssh t110414@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
@@ -399,7 +399,7 @@ echo "Japanese letters are 表示可能"
 
 safe-cmd diskinfo
 
-type xrandr >/dev/null 2>&1 && {
+test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
     xrandr | grep --color=never ^Screen
 }
 iswindows || safe-cmd finger $USER
