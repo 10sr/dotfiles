@@ -42,7 +42,12 @@ test -r /etc/bashrc && . /etc/bashrc
 
 export PS1="\$(prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
-export PAGER="less"
+if iswindows
+then
+    export PAGER="tr -d \\r | less"
+else
+    export PAGER="less"
+fi
 export EDITOR="vi"
 export VISUAL="$EDITOR"
 export LESS="-iRMX"
