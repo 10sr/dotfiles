@@ -512,7 +512,11 @@ ext.add("hide-sidebar", function(){
     }
 }, "hide-sidebar");
 
-
+ext.add("close-and-next-tab", function (ev, arg) {
+    var n = gBrowser.mCurrentTab._tPos;
+    BrowserCloseTabOrWindow();
+    gBrowser.selectedTab = gBrowser.mTabs[n];
+}, "close and focus to next tab")
 //}}%PRESERVE%
 // ========================================================================= //
 
@@ -596,7 +600,7 @@ key.setGlobalKey('M-:', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
 
-key.setViewKey('0', function (ev, arg) {
+key.setViewKey('', function (ev, arg) {
     var n = gBrowser.mCurrentTab._tPos;
     BrowserCloseTabOrWindow();
     gBrowser.selectedTab = gBrowser.mTabs[n];
@@ -752,10 +756,6 @@ key.setViewKey('<right>', function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
-key.setViewKey('C-w', function (ev) {
-    command.copyRegion(ev);
-}, '選択中のテキストをコピー');
-
 key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
     return;
 }, 'ignore');
@@ -769,10 +769,14 @@ key.setViewKey('H', function (ev, arg) {
     ext.exec("open-hatebu-comment", arg, ev);
 }, 'hatebu', true);
 
+key.setViewKey('l', function (ev) {
+    command.focusToById("urlbar");
+}, 'ロケーションバーへフォーカス', true);
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
 
-key.setViewKey('l', function (ev) {
-    command.focusToById("urlbar");
-}, 'ロケーションバーへフォーカス', true);
+key.setViewKey('0', function (ev) {
+    BrowserCloseTabOrWindow();
+}, 'タブ / ウィンドウを閉じる');
