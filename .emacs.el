@@ -717,7 +717,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (add-hook (kill-local-variable 'before-save-hook)
                       'js2-before-save)))
 
-(and (require 'zone nil t)
+(and nil
+     (require 'zone nil t)
      (not (eq system-type 'windows-nt))
      ;; (zone-when-idle 180)
      (run-with-idle-timer 180 t (lambda ()
@@ -769,31 +770,37 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;           (lambda (frame)
 ;;             (recentf-open-files)))
 
+;; (defvar aaa nil)
+;; (plist-get aaa 'abc)
+;; (setq aaa (plist-put aaa 'abc 'efg))
+
 (defvar my-frame-buffer-plist nil)
-(setplist my-frame-buffer-plist nil)
+;; (setplist my-frame-buffer-plist nil)
 
 (defun my-frame-buffer-add ()
   ""
-  (put 'my-frame-buffer-plist
-       (selected-frame)
-       (let ((lst (my-frame-buffer-get)))
-         (if lst
-             (add-to-list 'lst
-                          (current-buffer))
-           (list (current-buffer))))))
+  (setq my-frame-buffer-plist
+        (plist-put 'my-frame-buffer-plist
+                   (selected-frame)
+                   (let ((lst (my-frame-buffer-get)))
+                     (if lst
+                         (add-to-list 'lst
+                                      (current-buffer))
+                       (list (current-buffer)))))))
 
 (defun my-frame-buffer-remove ()
   ""
-  (put 'my-frame-buffer-plist
-       (selected-frame)
-       (delq (current-buffer)
-             (my-frame-buffer-get))))
+  (setq my-frame-buffer-plist
+        (plist-put 'my-frame-buffer-plist
+                   (selected-frame)
+                   (delq (current-buffer)
+                         (my-frame-buffer-get)))))
 
 (defun my-frame-buffer-get (&optional frame)
   ""
-  (get 'my-frame-buffer-plist
-       (or frame
-           (selected-frame))))
+  (plist-get 'my-frame-buffer-plist
+             (or frame
+                 (selected-frame))))
 
 (defun my-frame-buffer-get2 (&optional frame)
   ""
@@ -1718,17 +1725,18 @@ when SEC is nil, stop auto save if enabled."
       (ansi-term "/bin/bash"))))
 
 (defvar my-frame-term-plist nil)
-(setplist my-frame-term-plist nil)
+;; (setplist my-frame-term-plist nil)
 (defun my-execute-or-find-term ()
   ""
   (interactive)
-  (let* ((buf (get 'my-frame-term-plist (selected-frame))))
+  (let* ((buf (plist-get 'my-frame-term-plist (selected-frame))))
     (if (and buf
              (buffer-name buf))
         (switch-to-buffer buf)
-      (put 'my-frame-term-plist
-           (selected-frame)
-           (my-term)))))
+      (setq my-frame-ter-plist
+            (plist-put 'my-frame-term-plist
+                       (selected-frame)
+                       (my-term))))))
 
 (defun my-format-time-string (&optional time)
   ""
