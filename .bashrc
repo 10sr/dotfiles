@@ -44,25 +44,26 @@ export PS1="\$(prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
 export PAGER="less"
 export EDITOR="vi"
-export VISUAL=$EDITOR
-export LESS="-iRM"
+export VISUAL="$EDITOR"
+export LESS="-iRMX"
 # export LC_MESSAGES="C"
 # export LANG=ja_JP.UTF-8
 # export CDPATH=".:~"             # 使い方がよく分からない
-export GIT_PAGER=$PAGER
-export GIT_EDITOR=$EDITOR
+export GIT_PAGER="$PAGER"
+export GIT_EDITOR="$EDITOR"
 
 alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
 alias ll="ls -l"
 alias la="ls -A"
 alias lla="ls -Al"
+# alias less=""
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
 alias apt-get="sudo apt-get"
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
-alias ut="slogin t110414@un001.ecc.u-tokyo.ac.jp"
+alias ut="ssh t110414@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
@@ -399,7 +400,7 @@ echo "Japanese letters are 表示可能"
 
 safe-cmd diskinfo
 
-isdarwin || type xrandr >/dev/null 2>&1 && {
+isdarwin || test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
     xrandr | grep --color=never ^Screen
 }
 
