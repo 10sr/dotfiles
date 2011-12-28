@@ -400,10 +400,10 @@ echo "Japanese letters are 表示可能"
 
 safe-cmd diskinfo
 
-isdarwin || test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
+! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
     xrandr | grep --color=never ^Screen
 }
 
-iswindows || safe-cmd finger $USER
+! iswindows && safe-cmd finger $USER
 LANG=C safe-cmd id
 
