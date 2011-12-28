@@ -306,6 +306,7 @@ prompt_function(){              # used by PS1
     fi
     local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
     printf "${_MEMO}"
+    printf "$(test -f ~/.prompt.sh && bash ~/.prompt.sh)\n"
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
