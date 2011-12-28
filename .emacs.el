@@ -579,8 +579,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
-(when (or window-system
+(when (and window-system
           ;; (getenv "DESKTOP_SESSION")
+          (not (eq window-system 'mac))
           )
   (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal
         x-select-enable-primary nil)
@@ -1312,7 +1313,10 @@ otherwise, use `pack-default-extension' for pack."
                (not (get-buffer-window bf)))
       (kill-buffer bf))))
 
-(setq dired-listing-switches "-lhFG --time-style=long-iso")
+(if (eq window-system 'mac)
+    (setq dired-listing-switches "-lhFG")
+  (setq dired-listing-switches "-lhFG --time-style=long-iso")
+  )
 (define-minor-mode my-dired-display-all-mode
   ""
   :init-value nil

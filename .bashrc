@@ -399,9 +399,10 @@ echo "Japanese letters are 表示可能"
 
 safe-cmd diskinfo
 
-type xrandr >/dev/null 2>&1 && {
+isdarwin || type xrandr >/dev/null 2>&1 && {
     xrandr | grep --color=never ^Screen
 }
+
 iswindows || safe-cmd finger $USER
 LANG=C safe-cmd id
 
