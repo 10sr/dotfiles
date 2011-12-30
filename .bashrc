@@ -57,7 +57,7 @@ export LESS="-iRMX"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
-alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
+alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
 alias ll="ls -l"
 alias la="ls -A"
 alias lla="ls -Al"
@@ -77,6 +77,7 @@ alias psall="ps auxww"
 alias g=git
 alias q=exit
 alias pcalc="python -i -c 'from math import *' "
+alias _myreloadrc="test -f ~/.bashrc && source ~/.bashrc"
 # alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
