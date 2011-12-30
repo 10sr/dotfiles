@@ -611,13 +611,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'diff-mode-hook
           (lambda ()
             (view-mode 1)
-            ;; (set-face-foreground 'diff-file-header-face "black")
             (set-face-foreground 'diff-index-face "blue")
             (set-face-foreground 'diff-hunk-header-face "magenda")
             (set-face-foreground 'diff-removed-face "red")
-            ;; (set-face-background 'diff-removed-face "gray26")
             (set-face-foreground 'diff-added-face "blue")
-            ;;  (set-face-background 'diff-added-face "gray26")
             (set-face-foreground 'diff-changed-face "syan")
             ))
 
