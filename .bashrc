@@ -40,7 +40,7 @@ replace-cmd(){
 
 test -r /etc/bashrc && . /etc/bashrc
 
-export PS1="\$(prompt_function)\$ "
+export PS1="\$(__my_prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
 if iswindows
 then
@@ -271,7 +271,7 @@ replace-cmd date
 replace-cmd __my_svn_ps1
 
 
-prompt_function(){              # used by PS1
+__my_prompt_function(){              # used by PS1
     local lastreturn=$?
     if test "${TERM}" == dumb
     then
