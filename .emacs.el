@@ -778,7 +778,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (defun my-frame-buffer-add ()
   ""
   (setq my-frame-buffer-plist
-        (plist-put 'my-frame-buffer-plist
+        (plist-put my-frame-buffer-plist
                    (selected-frame)
                    (let ((lst (my-frame-buffer-get)))
                      (if lst
@@ -789,14 +789,14 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (defun my-frame-buffer-remove ()
   ""
   (setq my-frame-buffer-plist
-        (plist-put 'my-frame-buffer-plist
+        (plist-put my-frame-buffer-plist
                    (selected-frame)
                    (delq (current-buffer)
                          (my-frame-buffer-get)))))
 
 (defun my-frame-buffer-get (&optional frame)
   ""
-  (plist-get 'my-frame-buffer-plist
+  (plist-get my-frame-buffer-plist
              (or frame
                  (selected-frame))))
 
@@ -1730,12 +1730,12 @@ when SEC is nil, stop auto save if enabled."
 (defun my-execute-or-find-term ()
   ""
   (interactive)
-  (let* ((buf (plist-get 'my-frame-term-plist (selected-frame))))
+  (let* ((buf (plist-get my-frame-term-plist (selected-frame))))
     (if (and buf
              (buffer-name buf))
         (switch-to-buffer buf)
-      (setq my-frame-ter-plist
-            (plist-put 'my-frame-term-plist
+      (setq my-frame-term-plist
+            (plist-put my-frame-term-plist
                        (selected-frame)
                        (my-term))))))
 
