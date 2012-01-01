@@ -403,7 +403,10 @@ fi
 
 #######################
 
-echo "Japanese letters are 表示可能"
+_testjp(){
+    echo "Japanese letters are 表示可能"
+}
+_testjp
 
 safe-cmd diskinfo
 
