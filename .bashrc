@@ -48,7 +48,13 @@ then
 else
     export PAGER="less"
 fi
-export EDITOR="vi"
+
+if type vim >/dev/null 2>&1
+then
+    export EDITOR=vim
+else
+    export EDITOR=vi
+fi
 export VISUAL="$EDITOR"
 export LESS="-iRMX"
 # export LC_MESSAGES="C"
@@ -408,7 +414,7 @@ _testjp(){
 }
 _testjp
 
-test -f /etc/debian_version && echo Debian `cat /etc/debian_version`
+test -f /etc/issue.net && cat /etc/issue.net
 
 safe-cmd diskinfo
 
