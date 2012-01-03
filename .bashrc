@@ -408,6 +408,8 @@ _testjp(){
 }
 _testjp
 
+test -f /etc/debian_version && echo Debian `cat /etc/debian_version`
+
 safe-cmd diskinfo
 
 ! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
