@@ -414,6 +414,7 @@ _testjp(){
 }
 _testjp
 
+uname -a
 test -f /etc/issue.net && cat /etc/issue.net
 
 safe-cmd diskinfo
