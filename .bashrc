@@ -69,7 +69,7 @@ alias la="ls -A"
 alias lla="ls -Al"
 # alias less=""
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
-alias em="emacs -nw; echo emacs terminated."
+alias em="emacs -nw; echo Emacs terminated."
 # alias apt-get="sudo apt-get"
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
@@ -82,6 +82,8 @@ alias destroy="rm -rf"
 alias psall="ps auxww"
 alias g=git
 alias q=exit
+alias p="$PAGER"
+alias c=cat
 alias pcalc="python -i -c 'from math import *' "
 alias _myreloadrc="test -f ~/.bashrc && source ~/.bashrc"
 alias sudo="sudo "              # use aliases through sudo
@@ -190,12 +192,6 @@ setclip(){
             cat "$@" | xclip -i -f -selection "primary" | xclip -i -f -selection "clipboard"
         fi
     fi
-}
-p(){
-    "$@" | $PAGER
-}
-c(){
-    "$@" | cat
 }
 o(){
     if [ $# -eq 0 ]
