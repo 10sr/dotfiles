@@ -69,8 +69,8 @@ alias la="ls -A"
 alias lla="ls -Al"
 # alias less=""
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
-alias em="emacs -nw"
-alias apt-get="sudo apt-get"
+alias em="emacs -nw; echo emacs terminated."
+# alias apt-get="sudo apt-get"
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
@@ -84,6 +84,11 @@ alias g=git
 alias q=exit
 alias pcalc="python -i -c 'from math import *' "
 alias _myreloadrc="test -f ~/.bashrc && source ~/.bashrc"
+alias sudo="sudo "              # use aliases through sudo
+if isdarwin
+then alias upgrade="port selfupdate && port sync && port upgrade installed"
+else alias upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
+fi
 # alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
@@ -233,9 +238,6 @@ dl-my-init-files(){
             echo "${file}.old deleted."
         fi
     done
-}
-port-autosync(){
-    port selfupdate && port sync && port upgrade installed
 }
 _mygitconfig(){
     git config --global user.name '10sr'
