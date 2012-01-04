@@ -62,7 +62,7 @@
             (when (file-readable-p "~/.emacs")
               (load-file "~/.emacs"))))
 
-(cd ".")  ; when using windows use / instead of \ in default-directory
+(cd ".")  ; when using windows use / instead of \ in `default-directory'
 
 ;; locale
 (set-language-environment "Japanese")
@@ -1372,6 +1372,7 @@ otherwise, use `pack-default-extension' for pack."
             (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
             (define-key dired-mode-map "a" 'my-dired-display-all-mode)
             (define-key dired-mode-map "h" 'my-dired-display-all-mode)
+            (define-key dired-mode-map "/" 'isearch-forward)
             (substitute-key-definition 'dired-advertised-find-file 'my-dired-find-file dired-mode-map)
             (substitute-key-definition 'dired-up-directory 'my-dired-up-directory dired-mode-map)
             (define-key dired-mode-map (kbd "DEL") 'my-dired-up-directory)
