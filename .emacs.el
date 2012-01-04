@@ -62,6 +62,13 @@
             (when (file-readable-p "~/.emacs")
               (load-file "~/.emacs"))))
 
+(add-hook 'after-init-hook
+          (lambda ()
+            (message "init time: %d msec"
+                     (+ (* (- (nth 1 after-init-time) (nth 1 before-init-time)) 1000)
+                        (/ (- (nth 2 after-init-time) (nth 2 before-init-time)) 1000)))
+            (switch-to-buffer "*Messages*")))
+
 (cd ".")  ; when using windows use / instead of \ in `default-directory'
 
 ;; locale
@@ -1353,9 +1360,9 @@ otherwise, use `pack-default-extension' for pack."
 ;; (add-hook 'dired-after-readin-hook
 ;;           'my-replace-nasi-none)
 
-(add-hook 'after-init-hook
-          (lambda ()
-            (dired ".")))
+;; (add-hook 'after-init-hook
+;;           (lambda ()
+;;             (dired ".")))
 
 (add-hook 'dired-mode-hook
           (lambda ()
