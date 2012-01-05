@@ -182,6 +182,14 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // エクステ
 
+ext.add('put-aside-this-page', function (ev, arg) {
+    var n = gBrowser.mCurrentTab._tPos;
+    gBrowser.moveTabTo(gBrowser.mCurrentTab, 0);
+    if (n != 0) {
+        gBrowser.selectedTab = gBrowser.mTabs[n];
+    }
+}, 'put aside this page');
+
 ext.add('send-escape', function (ev, arg) {
     ev.target.dispatchEvent(key.stringToKeyEvent("ESC", true));
 }, 'escape');
@@ -677,14 +685,6 @@ key.setViewKey('T', function (ev, arg) {
 key.setViewKey('C-SPC', function (ev, arg) {
     MultipleTabService.toggleSelection(gBrowser.selectedTab);
 }, 'タブの選択をトグル');
-
-key.setViewKey('s', function (ev, arg) {
-    var n = gBrowser.mCurrentTab._tPos;
-    gBrowser.moveTabTo(gBrowser.mCurrentTab, 0);
-    if (n != 0) {
-        gBrowser.selectedTab = gBrowser.mTabs[n];
-    }
-}, 'このタブを保持する');
 
 key.setViewKey('U', function (ev, arg) {
     ext.exec("list-closed-tabs", arg, ev);
