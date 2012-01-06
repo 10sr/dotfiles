@@ -194,13 +194,35 @@ ext.add('send-escape', function (ev, arg) {
     ev.target.dispatchEvent(key.stringToKeyEvent("ESC", true));
 }, 'escape');
 
-
-
 ext.add("open-hatebu-comment", function (ev, arg) {
     if (window.loadURI) {
         loadURI("javascript:location.href='http://b.hatena.ne.jp/entry?mode=more&url='+escape(location.href);");
     }
 }, 'hatebu');
+
+ext.add("fullscreen-page",function (ev) {
+    getBrowser().selectedTab = getBrowser().addTab("http://home.tiscali.nl/annejan/swf/timeline.swf");
+    BrowserFullScreen();
+}, "fullscreen page");
+
+ext.add("focus-on-content", function(){
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+}, "forcus on content");
+
+ext.add("hide-sidebar", function(){
+    var sidebarBox = document.getElementById("sidebar-box");
+    if (!sidebarBox.hidden) {
+        toggleSidebar(sidebarBox.getAttribute("sidebarcommand"));
+    }
+}, "hide-sidebar");
+
+ext.add("close-and-next-tab", function (ev, arg) {
+    var n = gBrowser.mCurrentTab._tPos;
+    BrowserCloseTabOrWindow();
+    gBrowser.selectedTab = gBrowser.mTabs[n];
+}, "close and focus to next tab");
 
 /////////////////////////////////////
 // google itranslate
@@ -277,13 +299,6 @@ ext.add("restart-firefox-add-menu", function(){
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
     menu.appendChild(menuelm);
 }, "add restart firefox menu");
-
-//////////////////////////////////////
-//
-ext.add("fullscreen-page",function (ev) {
-    getBrowser().selectedTab = getBrowser().addTab("http://home.tiscali.nl/annejan/swf/timeline.swf");
-    BrowserFullScreen();
-}, "fullscreen page");
 
 //////////////////////////////////////
 // restart firefox
@@ -500,31 +515,6 @@ ext.add("echo-closed-tabs", function () {
 
 }, "List closed tabs");
 
-///////////////////////////////////////
-//
-ext.add("focus-on-content", function(){
-    document.getElementById("searchbar").focus();
-    document.commandDispatcher.advanceFocus();
-    document.commandDispatcher.advanceFocus();
-}, "forcus on content");
-
-ext.add("_focus-on-content", function(){
-    gBrowser.focus();
-    _content.focus();
-}, "focus on content");
-
-ext.add("hide-sidebar", function(){
-    var sidebarBox = document.getElementById("sidebar-box");
-    if (!sidebarBox.hidden) {
-        toggleSidebar(sidebarBox.getAttribute("sidebarcommand"));
-    }
-}, "hide-sidebar");
-
-ext.add("close-and-next-tab", function (ev, arg) {
-    var n = gBrowser.mCurrentTab._tPos;
-    BrowserCloseTabOrWindow();
-    gBrowser.selectedTab = gBrowser.mTabs[n];
-}, "close and focus to next tab")
 //}}%PRESERVE%
 // ========================================================================= //
 
@@ -548,6 +538,12 @@ hook.setHook('KeySnailInitialized', function () {
 });
 
 hook.setHook('KeyBoardQuit', function (aEvent) {
+    ext.exec("hide-sidebar");
+
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+
     command.closeFindBar();
     if (util.isCaretEnabled()) {
         command.resetMark(aEvent);
@@ -557,10 +553,6 @@ hook.setHook('KeyBoardQuit', function (aEvent) {
     key.generateKey(aEvent.originalTarget, KeyEvent.DOM_VK_ESCAPE, true);
 });
 hook.addToHook('KeyBoardQuit', function (aEvent) {
-    ext.exec("hide-sidebar");
-    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-    gBrowser.focus();
-    content.focus();
 });
 
 hook.setHook('Unload', function () {
