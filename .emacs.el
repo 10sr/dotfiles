@@ -433,8 +433,8 @@ emacs-major-version
 (setq auto-save-list-file-prefix (expand-file-name "~/.emacs.d/autosave/"))
 (setq delete-auto-save-files t)
 
-(setq delete-by-moving-to-trash t
-      trash-directory "~/.emacs.d/trash")
+;; (setq delete-by-moving-to-trash t
+;;       trash-directory "~/.emacs.d/trash")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
