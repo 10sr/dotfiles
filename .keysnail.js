@@ -121,7 +121,7 @@ local["^http://www.feedly.com/"] = [
 
 /////////////////////////////////////////
 //nicovideo用
-local["http://(www|tw|es|de|)\.nicovideo\.jp\/watch/*"] = [
+local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
     ["i", function (ev, arg) { ext.exec("nicoinfo", arg); }],
     ["p", function (ev, arg) { ext.exec("nicopause", arg); }],
     ["o", function (ev, arg) { ext.exec("nicommentvisible", arg); }],
