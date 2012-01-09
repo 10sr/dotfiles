@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 if [ -n "${DESKTOP_SESSION}" ]; then
     xmodmap -e 'keycode 135 = Alt_R Meta_R' # menu key as alt
     xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
@@ -10,6 +10,10 @@ if [ -n "${DESKTOP_SESSION}" ]; then
     synclient MaxTapTime=0 
     synclient MaxSpeed=0.4
     synclient MinSpeed=0.2
+
+    test -f "$HOME/.fehbg" &&
+    type feh >/dev/null 2>&1 &&
+    sh "$HOME/.fehbg"
 fi
 
 export LC_TIME=C

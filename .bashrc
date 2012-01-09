@@ -40,15 +40,21 @@ replace-cmd(){
 
 test -r /etc/bashrc && . /etc/bashrc
 
-export PS1="\$(prompt_function)\$ "
+export PS1="\$(__my_prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
 if iswindows
 then
-    export PAGER="tr -d '\r' | less"
+    export PAGER="tr -d \\r | less"
 else
     export PAGER="less"
 fi
-export EDITOR="vi"
+
+if type vim >/dev/null 2>&1
+then
+    export EDITOR=vim
+else
+    export EDITOR=vi
+fi
 export VISUAL="$EDITOR"
 export LESS="-iRMX"
 # export LC_MESSAGES="C"
@@ -57,14 +63,14 @@ export LESS="-iRMX"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
-alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
+alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
 alias ll="ls -l"
 alias la="ls -A"
 alias lla="ls -Al"
 # alias less=""
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
-alias apt-get="sudo apt-get"
+# alias apt-get="sudo apt-get"
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
@@ -76,7 +82,15 @@ alias destroy="rm -rf"
 alias psall="ps auxww"
 alias g=git
 alias q=exit
+alias p="$PAGER"
+alias c=cat
 alias pcalc="python -i -c 'from math import *' "
+alias _myreloadrc="test -f ~/.bashrc && source ~/.bashrc"
+alias sudo="sudo "              # use aliases through sudo
+if isdarwin
+then alias upgrade="port selfupdate && port sync && port upgrade installed"
+else alias upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
+fi
 # alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
@@ -179,12 +193,6 @@ setclip(){
         fi
     fi
 }
-p(){
-    "$@" | $PAGER
-}
-c(){
-    "$@" | cat
-}
 o(){
     if [ $# -eq 0 ]
     then
@@ -227,9 +235,6 @@ dl-my-init-files(){
         fi
     done
 }
-port-autosync(){
-    port selfupdate && port sync && port upgrade installed
-}
 _mygitconfig(){
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
@@ -270,7 +275,7 @@ replace-cmd date
 replace-cmd __my_svn_ps1
 
 
-prompt_function(){              # used by PS1
+__my_prompt_function(){              # used by PS1
     local lastreturn=$?
     if test "${TERM}" == dumb
     then
@@ -306,6 +311,7 @@ prompt_function(){              # used by PS1
     fi
     local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
     printf "${_MEMO}"
+    printf "$(test -f ~/.prompt.sh && bash ~/.prompt.sh)\n"
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
@@ -401,13 +407,20 @@ fi
 
 #######################
 
-echo "Japanese letters are 表示可能"
+_testjp(){
+    echo "Japanese letters are 表示可能"
+}
+_testjp
+
+uname -a
+test -f /etc/issue.net && cat /etc/issue.net
 
 safe-cmd diskinfo
 
-test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
+! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
     xrandr | grep --color=never ^Screen
 }
-iswindows || safe-cmd finger $USER
+
+! iswindows && safe-cmd finger $USER
 LANG=C safe-cmd id
 

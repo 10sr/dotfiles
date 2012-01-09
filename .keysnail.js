@@ -182,17 +182,47 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // エクステ
 
+ext.add('put-aside-this-page', function (ev, arg) {
+    var n = gBrowser.mCurrentTab._tPos;
+    gBrowser.moveTabTo(gBrowser.mCurrentTab, 0);
+    if (n != 0) {
+        gBrowser.selectedTab = gBrowser.mTabs[n];
+    }
+}, 'put aside this page');
+
 ext.add('send-escape', function (ev, arg) {
     ev.target.dispatchEvent(key.stringToKeyEvent("ESC", true));
 }, 'escape');
-
-
 
 ext.add("open-hatebu-comment", function (ev, arg) {
     if (window.loadURI) {
         loadURI("javascript:location.href='http://b.hatena.ne.jp/entry?mode=more&url='+escape(location.href);");
     }
 }, 'hatebu');
+
+ext.add("fullscreen-page",function (ev) {
+    getBrowser().selectedTab = getBrowser().addTab("http://home.tiscali.nl/annejan/swf/timeline.swf");
+    BrowserFullScreen();
+}, "fullscreen page");
+
+ext.add("focus-on-content", function(){
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+}, "forcus on content");
+
+ext.add("hide-sidebar", function(){
+    var sidebarBox = document.getElementById("sidebar-box");
+    if (!sidebarBox.hidden) {
+        toggleSidebar(sidebarBox.getAttribute("sidebarcommand"));
+    }
+}, "hide-sidebar");
+
+ext.add("close-and-next-tab", function (ev, arg) {
+    var n = gBrowser.mCurrentTab._tPos;
+    BrowserCloseTabOrWindow();
+    gBrowser.selectedTab = gBrowser.mTabs[n];
+}, "close and focus to next tab");
 
 /////////////////////////////////////
 // google itranslate
@@ -269,13 +299,6 @@ ext.add("restart-firefox-add-menu", function(){
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
     menu.appendChild(menuelm);
 }, "add restart firefox menu");
-
-//////////////////////////////////////
-//
-ext.add("fullscreen-page",function (ev) {
-    getBrowser().selectedTab = getBrowser().addTab("http://home.tiscali.nl/annejan/swf/timeline.swf");
-    BrowserFullScreen();
-}, "fullscreen page");
 
 //////////////////////////////////////
 // restart firefox
@@ -492,27 +515,6 @@ ext.add("echo-closed-tabs", function () {
 
 }, "List closed tabs");
 
-///////////////////////////////////////
-//
-ext.add("focus-on-content", function(){
-    document.getElementById("searchbar").focus();
-    document.commandDispatcher.advanceFocus();
-    document.commandDispatcher.advanceFocus();
-}, "forcus on content");
-
-ext.add("_focus-on-content", function(){
-    gBrowser.focus();
-    _content.focus();
-}, "focus on content");
-
-ext.add("hide-sidebar", function(){
-    var sidebarBox = document.getElementById("sidebar-box");
-    if (!sidebarBox.hidden) {
-        toggleSidebar(sidebarBox.getAttribute("sidebarcommand"));
-    }
-}, "hide-sidebar");
-
-
 //}}%PRESERVE%
 // ========================================================================= //
 
@@ -536,6 +538,12 @@ hook.setHook('KeySnailInitialized', function () {
 });
 
 hook.setHook('KeyBoardQuit', function (aEvent) {
+    ext.exec("hide-sidebar");
+
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+
     command.closeFindBar();
     if (util.isCaretEnabled()) {
         command.resetMark(aEvent);
@@ -545,10 +553,6 @@ hook.setHook('KeyBoardQuit', function (aEvent) {
     key.generateKey(aEvent.originalTarget, KeyEvent.DOM_VK_ESCAPE, true);
 });
 hook.addToHook('KeyBoardQuit', function (aEvent) {
-    ext.exec("hide-sidebar");
-    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-    gBrowser.focus();
-    content.focus();
 });
 
 hook.setHook('Unload', function () {
@@ -596,7 +600,7 @@ key.setGlobalKey('M-:', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
 
-key.setViewKey('0', function (ev, arg) {
+key.setViewKey('', function (ev, arg) {
     var n = gBrowser.mCurrentTab._tPos;
     BrowserCloseTabOrWindow();
     gBrowser.selectedTab = gBrowser.mTabs[n];
@@ -674,14 +678,6 @@ key.setViewKey('C-SPC', function (ev, arg) {
     MultipleTabService.toggleSelection(gBrowser.selectedTab);
 }, 'タブの選択をトグル');
 
-key.setViewKey('s', function (ev, arg) {
-    var n = gBrowser.mCurrentTab._tPos;
-    gBrowser.moveTabTo(gBrowser.mCurrentTab, 0);
-    if (n != 0) {
-        gBrowser.selectedTab = gBrowser.mTabs[n];
-    }
-}, 'このタブを保持する');
-
 key.setViewKey('U', function (ev, arg) {
     ext.exec("list-closed-tabs", arg, ev);
 }, 'List closed tabs', true);
@@ -752,10 +748,6 @@ key.setViewKey('<right>', function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
-key.setViewKey('C-w', function (ev) {
-    command.copyRegion(ev);
-}, '選択中のテキストをコピー');
-
 key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
     return;
 }, 'ignore');
@@ -769,10 +761,14 @@ key.setViewKey('H', function (ev, arg) {
     ext.exec("open-hatebu-comment", arg, ev);
 }, 'hatebu', true);
 
+key.setViewKey('l', function (ev) {
+    command.focusToById("urlbar");
+}, 'ロケーションバーへフォーカス', true);
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
 
-key.setViewKey('l', function (ev) {
-    command.focusToById("urlbar");
-}, 'ロケーションバーへフォーカス', true);
+key.setViewKey('0', function (ev) {
+    BrowserCloseTabOrWindow();
+}, 'タブ / ウィンドウを閉じる');

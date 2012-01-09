@@ -62,7 +62,16 @@
             (when (file-readable-p "~/.emacs")
               (load-file "~/.emacs"))))
 
-(cd ".")  ; when using windows use / instead of \ in default-directory
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; (message "init time: %d msec"
+            ;;          (+ (* (- (nth 1 after-init-time) (nth 1 before-init-time)) 1000)
+            ;;             (/ (- (nth 2 after-init-time) (nth 2 before-init-time)) 1000)))
+            (message (emacs-init-time))
+            (switch-to-buffer "*Messages*")
+            ))
+
+(cd ".")  ; when using windows use / instead of \ in `default-directory'
 
 ;; locale
 (set-language-environment "Japanese")
@@ -424,8 +433,8 @@ emacs-major-version
 (setq auto-save-list-file-prefix (expand-file-name "~/.emacs.d/autosave/"))
 (setq delete-auto-save-files t)
 
-(setq delete-by-moving-to-trash t
-      trash-directory "~/.emacs.d/trash")
+;; (setq delete-by-moving-to-trash t
+;;       trash-directory "~/.emacs.d/trash")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
@@ -579,8 +588,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
-(when (or window-system
+(when (and window-system
           ;; (getenv "DESKTOP_SESSION")
+          (not (eq window-system 'mac))
           )
   (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal
         x-select-enable-primary nil)
@@ -610,13 +620,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'diff-mode-hook
           (lambda ()
             (view-mode 1)
-            ;; (set-face-foreground 'diff-file-header-face "black")
             (set-face-foreground 'diff-index-face "blue")
             (set-face-foreground 'diff-hunk-header-face "magenda")
             (set-face-foreground 'diff-removed-face "red")
-            ;; (set-face-background 'diff-removed-face "gray26")
             (set-face-foreground 'diff-added-face "blue")
-            ;;  (set-face-background 'diff-added-face "gray26")
             (set-face-foreground 'diff-changed-face "syan")
             ))
 
@@ -717,7 +724,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (add-hook (kill-local-variable 'before-save-hook)
                       'js2-before-save)))
 
-(and (require 'zone nil t)
+(and nil
+     (require 'zone nil t)
      (not (eq system-type 'windows-nt))
      ;; (zone-when-idle 180)
      (run-with-idle-timer 180 t (lambda ()
@@ -769,31 +777,37 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;           (lambda (frame)
 ;;             (recentf-open-files)))
 
+;; (defvar aaa nil)
+;; (plist-get aaa 'abc)
+;; (setq aaa (plist-put aaa 'abc 'efg))
+
 (defvar my-frame-buffer-plist nil)
-(setplist my-frame-buffer-plist nil)
+;; (setplist my-frame-buffer-plist nil)
 
 (defun my-frame-buffer-add ()
   ""
-  (put 'my-frame-buffer-plist
-       (selected-frame)
-       (let ((lst (my-frame-buffer-get)))
-         (if lst
-             (add-to-list 'lst
-                          (current-buffer))
-           (list (current-buffer))))))
+  (setq my-frame-buffer-plist
+        (plist-put my-frame-buffer-plist
+                   (selected-frame)
+                   (let ((lst (my-frame-buffer-get)))
+                     (if lst
+                         (add-to-list 'lst
+                                      (current-buffer))
+                       (list (current-buffer)))))))
 
 (defun my-frame-buffer-remove ()
   ""
-  (put 'my-frame-buffer-plist
-       (selected-frame)
-       (delq (current-buffer)
-             (my-frame-buffer-get))))
+  (setq my-frame-buffer-plist
+        (plist-put my-frame-buffer-plist
+                   (selected-frame)
+                   (delq (current-buffer)
+                         (my-frame-buffer-get)))))
 
 (defun my-frame-buffer-get (&optional frame)
   ""
-  (get 'my-frame-buffer-plist
-       (or frame
-           (selected-frame))))
+  (plist-get my-frame-buffer-plist
+             (or frame
+                 (selected-frame))))
 
 (defun my-frame-buffer-get2 (&optional frame)
   ""
@@ -1316,7 +1330,10 @@ otherwise, use `pack-default-extension' for pack."
                (not (get-buffer-window bf)))
       (kill-buffer bf))))
 
-(setq dired-listing-switches "-lhFG --time-style=long-iso")
+(if (eq window-system 'mac)
+    (setq dired-listing-switches "-lhFG")
+  (setq dired-listing-switches "-lhFG --time-style=long-iso")
+  )
 (define-minor-mode my-dired-display-all-mode
   ""
   :init-value nil
@@ -1345,9 +1362,9 @@ otherwise, use `pack-default-extension' for pack."
 ;; (add-hook 'dired-after-readin-hook
 ;;           'my-replace-nasi-none)
 
-(add-hook 'after-init-hook
-          (lambda ()
-            (dired ".")))
+;; (add-hook 'after-init-hook
+;;           (lambda ()
+;;             (dired ".")))
 
 (add-hook 'dired-mode-hook
           (lambda ()
@@ -1364,6 +1381,7 @@ otherwise, use `pack-default-extension' for pack."
             (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
             (define-key dired-mode-map "a" 'my-dired-display-all-mode)
             (define-key dired-mode-map "h" 'my-dired-display-all-mode)
+            (define-key dired-mode-map "/" 'isearch-forward)
             (substitute-key-definition 'dired-advertised-find-file 'my-dired-find-file dired-mode-map)
             (substitute-key-definition 'dired-up-directory 'my-dired-up-directory dired-mode-map)
             (define-key dired-mode-map (kbd "DEL") 'my-dired-up-directory)
@@ -1718,17 +1736,18 @@ when SEC is nil, stop auto save if enabled."
       (ansi-term "/bin/bash"))))
 
 (defvar my-frame-term-plist nil)
-(setplist my-frame-term-plist nil)
+;; (setplist my-frame-term-plist nil)
 (defun my-execute-or-find-term ()
   ""
   (interactive)
-  (let* ((buf (get 'my-frame-term-plist (selected-frame))))
+  (let* ((buf (plist-get my-frame-term-plist (selected-frame))))
     (if (and buf
              (buffer-name buf))
         (switch-to-buffer buf)
-      (put 'my-frame-term-plist
-           (selected-frame)
-           (my-term)))))
+      (setq my-frame-term-plist
+            (plist-put my-frame-term-plist
+                       (selected-frame)
+                       (my-term))))))
 
 (defun my-format-time-string (&optional time)
   ""
