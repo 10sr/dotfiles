@@ -182,6 +182,31 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // エクステ
 
+ext.add('auto-install-plugins', function(ev, arg){
+    var urls = [
+        'https://github.com/mooz/keysnail/raw/master/plugins/yet-another-twitter-client-keysnail.ks.js',
+        'https://github.com/mooz/keysnail/raw/master/plugins/site-local-keymap.ks.js',
+        'https://github.com/azu/KeySnail-Plugins/raw/master/JSReference/js-referrence.ks.js',
+        'https://github.com/tkosaka/keysnail-plugin/raw/master/nicontroller.ks.js',
+        'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
+    ];
+
+    function inst(a){
+        if(a.length == 0){
+            display.showPopup("auto-install-plugins", "All installation finished.");
+        }else{
+            var url = a.shift();
+            var path = userscript.pluginDir + userscript.directoryDelimiter + url.match(/[^/]+$/)[0];
+            if(plugins.context[path] === undefined){
+                userscript.installPluginFromURL(url, function(){inst(a);});
+            }else{
+                inst(a);
+            }
+        }
+    }
+    inst(urls);
+}, 'Install plugins automatically if not installed yet.');
+
 ext.add('put-aside-this-page', function (ev, arg) {
     var n = gBrowser.mCurrentTab._tPos;
     gBrowser.moveTabTo(gBrowser.mCurrentTab, 0);
