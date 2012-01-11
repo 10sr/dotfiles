@@ -259,6 +259,12 @@ _mygitconfig(){
     fi
 }
 
+if type _git >/dev/null 2>&1    # enable programmable completion when alias g=git
+then
+    complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
+	|| complete -o default -o nospace -F _git g
+fi
+
 __my_parse_svn_branch() {
     local LANG=C
     local svn_url=$(svn info 2>/dev/null | sed -ne 's#^URL: ##p')
