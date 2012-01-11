@@ -112,9 +112,10 @@ local["^http://www.feedly.com/"] = [
     ['S', null],
     ['s', null],
     ['?', null],
-    ['l', function (ev, arg) {window.content.location.href = "http://www.feedly.com/home#latest";}],
     ['r', null],
-    ['x', function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("g", true));}],
+    ['g', null],
+    // ['x', function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("g", true));}],
+    ['l', function (ev, arg) {window.content.location.href = "http://www.feedly.com/home#latest";}],
     [['t', 'p'], function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("t", true));}],
     [['t', 'w'], function (ev, arg) {ext.exec("twitter-client-tweet", arg, ev);}],
 ];
@@ -187,6 +188,7 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://github.com/mooz/keysnail/raw/master/plugins/yet-another-twitter-client-keysnail.ks.js',
         'https://github.com/mooz/keysnail/raw/master/plugins/site-local-keymap.ks.js',
         'https://github.com/azu/KeySnail-Plugins/raw/master/JSReference/js-referrence.ks.js',
+        'https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js',
         'https://github.com/tkosaka/keysnail-plugin/raw/master/nicontroller.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
     ];
@@ -382,6 +384,7 @@ ext.add("copy-url", function () {
 // 評価しちゃうっぽい とりあえずこんな感じで
 ext.add("keysnail-setting-menu",function(){
     var settingmenulist = [["keysnail setting dialogue", function(){return function(){KeySnail.openPreference();};}],
+                           ["keysnail plugin manager", function(){return function(){userscript.openPluginManager();}}],
                            ["firefox addon manager", function(){return function(){BrowserOpenAddonsMgr();};}],
                            ["reload .keysnail.js", function(){return function() {userscript.reload();};}],
                            // ["check for plugins update", function(){return function(){ext.exec("check-for-plugins-update");};}],
