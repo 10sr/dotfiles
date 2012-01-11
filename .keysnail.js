@@ -567,11 +567,9 @@ hook.setHook('KeySnailInitialized', function () {
 
 hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
-
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
     content.focus();
-
     command.closeFindBar();
     if (util.isCaretEnabled()) {
         command.resetMark(aEvent);
@@ -580,8 +578,7 @@ hook.setHook('KeyBoardQuit', function (aEvent) {
     }
     key.generateKey(aEvent.originalTarget, KeyEvent.DOM_VK_ESCAPE, true);
 });
-hook.addToHook('KeyBoardQuit', function (aEvent) {
-});
+hook.addToHook('KeyBoardQuit', function (aEvent) {});
 
 hook.setHook('Unload', function () {
     util.getBrowserWindows().some(function (win) {
@@ -627,12 +624,6 @@ key.setGlobalKey('C-<down>', function () {
 key.setGlobalKey('M-:', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
-
-key.setViewKey('', function (ev, arg) {
-    var n = gBrowser.mCurrentTab._tPos;
-    BrowserCloseTabOrWindow();
-    gBrowser.selectedTab = gBrowser.mTabs[n];
-}, '閉じて次のタブ');
 
 key.setViewKey('x', function (aEvent, aArg) {
     ext.select(aArg, aEvent);
@@ -760,10 +751,6 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
-key.setViewKey('C', function (ev, arg) {
-    ext.exec("copy-url", arg, ev);
-}, '選択タブと現在のタブを閉じる', true);
-
 key.setViewKey('I', function (ev, arg) {
     ext.exec("instapaper-add-this-page-and-close", arg, ev);
 }, 'instapaper add page', true);
@@ -793,10 +780,14 @@ key.setViewKey('l', function (ev) {
     command.focusToById("urlbar");
 }, 'ロケーションバーへフォーカス', true);
 
+key.setViewKey('0', function (ev) {
+    BrowserCloseTabOrWindow();
+}, 'タブ / ウィンドウを閉じる');
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
 
-key.setViewKey('0', function (ev) {
-    BrowserCloseTabOrWindow();
-}, 'タブ / ウィンドウを閉じる');
+key.setViewKey('C', function (ev, arg) {
+    ext.exec('linksnail', arg, ev);
+}, 'LinkSnail', true);
