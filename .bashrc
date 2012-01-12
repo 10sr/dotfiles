@@ -427,6 +427,6 @@ safe-cmd diskinfo
     xrandr | grep --color=never ^Screen
 }
 
-! iswindows && safe-cmd finger $USER
+iswindows || safe-cmd finger $USER
 LANG=C safe-cmd id
 
