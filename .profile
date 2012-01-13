@@ -14,6 +14,8 @@ if [ -n "${DESKTOP_SESSION}" ]; then
     test -f "$HOME/.fehbg" &&
     type feh >/dev/null 2>&1 &&
     sh "$HOME/.fehbg"
+else
+    export LANG=C
 fi
 
 export LC_TIME=C
