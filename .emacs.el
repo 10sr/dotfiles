@@ -9,15 +9,8 @@
 (unless (file-directory-p (expand-file-name "~/.emacs.d/lisp"))
   (make-directory (expand-file-name "~/.emacs.d/lisp")))
 (add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'load-path "~/dbx/Public/myelisp")
 
 (require 'cl)
-
-(defvar my-prefix-map
-  (make-sparse-keymap))
-(global-set-key (kbd "C-z") my-prefix-map)
-(define-key my-prefix-map (kbd "C-q") 'quoted-insert)
-(define-key my-prefix-map (kbd "C-z") 'suspend-frame)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; start and quit
@@ -78,6 +71,13 @@
 (set-default-coding-systems 'utf-8-unix)
 (prefer-coding-system 'utf-8-unix)
 (setq system-time-locale "C")
+
+(defvar my-prefix-map
+  (make-sparse-keymap))
+(define-key ctl-x-map (kbd "C-x") my-prefix-map)
+(define-key my-prefix-map (kbd "C-q") 'quoted-insert)
+(define-key my-prefix-map (kbd "C-z") 'suspend-frame)
+
 
 ;; display
 (setq redisplay-dont-pause t)
@@ -170,9 +170,9 @@
 (global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
 (global-set-key (kbd "C-<left>") 'scroll-down)
 (global-set-key (kbd "C-<right>") 'scroll-up)
-(global-set-key (kbd "C-x M-x") 'execute-extended-command)
-(global-set-key (kbd "C-x M-:") 'eval-expression)
 (global-set-key (kbd "<select>") 'previous-line-mark)
+(define-key ctl-x-map (kbd "M-x") 'execute-extended-command)
+(define-key ctl-x-map (kbd "M-:") 'eval-expression)
 
 ;; C-h and DEL
 (global-set-key (kbd "C-h") (kbd "DEL"))
@@ -238,7 +238,14 @@
 (setq show-paren-style 'mixed)
 
 (transient-mark-mode 1)
+
 (global-font-lock-mode 1)
+(setq font-lock-global-modes
+      '(not
+        help-mode
+        eshell-mode
+        term-mode
+        Man-mode))
 
 (standard-display-ascii ?\n "$\n")
 (copy-face 'default 'my-eol-face)
@@ -289,13 +296,6 @@
 (setq hl-line-global-modes
       '(not
         term-mode))
-
-(setq font-lock-global-modes
-      '(not
-        help-mode
-        eshell-mode
-        term-mode
-        Man-mode))
 
 (add-hook 'font-lock-mode-hook
           (lambda ()
@@ -410,6 +410,7 @@ emacs-major-version
 (setq auto-save-list-file-prefix (expand-file-name "~/.emacs.d/autosave/"))
 (setq delete-auto-save-files t)
 
+(add-to-list 'completion-ignored-extensions ".bak")
 ;; (setq delete-by-moving-to-trash t
 ;;       trash-directory "~/.emacs.d/trash")
 
@@ -487,8 +488,8 @@ if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
 
 ;; (define-key my-prefix-map (kbd "C-h") help-map)
 (global-set-key (kbd "C-\\") help-map)
-(global-set-key (kbd "C-x DEL") help-map)
-(global-set-key (kbd "C-x C-h") help-map)
+(define-key ctl-x-map (kbd "DEL") help-map)
+(define-key ctl-x-map (kbd "C-h") help-map)
 (define-key help-map "a" 'apropos)
 
 ;; compose window
