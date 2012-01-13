@@ -75,8 +75,8 @@
 
 ;; locale
 (set-language-environment "Japanese")
-(set-default-coding-systems 'utf-8)
-(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8-unix)
+(prefer-coding-system 'utf-8-unix)
 (setq system-time-locale "C")
 
 ;; display
@@ -308,29 +308,6 @@
 
 ;; fonts
 
-;; (defun my-w32-set-font ()
-;;   "set font for windows."
-;;   ((lambda (&rest lists)
-;;      (let ((dir "c:/WINDOWS/Fonts")
-;;            lfs)
-;;        (while lists
-;;          (setq lfs (pop lists))
-;;          (when (directory-files dir nil (car lfs))
-;;            (my-set-ascii-and-jp-font-with-size (cdr lfs))
-;;            (setq lists nil)))))
-;;    '("^DejaVuSansMono" "dejavu sans mono" 80 "ms gothic" 12)
-;;    '("^inconsolata" "inconsolata" 100 "ms gothic" 12)))
-
-;; (defun my-w32-set-available-ascii-and-jp-font-with-size (&rest lists)
-;;   ""
-;;   (let ((dir "c:/WINDOWS/Fonts")
-;;         lfs)
-;;     (while lists
-;;       (setq lfs (pop lists))
-;;       (when (directory-files dir nil (car lfs))
-;;         (my-set-ascii-and-jp-font-with-size (cdr lfs))
-;;         (setq lists nil)))))
-
 (defun my-set-ascii-and-jp-font-with-size (list)
   ""
   (set-face-attribute 'default nil
@@ -365,9 +342,9 @@ emacs-major-version
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode-line
 
-(setq eol-mnemonic-dos "CL")
-(setq eol-mnemonic-mac "CR")
-(setq eol-mnemonic-unix "LF")
+(setq eol-mnemonic-dos "crlf")
+(setq eol-mnemonic-mac "cr")
+(setq eol-mnemonic-unix "lf")
 
 (which-function-mode 0)
 
