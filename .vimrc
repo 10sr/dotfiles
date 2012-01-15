@@ -29,6 +29,7 @@ set notitle " do not display editting file on titlebar
 set incsearch
 set wrapscan "折り返し検索
 set showmatch "括弧を閉じた時、対になる括弧を一瞬ハイライトする
+set wildmode=longest,list,full
 set ruler "行番号、カーソル位置を表示
 set nonumber " do not show line number at left side
 set laststatus=2 "ステータスラインを常に表示
