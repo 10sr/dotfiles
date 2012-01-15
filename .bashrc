@@ -1,7 +1,6 @@
 #!/bin/bash
-# 外部ファイルの読み込み
-# test -r ~/filepath && . ~/filepath
-# ln SRC DST
+
+test -r /etc/bashrc && . /etc/bashrc
 
 ##########################
 # system type
@@ -31,14 +30,15 @@ else
 fi
 
 ##########################################
+null(){
+    "$@" >/dev/null 2>&1
+}
 safe-cmd(){
     type $1 >/dev/null 2>&1 && "$@"
 }
 replace-cmd(){
-    type $1 1>/dev/null || alias $1=:
+    type $1 1>/dev/null || alias $1=true
 }
-
-test -r /etc/bashrc && . /etc/bashrc
 
 export PS1="\$(__my_prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
@@ -85,11 +85,14 @@ alias q=exit
 alias p="$PAGER"
 alias c=cat
 alias pcalc="python -i -c 'from math import *' "
-alias _myreloadrc="test -f ~/.bashrc && source ~/.bashrc"
+alias reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 alias sudo="sudo "              # use aliases through sudo
+alias mytime="date +%Y%m%d-%H%M%S"
 if isdarwin
-then alias upgrade="port selfupdate && port sync && port upgrade installed"
-else alias upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
+then
+    alias upgrade="port selfupdate && port sync && port upgrade installed"
+else
+    alias upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
 fi
 # alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
@@ -216,7 +219,7 @@ convmv-sjis2utf8-test(){
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
-dl-my-init-files(){
+_my-dl-init-files(){
     for file in .bashrc .vimrc .emacs
     do
         local flag=0
@@ -259,7 +262,7 @@ _mygitconfig(){
     fi
 }
 
-if type _git >/dev/null 2>&1    # enable programmable completion when alias g=git
+if type _git >/dev/null 2>&1    # enable programmable completion of g
 then
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
 	|| complete -o default -o nospace -F _git g
@@ -276,10 +279,6 @@ __my_svn_ps1(){
     local svn_branch=$(__my_parse_svn_branch)
     test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
 }
-
-replace-cmd date
-replace-cmd __my_svn_ps1
-
 
 __my_prompt_function(){              # used by PS1
     local lastreturn=$?
