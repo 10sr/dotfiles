@@ -42,9 +42,9 @@ replace-cmd(){
 
 export PS1="\$(__my_prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
-if iswindows
+if false # iswindows
 then
-    export PAGER="tr -d \\r | less"
+    export PAGER='tr -d \\r | less'
 else
     export PAGER="less"
 fi
