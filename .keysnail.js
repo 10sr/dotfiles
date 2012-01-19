@@ -191,6 +191,7 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js',
         'https://github.com/tkosaka/keysnail-plugin/raw/master/nicontroller.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
+        'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
     ];
 
     function inst(a){
@@ -417,7 +418,7 @@ ext.add("multiple-tab-handler-close-selected-and-current-tabs", function () {
 }, '選択タブと現在のタブを閉じる');
 
 ext.add("if-mth-exist", function() {
-    if (MultipleTabService != undefined) display.echoStatusBar("true");
+    if (MultipleTabService === undefined) display.echoStatusBar("mth not exist.");
 },'if mth exist');
 
 ////////////////////////
@@ -484,33 +485,6 @@ ext.add("query-then-engine", function () {
                    initialInput : content.document.getSelection() || "",
                   });
 }, "enter search word and then select engine");
-
-///////////////////////
-//diggler
-ext.add("dig-url", function () {
-    var url = window.content.location.href;
-    var nsurl = [];
-    var pname = "";
-    var ssurl = [];
-    var durl = [];
-    nsurl = url.split("#");
-    var pname = nsurl[1];
-    ssurl = nsurl[0].split("/");
-    durl[0] = ssurl[0] + "//" + ssurl[2];
-    ssurl.splice(0,3);
-    for (var i = 0; i < ssurl.length; i++){
-        var durlsaved = durl[0];
-        durl.unshift(durlsaved + "/" + ssurl[i]);
-    };
-    if (pname) {
-        var durlfull = durl[0] + "#"+ pname;
-        durl.unshift(durlfull);
-    };
-    prompt.selector({ message : "dig " + url,
-                      collection : durl,
-                      callback : function (i) { window.content.location.href = durl[i]; },
-                    });
-},"keysnail diggler ");
 
 /////////////////////////////////////
 // 閉じたタブリスト
@@ -625,6 +599,10 @@ key.setGlobalKey('M-:', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
 
+key.setViewKey('D', function (ev, arg) {
+    ext.exec("dig-url", arg, ev);
+}, 'dig url with selector', true);
+
 key.setViewKey('x', function (aEvent, aArg) {
     ext.select(aArg, aEvent);
 }, 'エクステ一覧');
@@ -735,10 +713,6 @@ key.setViewKey('q', function (ev, arg) {
     ext.exec("query-then-engine", arg, ev);
 }, 'enter search word and then select engine', true);
 
-key.setViewKey('D', function (ev, arg) {
-    ext.exec("dig-url", arg, ev);
-}, 'keysnail diggler ', true);
-
 key.setViewKey('/', function () {
     command.iSearchForward();
 }, 'インクリメンタル検索', true);
@@ -784,10 +758,10 @@ key.setViewKey('0', function (ev) {
     BrowserCloseTabOrWindow();
 }, 'タブ / ウィンドウを閉じる');
 
+key.setViewKey('C', function (ev, arg) {
+    ext.exec("linksnail", arg, ev);
+}, 'LinkSnail', true);
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
-
-key.setViewKey('C', function (ev, arg) {
-    ext.exec('linksnail', arg, ev);
-}, 'LinkSnail', true);
