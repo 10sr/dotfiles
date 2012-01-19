@@ -87,6 +87,7 @@ alias c=cat
 alias pcalc="python -i -c 'from math import *' "
 alias reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 alias sudo="sudo "              # use aliases through sudo
+alias e3=e3em
 alias mytime="date +%Y%m%d-%H%M%S"
 if isdarwin
 then
@@ -253,7 +254,8 @@ _mygitconfig(){
     git config --global alias.cim "commit --verbose -m"
     git config --global alias.di "diff"
     git config --global alias.me "merge --no-ff --stat -v"
-    git config --global alias.ls "ls-files"
+    git config --global alias.ls "ls-files -v --full-name"
+    git config --global alias.sl "!sl"
     # git config --global alias.my-ls "ls-files | xargs ls"
     # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
