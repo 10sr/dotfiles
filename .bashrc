@@ -64,9 +64,9 @@ export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
 alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
-alias ll="ls -l"
-alias la="ls -A"
-alias lla="ls -Al"
+# alias ll="ls -l"
+# alias la="ls -A"
+# alias lla="ls -Al"
 # alias less=""
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
