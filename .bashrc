@@ -89,6 +89,7 @@ alias reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 alias sudo="sudo "              # use aliases through sudo
 alias e3=e3em
 alias mytime="date +%Y%m%d-%H%M%S"
+alias sh="ENV=$HOME/.shrc sh"
 if isdarwin
 then
     alias upgrade="port selfupdate && port sync && port upgrade installed"
