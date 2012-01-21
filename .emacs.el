@@ -108,7 +108,7 @@
 (setq w32-apps-modifier 'meta)
 
 ;; http://www.emacswiki.org/emacs/ChangingCursorDynamically
-;; bufferの保存はなんで必要なんだろう？
+;; why saving buffer?
 ;; Change cursor color according to mode
 (defvar hcz-set-cursor-color-color "")
 (defvar hcz-set-cursor-color-buffer "")
@@ -124,7 +124,21 @@
              (string= (buffer-name) hcz-set-cursor-color-buffer))
       (set-cursor-color (setq hcz-set-cursor-color-color color))
       (setq hcz-set-cursor-color-buffer (buffer-name)))))
-(add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode)
+(and window-system
+     (add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode))
+
+(defun my-set-mode-line-color-read-only ()
+  ""
+  (let ((color (if buffer-read-only
+                   'blue
+                 (if overwrite-mode
+                     'red
+                   'black))))
+    (unless (eq color my-set-mode-line-color-color)
+      (set-face-foreground 'modeline (symbol-name color))
+      (setq my-set-mode-line-color-color color))))
+(defvar my-set-mode-line-color-color nil "")
+(add-hook 'post-command-hook 'my-set-mode-line-color-read-only)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; minibuffer
@@ -313,15 +327,29 @@
 
 (defun my-set-ascii-and-jp-font-with-size (list)
   ""
-  (set-face-attribute 'default nil
-                      :family (nth 0 list)
-                      :height (nth 1 list))
-  (set-fontset-font "fontset-default"
-                    'japanese-jisx0208
-                    (font-spec :family (nth 2 list) :size (nth 3 list)))
-  (set-fontset-font "fontset-default"
-                    'katakana-jisx0201
-                    (font-spec :family (nth 2 list) :size (nth 3 list)))) ; font spec is available in emacs23 and later, cannot used in emacs22
+  (if (> emacs-major-version 22)
+      (progn                            ; 23 or later
+        (set-face-attribute 'default nil
+                            :family (nth 0 list)
+                            :height (nth 1 list))
+        (set-fontset-font "fontset-default"
+                          'japanese-jisx0208
+                          (font-spec :family (nth 2 list) :size (nth 3 list)))
+        (set-fontset-font "fontset-default"
+                          'katakana-jisx0201
+                          (font-spec :family (nth 2 list) :size (nth 3 list))))
+                                        ; font spec is available in emacs23 and later, cannot used in emacs22
+    (progn                              ; 22
+      (set-face-attribute 'default nil
+                          :family (nth 0 list)
+                          :height (nth 1 list))
+      (set-fontset-font "fontset-default"
+                        'japanese-jisx0208
+                        (cons (nth 2 list) "jisx0208.*"))
+      (set-fontset-font "fontset-default"
+                        'katakana-jisx0201
+                        (cons (nth 2 list) "jisx0201.*"))
+      )))
 ;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 100 "takaogothic" 14))
 ;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 100 "ms gothic" 14))
@@ -329,18 +357,6 @@
 ;; (my-set-ascii-and-jp-font-with-size '("monaco" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
-emacs-major-version
-(defun my-22-set-ascii-and-jp-font-with-size (list)
-  ""
-  (set-face-attribute 'default nil
-                      :family (nth 0 list)
-                      :height (nth 1 list))
-  (set-fontset-font "fontset-default"
-                    'japanese-jisx0208
-                    (cons (nth 2 list) "jisx0208.*"))
-  (set-fontset-font "fontset-default"
-                    'katakana-jisx0201
-                    (cons (nth 2 list) "jisx0201.*")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode-line
