@@ -18,6 +18,7 @@ else
     export LANG=C
 fi
 
+# export PS1="\$ "
 export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
@@ -31,7 +32,7 @@ addtopath(){
         echo $PATH | grep -E "^$p:|:$p:|:$p$" >/dev/null 2>&1 || PATH="$p:${PATH}"
     done
 }
-# export PATH="${PATH}:${HOME}/bin:${HOME}/dbx/dev/bin"
+# export PATH="${PATH}:${HOME}/bin"
 addtopath ${HOME}/bin
 
 test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
