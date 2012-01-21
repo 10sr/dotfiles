@@ -155,6 +155,7 @@
 (setq-default indicate-empty-lines t)   ; なんだろうこれ
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
+(setq-default indent-line-function nil)
 (pc-selection-mode 1)
 (delete-selection-mode 1)
 (cua-mode 0)
