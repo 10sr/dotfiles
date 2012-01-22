@@ -133,8 +133,7 @@
                    'readonly
                  (if overwrite-mode
                      'overwrite
-                   'insert)))
-        )
+                   'insert))))
     (unless (eq state my-set-mode-line-color-state)
       (set-face-foreground 'modeline
                            (nth 1
@@ -144,8 +143,7 @@
                            (nth 2
                                 (assq state
                                       my-set-mode-line-color-color)))
-      (setq my-set-mode-line-color-state state)
-      )))
+      (setq my-set-mode-line-color-state state))))
 (defvar my-set-mode-line-color-color
   '((readonly "blue" "white")
     (overwrite "red" "white")
@@ -153,6 +151,57 @@
   "")
 (defvar my-set-mode-line-color-state nil "")
 (add-hook 'post-command-hook 'my-set-mode-line-color-read-only)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; mode-line
+
+(setq eol-mnemonic-dos "crlf")
+(setq eol-mnemonic-mac "cr")
+(setq eol-mnemonic-unix "lf")
+
+(which-function-mode 0)
+
+(line-number-mode 0)
+(column-number-mode 0)
+(size-indication-mode 0)
+(setq mode-line-position
+      '(:eval (format "L%%l/%d,C%%c"
+                      (count-lines (point-max)
+                                   (point-min)))))
+
+;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
+;; display date
+(add-hook 'after-init-hook
+          (lambda ()
+            ;; (setq display-time-string-forms
+            ;;       '(dayname ", " day " " monthname " " year " " 24-hours ":"minutes ":" seconds))
+            (setq display-time-string-forms
+                  '((my-format-time-string)))
+            (when display-time-mode
+              (display-time-update))
+            ))
+(setq display-time-interval 29)
+(setq display-time-day-and-date t)
+(if window-system
+    (display-time-mode 0)
+  (display-time-mode 1))
+
+;; ;; current directory
+;; (let ((ls (member 'mode-line-buffer-identification
+;;                   mode-line-format)))
+;;   (setcdr ls
+;;           (cons '(:eval (concat " ("
+;;                                 (abbreviate-file-name default-directory)
+;;                                 ")"))
+;;                 (cdr ls))))
+
+;; ;; display last modified time
+;; (let ((ls (member 'mode-line-buffer-identification
+;;                   mode-line-format)))
+;;   (setcdr ls
+;;           (cons '(:eval (concat " "
+;;                                 my-buffer-file-last-modified-time))
+;;                 (cdr ls))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; minibuffer
@@ -167,75 +216,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol) ; complete symbol when `eval'
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; editting
-(setq require-final-newline t)
-(setq kill-whole-line t)
-(setq scroll-conservatively 35
-      scroll-margin 2
-      scroll-step 0)                    ;4行ずつスクロール?
-(setq default-major-mode 'text-mode)
-(setq next-line-add-newlines nil)
-(setq kill-read-only-ok t)
-(setq truncate-partial-width-windows nil) ; when splitted horizontally
-;; (setq-default line-spacing 0.2)
-(setq-default indicate-empty-lines t)   ; なんだろうこれ
-(setq-default tab-width 4)
-(setq-default indent-tabs-mode nil)
-(setq-default indent-line-function nil)
-(pc-selection-mode 1)
-(delete-selection-mode 1)
-(cua-mode 0)
-
-;; key bindings
-;; moving around
-;; (global-set-key (kbd "M-j") 'next-line)
-;; (global-set-key (kbd "M-k") 'previous-line)
-;; (global-set-key (kbd "M-h") 'backward-char)
-;; (global-set-key (kbd "M-l") 'forward-char)
-;;(keyboard-translate ?\M-j ?\C-j)
-(global-set-key (kbd "M-p") 'backward-paragraph)
-(global-set-key (kbd "M-n") 'forward-paragraph)
-(global-set-key (kbd "C-<up>") (lambda () (interactive)(scroll-down 1)))
-(global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
-(global-set-key (kbd "C-<left>") 'scroll-down)
-(global-set-key (kbd "C-<right>") 'scroll-up)
-(global-set-key (kbd "<select>") 'previous-line-mark)
-(define-key ctl-x-map (kbd "M-x") 'execute-extended-command)
-(define-key ctl-x-map (kbd "M-:") 'eval-expression)
-
-;; C-h and DEL
-(global-set-key (kbd "C-h") (kbd "DEL"))
-;; (global-set-key (kbd "C-h") 'backward-delete-char-untabify)
-;; (global-set-key (kbd "DEL") help-map)
-;; (global-set-key (kbd "C-h") (lambda ()
-;;                               (interactive)
-;;                               (call-interactively (key-binding (kbd "DEL")))))
-;; (keyboard-translate ?\^h ?\^?) ; scimにはC-hを送りたい
-;; (keyboard-translate ?\b ?\^h)          ; dont translate backspace
-
-(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
-(global-set-key (kbd "C-o")
-                ;; (lambda ()
-                ;;   (interactive)
-                ;;   (move-end-of-line nil)
-                ;;   (newline-and-indent))
-                (kbd "C-e C-m")
-                )
-(global-set-key (kbd "C-k") 'kill-whole-line)
-(global-set-key (kbd "M-k") 'my-copy-whole-line)
-;; (global-set-key "\C-z" 'undo) ; undo is C-/
-;; (global-set-key (kbd "C-<return>") (lambda () (interactive) (insert "\f\n")))
-(global-set-key (kbd "M-u") 'undo)
-(global-set-key (kbd "C-r") 'query-replace-regexp)
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "M-i")
-                (lambda ()
-                  (interactive)
-                  (call-interactively (key-binding (kbd "M-TAB"))))
-                ;; (kbd "M-TAB")
-                )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
@@ -372,58 +352,6 @@
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; mode-line
-
-(setq eol-mnemonic-dos "crlf")
-(setq eol-mnemonic-mac "cr")
-(setq eol-mnemonic-unix "lf")
-
-(which-function-mode 0)
-
-(line-number-mode 0)
-(column-number-mode 0)
-(size-indication-mode 0)
-(setq mode-line-position
-      '(:eval (format "L%%l/%d,C%%c"
-                      (count-lines (point-max)
-                                   (point-min)))))
-
-
-;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
-;; display date
-(add-hook 'after-init-hook
-          (lambda ()
-            (setq display-time-string-forms
-                  '(dayname ", " day " " monthname " " year " " 24-hours ":"minutes ":" seconds))
-            (setq display-time-string-forms
-                  '((my-format-time-string)))
-            (when display-time-mode
-              (display-time-update))
-            ))
-(setq display-time-interval 29)
-(setq display-time-day-and-date t)
-(if window-system
-    (display-time-mode 0)
-  (display-time-mode 1))
-
-;; ;; current directory
-;; (let ((ls (member 'mode-line-buffer-identification
-;;                   mode-line-format)))
-;;   (setcdr ls
-;;           (cons '(:eval (concat " ("
-;;                                 (abbreviate-file-name default-directory)
-;;                                 ")"))
-;;                 (cdr ls))))
-
-;; ;; display last modified time
-;; (let ((ls (member 'mode-line-buffer-identification
-;;                   mode-line-format)))
-;;   (setcdr ls
-;;           (cons '(:eval (concat " "
-;;                                 my-buffer-file-last-modified-time))
-;;                 (cdr ls))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
@@ -446,6 +374,75 @@
 (add-to-list 'completion-ignored-extensions ".bak")
 ;; (setq delete-by-moving-to-trash t
 ;;       trash-directory "~/.emacs.d/trash")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; editting
+(setq require-final-newline t)
+(setq kill-whole-line t)
+(setq scroll-conservatively 35
+      scroll-margin 2
+      scroll-step 0)                    ;4行ずつスクロール?
+(setq default-major-mode 'text-mode)
+(setq next-line-add-newlines nil)
+(setq kill-read-only-ok t)
+(setq truncate-partial-width-windows nil) ; when splitted horizontally
+;; (setq-default line-spacing 0.2)
+(setq-default indicate-empty-lines t)   ; なんだろうこれ
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+(setq-default indent-line-function nil)
+(pc-selection-mode 1)
+(delete-selection-mode 1)
+(cua-mode 0)
+
+;; key bindings
+;; moving around
+;; (global-set-key (kbd "M-j") 'next-line)
+;; (global-set-key (kbd "M-k") 'previous-line)
+;; (global-set-key (kbd "M-h") 'backward-char)
+;; (global-set-key (kbd "M-l") 'forward-char)
+;;(keyboard-translate ?\M-j ?\C-j)
+(global-set-key (kbd "M-p") 'backward-paragraph)
+(global-set-key (kbd "M-n") 'forward-paragraph)
+(global-set-key (kbd "C-<up>") (lambda () (interactive)(scroll-down 1)))
+(global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
+(global-set-key (kbd "C-<left>") 'scroll-down)
+(global-set-key (kbd "C-<right>") 'scroll-up)
+(global-set-key (kbd "<select>") 'previous-line-mark)
+(define-key ctl-x-map (kbd "M-x") 'execute-extended-command)
+(define-key ctl-x-map (kbd "M-:") 'eval-expression)
+
+;; C-h and DEL
+(global-set-key (kbd "C-h") (kbd "DEL"))
+;; (global-set-key (kbd "C-h") 'backward-delete-char-untabify)
+;; (global-set-key (kbd "DEL") help-map)
+;; (global-set-key (kbd "C-h") (lambda ()
+;;                               (interactive)
+;;                               (call-interactively (key-binding (kbd "DEL")))))
+;; (keyboard-translate ?\^h ?\^?) ; scimにはC-hを送りたい
+;; (keyboard-translate ?\b ?\^h)          ; dont translate backspace
+
+(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
+(global-set-key (kbd "C-o")
+                ;; (lambda ()
+                ;;   (interactive)
+                ;;   (move-end-of-line nil)
+                ;;   (newline-and-indent))
+                (kbd "C-e C-m")
+                )
+(global-set-key (kbd "C-k") 'kill-whole-line)
+(global-set-key (kbd "M-k") 'my-copy-whole-line)
+;; (global-set-key "\C-z" 'undo) ; undo is C-/
+;; (global-set-key (kbd "C-<return>") (lambda () (interactive) (insert "\f\n")))
+(global-set-key (kbd "M-u") 'undo)
+(global-set-key (kbd "C-r") 'query-replace-regexp)
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "M-i")
+                (lambda ()
+                  (interactive)
+                  (call-interactively (key-binding (kbd "M-TAB"))))
+                ;; (kbd "M-TAB")
+                )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
