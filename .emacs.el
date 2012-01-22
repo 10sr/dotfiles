@@ -129,15 +129,29 @@
 
 (defun my-set-mode-line-color-read-only ()
   ""
-  (let ((color (if buffer-read-only
-                   'blue
+  (let ((state (if buffer-read-only
+                   'readonly
                  (if overwrite-mode
-                     'red
-                   'black))))
-    (unless (eq color my-set-mode-line-color-color)
-      (set-face-foreground 'modeline (symbol-name color))
-      (setq my-set-mode-line-color-color color))))
-(defvar my-set-mode-line-color-color nil "")
+                     'overwrite
+                   'insert)))
+        )
+    (unless (eq state my-set-mode-line-color-state)
+      (set-face-foreground 'modeline
+                           (nth 1
+                                (assq state
+                                      my-set-mode-line-color-color)))
+      (set-face-background 'modeline
+                           (nth 2
+                                (assq state
+                                      my-set-mode-line-color-color)))
+      (setq my-set-mode-line-color-state state)
+      )))
+(defvar my-set-mode-line-color-color
+  '((readonly "blue" "white")
+    (overwrite "red" "white")
+    (insert nil nil))
+  "")
+(defvar my-set-mode-line-color-state nil "")
 (add-hook 'post-command-hook 'my-set-mode-line-color-read-only)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
