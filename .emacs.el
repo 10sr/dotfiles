@@ -144,13 +144,14 @@
                                 (assq state
                                       my-set-mode-line-color-color)))
       (setq my-set-mode-line-color-state state))))
-(defvar my-set-mode-line-color-color
-  '((readonly "blue" "white")
-    (overwrite "red" "white")
-    (insert nil nil))
-  "")
+(defvar my-set-mode-line-color-color nil "")
+(setq my-set-mode-line-color-color
+      '((readonly "blue" "white")
+        (overwrite "red" "white")
+        (insert nil nil)))
 (defvar my-set-mode-line-color-state nil "")
 (add-hook 'post-command-hook 'my-set-mode-line-color-read-only)
+(add-hook 'after-init-hook 'my-set-mode-line-color-read-only)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode-line
