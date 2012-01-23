@@ -142,7 +142,7 @@ local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
 local["^http://www.tumblr.com/dashboard"] = [
     //        ["C-<left>", function (ev, arg) {gBrowser.mTabContainer.advanceSelectedTab(-1, true); }],
     //        ["C-<right>", function (ev, arg) {gBrowser.mTabContainer.advanceSelectedTab(1, true); }],
-    ["<left>", function (ev, arg) {window.content.location.href = "http://www.tumblr.com/dashboard"; }],
+    ["<left>", function (ev, arg) { window.content.location.href = "http://www.tumblr.com/dashboard"; }],
     //        ["<right>", null],
     ["J", function (ev, arg) {
         if (window.loadURI) {
@@ -150,17 +150,6 @@ local["^http://www.tumblr.com/dashboard"] = [
         }
     }],
 ];
-
-///////////////////////////////////
-//tanythhing用
-plugins.options["tanything_opt.keymap"] = {
-    "\\"     : "prompt-cancel",
-    "j"     : "prompt-next-completion",
-    "k"     : "prompt-previous-completion",
-    "o"     : "localOpen",
-    ":"     : "localClose",
-    "L"     : "localMovetoend"
-};
 
 //////////////////////////////////////////
 // yatc
@@ -399,12 +388,6 @@ ext.add("keysnail-setting-menu",function(){
         });
 },"open keysnail setting menu");
 
-// //////////////////////////
-// //プラグイン一括アップデート
-// ext.add("check-for-plugins-update", function () {
-//     [p for (p in plugins.context)].forEach(function (p) { try { userscript.updatePlugin(p); } catch(e) {} });
-// }, "Check for all plugin's update");
-
 ////////////////////////
 //マルチプルタブハンドラ
 ext.add("multiple-tab-handler-close-selected-and-current-tabs", function () {
@@ -516,6 +499,40 @@ ext.add("echo-closed-tabs", function () {
     confirm(dump);
 
 }, "List closed tabs");
+
+///////////////////////////////
+ext.add("list-tab-history", function () {
+    const fav = "chrome://mozapps/skin/places/defaultFavicon.png";
+    var tabHistory = [];
+    var sessionHistory = gBrowser.webNavigation.sessionHistory;
+    if (sessionHistory.count < 1)
+        return void display.echoStatusBar("Tab history not exist", 2000);
+    var curIdx = sessionHistory.index;
+    for (var i = 0; i < sessionHistory.count; i++) {
+        var entry = sessionHistory.getEntryAtIndex(i, false);
+        if (!entry)
+            continue;
+        try {
+            var iconURL = Cc["@mozilla.org/browser/favicon-service;1"]
+                .getService(Ci.nsIFaviconService)
+                .getFaviconForPage(entry.URI).spec;
+        } catch (ex) {}
+        tabHistory.push([iconURL || fav, entry.title, entry.URI.spec, i]);
+    }
+    for (var thIdx = 0; thIdx < tabHistory.length; thIdx++) {
+        if (tabHistory[thIdx][3] == curIdx) break;
+    }
+
+    prompt.selector(
+        {
+            message     : "select history in tab",
+            collection  : tabHistory,
+            flags       : [ICON | IGNORE, 0, 0, IGNORE | HIDDEN],
+            header      : ["Title", "URL"],
+            initialIndex : thIdx,
+            callback    : function(i) { if (i >= 0) gBrowser.webNavigation.gotoIndex(tabHistory[i][3]); }
+        }); 
+},  'List tab history');
 
 //}}%PRESERVE%
 // ========================================================================= //
@@ -742,8 +759,7 @@ key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
 }, 'ignore');
 
 key.setViewKey(':', function (ev, arg) {
-    return !document.getElementById("keysnail-prompt").hidden &&
-        document.getElementById("keysnail-prompt-textbox").focus();
+    return !document.getElementById("keysnail-prompt").hidden && document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
 
 key.setViewKey('H', function (ev, arg) {
@@ -765,3 +781,7 @@ key.setViewKey('C', function (ev, arg) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setViewKey('C-<backspace>', function (ev, arg) {
+    ext.exec('list-tab-history', arg, ev);
+}, 'List tab history', true);
