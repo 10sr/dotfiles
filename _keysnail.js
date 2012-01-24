@@ -181,6 +181,7 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://github.com/tkosaka/keysnail-plugin/raw/master/nicontroller.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
+        'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
     ];
 
     function inst(a){
@@ -405,54 +406,6 @@ ext.add("if-mth-exist", function() {
 },'if mth exist');
 
 ////////////////////////
-// instapaper
-ext.add("instapaper-add-this-page-and-close",function(){
-    var url = window.content.location.href;
-    var title = window.content.document.title;
-    var tab = gBrowser.selectedTab;
-    var username = "8slashes+instapaper@gmail.com";
-    var password = "";
-    var passwordManager = (Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager));
-    var logins = passwordManager.findLogins({}, "http://www.instapaper.com", "", null);
-    for (var i = 0; i < logins.length; i++) {
-        if (logins[i].username == username) {
-            password = logins[i].password;
-            break;
-        }
-    }
-    var comment = "";
-    // prompt.read("Instapaper comment:",function(cm){
-        // if(cm){comment = cm;}
-    // });
-    display.echoStatusBar("Instapaper: adding " + url + "...");
-    util.httpPost("https://www.instapaper.com/api/add",
-                  {"username" : encodeURIComponent(username),
-                   "password" : password,
-                   "url" : encodeURIComponent(url),
-                   "title" : encodeURIComponent(title),},
-                  function (xhr) {
-                      display.echoStatusBar(xhr.status);
-                      if (xhr.readyState == 4 && xhr.status == 201) {
-                          // var title = decodeURIComponent(xhr.getResponseHeader("X-Instapaper-Title")); //超文字化けする
-                          try {
-                              Components.classes['@mozilla.org/alerts-service;1'].
-                                  getService(Components.interfaces.nsIAlertsService).
-                                  showAlertNotification(null, "Instapaper", "Page " + title + " added successfully", false, '', null);
-                          } catch(e) {
-                              // prevents runtime error on platforms that don't implement nsIAlertsService
-                          }
-                          display.echoStatusBar("Instapaper: adding " + url + "...done.");
-                          gBrowser.removeTab(tab);
-                      } else{
-                          display.echoStatusBar("Instapaper: Something wrong has happended!");
-                          if (window.loadURI) {
-                              loadURI("javascript:function%20iprl5(){var%20d=document,z=d.createElement('scr'+'ipt'),b=d.body,l=d.location;try{if(!b)throw(0);d.title='(Saving...)%20'+d.title;z.setAttribute('src',l.protocol+'//www.instapaper.com/j/mt8YO6Cuosmf?u='+encodeURIComponent(l.href)+'&t='+(new%20Date().getTime()));b.appendChild(z);}catch(e){alert('Please%20wait%20until%20the%20page%20has%20loaded.');}}iprl5();void(0)");
-                          }
-                      }
-                  });
-},'instapaper add page and close tab when done without error.');
-
-////////////////////////
 //検索
 ext.add("query-then-engine", function () {
     prompt.reader({message : "Search Word?:", 
@@ -501,6 +454,7 @@ ext.add("echo-closed-tabs", function () {
 }, "List closed tabs");
 
 ///////////////////////////////
+// http://malblue.tumblr.com/post/349001250/tips-japanese-keysnail-github
 ext.add("list-tab-history", function () {
     const fav = "chrome://mozapps/skin/places/defaultFavicon.png";
     var tabHistory = [];
@@ -742,10 +696,6 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
-key.setViewKey('I', function (ev, arg) {
-    ext.exec("instapaper-add-this-page-and-close", arg, ev);
-}, 'instapaper add page', true);
-
 key.setViewKey('<left>', function (ev) {
     goDoCommand("cmd_scrollPageUp");
 }, '一画面分スクロールアップ');
@@ -778,10 +728,14 @@ key.setViewKey('C', function (ev, arg) {
     ext.exec("linksnail", arg, ev);
 }, 'LinkSnail', true);
 
+key.setViewKey('C-<backspace>', function (ev, arg) {
+    ext.exec("list-tab-history", arg, ev);
+}, 'List tab history', true);
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
 
-key.setViewKey('C-<backspace>', function (ev, arg) {
-    ext.exec('list-tab-history', arg, ev);
-}, 'List tab history', true);
+key.setViewKey('I', function (ev, arg) {
+    ext.exec('instapaper-post-page-with-comment', arg, ev);
+}, 'post page and comment', true);
