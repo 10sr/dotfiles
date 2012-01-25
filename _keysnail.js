@@ -11,9 +11,6 @@
 // command.kill.killRingMax   = 15;
 // command.kill.textLengthMax = 8192;
 
-//userscript.addLoadPath(".");
-//userscript.require("verticaltab.js");
-
 //////////////////////////////////////
 //// sitelocalkeymap
 var local = {};
@@ -74,9 +71,8 @@ plugins.options["my-keysnail-bookmarks"] = [
     "twitter.com",
 ];
 
+// sitelocal
 
-
-//sitelocal
 //////////////////////////////////////////
 // 2ch chaika
 local["^http://127.0.0.1:8823/thread/"] = [
@@ -150,6 +146,11 @@ local["^http://www.tumblr.com/dashboard"] = [
         }
     }],
 ];
+
+///////////////////////////////////////////
+// plugin option
+
+plugins.options["instapaper.close_after_post"] = true;
 
 //////////////////////////////////////////
 // yatc
@@ -406,7 +407,7 @@ ext.add("if-mth-exist", function() {
 },'if mth exist');
 
 ////////////////////////
-//検索
+// search web
 ext.add("query-then-engine", function () {
     prompt.reader({message : "Search Word?:", 
                    callback : function (q) {
