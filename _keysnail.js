@@ -406,7 +406,6 @@ ext.add("if-mth-exist", function() {
     if (MultipleTabService === undefined) display.echoStatusBar("mth not exist.");
 },'if mth exist');
 
-////////////////////////
 // search web
 ext.add("query-then-engine", function () {
     prompt.reader({message : "Search Word?:", 
@@ -740,3 +739,7 @@ key.setEditKey('C-<tab>', function (ev) {
 key.setViewKey('I', function (ev, arg) {
     ext.exec('instapaper-post-page-with-comment', arg, ev);
 }, 'post page and comment', true);
+
+key.setViewKey('C-<backspace>', function (ev, arg) {
+    ext.exec('list-tab-history', arg, ev);
+}, 'List tab history', true);
