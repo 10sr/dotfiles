@@ -2,11 +2,12 @@
 |
 `-- ~/.profile                       <= text login
     |
-    |-- ~/.bashrc                    <= execute bash
-    |   |
-    |   `-- ~/.dotfiles/.bashrc
-    |       |
-    |       `-- /etc/bashrc
+    |-- ~/.dotfiles/.profile
     |
-    `-- ~/.dotfiles/.profile
-
+    * if shell is bash
+    |
+    `-- ~/.bashrc                    <= run bash
+        |
+        `-- ~/.dotfiles/.bashrc
+            |
+            `-- /etc/bashrc
