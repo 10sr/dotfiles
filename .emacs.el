@@ -356,6 +356,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
+(setq revert-without-query ".+")
+
 ;; カーソルの場所を保存する
 (when (require 'saveplace nil t)
   (setq-default save-place t))
@@ -1702,23 +1704,21 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 (defvar my-auto-save-this-buffer nil "auto save timer object")
 
-(defun my-auto-save-this-buffer (secs &optional silent-p)
+(defun my-auto-save-this-buffer (sec &optional silent-p)
   "auto save current buffer if idle for SEC.
 when SEC is nil, stop auto save if enabled."
-  (if secs
+  (if sec
       (progn (when my-auto-save-this-buffer
                (cancel-timer my-auto-save-this-buffer)
                (setq my-auto-save-this-buffer nil))
-             (setq my-auto-save-this-buffer (run-with-idle-timer secs t 'my-save-this-buffer silent-p)))
+             (setq my-auto-save-this-buffer (run-with-idle-timer sec t 'my-save-this-buffer silent-p)))
     (when my-auto-save-this-buffer
       (cancel-timer my-auto-save-this-buffer)
       (setq my-auto-save-this-buffer nil))))
 
 (my-auto-save-this-buffer 2 t)
 
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
 (defvar my-desktop-terminal "roxterm")
@@ -1879,17 +1879,19 @@ this is test, does not rename files"
 ;;     (while (re-search-forward "[ \t]+$" nil t)
 ;;       (replace-match "" nil nil))))
 
+(defvar my-revert-buffer-if-needed-last-buffer nil)
+
 (defun my-revert-buffer-if-needed ()
   ""
   (interactive)
-  (unless (verify-visited-file-modtime (current-buffer))
-    (revert-buffer t t)))
+  (unless (eq my-revert-buffer-if-needed-last-buffer (current-buffer))
+    (setq my-revert-buffer-if-needed-last-buffer (current-buffer))
+    (when (or (not (verify-visited-file-modtime (current-buffer)))
+              buffer-read-only)
+      (revert-buffer t t))))
 
 (add-hook 'window-configuration-change-hook
-          (lambda ()
-            (run-with-timer 0.5
-                            nil
-                            'my-revert-buffer-if-needed)))
+          'my-revert-buffer-if-needed)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
