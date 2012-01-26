@@ -1886,8 +1886,8 @@ this is test, does not rename files"
   (interactive)
   (unless (eq my-revert-buffer-if-needed-last-buffer (current-buffer))
     (setq my-revert-buffer-if-needed-last-buffer (current-buffer))
-    (when (or (not (verify-visited-file-modtime (current-buffer)))
-              buffer-read-only)
+    (when (or (eq major-mode 'dired-mode)
+              (not (verify-visited-file-modtime (current-buffer))))
       (revert-buffer t t))))
 
 (add-hook 'window-configuration-change-hook
