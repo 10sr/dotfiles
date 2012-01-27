@@ -151,6 +151,10 @@ local["^http://www.tumblr.com/dashboard"] = [
 // plugin option
 
 plugins.options["instapaper.close_after_post"] = true;
+plugins.options["instapaper.initial_comment_function"] = function(){
+    var now = new Date();
+    return "[" + now.toLocaleString() + "]";
+};
 
 //////////////////////////////////////////
 // yatc
