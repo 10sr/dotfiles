@@ -153,7 +153,7 @@ local["^http://www.tumblr.com/dashboard"] = [
 plugins.options["instapaper.close_after_post"] = true;
 plugins.options["instapaper.initial_comment_function"] = function(){
     var now = new Date();
-    return "[" + now.toLocaleString() + "]";
+    return "[" + now.toString() + "]";
 };
 
 //////////////////////////////////////////
