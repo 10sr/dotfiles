@@ -1879,7 +1879,7 @@ this is test, does not rename files"
               (not (verify-visited-file-modtime (current-buffer))))
       (revert-buffer t t))))
 
-(add-hook 'window-configuration-change-hook
+(add-hook 'post-command-hook ; 'window-configuration-change-hook
           'my-revert-buffer-if-needed)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
