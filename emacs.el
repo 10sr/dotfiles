@@ -820,17 +820,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
              (or frame
                  (selected-frame))))
 
-(defun my-frame-buffer-get2 (&optional frame)
-  ""
-  (delq nil (mapcar (lambda (buf)
-                      (if (or t (buffer-file-name buf))
-                          buf
-                        nil))
-                    (cdr (assq 'buffer-list
-                               (frame-parameters (or frame
-                                                     (selected-frame))))))))
-(my-frame-buffer-get2)
-
 (defun my-frame-buffer-kill-all-buffer (frame)
   ""
   (mapcar 'kill-buffer
@@ -899,7 +888,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; (add-to-list 'bs-configurations '("processes" nil get-buffer-process ".*" nil nil))
 (add-to-list 'bs-configurations '("same-dir" nil buffer-same-dir-p ".*" nil nil))
 (add-to-list 'bs-configurations '("this-frame" nil (lambda (buf) (memq buf (my-frame-buffer-get))) ".*" nil nil))
-(add-to-list 'bs-configurations '("this-frame2" nil (lambda (buf) (memq buf (my-frame-buffer-get2))) ".*" nil nil))
 ;; (setq bs-configurations (list '("processes" nil get-buffer-process ".*" nil nil)
 ;;                               '("files-and-scratch" "^\\*scratch\\*$" nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)))
 (setq bs-default-configuration "this-frame")
