@@ -377,7 +377,10 @@ _echocolors(){
         "\e[0m"
 }
 
-safe-cmd stty stop undef        # unbind C-s to stop displaying output
+null type stty && {
+    stty stop undef        # unbind C-s to stop displaying output
+    stty erase '^h'
+}
 
 #########################
 # for windose
