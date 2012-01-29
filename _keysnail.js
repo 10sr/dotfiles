@@ -510,11 +510,11 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-hook.setHook('KeySnailInitialized', function () {
+hook.addToHook('KeySnailInitialized', function () {
     ext.exec("shiitake-enable-style");
 });
 
-hook.setHook('KeyBoardQuit', function (aEvent) {
+hook.addToHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
@@ -527,7 +527,6 @@ hook.setHook('KeyBoardQuit', function (aEvent) {
     }
     key.generateKey(aEvent.originalTarget, KeyEvent.DOM_VK_ESCAPE, true);
 });
-hook.addToHook('KeyBoardQuit', function (aEvent) {});
 
 hook.setHook('Unload', function () {
     util.getBrowserWindows().some(function (win) {
@@ -541,6 +540,16 @@ hook.setHook('Unload', function () {
     });
 });
 
+// hook.addToHook('LocationChange', function (aNsURI) {
+//     if(window.content.document.body){
+//         display.prettyPrint(window.content.document.title); 
+//     }else{
+//         window.addEventListener("load", function(){
+//             disp = display;
+//             disp.prettyPrint(window.content.document.title);
+//         }, false);
+//     }
+// });
 
 // ============================= Key bindings ============================== //
 
