@@ -1129,6 +1129,18 @@ if arg is omitted use value of `buffer-list'."
 
 (require 'dired)
 
+(defun my-dired-echo-file-head (&optional arg)
+  ""
+  (interactive)
+  (let ((f (dired-get-filename)))
+    (message "%s"
+             (with-temp-buffer
+               (insert-file-contents f)
+               (buffer-substring-no-properties (point-min)
+                                               (progn (goto-line (or arg
+                                                                     10))
+                                                      (point-at-eol)))))))
+
 (defun my-dired-diff ()
   ""
   (interactive)
@@ -1393,11 +1405,11 @@ otherwise, use `pack-default-extension' for pack."
             (define-key dired-mode-map "=" 'my-dired-diff)
             (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
             (define-key dired-mode-map "b" 'gtkbm)
+            (define-key dired-mode-map "h" 'my-dired-echo-file-head)
             (define-key dired-mode-map "@" (lambda () (interactive) (my-x-open ".")))
             (define-key dired-mode-map (kbd "TAB") 'other-window)
             (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
             (define-key dired-mode-map "a" 'my-dired-display-all-mode)
-            (define-key dired-mode-map "h" 'my-dired-display-all-mode)
             (define-key dired-mode-map "/" 'dired-isearch-filenames)
             ;; (substitute-key-definition 'dired-advertised-find-file 'my-dired-find-file dired-mode-map)
             ;; (substitute-key-definition 'dired-up-directory 'my-dired-up-directory dired-mode-map)
@@ -1895,7 +1907,8 @@ this is test, does not rename files"
     (setq my-revert-buffer-if-needed-last-buffer (current-buffer))
     (when (or (eq major-mode 'dired-mode)
               (not (verify-visited-file-modtime (current-buffer))))
-      (revert-buffer t t))))
+      (revert-buffer t t)
+      (message "%s reverted." (buffer-name)))))
 
 (add-hook 'post-command-hook ; 'window-configuration-change-hook
           'my-revert-buffer-if-needed)
