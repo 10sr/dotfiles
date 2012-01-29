@@ -895,6 +895,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'bs-mode-hook
           (lambda ()
             (setq bs-default-configuration "this-frame")
+            ;; (and bs--show-all
+            ;;      (call-interactively 'bs-toggle-show-all))
             (set (make-variable-buffer-local 'scroll-margin) 0)
             ))
 
@@ -1333,29 +1335,45 @@ otherwise, use `pack-default-extension' for pack."
     (setq dired-listing-switches "-lhFG")
   (setq dired-listing-switches "-lhFG --time-style=long-iso")
   )
+(setq dired-listing-switches "-lhFG")
+
 (define-minor-mode my-dired-display-all-mode
   ""
   :init-value nil
-  :global t
-  (my-dired-display-all-set)
+  :global nil
+  :lighter " ALL"
   (when (eq major-mode 'dired-mode)
+    (my-dired-display-all-set)
     (revert-buffer)))
 (defun my-dired-display-all-set ()
   ""
   (if my-dired-display-all-mode
-      (setq dired-actual-switches
-            (concat "-A "
-                    dired-actual-switches))
+      (or (string-match-p my-dired-display-all-switch
+                          dired-actual-switches)
+          (setq dired-actual-switches
+                (concat my-dired-display-all-switch
+                        " "
+                        dired-actual-switches)))
     (setq dired-actual-switches
-          (replace-regexp-in-string "-A " "" dired-actual-switches))))
+          (replace-regexp-in-string (concat my-dired-display-all-switch
+                                            " ")
+                                    ""
+                                    dired-actual-switches))))
+(defvar my-dired-display-all-switch "-A")
 (add-hook 'dired-mode-hook
           'my-dired-display-all-set)
 
 (put 'dired-find-alternate-file 'disabled nil)
-(require 'ls-lisp)
-;; (setq ls-lisp-use-insert-directory-program nil)
-(setq ls-lisp-dirs-first t)
 (setq dired-ls-F-marks-symlinks t)
+
+(require 'ls-lisp)
+(setq ls-lisp-use-insert-directory-program nil)
+(setq ls-lisp-dirs-first t)
+(setq ls-lisp-use-localized-time-format t)
+(setq ls-lisp-format-time-list
+       '("%Y-%m-%d %H:%M"
+         "%Y-%m-%d      "))
+
 (setq dired-dwim-target t)
 
 ;; (add-hook 'dired-after-readin-hook
