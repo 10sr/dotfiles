@@ -1328,22 +1328,6 @@ otherwise, use `pack-default-extension' for pack."
   (interactive)
   (my-x-open (dired-get-filename t t)))
 
-(defun my-dired-up-directory ()
-  ""
-  (interactive)
-  (my-dired-find-file ".."))
-
-(defun my-dired-find-file (&optional filename)
-  "if the file to open is a directory, kill current buffer after opening that file."
-  (interactive)
-  (let ((f (expand-file-name (or filename
-                                 (dired-get-filename))))
-        (bf (current-buffer)))
-    (find-file f)
-    (when (and (file-directory-p f)
-               (not (get-buffer-window bf)))
-      (kill-buffer bf))))
-
 (if (eq window-system 'mac)
     (setq dired-listing-switches "-lhFG")
   (setq dired-listing-switches "-lhFG --time-style=long-iso")
@@ -1412,9 +1396,6 @@ otherwise, use `pack-default-extension' for pack."
             (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
             (define-key dired-mode-map "a" 'my-dired-display-all-mode)
             (define-key dired-mode-map "/" 'dired-isearch-filenames)
-            ;; (substitute-key-definition 'dired-advertised-find-file 'my-dired-find-file dired-mode-map)
-            ;; (substitute-key-definition 'dired-up-directory 'my-dired-up-directory dired-mode-map)
-            ;; (define-key dired-mode-map (kbd "DEL") 'my-dired-up-directory)
             (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
             (substitute-key-definition 'dired-next-line 'my-dired-next-line dired-mode-map)
             (substitute-key-definition 'dired-previous-line 'my-dired-previous-line dired-mode-map)
