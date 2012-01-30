@@ -621,7 +621,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
           'executable-make-buffer-file-executable-if-script-p)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; mode関連
+;; mode
 
 (add-hook 'verilog-mode-hook
           (lambda ()
@@ -1971,14 +1971,6 @@ this is test, does not rename files"
                                 (modify-frame-parameters (selected-frame)
                                                          default-frame-alist))))
             t)
-  ;; (add-hook 'make-frame-hook
-  ;;           (lambda ()
-  ;;             (run-with-timer 1
-  ;;                             nil
-  ;;                             (lambda ()
-  ;;                               (modify-frame-parameters (selected-frame)
-  ;;                                                        initial-frame-alist))))
-  ;;           t)
   (add-hook 'kill-emacs-hook
             'my-window-size-save))
 
