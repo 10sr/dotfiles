@@ -1405,21 +1405,6 @@ otherwise, use `pack-default-extension' for pack."
               (when (file-readable-p file)
                 (delete-file file)))))
 
-;; http://homepage1.nifty.com/blankspace/emacs/dired.html
-;; (add-hook 'dired-load-hook
-;;           (lambda ()
-;;             (load-library "ls-lisp")
-;;             (setq ls-lisp-dirs-first t)
-;;             (setq dired-listing-switches "-alhF"))) ;これ書く場所間違えてね？
-
-;; (defadvice dired-next-line (after dired-next-line-print-directory activate)
-;;   "print current directory when go down line"
-;;   (dired-print-current-dir-and-file))
-
-;; (defadvice dired-previous-line (after dired-previous-line-print-directory activate)
-;;   "print current directory when go up line"
-;;   (dired-print-current-dir-and-file))
-
 ;; http://blog.livedoor.jp/tek_nishi/archives/4693204.html
 
 (defun my-dired-toggle-mark()
