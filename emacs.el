@@ -462,42 +462,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
 
-(defun kill-buffer-by-major-mode (mode &optional exclude-current-buffer-p) ;mapcarとかつかって全部書き換える
-  "kill buffers.
-if EXCLUDE-CURRENT-BUFFER-P is non-nil, never kill current buffer"
-  (interactive "xmajor mode of buffer to kill: ")
-  (save-excursion
-    (let ((bflist (buffer-list))
-          (cbf (current-buffer))
-          bf)
-      (while bflist
-        (setq bf (pop bflist))
-        (set-buffer bf)
-        (if (and (eq mode major-mode)   ;メジャーモードが一致し、かつ
-                 (not (and exclude-current-buffer-p ;今のバッファを除外、今のバッファと一致 がともには満たされない
-                           (eq bf cbf))))
-            (kill-buffer bf))))))
-
-(defun my-kill-this-buffer-when-hide (&optional buffer all-frames)
-  ""
-  (interactive)
-  (let ((bf (or buffer
-                (current-buffer))))
-    (if (or (not buffer) (get-buffer-window bf all-frames))
-        (run-with-timer 3 nil 'my-kill-this-buffer-when-hide bf all-frames)
-      (kill-buffer bf))))
-;; (add-hook 'dired-mode-hook
-;;           'my-kill-this-buffer-when-hide)
-
-(defvar my-kill-previous-buffer nil)
-(defun my-kill-previous-buffer ()
-  ""
-  (when my-kill-previous-buffer
-    (kill-buffer my-kill-previous-buffer))
-  (setq my-kill-previous-buffer (current-buffer)))
-;; (add-hook 'dired-mode-hook
-;;           'my-kill-previous-buffer)
-
 (defun my-query-kill-this-buffer ()
   ""
   (interactive)
