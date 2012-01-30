@@ -1131,14 +1131,15 @@ if arg is omitted use value of `buffer-list'."
 
 (defun my-dired-echo-file-head (&optional arg)
   ""
-  (interactive)
+  (interactive "P")
   (let ((f (dired-get-filename)))
     (message "%s"
              (with-temp-buffer
                (insert-file-contents f)
                (buffer-substring-no-properties (point-min)
-                                               (progn (goto-line (or arg
-                                                                     10))
+                                               (progn (goto-line (if arg
+                                                                     (prefix-numeric-value arg)
+                                                                   10))
                                                       (point-at-eol)))))))
 
 (defun my-dired-diff ()
