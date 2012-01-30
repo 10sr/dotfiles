@@ -1777,7 +1777,7 @@ when SEC is nil, stop auto save if enabled."
     sgml-mode
     c-mode
     c++-mode))
-(setq my-auto-indent-buffer-mode-list nil)
+(setq my-auto-indent-buffer-mode-list nil) ;disable
 (defun my-indent-buffer ()
   "indent whole buffer."
   (interactive)
@@ -1855,15 +1855,6 @@ this is test, does not rename files"
 ;;       (start-process "ps"
 ;;                      nil
 ;;                      func))))
-
-;; delete-trailing-whitespace
-;; (defun my-delete-blanks-on-eol ()
-;;   ""
-;;   (interactive)
-;;   (save-excursion
-;;     (goto-char (point-min))
-;;     (while (re-search-forward "[ \t]+$" nil t)
-;;       (replace-match "" nil nil))))
 
 (defvar my-revert-buffer-if-needed-last-buffer nil)
 
