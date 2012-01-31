@@ -570,7 +570,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
           )
   (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal
         x-select-enable-primary nil)
-  (global-set-key "\C-y" 'x-clipboard-yank))
+  ;; (global-set-key "\C-y" 'x-clipboard-yank)
+  )
 
 ;; urlに細かい説明あり。でも設定は上記だけでよさそう
 ;; http://garin.jp/doc/Linux/xwindow_clipboard
