@@ -72,6 +72,7 @@
 (prefer-coding-system 'utf-8-unix)
 (setq system-time-locale "C")
 
+;; my prefix map
 (defvar my-prefix-map
   (make-sparse-keymap))
 (add-hook 'after-init-hook
