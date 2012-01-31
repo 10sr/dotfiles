@@ -685,7 +685,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                         "https://github.com/mooz/js2-mode/raw/master/js2-mode.el"
                         t)
   (autoload 'js2-mode "js2-mode" nil t)
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode)))
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsm$" . js2-mode)))
 ;; (add-hook 'js2-mode-hook
 ;;           (lambda ()
 ;;             (add-hook 'before-save-hook
