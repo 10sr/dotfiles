@@ -805,6 +805,13 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
      (require 'multi-term nil t)
      (setq multi-term-switch-after-close nil))
 
+(defun my-term-quit-or-send-raw ()
+  ""
+  (interactive)
+  (if (get-buffer-process (current-buffer))
+      (call-interactively 'term-send-raw)
+    (kill-buffer)))
+
 ;; http://d.hatena.ne.jp/goinger/20100416/1271399150
 ;; (setq term-ansi-default-program shell-file-name)
 (add-hook 'term-setup-hook (lambda ()
@@ -820,6 +827,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                               ;; (define-key term-raw-map "\C-t" 'set-mark-command)
                               (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
                               (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z")))
+                            (define-key term-raw-map "q" 'my-term-quit-or-send-raw)
                             (define-key term-raw-map (kbd "ESC") 'term-send-raw)
                             (define-key term-raw-map [delete] 'term-send-raw)
                             (define-key term-raw-map "\C-h" 'term-send-backspace)
@@ -1500,6 +1508,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
       (eshell-send-input))))
 
 (setq eshell-directory-name "~/.emacs.d/eshell/")
+(setq eshell-term-name "eterm-color")
 (setq eshell-scroll-to-bottom-on-input t)
 (setq eshell-cmpl-ignore-case t)
 (setq eshell-cmpl-cycle-completions nil)
@@ -1561,21 +1570,25 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (mapcar (lambda (alias)
                       (add-to-list 'eshell-command-aliases-list
                                    alias))
-                    '(("ll" "ls -l")
-                      ("la" "ls -a")
-                      ("lla" "ls -al")
-                      ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp")
-                      ("aptin" "sudo apt-get install")
-                      ("u" "uname")
+                    '(
+                      ; ("ll" "ls -l $*")
+                      ; ("la" "ls -a $*")
+                      ; ("lla" "ls -al $*")
+                      ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp $*")
+                      ("aptin" "apt-get install $*")
                       ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer)); (view-buffer (get-buffer \"*eshell output*\"))")
-                      ("g" "git")))
+                      ("g" "git $*")
+                      ))
+            ; (eshell/alias "g" "git $*")
             (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
             (apply 'eshell/addpath exec-path)
             (set (make-variable-buffer-local 'scroll-margin) 0)
-            (eshell/export "GIT_PAGER=")
-            (eshell/export "GIT_EDITOR=")
+            ;; (eshell/export "GIT_PAGER=")
+            ;; (eshell/export "GIT_EDITOR=")
             (eshell/export "LC_MESSAGES=C")
-            (eshell/export "TERM=xterm")
+            (add-to-list 'eshell-visual-commands "vim")
+            (add-to-list 'eshell-visual-commands "git")
+            (switch-to-buffer (current-buffer)) ; move buffer top of list
             ))
 
 ;; (eval-after-load "em-alias"
