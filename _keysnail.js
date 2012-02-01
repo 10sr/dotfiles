@@ -27,25 +27,6 @@ function ignore(k, i) [k, null];
 //// firefox
 // style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
 
-util.setPrefs(
-    {
-        "browser.tabs.loadDivertedInBackground": true,
-        "dom.disable_window_open_feature.location": false,
-        "dom.max_script_run_time": 30,
-        "browser.bookmarks.max_backups":0,
-        "browser.urlbar.autocomplete.enabled":false,
-        "browser.cache.memory.capacity":16384,
-        "browser.sessionhistory.max_total_viewers":8,
-        "browser.download.manager.closeWhenDone":true,
-        "browser.download.useDownloadDir":false,
-        "browser.tabs.closeWindowWithLastTab":false,
-        "network.dns.disableIPv6":true,
-        "browser.urlbar.trimURLs":false,
-        "browser.fullscreen.autohide":false,
-        "keyword.URL":"http://www.bing.com/search?q=",
-    }
-);
-
 ///////////////////////////////////
 //検索エンジン
 plugins.options["search-url-list"] = [
@@ -176,6 +157,27 @@ plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
 // エクステ
+
+ext.add('my-setpref', function(){
+    util.setPrefs(
+        {
+            "browser.tabs.loadDivertedInBackground": true,
+            "dom.disable_window_open_feature.location": false,
+            "dom.max_script_run_time": 30,
+            "browser.bookmarks.max_backups":0,
+            "browser.urlbar.autocomplete.enabled":false,
+            "browser.cache.memory.capacity":16384,
+            "browser.sessionhistory.max_total_viewers":8,
+            "browser.download.manager.closeWhenDone":true,
+            "browser.download.useDownloadDir":false,
+            "browser.tabs.closeWindowWithLastTab":false,
+            "network.dns.disableIPv6":true,
+            "browser.urlbar.trimURLs":false,
+            "browser.fullscreen.autohide":false,
+            "keyword.URL":"http://www.bing.com/search?q=",
+        }
+    );
+}, 'my setpref');
 
 ext.add('auto-install-plugins', function(ev, arg){
     var urls = [
