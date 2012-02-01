@@ -94,16 +94,6 @@
           (lambda ()
             (kill-buffer "*scratch*")))
 
-(defun my-delete-frame-or-kill-emacs ()
-  "delete frame when opening multiple frame, kill emacs when only one."
-  (interactive)
-  (if (eq 1
-          (length (frame-list)))
-      (save-buffers-kill-emacs)
-    (delete-frame)))
-(global-set-key (kbd "C-x C-c") 'my-delete-frame-or-kill-emacs)
-(define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
-
 ;; modifier keys
 (setq mac-option-modifier 'control)
 (setq w32-apps-modifier 'meta)
@@ -480,9 +470,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
-(define-key my-prefix-map (kbd "C-f") 'make-frame-command)
 (define-key my-prefix-map (kbd "C-o") 'occur)
-(define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
 
 ;; (define-key my-prefix-map (kbd "C-h") help-map)
 (global-set-key (kbd "C-\\") help-map)
@@ -743,9 +731,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; frame buffer
 
-;; (add-hook 'after-make-frame-functions
-;;           (lambda (frame)
-;;             (recentf-open-files)))
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (switch-to-buffer (recentf-open-files))))
 
 ;; (defvar aaa nil)
 ;; (plist-get aaa 'abc)
@@ -754,24 +742,29 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (defvar my-frame-buffer-plist nil)
 ;; (setplist my-frame-buffer-plist nil)
 
-(defun my-frame-buffer-add ()
+(defun my-frame-buffer-add (&optional buf frame)
   ""
   (setq my-frame-buffer-plist
         (plist-put my-frame-buffer-plist
-                   (selected-frame)
-                   (let ((lst (my-frame-buffer-get)))
+                   (or frame
+                       (selected-frame))
+                   (let ((lst (my-frame-buffer-get frame)))
                      (if lst
                          (add-to-list 'lst
-                                      (current-buffer))
-                       (list (current-buffer)))))))
+                                      (or buf
+                                          (current-buffer)))
+                       (list (or buf
+                                 (current-buffer))))))))
 
-(defun my-frame-buffer-remove ()
+(defun my-frame-buffer-remove (&optional buf frame)
   ""
   (setq my-frame-buffer-plist
         (plist-put my-frame-buffer-plist
-                   (selected-frame)
-                   (delq (current-buffer)
-                         (my-frame-buffer-get)))))
+                   (or frame
+                       (selected-frame))
+                   (delq (or buf
+                             (current-buffer))
+                         (my-frame-buffer-get frame)))))
 
 (defun my-frame-buffer-get (&optional frame)
   ""
@@ -779,21 +772,73 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
              (or frame
                  (selected-frame))))
 
-(defun my-frame-buffer-kill-all-buffer (frame)
+(defun my-frame-buffer-kill-all-buffer (&optional frame)
   ""
   (mapcar 'kill-buffer
           (my-frame-buffer-get frame)))
 
 (add-hook 'find-file-hook
           'my-frame-buffer-add)
-;; (add-hook 'dired-mode-hook
-;;           'my-frame-buffer-add)
+(add-hook 'term-mode-hook
+          'my-frame-buffer-add)
+(add-hook 'eshell-mode-hook
+          'my-frame-buffer-add)
+
 (add-hook 'kill-buffer-hook
           'my-frame-buffer-remove)
 (add-hook 'delete-frame-functions
           'my-frame-buffer-kill-all-buffer)
 
-(frame-parameters (selected-frame))
+
+(defvar my-desktop-terminal "roxterm")
+(defun my-execute-terminal ()
+  ""
+  (interactive)
+  (if (and (or (eq system-type 'windows-nt)
+               window-system)
+           my-desktop-terminal
+           )
+      (let ((process-environment (cons "TERM=xterm" process-environment)))
+        (start-process "terminal"
+                       nil
+                       my-desktop-terminal))
+    (my-term)))
+
+(defun my-term ()
+  "open terminal buffer and return that buffer."
+  (interactive)
+  (if (eq system-type 'windows-nt)
+      (eshell t)
+    (if (featurep 'multi-term)
+        (multi-term)
+      (ansi-term "/bin/bash"))))
+
+(defvar my-frame-term-plist nil)
+;; (setplist my-frame-term-plist nil)
+(defun my-execute-or-find-term ()
+  ""
+  (interactive)
+  (let* ((buf (plist-get my-frame-term-plist (selected-frame))))
+    (if (and buf
+             (buffer-name buf))
+        (switch-to-buffer buf)
+      (setq my-frame-term-plist
+            (plist-put my-frame-term-plist
+                       (selected-frame)
+                       (my-term))))))
+
+(defun my-delete-frame-or-kill-emacs ()
+  "delete frame when opening multiple frame, kill emacs when only one."
+  (interactive)
+  (if (eq 1
+          (length (frame-list)))
+      (save-buffers-kill-emacs)
+    (delete-frame)))
+
+(define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
+(define-key my-prefix-map (kbd "C-f") 'make-frame-command)
+(global-set-key (kbd "C-x C-c") 'my-delete-frame-or-kill-emacs)
+(define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
@@ -1438,7 +1483,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 
 ;; (defun eshell/git (&rest args)
 ;;   ""
-;;   (eshell-parse-arguments (point-at-bol) (point-at-eol)))
+;;   )
 
 (defun eshell/o (&optional file)
   (my-x-open (or file ".")))
@@ -1659,43 +1704,6 @@ when SEC is nil, stop auto save if enabled."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
-
-(defvar my-desktop-terminal "roxterm")
-(defun my-execute-terminal ()
-  ""
-  (interactive)
-  (if (and (or (eq system-type 'windows-nt)
-               window-system)
-           my-desktop-terminal
-           )
-      (let ((process-environment (cons "TERM=xterm" process-environment)))
-        (start-process "terminal"
-                       nil
-                       my-desktop-terminal))
-    (my-execute-or-find-term)))
-
-(defun my-term ()
-  "open terminal buffer and return that buffer."
-  (interactive)
-  (if (eq system-type 'windows-nt)
-      (eshell t)
-    (if (featurep 'multi-term)
-        (multi-term)
-      (ansi-term "/bin/bash"))))
-
-(defvar my-frame-term-plist nil)
-;; (setplist my-frame-term-plist nil)
-(defun my-execute-or-find-term ()
-  ""
-  (interactive)
-  (let* ((buf (plist-get my-frame-term-plist (selected-frame))))
-    (if (and buf
-             (buffer-name buf))
-        (switch-to-buffer buf)
-      (setq my-frame-term-plist
-            (plist-put my-frame-term-plist
-                       (selected-frame)
-                       (my-term))))))
 
 (defun my-format-time-string (&optional time)
   ""
