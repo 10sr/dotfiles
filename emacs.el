@@ -813,20 +813,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
         (multi-term)
       (ansi-term "/bin/bash"))))
 
-(defvar my-frame-term-plist nil)
-;; (setplist my-frame-term-plist nil)
-(defun my-execute-or-find-term ()
-  ""
-  (interactive)
-  (let* ((buf (plist-get my-frame-term-plist (selected-frame))))
-    (if (and buf
-             (buffer-name buf))
-        (switch-to-buffer buf)
-      (setq my-frame-term-plist
-            (plist-put my-frame-term-plist
-                       (selected-frame)
-                       (my-term))))))
-
 (defun my-delete-frame-or-kill-emacs ()
   "delete frame when opening multiple frame, kill emacs when only one."
   (interactive)
