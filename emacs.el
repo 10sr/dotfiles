@@ -1418,20 +1418,6 @@ Optional prefix ARG says how many lines to unflag; default is one line."
            (point))
     (backward-delete-char 1)))
 
-(defvar my-eshell-frame-buffer-alist nil)
-
-(defun my-eshell-frame-buffer (frame)
-  "get buffer associated with FRAME. if buffer doesnt exist or killed, return nil."
-  (let ((bf (cdr (assq frame my-eshell-frame-buffer-alist))))
-    (and bf                            ;関連付けられたバッファが存在し
-         (buffer-name bf)              ;かつkillされてない
-         bf)))
-
-(add-hook 'eshell-mode-hook
-          (lambda ()
-            (add-to-list 'my-eshell-frame-buffer-alist
-                         (cons (selected-frame) (current-buffer)))))
-
 (defun my-file-owner-p (file)
   "t if FILE is owned by me."
   (eq (user-uid) (nth 2 (file-attributes file))))
@@ -1603,11 +1589,6 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;                               "gcc -lm -o ${uname}.$1.out $1"))
 ;;      ;; (eshell/alias "ut" "ssh g841105@un001.ecc.u-tokyo.ac.jp")
 ;;      (add-to-list 'recentf-exclude (concat eshell-directory-name "alias"))))
-
-;; (define-key my-prefix-map (kbd "C-s") (lambda ()
-;;                                         (interactive)
-;;                                         (eshell-cd-default-directory (buffer-name (or (my-eshell-frame-buffer (selected-frame))
-;;                                                                                       (eshell t))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 最終更新日時を得る
