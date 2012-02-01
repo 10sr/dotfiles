@@ -673,14 +673,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (c-toggle-hungry-state 1)
             ))
 
-(defun my-compile-c-this-file ()
-  ""
-  (interactive)
-  (compile (format "gcc -Wall -g -o %s %s"
-                   (file-name-sans-extension buffer-file-name)
-                   buffer-file-name)))
-;; (when (require 'c nil t)(c-toggle-hungry-state t)
-
 (when (dllib-if-unfound "js2-mode"
                         "https://github.com/mooz/js2-mode/raw/master/js2-mode.el"
                         t)
