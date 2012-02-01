@@ -731,16 +731,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; frame buffer
 
-(add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (switch-to-buffer (recentf-open-files))))
-
-;; (defvar aaa nil)
-;; (plist-get aaa 'abc)
-;; (setq aaa (plist-put aaa 'abc 'efg))
+(add-hook 'before-make-frame-hook
+          (lambda ()
+            (switch-to-buffer "*Messages*")))
 
 (defvar my-frame-buffer-plist nil)
-;; (setplist my-frame-buffer-plist nil)
 
 (defun my-frame-buffer-add (&optional buf frame)
   ""
