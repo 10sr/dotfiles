@@ -705,10 +705,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (define-key view-mode-map "q" 'bury-buffer)))
 (global-set-key "\M-r" 'view-mode)
 (setq view-read-only t)
-;; (add-hook 'find-file-hook
-;;           (lambda ()
-;;             (when buffer-read-only
-;;               (view-mode 1))))
 
 (add-hook 'Man-mode-hook
           (lambda ()
@@ -899,56 +895,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
     (with-current-buffer bf
       (equal (expand-file-name default-directory) cdir))))
 
-(defun echo-buffer-list (&optional blist)
-  "echo buffer list as string. BLIST is list with buffer objects as elements.
-if arg is omitted use value of `buffer-list'."
-  (interactive)
-  (message (or (mapconcat (lambda (bf)
-                            (concat (buffer-name bf)
-                                    "\t"
-                                    (with-current-buffer bf
-                                      (symbol-name major-mode))
-                                    "\t"
-                                    (abbreviate-file-name (buffer-file-name bf))))
-                          (or blist
-                              (buffer-list))
-                          "\n")
-               "")))
-
-(defun my-buffer-list ()
-  "return buffer list."
-  (delq nil
-        (mapcar (lambda (bf)
-                  (with-current-buffer bf
-                    (and buffer-file-name
-                         bf)))
-                (buffer-list (selected-frame)))))
-
-(defvar buffer-switch-list-function 'my-buffer-list)
-
-(defun switch-to-previous-buffer-cycle (&optional silent-p)
-  ""
-  (interactive)
-  (let ((bl (funcall buffer-switch-list-function)))
-    (when bl
-      (bury-buffer (car bl))
-      (switch-to-buffer (or (nth 1 bl)
-                            (car bl)))
-      (or silent-p
-          (echo-buffer-list (funcall buffer-switch-list-function))))))
-
-(defun switch-to-next-buffer-cycle (&optional silent-p)
-  ""
-  (interactive)
-  (let* ((bl (funcall buffer-switch-list-function))
-         (bf (nth (- (length bl)
-                     1)
-                  bl)))
-    (when bl
-      (switch-to-buffer bf)
-      (or silent-p
-          (echo-buffer-list (funcall buffer-switch-list-function))))))
-
 (iswitchb-mode 1)
 
 (defun iswitchb-buffer-display-other-window ()
@@ -956,17 +902,6 @@ if arg is omitted use value of `buffer-list'."
   (interactive)
   (let ((iswitchb-default-method 'display))
     (call-interactively 'iswitchb-buffer)))
-
-(defun switch-to-other-buffer ()
-  ""
-  (interactive)
-  (let ((buffer-switch-list-function 'buffer-list))
-    (switch-to-previous-buffer-cycle t)))
-
-(global-set-key (kbd "C-.") 'switch-to-previous-buffer-cycle)
-(global-set-key (kbd "C-,") 'switch-to-next-buffer-cycle)
-;; (global-set-key (kbd "C-\\") 'switch-to-other-buffer)
-;; (global-set-key (kbd "C-\\") 'bury-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sdic
