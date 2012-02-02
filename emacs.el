@@ -603,8 +603,18 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
 
+(add-hook 'python-mode-hook
+          (lambda ()
+            ()))
+
+(defun my-python-run-as-command ()
+  ""
+  (interactive)
+  (shell-command (concat python-command " " buffer-file-name)))
+
 (add-hook 'inferior-python-mode-hook
           (lambda ()
+            (set-window-text-height (display-buffer (current-buffer) t) 7)
             (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
             (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)))
 
