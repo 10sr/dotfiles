@@ -600,24 +600,27 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'sh-mode-hook
           (lambda ()
             (define-key sh-mode-map (kbd "C-x C-e") 'my-execute-shell-command-current-line)))
+
 (defun my-execute-shell-command-current-line ()
   ""
   (interactive)
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
 
-(add-hook 'python-mode-hook
-          (lambda ()
-            ()))
-
 (defun my-python-run-as-command ()
   ""
   (interactive)
   (shell-command (concat python-command " " buffer-file-name)))
 
+(add-hook 'python-mode-hook
+          (lambda ()
+            (define-key python-mode-map (kbd "C-c C-e") 'my-python-run-as-command)))
+
 (add-hook 'inferior-python-mode-hook
           (lambda ()
-            (set-window-text-height (display-buffer (current-buffer) t) 7)
+            (set-window-text-height (display-buffer (current-buffer)
+                                                    t)
+                                    7)
             (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
             (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)))
 
@@ -630,7 +633,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (define-key apropos-mode-map "j" 'next-line)
             (define-key apropos-mode-map "k" 'previous-line)))
 
-(define-key minibuffer-local-map (kbd "C-u") (lambda () (interactive) (delete-region (point-at-bol) (point-at-eol))))
+(define-key minibuffer-local-map (kbd "C-u") (lambda () (interactive) (delete-region (point-at-bol) (point))))
 
 (add-hook 'isearch-mode-hook
           (lambda ()
@@ -656,11 +659,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (lambda ()
               (outline-minor-mode 1)
               (set (make-local-variable 'comment-start) ";"))))
-
-;; (add-hook 'c-mode-hook
-;;           (lambda ()
-;;             (set (make-local-variable 'comment-start) "//")
-;;             (set (make-local-variable 'comment-end) "")))
 
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; c-mode
