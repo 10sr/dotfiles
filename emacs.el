@@ -738,9 +738,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; frame buffer
 
-(add-hook 'before-make-frame-hook
-          (lambda ()
-            (switch-to-buffer "*Messages*")))
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (set-window-buffer (frame-selected-window frame)
+                               "*Messages*")))
 
 (defvar my-frame-buffer-plist nil)
 
