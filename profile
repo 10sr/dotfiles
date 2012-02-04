@@ -17,7 +17,7 @@ if [ -n "${DESKTOP_SESSION}" ]; then
     type feh >/dev/null 2>&1 &&
     sh "$HOME/.fehbg"
 else
-    export LANG=C
+    export LC_MESSAGES=C
 fi
 
 # export PS1="\$ "
