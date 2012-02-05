@@ -975,6 +975,13 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
           (lambda ()
             (define-key scheme-mode-map "\C-c\C-b" 'scheme-send-buffer)))
 
+(add-hook 'inferior-scheme-mode-hook
+          (lambda ()
+            (set-window-text-height (display-buffer (current-buffer)
+                                                    t)
+                                    7)
+            ))
+
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
 
@@ -982,12 +989,12 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                         "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
                         t)
   (setq auto-mode-alist
-        (cons '("\.scm$" . gauche-mode) auto-mode-alist))
+        (cons '("\.gosh$" . gauche-mode) auto-mode-alist))
   (autoload 'gauche-mode "gauche-mode" "Major mode for Scheme." t)
   (autoload 'run-scheme "gauche-mode" "Run an inferior Scheme process." t)
   (add-hook 'gauche-mode-hook
             (lambda ()
-              (define-key scheme-mode-map "\C-c\C-z" 'run-gauche-other-window))))
+              (define-key gauche-mode-map "\C-c\C-z" 'run-gauche-other-window))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
