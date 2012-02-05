@@ -337,9 +337,13 @@
       (setq my-set-mode-line-color-state state))))
 (defvar my-set-mode-line-color-color nil "")
 (setq my-set-mode-line-color-color
+      (if window-system
+          `((readonly "white" "blue")
+            (overwrite "white" "red")
+            (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))
       `((readonly "blue" "white")
         (overwrite "red" "white")
-        (insert ,(face-foreground 'modeline) ,(face-background 'modeline))))
+        (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))))
 (defvar my-set-mode-line-color-state nil "")
 (add-hook 'post-command-hook 'my-set-mode-line-color-read-only)
 (add-hook 'after-init-hook 'my-set-mode-line-color-read-only)
