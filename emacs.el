@@ -509,26 +509,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; download library from web
 
-;; (require 'url)
-
-;; (defun dllib-if-needed (lib url &optional callback bite-compile-p force-download-p) ; dont use it
-;;   "if LIB does not exist, download it from URL and rename to \"~/emacs.d/lisp/LIB.el\".
-;; after download LIB successfully call CALLBACK. if LIB already exist, call CALLBACK immediately."
-;;   (let* ((dir (expand-file-name "~/.emacs.d/lisp/"))
-;;          (lpath (concat dir lib ".el")))
-;;     (and (if (or force-download-p (not (locate-library lib)))
-;;              (condition-case nil
-;;                  (progn (url-copy-file url
-;;                                        lpath
-;;                                        t)
-;;                         (and bite-compile-p
-;;                              (byte-compile-file lpath)
-;;                              t))
-;;                (error (message "downloading %s...something wrong happened!" url)
-;;                       nil))
-;;            t)
-;;          callback
-;;          (funcall callback))))
+(require 'url)
 
 (defun dllib-if-unfound (lib url &optional bite-compile-p force-download-p) ; new version
   "if LIB does not exist, download it from URL and locate it to \"~/emacs.d/lisp/LIB.el\".
@@ -868,7 +849,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             (define-key term-raw-map "q" 'my-term-quit-or-send-raw)
                             (define-key term-raw-map (kbd "ESC") 'term-send-raw)
                             (define-key term-raw-map [delete] 'term-send-raw)
-                            (define-key term-raw-map "\C-h" 'term-send-backspace)
+                            (define-key term-raw-map (kbd "DEL") 'term-send-backspace)
                             (define-key term-raw-map "\C-y" 'term-paste)
                             (define-key term-raw-map "\C-c" 'term-send-raw) ;; 'term-interrupt-subjob)
                             ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
@@ -973,7 +954,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (add-hook 'scheme-mode-hook
           (lambda ()
-            (define-key scheme-mode-map "\C-c\C-b" 'scheme-send-buffer)))
+            (define-key scheme-mode-map "\C-c\C-c" 'scheme-send-buffer)))
 
 (add-hook 'inferior-scheme-mode-hook
           (lambda ()
@@ -990,6 +971,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                         t)
   (setq auto-mode-alist
         (cons '("\.gosh$" . gauche-mode) auto-mode-alist))
+  (setq auto-mode-alist
+        (cons '("\.gaucherc$" . gauche-mode) auto-mode-alist))
   (autoload 'gauche-mode "gauche-mode" "Major mode for Scheme." t)
   (autoload 'run-scheme "gauche-mode" "Run an inferior Scheme process." t)
   (add-hook 'gauche-mode-hook
