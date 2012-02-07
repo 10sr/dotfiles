@@ -25,6 +25,7 @@ export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
 export BROWSER=firefox
+export ENV=~/.shrc
 # export TMP=/tmp
 # export TEMP=/tmp
 
