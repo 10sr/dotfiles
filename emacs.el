@@ -296,7 +296,7 @@
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-(defun my-set-mode-line-color-according-to-readily-state ()
+(defun my-set-mode-line-color-according-to-readonly-state ()
   ""
   (let ((state (if buffer-read-only
                    'readonly
@@ -304,11 +304,11 @@
                      'overwrite
                    'insert))))
     (unless (eq state my-set-mode-line-color-state)
-      (set-face-foreground 'mode-line
+      (set-face-foreground 'modeline
                            (nth 1
                                 (assq state
                                       my-set-mode-line-color-color)))
-      (set-face-background 'mode-line
+      (set-face-background 'modeline
                            (nth 2
                                 (assq state
                                       my-set-mode-line-color-color)))
@@ -323,8 +323,11 @@
           (overwrite "red" "white")
           (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))))
 (defvar my-set-mode-line-color-state nil "")
-(add-hook 'post-command-hook 'my-set-mode-line-color-according-to-readily-state)
-(add-hook 'after-init-hook 'my-set-mode-line-color-according-to-readily-state)
+(add-hook 'post-command-hook 'my-set-mode-line-color-according-to-readonly-state)
+(add-hook 'after-init-hook 'my-set-mode-line-color-according-to-readonly-state)
+
+;; (set-face-foreground 'mode-line-inactive (if window-system "gray" "white"))
+;; (set-face-background 'mode-line-inactive (if window-system "white" "gray"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
