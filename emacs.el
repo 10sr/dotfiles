@@ -833,12 +833,15 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
                             ;;   (define-key term-raw-map (kbd key) 'term-send-raw))
                             ;; (define-key term-raw-map "\C-d" 'delete-char)
-                            (set (make-variable-buffer-local 'scroll-margin) 0)
-                            ;; (set (make-variable-buffer-local 'cua-enable-cua-keys) nil)
+                            (set (make-local-variable 'scroll-margin) 0)
+                            ;; (set (make-local-variable 'cua-enable-cua-keys) nil)
                             ;; (cua-mode 0)
                             ;; (and cua-mode
                             ;;      (local-unset-key (kbd "C-c")))
                             ;; (define-key cua--prefix-override-keymap "\C-c" 'term-interrupt-subjob)
+                            (set (make-local-variable 'hl-line-range-function)
+                                 (lambda ()
+                                   '(0 0)))
                             ))
 ;; (add-hook 'term-exec-hook 'forward-char)
 
@@ -861,7 +864,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (setq bs-default-configuration "this-frame")
             ;; (and bs--show-all
             ;;      (call-interactively 'bs-toggle-show-all))
-            (set (make-variable-buffer-local 'scroll-margin) 0)
+            (set (make-local-variable 'scroll-margin) 0)
             ))
 
 (defun buffer-same-dir-p (bf)
@@ -1520,7 +1523,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                         ; (eshell/alias "g" "git $*")
             (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
             (apply 'eshell/addpath exec-path)
-            (set (make-variable-buffer-local 'scroll-margin) 0)
+            (set (make-local-variable 'scroll-margin) 0)
             ;; (eshell/export "GIT_PAGER=")
             ;; (eshell/export "GIT_EDITOR=")
             (eshell/export "LC_MESSAGES=C")
