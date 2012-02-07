@@ -844,7 +844,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             ;; (define-key cua--prefix-override-keymap "\C-c" 'term-interrupt-subjob)
                             (set (make-local-variable 'hl-line-range-function)
                                  (lambda ()
-                                   '(0 0)))
+                                   '(0 . 0)))
                             ))
 ;; (add-hook 'term-exec-hook 'forward-char)
 
