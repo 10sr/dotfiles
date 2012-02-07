@@ -296,26 +296,6 @@
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-;; http://www.emacswiki.org/emacs/ChangingCursorDynamically
-;; why saving buffer?
-;; Change cursor color according to mode
-(defvar hcz-set-cursor-color-color "")
-(defvar hcz-set-cursor-color-buffer "")
-(defun hcz-set-cursor-color-according-to-mode ()
-  "change cursor color according to some minor modes."
-  ;; set-cursor-color is somewhat costly, so we only call it when needed:
-  (let ((color
-         (if buffer-read-only "blue"
-           (if overwrite-mode "yellow"
-             "black"))))
-    (unless (and
-             (string= color hcz-set-cursor-color-color)
-             (string= (buffer-name) hcz-set-cursor-color-buffer))
-      (set-cursor-color (setq hcz-set-cursor-color-color color))
-      (setq hcz-set-cursor-color-buffer (buffer-name)))))
-(and window-system
-     (add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode))
-
 (defun my-set-mode-line-color-according-to-readily-state ()
   ""
   (let ((state (if buffer-read-only
