@@ -57,9 +57,6 @@
 
 (add-hook 'after-init-hook
           (lambda ()
-            ;; (message "init time: %d msec"
-            ;;          (+ (* (- (nth 1 after-init-time) (nth 1 before-init-time)) 1000)
-            ;;             (/ (- (nth 2 after-init-time) (nth 2 before-init-time)) 1000)))
             (message (emacs-init-time))
             (switch-to-buffer "*Messages*")
             ))
@@ -205,8 +202,9 @@
         Man-mode))
 
 (standard-display-ascii ?\n "$\n")
-(copy-face 'default 'my-eol-face)
-(set-face-foreground 'my-eol-face "green")
+(set-face-foreground (copy-face 'default
+                                'my-eol-face)
+                     "green")
 ;; (defface my-eol-face
 ;;   '((t (:foreground "green")))
 ;;   "eol.")
@@ -318,7 +316,7 @@
 (and window-system
      (add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode))
 
-(defun my-set-mode-line-color-read-only ()
+(defun my-set-mode-line-color-according-to-readily-state ()
   ""
   (let ((state (if buffer-read-only
                    'readonly
@@ -326,11 +324,11 @@
                      'overwrite
                    'insert))))
     (unless (eq state my-set-mode-line-color-state)
-      (set-face-foreground 'modeline
+      (set-face-foreground 'mode-line
                            (nth 1
                                 (assq state
                                       my-set-mode-line-color-color)))
-      (set-face-background 'modeline
+      (set-face-background 'mode-line
                            (nth 2
                                 (assq state
                                       my-set-mode-line-color-color)))
@@ -341,12 +339,12 @@
           `((readonly "white" "blue")
             (overwrite "white" "red")
             (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))
-      `((readonly "blue" "white")
-        (overwrite "red" "white")
-        (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))))
+        `((readonly "blue" "white")
+          (overwrite "red" "white")
+          (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))))
 (defvar my-set-mode-line-color-state nil "")
-(add-hook 'post-command-hook 'my-set-mode-line-color-read-only)
-(add-hook 'after-init-hook 'my-set-mode-line-color-read-only)
+(add-hook 'post-command-hook 'my-set-mode-line-color-according-to-readily-state)
+(add-hook 'after-init-hook 'my-set-mode-line-color-according-to-readily-state)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
@@ -379,7 +377,7 @@
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
       scroll-margin 2
-      scroll-step 0)                    ;4行ずつスクロール?
+      scroll-step 0)
 (setq default-major-mode 'text-mode)
 (setq next-line-add-newlines nil)
 (setq kill-read-only-ok t)
@@ -538,9 +536,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 (when (and window-system
-          ;; (getenv "DESKTOP_SESSION")
-          (not (eq window-system 'mac))
-          )
+           ;; (getenv "DESKTOP_SESSION")
+           (not (eq window-system 'mac))
+           )
   (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal
         x-select-enable-primary nil)
   ;; (global-set-key "\C-y" 'x-clipboard-yank)
@@ -934,7 +932,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gauche-mode
 
-(setq scheme-program-name "gosh")
+(setq scheme-program-name
+      (setq gauche-program-name "gosh"))
 
 (defun run-gauche-other-window ()
   "Run gauche on other window"
@@ -945,21 +944,25 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (defun run-gauche ()
   "run gauche"
-  (run-scheme "gosh"))
+  (run-scheme gauche-program-name)
+  )
 
 (defun scheme-send-buffer ()
   ""
   (interactive)
-  (scheme-send-region (point-min) (point-max)))
+  (scheme-send-region (point-min) (point-max))
+  (set-window-text-height (display-buffer "*scheme*"
+                                          t)
+                          7)
+  )
 
 (add-hook 'scheme-mode-hook
           (lambda ()
-            (define-key scheme-mode-map "\C-c\C-c" 'scheme-send-buffer)))
+            nil))
 
 (add-hook 'inferior-scheme-mode-hook
           (lambda ()
-            (set-window-text-height (display-buffer (current-buffer)
-                                                    t)
+            (set-window-text-height (display-buffer "*scheme*")
                                     7)
             ))
 
@@ -977,7 +980,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (autoload 'run-scheme "gauche-mode" "Run an inferior Scheme process." t)
   (add-hook 'gauche-mode-hook
             (lambda ()
-              (define-key gauche-mode-map "\C-c\C-z" 'run-gauche-other-window))))
+              (define-key gauche-mode-map "\C-c\C-z" 'run-gauche-other-window)
+              (define-key scheme-mode-map "\C-c\C-c" 'scheme-send-buffer)
+              )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
@@ -1302,8 +1307,8 @@ otherwise, use `pack-default-extension' for pack."
 (setq ls-lisp-dirs-first t)
 (setq ls-lisp-use-localized-time-format t)
 (setq ls-lisp-format-time-list
-       '("%Y-%m-%d %H:%M"
-         "%Y-%m-%d      "))
+      '("%Y-%m-%d %H:%M"
+        "%Y-%m-%d      "))
 
 (setq dired-dwim-target t)
 
@@ -1524,15 +1529,15 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                       (add-to-list 'eshell-command-aliases-list
                                    alias))
                     '(
-                      ; ("ll" "ls -l $*")
-                      ; ("la" "ls -a $*")
-                      ; ("lla" "ls -al $*")
+                                        ; ("ll" "ls -l $*")
+                                        ; ("la" "ls -a $*")
+                                        ; ("lla" "ls -al $*")
                       ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp $*")
                       ("aptin" "apt-get install $*")
                       ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer)); (view-buffer (get-buffer \"*eshell output*\"))")
                       ("g" "git $*")
                       ))
-            ; (eshell/alias "g" "git $*")
+                                        ; (eshell/alias "g" "git $*")
             (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
             (apply 'eshell/addpath exec-path)
             (set (make-variable-buffer-local 'scroll-margin) 0)
