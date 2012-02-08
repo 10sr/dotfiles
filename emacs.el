@@ -573,20 +573,29 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
 
+(setq python-python-command (executable-find "python3"))
 (defun my-python-run-as-command ()
   ""
   (interactive)
-  (shell-command (concat python-command " " buffer-file-name)))
+  (shell-command (concat python-python-command " " buffer-file-name)))
+(defun my-python-display-python-buffer ()
+  ""
+  (interactive)
+  ;; (or python-buffer
+  ;;     (save-excursion
+  ;;       (run-python)))
+  (set-window-text-height (display-buffer python-buffer
+                                          t)
+                          7))
 
 (add-hook 'python-mode-hook
           (lambda ()
-            (define-key python-mode-map (kbd "C-c C-e") 'my-python-run-as-command)))
+            (define-key python-mode-map (kbd "C-c C-e") 'my-python-run-as-command)
+            (define-key python-mode-map (kbd "C-c C-b") 'my-python-display-python-buffer)))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
-            (set-window-text-height (display-buffer (current-buffer)
-                                                    t)
-                                    7)
+            (my-python-display-python-buffer)
             (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
             (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)))
 
@@ -937,10 +946,15 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   ""
   (interactive)
   (scheme-send-region (point-min) (point-max))
-  (set-window-text-height (display-buffer "*scheme*"
-                                          t)
-                          7)
+  (my-scheme-display-scheme-buffer)
   )
+
+(defun my-scheme-display-scheme-buffer ()
+  ""
+  (interactive)
+  (set-window-text-height (display-buffer scheme-buffer
+                                          t)
+                          7))
 
 (add-hook 'scheme-mode-hook
           (lambda ()
@@ -948,10 +962,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (add-hook 'inferior-scheme-mode-hook
           (lambda ()
-            (set-window-text-height (display-buffer "*scheme*")
-                                    7)
+            ;; (my-scheme-display-scheme-buffer)
             ))
-
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
 
@@ -966,8 +978,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (autoload 'run-scheme "gauche-mode" "Run an inferior Scheme process." t)
   (add-hook 'gauche-mode-hook
             (lambda ()
-              (define-key gauche-mode-map "\C-c\C-z" 'run-gauche-other-window)
-              (define-key scheme-mode-map "\C-c\C-c" 'scheme-send-buffer)
+              (define-key gauche-mode-map (kbd "C-c C-z") 'run-gauche-other-window)
+              (define-key scheme-mode-map (kbd "C-c C-c") 'scheme-send-buffer)
+              (define-key scheme-mode-map (kbd "C-c C-b") 'my-scheme-display-scheme-buffer)
               )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
