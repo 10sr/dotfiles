@@ -4,7 +4,6 @@ test -r /etc/bashrc && . /etc/bashrc
 
 ##########################
 # system type
-# $OSTYPEとか使えるのかな
 
 if uname | grep -E "^MINGW32" >/dev/null 2>&1
 then
@@ -63,7 +62,7 @@ export LESS="-iRMX"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
-alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
+alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto\ )--time-style=long-iso"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
@@ -85,6 +84,7 @@ alias q=exit
 alias p="$PAGER"
 alias c=cat
 alias pcalc="python -i -c 'from math import *' "
+alias py3=python3
 alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 alias sudo="sudo "              # use aliases through sudo
 alias e3=e3em
@@ -221,25 +221,6 @@ convmv-sjis2utf8-test(){
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
-_my_dl_init_files(){
-    for file in .bashrc .vimrc .emacs
-    do
-        local flag=0
-        if test -f ~/${file}.new
-        then
-            mv ~/${file}.new ~/${file}.old
-            echo "${file}.new already exist. Rename it to ${file}.old."
-            flag=1
-        fi
-        wget https://dl.dropbox.com/u/1751156/${file} -O ~/${file}.new
-        local wgetreturn=$?
-        if test ${flag} -eq 1 -a ${wgetreturn} -eq 0
-        then
-            rm ~/${file}.old
-            echo "${file}.old deleted."
-        fi
-    done
-}
 _mygitconfig(){
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
@@ -328,7 +309,7 @@ __my_prompt_function(){              # used by PS1
 # type date >/dev/null 2>&1 || alias date=":" # "cmd /c echo %time%"
 
 if [ "${EMACS}" = "t" ]; then   # emacs shell用
-    : export PS1="\u@\H \d \t \w\nemacs shell\$ "
+    true export PS1="\u@\H \d \t \w\nemacs shell\$ "
 elif echo "$EMACS" | grep term >/dev/null 2>&1; then # emacs term用
     echo "emacs term"
 fi
