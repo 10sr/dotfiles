@@ -33,7 +33,7 @@ fi
 null(){
     "$@" >/dev/null 2>&1
 }
-safe-cmd(){
+__try_exec(){
     type $1 >/dev/null 2>&1 && "$@"
 }
 replace-cmd(){
@@ -85,7 +85,7 @@ alias q=exit
 alias p="$PAGER"
 alias c=cat
 alias pcalc="python -i -c 'from math import *' "
-alias reloadrc="test -f ~/.bashrc && source ~/.bashrc"
+alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 alias sudo="sudo "              # use aliases through sudo
 alias e3=e3em
 alias mytime="date +%Y%m%d-%H%M%S"
@@ -221,7 +221,7 @@ convmv-sjis2utf8-test(){
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
-_my-dl-init-files(){
+_my_dl_init_files(){
     for file in .bashrc .vimrc .emacs
     do
         local flag=0
@@ -314,10 +314,10 @@ __my_prompt_function(){              # used by PS1
         local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
         local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
         local jobnum=$(jobs | wc -l)
-        local git=$(safe-cmd __git_ps1 [GIT:%s])
-        local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
+        local git=$(__try_exec __git_ps1 [GIT:%s])
+        local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
     fi
-    local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
+    local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
     printf "${_MEMO}"
     printf "$(test -f ~/.prompt.sh && bash ~/.prompt.sh)\n"
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
@@ -426,12 +426,12 @@ _testjp
 uname -a
 test -f /etc/issue.net && cat /etc/issue.net
 
-safe-cmd diskinfo
+__try_exec diskinfo
 
 ! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
     xrandr | grep --color=never ^Screen
 }
 
-iswindows || safe-cmd finger $USER
-LANG=C safe-cmd id
+iswindows || __try_exec finger $USER
+LANG=C __try_exec id
 
