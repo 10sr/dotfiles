@@ -35,9 +35,6 @@ null(){
 __try_exec(){
     type $1 >/dev/null 2>&1 && "$@"
 }
-replace-cmd(){
-    type $1 1>/dev/null || alias $1=true
-}
 
 export PS1="\$(__my_prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
@@ -77,7 +74,6 @@ alias ut="ssh t110414@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
-alias destroy="rm -rf"
 alias psall="ps auxww"
 alias g=git
 alias q=exit
@@ -154,12 +150,6 @@ di(){
         local diffcmd=diff
     fi
     ${diffcmd} -u "$@" | ${PAGER}
-}
-memo(){
-    __MYMEMO="# $*\n"
-}
-rmmemo(){
-    __MYMEMO=""
 }
 throw-away(){
     mkdir -p ~/bu/tb
@@ -299,8 +289,7 @@ __my_prompt_function(){              # used by PS1
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
     fi
     local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
-    printf "${_MEMO}"
-    printf "$(test -f ~/.prompt.sh && bash ~/.prompt.sh)\n"
+    jobs
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
