@@ -1439,6 +1439,18 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 (defun eshell/v ()
   (view-mode 1))
 
+(defun eshell/git (&rest args)
+  ""
+  (if (member (car args)
+              '("di" "diff" "log" "show"))
+      (apply 'eshell-exec-visual "git" args)
+    (shell-command (mapconcat 'shell-quote-argument
+                               `("git" ,@args)
+                               " ")
+                   t)
+    ;; (eshell-external-command "git" args)
+    ))
+
 (defalias 'eshell/: 'ignore)
 (defalias 'eshell/type 'eshell/which)
 ;; (defalias 'eshell/vim 'eshell/vi)
@@ -1472,7 +1484,9 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 (setq eshell-cmpl-ignore-case t)
 (setq eshell-cmpl-cycle-completions nil)
 (setq eshell-highlight-prompt nil)
-(setq eshell-ls-initial-args "-FG")     ; "-hF")
+(setq eshell-ls-initial-args '("-hCFG"
+                               "--color=auto"
+                               "--time-style=long-iso"))     ; "-hF")
 (setq eshell-prompt-function
       (lambda ()
         (with-temp-buffer
@@ -1526,6 +1540,28 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (define-key eshell-mode-map (kbd "DEL") 'my-eshell-backward-delete-char)
             (define-key eshell-mode-map (kbd "C-p") 'eshell-previous-matching-input-from-input)
             (define-key eshell-mode-map (kbd "C-n") 'eshell-next-matching-input-from-input)
+            (apply 'eshell/addpath exec-path)
+            (set (make-local-variable 'scroll-margin) 0)
+            ;; (eshell/export "GIT_PAGER=")
+            ;; (eshell/export "GIT_EDITOR=")
+            (eshell/export "LC_MESSAGES=C")
+            (switch-to-buffer (current-buffer)) ; move buffer top of list
+            (set (make-local-variable 'hl-line-range-function)
+                 (lambda ()
+                   '(0 . 0)))
+            (add-to-list 'eshell-virtual-targets
+                         '("/dev/less"
+                           (lambda (str)
+                             (if str
+                                 (with-current-buffer nil)))
+                           nil))
+            ))
+
+(add-hook 'eshell-mode-hook
+          (lambda ()
+            (add-to-list 'eshell-visual-commands "vim")
+            ;; (add-to-list 'eshell-visual-commands "git")
+            (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
             (mapcar (lambda (alias)
                       (add-to-list 'eshell-command-aliases-list
                                    alias))
@@ -1538,16 +1574,6 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                       ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer)); (view-buffer (get-buffer \"*eshell output*\"))")
                       ("g" "git $*")
                       ))
-                                        ; (eshell/alias "g" "git $*")
-            (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-            (apply 'eshell/addpath exec-path)
-            (set (make-local-variable 'scroll-margin) 0)
-            ;; (eshell/export "GIT_PAGER=")
-            ;; (eshell/export "GIT_EDITOR=")
-            (eshell/export "LC_MESSAGES=C")
-            (add-to-list 'eshell-visual-commands "vim")
-            (add-to-list 'eshell-visual-commands "git")
-            (switch-to-buffer (current-buffer)) ; move buffer top of list
             ))
 
 ;; (eval-after-load "em-alias"
