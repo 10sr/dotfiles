@@ -1069,7 +1069,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (require 'dired)
 
-(defun my-dired-echo-file-head (&optional arg)
+(defun my-dired-echo-file-head (arg)
   ""
   (interactive "P")
   (let ((f (dired-get-filename)))
@@ -1217,11 +1217,11 @@ otherwise, use `pack-default-extension' for pack."
       (while (search-forward "なし" nil t)
         (replace-match "none")))))
 
-(defun dired-get-du ()                  ;em-unix.el使えるかも
+(defun dired-get-du ()
   "dired get disk usage"
   (interactive)
   (message "calculating du...")
-  (dired-do-shell-command "du -hs * " nil (dired-get-marked-files)))
+  (dired-do-shell-command "du -hsD * " nil (dired-get-marked-files)))
 
 (defun my-dired-scroll-up ()
   ""
@@ -1233,17 +1233,33 @@ otherwise, use `pack-default-extension' for pack."
   (interactive)
   (my-dired-next-line (- (window-height) 1)))
 
-(defun my-dired-previous-line (&optional arg)
+(defun my-dired-previous-line (arg)
   ""
-  (interactive)
-  (dired-previous-line (or arg 1))
-  (my-dired-print-current-dir-and-file))
+  (interactive "p")
+  (when (> arg 0)
+    ;; (ignore 'my-dired-print-current-dir-and-file)
+    (dired-previous-line 1)
+    (when (eq (line-number-at-pos)
+              2)
+      (goto-line (- (line-number-at-pos (point-max))
+                    1))
+      (dired-move-to-filename))
+    (my-dired-next-line (- arg
+                           1))
+    ))
 
-(defun my-dired-next-line (&optional arg)
+(defun my-dired-next-line (arg)
   ""
-  (interactive)
-  (dired-next-line (or arg 1))
-  (my-dired-print-current-dir-and-file))
+  (interactive "p")
+  (when (> arg 0)
+    ;; (ignore 'my-dired-print-current-dir-and-file)
+    (dired-next-line 1)
+    (when (eq (point)
+              (point-max))
+      (goto-line 3)
+      (dired-move-to-filename))
+    (my-dired-next-line (- arg 1))
+    ))
 
 (defun my-dired-print-current-dir-and-file ()
   (message "%s  %s"
