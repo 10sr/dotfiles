@@ -158,6 +158,15 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // エクステ
 
+ext.add('radikox-play-pause', function(){
+    radikox.turn_power();
+    radikox.power();
+}, 'radikox toggle play/pause');
+
+ext.add('radikox-select-station', function(){
+    var m = document.getElementById("radikox_menupopup");
+}, 'radikox station');
+
 ext.add('my-setpref', function(){
     util.setPrefs(
         {
