@@ -1244,7 +1244,7 @@ otherwise, use `pack-default-extension' for pack."
       (goto-line (- (line-number-at-pos (point-max))
                     1))
       (dired-move-to-filename))
-    (my-dired-next-line (- arg
+    (my-dired-previous-line (- arg
                            1))
     ))
 
