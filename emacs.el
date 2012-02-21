@@ -625,6 +625,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-to-list 'auto-mode-alist (cons "\\.ol$" 'outline-mode))
 
 (add-to-list 'auto-mode-alist (cons "\\.md$" 'outline-mode))
+(setq markdown-command (or (executable-find "markdown")
+                           (executable-find "markdown.pl")))
 (when (dllib-if-unfound "markdown-mode"
                         "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
                         t)
@@ -1091,115 +1093,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
         (diff (cadr files) (dired-get-filename))
       (message "One files must be marked!"))))
 
-(require 'dired-aux) ;; needed to use dired-dwim-target-directory
-(defun my-dired-do-pack-or-unpack ()
-  "pack or unpack files.
-if targetting one file and that is archive file defined in `pack-program-alist', unpack that.
-otherwise, pack marked files. prompt user to decide filename for archive."
-  (interactive)
-  (let* ((infiles (dired-get-marked-files t))
-         (onefile (and (eq 1 ; filename if only one file targeted, otherwise nil.
-                           (length infiles))
-                       (car infiles))))
-    (if (and onefile
-             (my-pack-file-name-association onefile))
-        (when (y-or-n-p (format "unpack %s? " onefile))
-          (my-unpack onefile))
-      (let* ((dir-default (dired-dwim-target-directory))
-             (archive-default (my-pack-file-extension (file-name-nondirectory (car infiles))))
-             (archive ;; (if (interactive-p)
-              (read-file-name "Output file to pack : "
-                              dir-default
-                              nil
-                              nil
-                              archive-default)
-              ;; (concat dir-default archive-default)
-              ))
-        (apply 'my-pack
-               archive
-               infiles))))
-  (revert-buffer)
-  ;; (dired-unmark-all-marks)
-  )
-
-(defun my-file-name-extension-with-tar (filename)
-  "if FILENAME has extension with tar, like \"tar.gz\", return that.
-otherwise, return extension normally."
-  (if (string-equal "tar" (file-name-extension (file-name-sans-extension filename)))
-      (concat "tar."
-              (file-name-extension filename))
-    (file-name-extension filename)))
-
-(defun my-pack-file-extension (filename)
-  "if FILENAME has extension and it can be used for pack, return FILENAME.
-otherwise, return FILENAME with `my-pack-default-extension'"
-  (if (my-pack-file-name-association filename)
-      filename
-    (concat filename "." my-pack-default-extension)))
-
-(defvar my-7z-program-name
-  (or (executable-find "7z")
-      (executable-find "7za")
-      (executable-find "7zr"))
-  "7z program.")
-
-(defvar my-pack-default-extension
-  "7z"
-  "default suffix for packing. filename with this suffix must matches one of `pack-program-alist'")
-
-(defun my-pack-file-name-association (filename)
-  "if the pattern matching FILENAME is found at car of the list in `pack-program-alist', return cdr of that list.
-otherwise, return nil."
-  (let ((case-fold-search nil))
-    (assoc-default filename
-                   my-pack-program-alist
-                   'string-match-p
-                   nil)))
-
-(defvar my-pack-program-alist
-  `(
-    ("\\.7z\\'" ,(concat my-7z-program-name " a") ,(concat my-7z-program-name " x"))
-    ("\\.zip\\'" "zip -r" "unzip")
-    ("\\.tar\\'" "tar cf" "tar xf")
-    ("\\.tgz\\'" "tar czf" "tar xzf")
-    ("\\.tar\\.gz\\'" "tar czf" "tar xzf")
-    )
-  "Alist of filename patterns, command for pack and unpack.
-Each element looks like (REGEXP PACKING-COMMAND UNPACKING-COMMAND).
-PACKING-COMMAND and UNPACKING-COMMAND can be nil if the command is not available.
-alist is searched from the beginning so pattern for \".tar.gz\" should be ahead of pattern for \".gz\"")
-;; (string-match-p "\\.gz\\'" "aaa.gz")    ; \' matches string end, $ also matches the point before newline.
-
-(defun my-unpack (archive)
-  "unpack ARCHIVE. command for unpacking is defined in `pack-program-alist'"
-  (interactive "fArchive to extract: ")
-  (let* ((earchive (expand-file-name archive))
-         (cmd (nth 1
-                   (my-pack-file-name-association earchive)))
-         )
-    (if cmd
-        (shell-command (concat cmd 
-                               " "
-                               (shell-quote-argument earchive)))
-      (message "this is not archive file defined in `pack-program-alist'!"))))
-
-(defun my-pack (archive &rest files)
-  "pack FILES into ARCHIVE.
-if ARCHIVE have extension defined in `pack-program-alist', use that command.
-otherwise, use `pack-default-extension' for pack."
-  (let* ((archive-ext (my-pack-file-extension (expand-file-name archive)))
-         (cmd (car (my-pack-file-name-association archive-ext)))
-         )
-    (if cmd
-        (shell-command (concat cmd
-                               " "
-                               (shell-quote-argument archive-ext)
-                               " "
-                               (mapconcat 'shell-quote-argument
-                                          files
-                                          " ")))
-      (message "invalid extension for packing!"))))
-
 (defun my-pop-to-buffer-erase-noselect (buffer-or-name)
   "pop up buffer using `display-buffer' and return that buffer."
   (let ((bf (get-buffer-create buffer-or-name)))
@@ -1348,7 +1241,7 @@ otherwise, use `pack-default-extension' for pack."
             (define-key dired-mode-map "h" 'my-dired-echo-file-head)
             (define-key dired-mode-map "@" (lambda () (interactive) (my-x-open ".")))
             (define-key dired-mode-map (kbd "TAB") 'other-window)
-            (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
+            ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
             (define-key dired-mode-map "a" 'my-dired-display-all-mode)
             (define-key dired-mode-map "/" 'dired-isearch-filenames)
             (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
@@ -1359,6 +1252,14 @@ otherwise, use `pack-default-extension' for pack."
             (let ((file "._Icon\015"))
               (when (file-readable-p file)
                 (delete-file file)))))
+
+(and (dllib-if-unfound "pack"
+                  "https://github.com/10sr/emacs-lisp/raw/master/pack.el"
+                  t)
+     (require 'pack nil t)
+     (add-hook 'dired-mode-hook
+               (lambda ()
+                 (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
 
 ;; http://blog.livedoor.jp/tek_nishi/archives/4693204.html
 
