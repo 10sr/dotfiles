@@ -96,7 +96,7 @@ fi
 # type trash >/dev/null 2>&1 && alias rm=trash
 
 export __MYGITBAREREP="${HOME}/dbx/.git-bare"
-git-make-bare-rep(){
+git-make-local-rep(){
     test $# -eq 0 && {
         echo "specify repository name." 1>&2
         return 1
@@ -108,38 +108,18 @@ git-make-bare-rep(){
     then
         echo "dir $dir already exist!" 1>&2
     else
-        mkdir -p "$dir" &&
-        pushd "$dir" &&
-        git init --bare --shared=all
-        popd
-    fi
-}
-
-git-add-bare-rep(){
-    test $# -ne 2 && {
-        echo "specify repository name and shortname." 1>&2
-        return 1
-    }
-
-    dir="${__MYGITBAREREP}/$2.git"
-
-    # git-make-bare-rep $2 &&
-    # git remote add $1 "$dir"
-    # git remote -v
-
-    if test -d "$dir"
-    then
-        git remote add $1 "$dir"
-        git remote -v
-    else
-        echo "dir $dir does not exist!" 1>&2
+        mkdir -p "$dir" && {
+            pushd "$dir" &&
+            git init --bare --shared=all
+            popd
+        }
     fi
 }
 
 bak(){
     for file in "$@"
     do
-        cp ${file} ${file}.bak
+        mv -v ${file} ${file}.bak
     done
 }
 di(){
@@ -388,20 +368,19 @@ fi
 
 #######################
 
-_testjp(){
-    echo "Japanese letters are 表示可能"
-}
-_testjp
-
 uname -a
 test -f /etc/issue.net && cat /etc/issue.net
 
-__try_exec diskinfo
+showinfo(){
+    echo "Japanese letters are 表示可能"
 
-! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
-    xrandr | grep --color=never ^Screen
+    __try_exec diskinfo
+
+    ! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
+        xrandr | grep --color=never ^Screen
+    }
+
+    iswindows || __try_exec finger $USER
+    LANG=C __try_exec id
+
 }
-
-iswindows || __try_exec finger $USER
-LANG=C __try_exec id
-
