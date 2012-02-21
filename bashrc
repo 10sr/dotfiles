@@ -92,6 +92,7 @@ then
 else
     alias upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
 fi
+iswindows && ! type windate >/dev/null 2>&1 && alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
 # alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
@@ -103,17 +104,19 @@ git-make-local-rep(){
     }
 
     dir="${__MYGITBAREREP}/$1.git"
+    cdir=$PWD
 
     if test -d "$dir"
     then
         echo "dir $dir already exist!" 1>&2
     else
         mkdir -p "$dir" && {
-            pushd "$dir" &&
+            cd "$dir" &&
             git init --bare --shared=all
-            popd
         }
     fi
+
+    cd ${cdir}
 }
 
 bak(){
@@ -382,5 +385,4 @@ showinfo(){
 
     iswindows || __try_exec finger $USER
     LANG=C __try_exec id
-
 }
