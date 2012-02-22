@@ -1,6 +1,6 @@
 #!/bin/bash
 
-test -r /etc/bashrc && . /etc/bashrc
+# test -r /etc/bashrc && . /etc/bashrc
 
 ##########################
 # system type
@@ -351,8 +351,6 @@ winln(){
         junction "$2" "$1"
     fi
 }
-
-########################
 
 if iscygwin; then
     alias cygsu="cygstart /cygwinsetup.exe"
