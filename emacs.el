@@ -1232,6 +1232,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
           (lambda ()
             (define-key dired-mode-map "o" 'my-dired-x-open)
             (define-key dired-mode-map "i" 'dired-get-du)
+            (define-key dired-mode-map "f" 'find-file)
             (define-key dired-mode-map "!" 'shell-command)
             (define-key dired-mode-map "&" 'async-shell-command)
             (define-key dired-mode-map "X" 'dired-do-async-shell-command)
@@ -1751,67 +1752,6 @@ this is test, does not rename files"
                  (beep))))))))
 ;; (aref (read-key-sequence-vector "aa") 0)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; save and restore frame size
-;;http://www.bookshelf.jp/soft/meadow_30.html#SEC416
-(defun my-window-size-save ()
-  (let* ((rlist (frame-parameters (selected-frame)))
-         (ilist initial-frame-alist)
-         (nCHeight (frame-height))
-         (nCWidth (frame-width))
-         (tMargin (if (integerp (cdr (assoc 'top rlist)))
-                      (cdr (assoc 'top rlist)) 0))
-         (lMargin (if (integerp (cdr (assoc 'left rlist)))
-                      (cdr (assoc 'left rlist)) 0))
-         buf
-         (file "~/.emacs.d/.framesize.el")
-         (recentf-exclude '("\\.emacs\\.d/\\.framesize\\.el$")))
-    (if (get-file-buffer (expand-file-name file))
-        (setq buf (get-file-buffer (expand-file-name file)))
-      (setq buf (find-file-noselect file)))
-    (set-buffer buf)
-    (erase-buffer)
-    (insert (concat
-             ;; 初期値をいじるよりも modify-frame-parameters
-             ;; で変えるだけの方がいい?
-             "(delete 'width default-frame-alist)\n"
-             "(delete 'height default-frame-alist)\n"
-             "(delete 'top default-frame-alist)\n"
-             "(delete 'left default-frame-alist)\n"
-             "(setq default-frame-alist (append (list\n"
-             "'(width . " (int-to-string nCWidth) ")\n"
-             "'(height . " (int-to-string nCHeight) ")\n"
-             "'(top . " (int-to-string tMargin) ")\n"
-             "'(left . " (int-to-string lMargin) "))\n"
-             "default-frame-alist))\n"
-             ;;"(setq default-frame-alist default-frame-alist)"
-             ))
-    (save-buffer)
-    ))
-(defun my-window-size-load ()
-  (let* ((file "~/.emacs.d/.framesize.el"))
-    (if (file-exists-p file)
-        (load file))))
-(when window-system
-  (my-window-size-load)
-  (add-hook 'after-init-hook      ;何かがframeの大きさ勝手に変えやがる
-            (lambda ()
-              (run-with-timer 1
-                              nil
-                              (lambda ()
-                                (modify-frame-parameters (selected-frame)
-                                                         default-frame-alist))))
-            t)
-  (add-hook 'kill-emacs-hook
-            'my-window-size-save))
-
-;; windowサイズを固定
-;; setq default-frame-alist
-;;       (append (list '(width . 80)
-;; 		    '(height . 35)
-;; 	      )
-;; 	      default-frame-alist)
-;; ) ;;デフォルトのフレーム設定
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; emacsを殺伐とさせる
