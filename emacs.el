@@ -1695,10 +1695,12 @@ this is test, does not rename files"
   (interactive)
   (unless (eq my-revert-buffer-if-needed-last-buffer (current-buffer))
     (setq my-revert-buffer-if-needed-last-buffer (current-buffer))
-    (when (or (eq major-mode 'dired-mode)
+    (when (or (and (eq major-mode 'dired-mode)
+                   (dired-directory-changed-p default-directory))
               (not (verify-visited-file-modtime (current-buffer))))
       (revert-buffer t t)
-      (message "%s reverted." (buffer-name)))))
+      (message "%s reverted." (buffer-name))
+      )))
 
 (add-hook 'post-command-hook ; 'window-configuration-change-hook
           'my-revert-buffer-if-needed)
@@ -1766,7 +1768,7 @@ this is test, does not rename files"
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ubuntu
+;; japanese input method
 
 (defun my-load-scim ()
   "use scim-bridge.el as japanese im."
