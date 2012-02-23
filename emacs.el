@@ -1208,11 +1208,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'dired-mode-hook
           'my-dired-display-all-set)
 
-(put 'dired-find-alternate-file 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil) ; when using dired-find-alternate-file reuse current dired buffer for the file to open
 (setq dired-ls-F-marks-symlinks t)
 
 (require 'ls-lisp)
-(setq ls-lisp-use-insert-directory-program nil)
+(setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
 (setq ls-lisp-dirs-first t)
 (setq ls-lisp-use-localized-time-format t)
 (setq ls-lisp-format-time-list
@@ -1292,10 +1292,11 @@ Optional prefix ARG says how many lines to unflag; default is one line."
   (interactive "p")
   (my-dired-mark (- arg)))
 
-(defun dired-mode-hooks()
-  (local-set-key (kbd "SPC") 'my-dired-mark)
-  (local-set-key (kbd "S-SPC") 'my-dired-mark-backward))
-(add-hook 'dired-mode-hook 'dired-mode-hooks)
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (local-set-key (kbd "SPC") 'my-dired-mark)
+            (local-set-key (kbd "S-SPC") 'my-dired-mark-backward))
+          )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; eshell
@@ -1575,6 +1576,14 @@ when SEC is nil, stop auto save if enabled."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
+
+(defun my-kill-buffers ()
+  ""
+  (interactive)
+  (mapcar (lambda (buf)
+            (when (buffer-file-name buf)
+              (kill-buffer buf)))
+          (buffer-list)))
 
 (defun my-format-time-string (&optional time)
   ""
