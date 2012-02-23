@@ -329,6 +329,7 @@ _echocolors(){
         "\e[37;1mBright White\n" \
         "\e[0m"
 }
+# http://myminios.googlecode.com/svn-history/r10/trunk/colortable16.sh
 
 null type stty && {
     stty stop undef        # unbind C-s to stop displaying output
