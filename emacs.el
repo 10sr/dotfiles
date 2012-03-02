@@ -70,11 +70,11 @@
 (setq system-time-locale "C")
 
 ;; my prefix map
-(defvar my-prefix-map
-  (make-sparse-keymap))
+(define-prefix-command 'my-prefix-map)
 (add-hook 'after-init-hook
           (lambda ()
-            (define-key ctl-x-map (kbd "C-x") my-prefix-map)))
+            (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
+            ))
 (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
 (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
 
@@ -381,8 +381,10 @@
 ;; (global-set-key (kbd "M-h") 'backward-char)
 ;; (global-set-key (kbd "M-l") 'forward-char)
 ;;(keyboard-translate ?\M-j ?\C-j)
-(global-set-key (kbd "M-p") 'backward-paragraph)
-(global-set-key (kbd "M-n") 'forward-paragraph)
+;; (global-set-key (kbd "M-p") 'backward-paragraph)
+(define-key esc-map "p" 'backward-paragraph)
+;; (global-set-key (kbd "M-n") 'forward-paragraph)
+(define-key esc-map "n" 'forward-paragraph)
 (global-set-key (kbd "C-<up>") (lambda () (interactive)(scroll-down 1)))
 (global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
 (global-set-key (kbd "C-<left>") 'scroll-down)
@@ -510,6 +512,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                         nil))
                (locate-library lib))
       locate-p)))
+
+'(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
+                          ("gnu" . "http://elpa.gnu.org/packages/")
+                          ("marmalade" . "http://marmalade-repo.org/packages/")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;requireが必要なelispおよびhook
@@ -1110,11 +1116,17 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
       (while (search-forward "なし" nil t)
         (replace-match "none")))))
 
-(defun dired-get-du ()
+(defun dired-get-file-info ()
   "dired get disk usage"
   (interactive)
-  (message "calculating du...")
-  (dired-do-shell-command "du -hsD * " nil (dired-get-marked-files)))
+  (let ((f (dired-get-filename)))
+    (if (file-directory-p f)
+        (progn
+          (message "calculating du...")
+          (shell-command (concat "du -hsD "
+                                 f)))
+      (shell-command (concat "file "
+                             f)))))
 
 (defun my-dired-scroll-up ()
   ""
@@ -1231,7 +1243,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'dired-mode-hook
           (lambda ()
             (define-key dired-mode-map "o" 'my-dired-x-open)
-            (define-key dired-mode-map "i" 'dired-get-du)
+            (define-key dired-mode-map "i" 'dired-get-file-info)
             (define-key dired-mode-map "f" 'find-file)
             (define-key dired-mode-map "!" 'shell-command)
             (define-key dired-mode-map "&" 'async-shell-command)
@@ -1576,6 +1588,29 @@ when SEC is nil, stop auto save if enabled."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
+
+(when (require 'ansi-color nil t)
+  (ansi-color-for-comint-mode-on))
+(defvar git-command-history nil
+  "History list for git command.")
+(defun my-git-shell-command (cmd)
+  ""
+  (interactive (list (read-shell-command "git: "
+                                         nil
+                                         'git-command-history)))
+  (let ((bf (get-buffer-create "*Git Output*"))
+        ;; (process-environment `(,@process-environment))
+        ;; (comint-preoutput-filter-functions '(ansi-color-apply . nil))
+        ;; (comint-output-filter-functions (cons 'ansi-color-process-output
+        ;;                                       comint-output-filter-functions))
+        )
+    (shell-command (concat "git "
+                           cmd)
+                   bf)
+    (with-current-buffer bf
+      (ansi-color-apply-on-region (point-min)
+                                  (point-max)))))
+(define-key ctl-x-map "g" 'my-git-shell-command)
 
 (defun my-kill-buffers ()
   ""
