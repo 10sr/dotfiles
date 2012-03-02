@@ -207,7 +207,7 @@ _mygitconfig(){
     git config --global alias.ci "commit --verbose"
     git config --global alias.co "checkout"
     git config --global alias.cim "commit --verbose -m"
-    git config --global alias.di "diff"
+    git config --global alias.di "diff --color"
     git config --global alias.me "merge --no-ff --stat -v"
     git config --global alias.ls "ls-files -v --full-name"
     git config --global alias.sl "!sl"

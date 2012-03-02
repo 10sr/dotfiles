@@ -1589,8 +1589,8 @@ when SEC is nil, stop auto save if enabled."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
-(when (require 'ansi-color nil t)
-  (ansi-color-for-comint-mode-on))
+;; (when (require 'ansi-color nil t)
+;;   (ansi-color-for-comint-mode-on))
 (defvar git-command-history nil
   "History list for git command.")
 (defun my-git-shell-command (cmd)
