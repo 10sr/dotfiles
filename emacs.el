@@ -155,6 +155,7 @@
       read-buffer-completion-ignore-case t)
 (setq resize-mini-window t)
 (temp-buffer-resize-mode 1)
+(savehist-mode 1)
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -579,7 +580,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
 
-(setq python-python-command (executable-find "python3"))
+(setq python-python-command (or (executable-find "python3")
+                                (executable-find "python")))
 (defun my-python-run-as-command ()
   ""
   (interactive)
@@ -597,7 +599,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-hook 'python-mode-hook
           (lambda ()
             (define-key python-mode-map (kbd "C-c C-e") 'my-python-run-as-command)
-            (define-key python-mode-map (kbd "C-c C-b") 'my-python-display-python-buffer)))
+            (define-key python-mode-map (kbd "C-c C-b") 'my-python-display-python-buffer)
+            (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
