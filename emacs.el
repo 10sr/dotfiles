@@ -589,13 +589,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (defun my-python-display-python-buffer ()
   ""
   (interactive)
-  ;; (or python-buffer
-  ;;     (save-excursion
-  ;;       (run-python)))
   (set-window-text-height (display-buffer python-buffer
                                           t)
                           7))
-
 (add-hook 'python-mode-hook
           (lambda ()
             (define-key python-mode-map (kbd "C-c C-e") 'my-python-run-as-command)
@@ -935,13 +931,16 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; vc
 ;; (require 'vc)
 
-(setq vc-handled-backends nil)
+(setq vc-handled-backends '())
+(and (executable-find "git")
+     (add-to-list 'vc-handled-backends 'GIT))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gauche-mode
 
-(setq scheme-program-name
-      (setq gauche-program-name "gosh"))
+(let ((s  (executable-find "gosh")))
+  (setq scheme-program-name s
+        gauche-program-name s))
 
 (defun run-gauche-other-window ()
   "Run gauche on other window"
@@ -1049,10 +1048,17 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                             (buffer-substring-no-properties (point-at-bol)
                                                             (point-at-eol))))
 
-(setq recentf-save-file (expand-file-name "~/.emacs.d/.recentf")
+(setq recentf-save-file (expand-file-name "~/.emacs.d/recentf")
       recentf-max-menu-items 20
       recentf-max-saved-items 30
       recentf-show-file-shortcuts-flag nil)
+
+(defun my-recentf-pop-to-buffer ()
+  ""
+  (interactive)
+  (let ((bf (save-excursion
+              (recentf-open-files))))
+    (pop-to-buffer bf)))
 
 (when (require 'recentf nil t)
   (global-set-key "\C-x\C-r" 'recentf-open-files)
@@ -1061,7 +1067,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   ;;             (recentf-add-file default-directory)))
   (recentf-mode 1)
   (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
-  (add-to-list 'recentf-exclude "\\.emacs\\.d/\\.recentf"))
+  (add-to-list 'recentf-exclude "\\.emacs\\.d/recentf"))
 
 (add-hook 'recentf-dialog-mode-hook
           (lambda ()
