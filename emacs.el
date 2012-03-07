@@ -604,6 +604,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
             (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)))
 
+(add-hook 'text-mode-hook
+          (lambda ()
+            (define-key text-mode-map (kbd "C-m") 'newline)))
+
 (add-to-list 'Info-default-directory-list (expand-file-name "~/.info/emacs-ja"))
 
 (setq bookmark-default-file "~/.emacs.d/bmk")
