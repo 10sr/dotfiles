@@ -4,7 +4,7 @@ xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
 #xmodmap -e 'add Control = Caps_Lock'
 setxkbmap -model "acer_laptop" -layout "jp" -option "ctrl:nocaps"
 
-type synclient >/dev/null 2&>1 && {
+type synclient >/dev/null 2>&1 && {
     synclient VertEdgeScroll=0
     synclient HorizEdgeScroll=0
     synclient MaxTapTime=0 
