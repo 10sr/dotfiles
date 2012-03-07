@@ -8,7 +8,7 @@ type synclient >/dev/null 2>&1 && {
     synclient VertEdgeScroll=0
     synclient HorizEdgeScroll=0
     synclient MaxTapTime=0 
-    synclient MaxSpeed=0.4
+    synclient MaxSpeed=2.0
     synclient MinSpeed=0.2
 }
 
@@ -17,5 +17,5 @@ type feh >/dev/null 2>&1 &&
 sh "$HOME/.fehbg"
 
 #export LC_MESSAGES=C
-LANG=ja_JP.utf8
+export LANG=ja_JP.utf8
 
