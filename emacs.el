@@ -659,7 +659,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             ))
 
 (when (dllib-if-unfound "js2-mode"
-                        "https://github.com/mooz/js2-mode/raw/master/js2-mode.el"
+                        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
                         t)
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
