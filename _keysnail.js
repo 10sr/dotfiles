@@ -177,6 +177,7 @@ ext.add('my-setpref', function(){
             "keyword.URL":"http://www.bing.com/search?q=",
         }
     );
+    display.showPopup("Keysnail", "My prefs done.");
 }, 'my setpref');
 
 ext.add('auto-install-plugins', function(ev, arg){
