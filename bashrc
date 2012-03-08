@@ -54,7 +54,6 @@ fi
 export VISUAL="$EDITOR"
 export LESS="-iRMX"
 export LC_MESSAGES=C
-# export LANG=ja_JP.UTF-8
 # export CDPATH=".:~"             # 使い方がよく分からない
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
