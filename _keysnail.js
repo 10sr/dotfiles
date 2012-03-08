@@ -181,14 +181,15 @@ ext.add('my-setpref', function(){
 
 ext.add('auto-install-plugins', function(ev, arg){
     var urls = [
-        'https://github.com/mooz/keysnail/raw/master/plugins/yet-another-twitter-client-keysnail.ks.js',
-        'https://github.com/mooz/keysnail/raw/master/plugins/site-local-keymap.ks.js',
-        'https://github.com/azu/KeySnail-Plugins/raw/master/JSReference/js-referrence.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/yet-another-twitter-client-keysnail.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/site-local-keymap.ks.js',
+        'https://raw.github.com/azu/KeySnail-Plugins/master/JSReference/js-referrence.ks.js',
         'https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js',
-        'https://github.com/tkosaka/keysnail-plugin/raw/master/nicontroller.ks.js',
+        'https://raw.github.com/tkosaka/keysnail-plugin/master/nicontroller.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
+        'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js'
     ];
 
     function inst(a){
