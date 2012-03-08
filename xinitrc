@@ -12,10 +12,6 @@ type synclient >/dev/null 2>&1 && {
     synclient MinSpeed=0.2
 }
 
-test -f "$HOME/.fehbg" &&
-type feh >/dev/null 2>&1 &&
-sh "$HOME/.fehbg"
-
-#export LC_MESSAGES=C
+unset LC_MESSAGES
 export LANG=ja_JP.utf8
 
