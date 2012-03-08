@@ -1,8 +1,8 @@
+setxkbmap -model "acer_laptop" -layout "jp" -option "ctrl:nocaps" # this line must comes first
 xmodmap -e 'keycode 135 = Alt_R Meta_R' # menu key as alt
 xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
 #xmodmap -e 'remove Lock = Caps_Lock'
 #xmodmap -e 'add Control = Caps_Lock'
-setxkbmap -model "acer_laptop" -layout "jp" -option "ctrl:nocaps"
 
 type synclient >/dev/null 2>&1 && {
     synclient VertEdgeScroll=0
