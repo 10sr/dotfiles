@@ -67,9 +67,6 @@ alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto\ )--time-style=lo
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
 # alias apt-get="sudo apt-get"
-alias aptin="apt-get install"
-alias aptsearch="apt-cache search"
-alias aptshow="apt-cache show"
 alias ut="ssh t110414@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
@@ -86,6 +83,14 @@ alias sudo="sudo "              # use aliases through sudo
 alias e3=e3em
 alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
+
+alias aptin="apt-get install"
+alias aptsearch="apt-cache search"
+alias aptshow="apt-cache show"
+
+alias yt=yaourt
+export PACMAN=pacman-color
+
 if isdarwin
 then
     alias upgrade="port selfupdate && port sync && port upgrade installed"
