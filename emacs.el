@@ -336,6 +336,8 @@
 (setq revert-without-query '(".+"))
 
 ;; カーソルの場所を保存する
+(setq save-place-file (concat user-emacs-directory
+                              "places"))
 (when (require 'saveplace nil t)
   (setq-default save-place t))
 
@@ -710,11 +712,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (setq Man-notify-method (if window-system
                             'newframe
                           'pushy))
-
-;; (when (and (executable-find "git")
-;;            (require 'sgit-mode nil t))
-;;   (add-hook 'find-file-hook
-;;             'sgit-load))
 
 (require 'session nil t)
 
@@ -1352,10 +1349,6 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 ;;               (goto-line line))
 ;;           (view-file (pop args))))))
 
-;; (defun eshell/git (&rest args)
-;;   ""
-;;   )
-
 (defun eshell/o (&optional file)
   (my-x-open (or file ".")))
 
@@ -1608,10 +1601,11 @@ when SEC is nil, stop auto save if enabled."
   "History list for git command.")
 (defun my-git-shell-command (cmd)
   ""
-  (interactive (list (read-shell-command "git: "
+  (interactive (list (read-shell-command (format "[%s] $ git : "
+                                                 (abbreviate-file-name default-directory))
                                          nil
                                          'git-command-history)))
-  (let ((bf (get-buffer-create "*Git Output*"))
+  (let ((dir default-directory) (bf (get-buffer-create "*Git Output*"))
         ;; (process-environment `(,@process-environment))
         ;; (comint-preoutput-filter-functions '(ansi-color-apply . nil))
         ;; (comint-output-filter-functions (cons 'ansi-color-process-output
@@ -1621,6 +1615,7 @@ when SEC is nil, stop auto save if enabled."
                            cmd)
                    bf)
     (with-current-buffer bf
+      (cd dir)
       (and (require 'ansi-color nil t)
            (ansi-color-apply-on-region (point-min)
                                        (point-max))))))
