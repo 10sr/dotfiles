@@ -82,6 +82,8 @@ alias sudo="sudo "              # use aliases through sudo
 alias e3=e3em
 alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
+alias halt="sudo halt"
+alias reboot="sudo reboot"
 
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
