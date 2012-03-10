@@ -1605,12 +1605,14 @@ when SEC is nil, stop auto save if enabled."
                                                  (abbreviate-file-name default-directory))
                                          nil
                                          'git-command-history)))
-  (let ((dir default-directory) (bf (get-buffer-create "*Git Output*"))
+  (let ((dir default-directory)
+        (bf (get-buffer-create "*Git Output*"))
         ;; (process-environment `(,@process-environment))
         ;; (comint-preoutput-filter-functions '(ansi-color-apply . nil))
         ;; (comint-output-filter-functions (cons 'ansi-color-process-output
         ;;                                       comint-output-filter-functions))
         )
+    (delete-windows-on bf t)
     (shell-command (concat "git "
                            cmd)
                    bf)
