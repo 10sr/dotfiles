@@ -311,7 +311,8 @@ __my_prompt_function(){              # used by PS1
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
     fi
     local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
-    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
+    # local battery=$(battery-status "[%s]" | sed -e 's"%"%%"g') # very slow
+    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
@@ -378,12 +379,21 @@ winln(){
 
 battery-status(){
     local dir=/sys/class/power_supply/BAT0
-    st=$(cat $dir/status)
-    full=$(cat $dir/charge_full)
-    now=$(cat $dir/charge_now)
-    # . $dir/uevent
-    # rate=$(expr $POWER_SUPPLY_CHARGE_NOW \* 100 / $POWER_SUPPLY_CHARGE_FULL)
-    rate=$(expr $now \* 100 / $full)
-    echo ${st}:${rate}\%
+    if test -d $dir
+    then
+        local st=$(cat $dir/status)
+        local full=$(cat $dir/charge_full)
+        local now=$(cat $dir/charge_now)
+        local rate=$(expr $now \* 100 / $full)
+        printf $1 "${st}:${rate}%"
+    fi
+}
+alias bat='battery-status %s\\n'
+
+battery-status2(){
+    local dir=/sys/class/power_supply/BAT0
+    . $dir/uevent
+    local rate=$(expr $POWER_SUPPLY_CHARGE_NOW \* 100 / $POWER_SUPPLY_CHARGE_FULL)
+    echo ${POWER_SUPPLY_STATUS}:${rate}%
 }
 
