@@ -184,7 +184,7 @@ ext.add('my-setpref', function(){
             "extensions.saveimageinfolder.general-fileprefixvalue":"%yyyy%%MM%%dd%-%hh%%mm%%ss%_",
             "extensions.saveimageinfolder.usecache":true,
             "extensions.tabutils.openTabNext":1,
-            "extensions.tabutils.styles.current":"{\"bold\":true,\"italic\":false,\"underline\":true,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#EEEEEE\",\"bgColor\":true,\"bgColorCode\":\"#000000\",\"outline\":true,\"outlineColorCode\":\"#000000\"}",
+            "extensions.tabutils.styles.current":"{\"bold\":true,\"italic\":false,\"underline\":true,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#EEEEEE\",\"bgColor\":true,\"bgColorCode\":\"#000000\",\"outline\":false,\"outlineColorCode\":\"#000000\"}",
             "extensions.yass.edgetype":0,
             "extensions.yass.selectedpreset":"red",
             "font.default.x-western":"sans-serif",
