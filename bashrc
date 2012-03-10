@@ -76,14 +76,16 @@ fi
 #######################
 
 uname -a
-if test -f /etc/issue.net
+
+if [ "${EMACS}" = "t" ]; then   # for emacs shell
+    true export PS1="\u@\H \d \t \w\nemacs shell\$ "
+elif echo "$EMACS" | grep term >/dev/null 2>&1; then # for emacs term
+    echo "Emacs Term"
+fi
+
+if test -f /etc/issue
 then
-    cat /etc/issue.net
-else
-    if test -f /etc/issue
-    then
-        cat /etc/issue
-    fi
+    cat /etc/issue
 fi
 
 ###################################
@@ -128,7 +130,7 @@ alias arch-upgrade="yaourt -Syu"
 alias port-upgrade="port selfupdate && port sync && port upgrade installed"
 
 if iscygwin; then
-    ! null type windate && alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
+    null type windate || alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
     alias cygsu="cygstart /cygwinsetup.exe"
     alias emacs="CYGWIN=tty emacs -nw"
     alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto)"
@@ -329,12 +331,6 @@ __my_prompt_function(){              # used by PS1
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
-
-if [ "${EMACS}" = "t" ]; then   # for emacs shell
-    true export PS1="\u@\H \d \t \w\nemacs shell\$ "
-elif echo "$EMACS" | grep term >/dev/null 2>&1; then # for emacs term
-    echo "emacs term"
-fi
 
 #Change ANSI Colors
 _chengecolors(){
