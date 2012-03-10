@@ -1,9 +1,13 @@
 #!/bin/bash
 
-# test -r /etc/bashrc && . /etc/bashrc
-
 ##########################
 # system type
+
+alias ismsys=false
+alias iscygwin=false
+alias isdarwin=false
+alias iswindows="iscygwin || ismsys"
+alias islinux="! iswindows && ! isdarwin"                # i havent used unix yet
 
 if uname | grep -E "^MINGW32" >/dev/null 2>&1
 then
@@ -18,8 +22,6 @@ then
 else
     alias iscygwin=false
 fi
-
-alias iswindows="iscygwin || ismsys"
 
 if uname | grep -E 'Darwin' >/dev/null 2>&1
 then
@@ -45,7 +47,7 @@ else
     export PAGER="less"
 fi
 
-if type vim >/dev/null 2>&1
+if null type vim
 then
     export EDITOR=vim
 else
@@ -54,9 +56,38 @@ fi
 export VISUAL="$EDITOR"
 export LESS="-iRMX"
 export LC_MESSAGES=C
-# export CDPATH=".:~"             # 使い方がよく分からない
+export CDPATH=".:~"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
+
+null type stty && {
+    stty stop undef        # unbind C-s to stop displaying output
+    stty erase '^h'
+}
+
+if iswindows; then
+    # export TMP=/tmp
+    # export TEMP=/tmp
+    # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
+    # export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
+    export USER=$USERNAME
+fi
+
+#######################
+
+uname -a
+if test -f /etc/issue.net
+then
+    cat /etc/issue.net
+else
+    if test -f /etc/issue
+    then
+        cat /etc/issue
+    fi
+fi
+
+###################################
+# some aliases and functions
 
 alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto\ )--time-style=long-iso"
 # alias ll="ls -l"
@@ -66,12 +97,11 @@ alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto\ )--time-style=lo
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
 # alias apt-get="sudo apt-get"
-alias ut="ssh t110414@un001.ecc.u-tokyo.ac.jp"
+alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"
 alias xunp="file-roller -h"
 alias pacome="sudo \paco -D"
 alias psall="ps auxww"
-alias g=git
 alias q=exit
 alias p="$PAGER"
 alias c=cat
@@ -84,6 +114,7 @@ alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
 alias halt="sudo halt"
 alias reboot="sudo reboot"
+# type trash >/dev/null 2>&1 && alias rm=trash
 
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
@@ -92,15 +123,36 @@ alias aptshow="apt-cache show"
 alias yt=yaourt
 export PACMAN=pacman-color
 
-if isdarwin
-then
-    alias upgrade="port selfupdate && port sync && port upgrade installed"
-else
-    alias upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
+alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
+alias arch-upgrade="yaourt -Syu"
+alias port-upgrade="port selfupdate && port sync && port upgrade installed"
+
+if iscygwin; then
+    ! null type windate && alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
+    alias cygsu="cygstart /cygwinsetup.exe"
+    alias emacs="CYGWIN=tty emacs -nw"
+    alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto)"
 fi
-iswindows && ! type windate >/dev/null 2>&1 && alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
-# alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
-# type trash >/dev/null 2>&1 && alias rm=trash
+
+alias g=git
+if null type _git    # enable programmable completion for g
+then
+    complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
+	|| complete -o default -o nospace -F _git g
+fi
+
+showinfo(){
+    echo "Japanese letters are 表示可能"
+
+    __try_exec diskinfo
+
+    ! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
+        xrandr | grep --color=never ^Screen
+    }
+
+    iswindows || __try_exec finger $USER
+    LANG=C __try_exec id
+}
 
 export __MYGITBAREREP="${HOME}/dbx/.git-bare"
 git-make-local-rep(){
@@ -132,7 +184,7 @@ bak(){
     done
 }
 di(){
-    if type colordiff >/dev/null 2>&1 && test $TERM != dumb
+    if null type colordiff && test $TERM != dumb
     then
         local diffcmd=colordiff
     else
@@ -141,10 +193,10 @@ di(){
     ${diffcmd} -u "$@" | ${PAGER}
 }
 throw-away(){
-    mkdir -p ~/bu/tb
+    mkdir -p ~/.backup/tb
     for file in "$@"
     do
-        mv $file ~/bu/tb
+        mv $file ~/.backup/tb
     done
 }
 mkcd(){
@@ -225,12 +277,6 @@ _mygitconfig(){
     fi
 }
 
-if type _git >/dev/null 2>&1    # enable programmable completion of g
-then
-    complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
-	|| complete -o default -o nospace -F _git g
-fi
-
 __my_parse_svn_branch() {
     local LANG=C
     local svn_url=$(svn info 2>/dev/null | sed -ne 's#^URL: ##p')
@@ -278,17 +324,15 @@ __my_prompt_function(){              # used by PS1
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
     fi
     local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
-    jobs
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
+    jobs
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
 
-# type date >/dev/null 2>&1 || alias date=":" # "cmd /c echo %time%"
-
-if [ "${EMACS}" = "t" ]; then   # emacs shell用
+if [ "${EMACS}" = "t" ]; then   # for emacs shell
     true export PS1="\u@\H \d \t \w\nemacs shell\$ "
-elif echo "$EMACS" | grep term >/dev/null 2>&1; then # emacs term用
+elif echo "$EMACS" | grep term >/dev/null 2>&1; then # for emacs term
     echo "emacs term"
 fi
 
@@ -337,15 +381,8 @@ _echocolors(){
 }
 # http://myminios.googlecode.com/svn-history/r10/trunk/colortable16.sh
 
-null type stty && {
-    stty stop undef        # unbind C-s to stop displaying output
-    stty erase '^h'
-}
-
-#########################
-# for windose
-
 winln(){
+    # for windose make link (actually junction)
     if test $# -eq 0
     then
         {
@@ -359,35 +396,3 @@ winln(){
     fi
 }
 
-if iscygwin; then
-    alias cygsu="cygstart /cygwinsetup.exe"
-    alias emacs="CYGWIN=tty emacs -nw"
-    echo "cygwin bash"
-fi
-
-if iswindows; then
-    # export TMP=/tmp
-    # export TEMP=/tmp
-    # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
-    # export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
-    alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto)"
-    export USER=$USERNAME
-fi
-
-#######################
-
-uname -a
-test -f /etc/issue.net && cat /etc/issue.net
-
-showinfo(){
-    echo "Japanese letters are 表示可能"
-
-    __try_exec diskinfo
-
-    ! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
-        xrandr | grep --color=never ^Screen
-    }
-
-    iswindows || __try_exec finger $USER
-    LANG=C __try_exec id
-}
