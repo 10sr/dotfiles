@@ -311,8 +311,9 @@ __my_prompt_function(){              # used by PS1
     fi
     local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
     test -f ~/.batterystatus && local battery="[Battery:$(cat ~/.batterystatus | sed -e 's`%`%%`g')]"
+    local ip=$(ip-address [Addr:%s])
     # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
-    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}\n"
+    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
@@ -397,3 +398,7 @@ battery-status2(){
     echo ${POWER_SUPPLY_STATUS}:${rate}%
 }
 
+ip-address(){
+    local ip=$(LANG=C ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{print $2}')
+    test -n $ip && printf $1 $ip
+}
