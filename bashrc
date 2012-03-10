@@ -376,3 +376,14 @@ winln(){
     fi
 }
 
+battery-status(){
+    local dir=/sys/class/power_supply/BAT0
+    st=$(cat $dir/status)
+    full=$(cat $dir/charge_full)
+    now=$(cat $dir/charge_now)
+    # . $dir/uevent
+    # rate=$(expr $POWER_SUPPLY_CHARGE_NOW \* 100 / $POWER_SUPPLY_CHARGE_FULL)
+    rate=$(expr $now \* 100 / $full)
+    echo ${st}:${rate}\%
+}
+
