@@ -302,7 +302,6 @@ __my_prompt_function(){              # used by PS1
             local git=
         fi
         local date=$(/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%')
-        :
     else
         local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
         local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
@@ -311,7 +310,8 @@ __my_prompt_function(){              # used by PS1
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
     fi
     local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
-    # local battery=$(battery-status "[%s]" | sed -e 's"%"%%"g') # very slow
+    test -f ~/.batterystatus && local battery="[Battery:$(cat ~/.batterystatus | sed -e 's`%`%%`g')]"
+    # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
