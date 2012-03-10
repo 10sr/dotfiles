@@ -9,26 +9,11 @@ alias isdarwin=false
 alias iswindows="iscygwin || ismsys"
 alias islinux="! iswindows && ! isdarwin"                # i havent used unix yet
 
-if uname | grep -E "^MINGW32" >/dev/null 2>&1
-then
-    alias ismsys=true
-else
-    alias ismsys=false
-fi
-
-if uname | grep -E "^CYGWIN" >/dev/null 2>&1
-then
-    alias iscygwin=true
-else
-    alias iscygwin=false
-fi
-
-if uname | grep -E 'Darwin' >/dev/null 2>&1
-then
-    alias isdarwin=true
-else
-    alias isdarwin=false
-fi
+case `uname` in
+    (MINGW32*) alias ismsys=true ;;
+    (CYGWIN*) alias iscygwin=true ;;
+    (Darwin*) alias isdarwin=true ;;
+esac
 
 ##########################################
 null(){
@@ -327,7 +312,6 @@ __my_prompt_function(){              # used by PS1
     fi
     local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
-    jobs
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
