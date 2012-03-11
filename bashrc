@@ -133,12 +133,13 @@ showinfo(){
 
     __try_exec diskinfo
 
-    ! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
-        xrandr | grep --color=never ^Screen
+    ! isdarwin && test -n "${DISPLAY}" && {
+        __try_exec xrandr | grep --color=never ^Screen
     }
 
     iswindows || __try_exec finger $USER
     LANG=C __try_exec id
+    __try_exec xset q
 }
 
 export __MYGITBAREREP="${HOME}/dbx/.git-bare"
@@ -400,5 +401,5 @@ battery-status2(){
 
 ip-address(){
     local ip=$(LANG=C ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{print $2}')
-    test -n $ip && printf $1 $ip
+    test -n "$ip" && printf $1 $ip
 }

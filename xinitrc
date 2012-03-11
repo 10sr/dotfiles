@@ -12,6 +12,8 @@ type synclient >/dev/null 2>&1 && {
     synclient MinSpeed=0.2
 }
 
+xset s 1800 # go blank after 30 min
+
 unset LC_MESSAGES
 export LANG=ja_JP.utf8
 

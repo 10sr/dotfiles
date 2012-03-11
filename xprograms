@@ -12,11 +12,12 @@ tint2 &
 #dropboxd & # done by ~/.config/autostart/dropbox.desktop
 
 volumeicon &
+
 #wicd-client --tray & # done by /etc/xdg/autostart/wicd-client.desktop
+
 # Detection of insertion of an optical disk
 if ! pgrep -lf "udisks-daemon: polling /dev/sr0"; then
     udisks --poll-for-media /dev/sr0
 fi
-
 udisksvm >/dev/null &
 
