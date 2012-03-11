@@ -1,5 +1,4 @@
 #!/bin/sh
-env > $HOME/.env.txt
 
 # export PS1="\$ "
 export LANG=ja_JP.UTF-8
@@ -23,3 +22,7 @@ addtopath ${HOME}/bin
 test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
 export PYTHONPATH=~/.py
 
+type setterm >/dev/null 2>&1 && setterm -blank 3 -powersave on # -powerdown 10
+# in my environment powerdown does not work
+
+env > $HOME/.env.txt
