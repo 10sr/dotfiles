@@ -273,8 +273,11 @@ __my_parse_svn_branch() {
 }
 
 __my_svn_ps1(){
-    local svn_branch=$(__my_parse_svn_branch)
-    test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
+    if svn status >/dev/null 2>&1
+    then
+        local svn_branch=$(__my_parse_svn_branch)
+        test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
+    fi
 }
 
 __my_prompt_function(){              # used by PS1
@@ -310,7 +313,7 @@ __my_prompt_function(){              # used by PS1
         local git=$(__try_exec __git_ps1 [GIT:%s])
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
     fi
-    local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
+    # local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
     test -f ~/.batterystatus && local battery="[Battery:$(cat ~/.batterystatus | sed -e 's`%`%%`g')]"
     local ip=$(ip-address [Addr:%s])
     # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
