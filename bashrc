@@ -143,6 +143,14 @@ showinfo(){
     __try_exec xset q
 }
 
+x(){
+    if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
+        nohup startx >~/.xorg.log 2>&1 &
+    else
+        echo "X cant be started! Maybe another X is already started!" 1>&2
+    fi
+}
+
 export __MYGITBAREREP="${HOME}/dbx/.git-bare"
 git-make-local-rep(){
     test $# -eq 0 && {

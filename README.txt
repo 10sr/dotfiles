@@ -8,5 +8,9 @@
 
 ~/.xinitrc                <= startx (~/.config/openbox/autostart also executed)
 |
-`--~/.dotfiles/xinitrc
+`--openbox-session
+   |
+   |--~/.dotfiles/xprofile
+   |
+   `--~/.dotfiles/xprograms
 
