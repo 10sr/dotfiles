@@ -68,10 +68,10 @@ elif echo "$EMACS" | grep term >/dev/null 2>&1; then # for emacs term
     echo "Emacs Term"
 fi
 
-if test -f /etc/issue
-then
-    cat /etc/issue
-fi
+# if test -f /etc/issue
+# then
+#     cat /etc/issue
+# fi
 
 ###################################
 # some aliases and functions
@@ -108,6 +108,7 @@ alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
 
 alias yt=yaourt
+null type pacman-color && alias pacman=pacman-color
 export PACMAN=pacman-color
 
 alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
