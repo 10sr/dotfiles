@@ -1,11 +1,10 @@
 #!/bin/sh
 
 # export PS1="\$ "
-export LANG=C # ja_JP.UTF-8
+# export LANG=ja_JP.UTF-8
 export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
-export BROWSER=firefox
 export ENV=~/.shrc
 # export TMP=/tmp
 # export TEMP=/tmp

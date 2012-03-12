@@ -6,7 +6,7 @@
    |
    `--~/.dotfiles/bashrc
 
-~/.xinitrc                <= startx (~/.config/openbox/autostart also executed)
+~/.xinitrc                <= startx
 |
 `--openbox-session
    |

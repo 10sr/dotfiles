@@ -83,6 +83,7 @@ alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto\ )--time-style=lo
 # alias less=""
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
+alias pstree="LANG=C pstree"
 # alias apt-get="sudo apt-get"
 alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
 alias rand="echo \$RANDOM"

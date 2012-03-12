@@ -16,4 +16,5 @@ xset s 1800 # go blank after 30 min
 
 unset LC_MESSAGES
 export LANG=ja_JP.utf8
+export BROWSER=firefox
 
