@@ -208,7 +208,8 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
-        'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js'
+        'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js',
+        'https://raw.github.com/gist/1450594/mstranslator.ks.js'
     ];
 
     function inst(a){
@@ -271,6 +272,7 @@ ext.add("close-and-next-tab", function (ev, arg) {
 
 /////////////////////////////////////
 // google itranslate
+// use mstranslator instead
 (function(){
     let targetLang = "ja"; // target lang to translate into
     let alternativeLang = "en"; // if given word is in targetLang, use this instead as a target lang
@@ -532,11 +534,11 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-hook.addToHook('KeySnailInitialized', function () {
+hook.setHook('KeySnailInitialized', function () {
     ext.exec("shiitake-enable-style");
 });
 
-hook.addToHook('KeyBoardQuit', function (aEvent) {
+hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
@@ -562,16 +564,6 @@ hook.setHook('Unload', function () {
     });
 });
 
-// hook.addToHook('LocationChange', function (aNsURI) {
-//     if(window.content.document.body){
-//         display.prettyPrint(window.content.document.title); 
-//     }else{
-//         window.addEventListener("load", function(){
-//             disp = display;
-//             disp.prettyPrint(window.content.document.title);
-//         }, false);
-//     }
-// });
 
 // ============================= Key bindings ============================== //
 
@@ -673,10 +665,6 @@ key.setViewKey('z', function (ev, arg) {
     ext.exec("keysnail-setting-menu", arg, ev);
 }, 'open keysnail setting menu', true);
 
-key.setViewKey('T', function (ev, arg) {
-    ext.exec("google-itranslate", arg, ev);
-}, 'google itranslate', true);
-
 key.setViewKey('C-SPC', function (ev, arg) {
     MultipleTabService.toggleSelection(gBrowser.selectedTab);
 }, 'タブの選択をトグル');
@@ -744,7 +732,8 @@ key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
 }, 'ignore');
 
 key.setViewKey(':', function (ev, arg) {
-    return !document.getElementById("keysnail-prompt").hidden && document.getElementById("keysnail-prompt-textbox").focus();
+    return !document.getElementById("keysnail-prompt").hidden &&
+        document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
 
 key.setViewKey('H', function (ev, arg) {
@@ -767,14 +756,14 @@ key.setViewKey('C-<backspace>', function (ev, arg) {
     ext.exec("list-tab-history", arg, ev);
 }, 'List tab history', true);
 
+key.setViewKey('I', function (ev, arg) {
+    ext.exec("instapaper-post-page-with-comment", arg, ev);
+}, 'post page and comment', true);
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
 
-key.setViewKey('I', function (ev, arg) {
-    ext.exec('instapaper-post-page-with-comment', arg, ev);
-}, 'post page and comment', true);
-
-key.setViewKey('C-<backspace>', function (ev, arg) {
-    ext.exec('list-tab-history', arg, ev);
-}, 'List tab history', true);
+key.setViewKey('T', function (ev, arg) {
+    ext.exec('mstranslator-open-prompt', arg, ev);
+}, 'MSTranslator - Open prompt', true);
