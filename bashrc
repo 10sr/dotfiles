@@ -146,7 +146,7 @@ showinfo(){
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        nohup startx >~/.xorg.log 2>&1 &
+        nohup startx >~/.backup/log/xorg.log 2>&1 &
     else
         echo "X cant be started! Maybe another X is already running!" 1>&2
     fi

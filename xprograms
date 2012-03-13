@@ -13,6 +13,9 @@ tint2 &
 
 volumeicon &
 
+conky -c ~/.dotfiles/conkyrc   >~/.backup/log/conky.log 2>&1 &
+conky -c ~/.dotfiles/conkyrc.2 >~/.backup/log/conky.2.log 2>&1 &
+
 #wicd-client --tray & # done by /etc/xdg/autostart/wicd-client.desktop
 
 # Detection of insertion of an optical disk

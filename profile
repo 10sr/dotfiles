@@ -23,4 +23,4 @@ addtopath ${HOME}/bin
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
 
-env > $HOME/.env.txt
+mkdir -p ~/.backup/log
