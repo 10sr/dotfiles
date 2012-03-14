@@ -769,6 +769,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
           'my-frame-buffer-add)
 (add-hook 'eshell-mode-hook
           'my-frame-buffer-add)
+(add-hook 'Man-mode-hook
+          'my-frame-buffer-add)
 
 (add-hook 'kill-buffer-hook
           'my-frame-buffer-remove)

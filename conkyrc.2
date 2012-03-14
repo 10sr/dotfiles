@@ -35,5 +35,6 @@ format_human_readable yes
 
 TEXT
 
-${color yellow}/var/log/dmesg.log:
-${color white}${tail /var/log/dmesg.log 15}
+${color yellow}$$ tail -f /var/log/everything.log
+${color white}${tail /var/log/everything.log 30}
+${time %b %d %T}
