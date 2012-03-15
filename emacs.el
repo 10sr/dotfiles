@@ -1650,12 +1650,10 @@ when SEC is nil, stop auto save if enabled."
          (call-process "cmd.exe" nil 0 nil "/c" "start" "" (convert-standard-filename file)))
         ((eq system-type 'darwin)
          (call-process "open" nil 0 nil file))
-        ((not (getenv "DESKTOP_SESSION"))
+        ((not (getenv "DISPLAY"))
          (find-file file))
         (t
-         (if (file-directory-p file)
-             (call-process my-filer nil 0 nil file)
-           (call-process "xdg-open" nil 0 nil file))))
+         (call-process (or my-filer "xdg-open") nil 0 nil file)))
   (recentf-add-file file)
   (message "Opening %s...done" file))
 

@@ -5,14 +5,15 @@
 
 alias ismsys=false
 alias iscygwin=false
-alias isdarwin=false
 alias iswindows="iscygwin || ismsys"
-alias islinux="! iswindows && ! isdarwin"                # i havent used unix yet
+alias isdarwin=false
+alias islinux=false
 
 case `uname` in
     (MINGW32*) alias ismsys=true ;;
     (CYGWIN*) alias iscygwin=true ;;
     (Darwin*) alias isdarwin=true ;;
+    (Linux*) alias islinux=true ;;
 esac
 
 ##########################################
@@ -25,14 +26,14 @@ __try_exec(){
 
 export PS1="\$(__my_prompt_function)\$ "
 # PROMPT_COMMAND=prompt_function
-if false # iswindows
+if false iswindows
 then
     export PAGER='tr -d \\r | less'
 else
     export PAGER="less"
 fi
 
-if null type vim
+if false null type vim
 then
     export EDITOR=vim
 else
@@ -76,7 +77,7 @@ fi
 ###################################
 # some aliases and functions
 
-alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto\ )--time-style=long-iso"
+alias ls="ls -hCF $(test "$TERM" == dumb || echo --color=auto\ )--time-style=long-iso"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
@@ -109,8 +110,15 @@ alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
 
 alias yt=yaourt
-null type pacman-color && alias pacman=pacman-color
-export PACMAN=pacman-color
+null type pacman-color && {
+    alias pacman=pacman-color
+    export pacman_program=pacman-color # used by pacmatic
+    export PACMAN=pacman-color         # used by yaourt
+}
+null type pacmatic && {
+    alias pacman=pacmatic
+    export PACMAN=pacmatic
+}
 
 alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
 alias arch-upgrade="yaourt -Syu"
@@ -182,7 +190,7 @@ bak(){
     done
 }
 di(){
-    if null type colordiff && test $TERM != dumb
+    if type colordiff >/dev/null 2>&1 && test $TERM != dumb
     then
         local diffcmd=colordiff
     else
@@ -240,6 +248,9 @@ o(){
     elif isdarwin
     then
         open "$f"
+    elif type pcmanfm >/dev/null 2>&1
+    then
+        pcmanfm "$f"
     else
         xdg-open "$f"
     fi
@@ -288,49 +299,6 @@ __my_svn_ps1(){
         local svn_branch=$(__my_parse_svn_branch)
         test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
     fi
-}
-
-__my_prompt_function(){              # used by PS1
-    local lastreturn=$?
-    if test "${TERM}" == dumb
-    then
-        local c1=
-        local c2=
-        local c3=
-        local cdef=
-    else
-        local c1="\e[33m"
-        local c2="\e[36m"
-        local c3="\e[37m"
-        local cdef="\e[0m"
-    fi
-    if iswindows
-    then
-        local pwd=$PWD
-        local oldpwd=$OLDPWD
-        local jobnum=
-        if git branch >/dev/null 2>&1
-        then
-            local git="[GIT]"
-        else
-            local git=
-        fi
-        local date=$(/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%')
-    else
-        local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
-        local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
-        local jobnum=$(jobs | wc -l)
-        local git=$(__try_exec __git_ps1 [GIT:%s])
-        local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
-    fi
-    # local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
-    test -f ~/.batterystatus && local battery="[Battery:$(cat ~/.batterystatus | sed -e 's`%`%%`g')]"
-    local ip=$(ip-address [Addr:%s])
-    local tty=$(__try_exec tty | sed -e 's:/dev/::')
-    # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
-    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
-    printf "${c2}${USER}@${HOSTNAME}${cdef} ${tty} ${date} ${BASH} ${BASH_VERSION}\n"
-    printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
 
 #Change ANSI Colors
@@ -417,3 +385,50 @@ ip-address(){
     local ip=$(LANG=C ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{print $2}')
     test -n "$ip" && printf $1 $ip
 }
+
+__my_prompt_function(){              # used by PS1
+    local lastreturn=$?
+    if test "${TERM}" == dumb
+    then
+        local c1=
+        local c2=
+        local c3=
+        local cdef=
+    else
+        local c1="\e[33m"
+        local c2="\e[36m"
+        local c3="\e[37m"
+        local cdef="\e[0m"
+    fi
+    if iswindows
+    then
+        local pwd=$PWD
+        local oldpwd=$OLDPWD
+        local jobnum=
+        if git branch >/dev/null 2>&1
+        then
+            local git="[GIT]"
+        else
+            local git=
+        fi
+        local date=$(/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%')
+    else
+        local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
+        local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
+        local jobnum=$(jobs | wc -l)
+        local git=$(__try_exec __git_ps1 [GIT:%s])
+        local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
+    fi
+    # local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
+    if test -z "$DISPLAY"
+    then
+        local ip=$(ip-address [Addr:%s])
+        test -f ~/.batterystatus && local battery="[Battery:$(cat ~/.batterystatus | sed -e 's`%`%%`g')]"
+    fi
+    local tty=$(__try_exec tty | sed -e 's:/dev/::')
+    # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
+    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
+    printf "${c2}${USER}@${HOSTNAME}${cdef} ${tty} ${date} ${BASH} ${BASH_VERSION}\n"
+    printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
+}
+
