@@ -18,6 +18,7 @@ own_window_colour hotpink
 own_window_hints undecorated,below,skip_taskbar,sticky,skip_pager
 
 minimum_size 200
+#maximum_width 1000
 draw_shades no
 draw_outline no
 draw_borders no
@@ -36,5 +37,5 @@ format_human_readable yes
 TEXT
 
 ${color yellow}$$ tail -f /var/log/everything.log
-${color white}${tail /var/log/everything.log 30}
+${color white}${tail /var/log/everything.log 15}
 ${time %b %d %T}
