@@ -369,7 +369,7 @@ battery-status(){
         local full=$(cat $dir/charge_full)
         local now=$(cat $dir/charge_now)
         local rate=$(expr $now \* 100 / $full)
-        printf $1 "${st}:${rate}%"
+        printf "$1" "${st}:${rate}%"
     fi
 }
 alias bat='battery-status %s\\n'
@@ -404,13 +404,7 @@ __my_prompt_function(){              # used by PS1
     then
         local pwd=$PWD
         local oldpwd=$OLDPWD
-        local jobnum=
-        if git branch >/dev/null 2>&1
-        then
-            local git="[GIT]"
-        else
-            local git=
-        fi
+        git branch >/dev/null 2>&1 && local git="[GIT]"
         local date=$(/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%')
     else
         local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
@@ -423,12 +417,14 @@ __my_prompt_function(){              # used by PS1
     if test -z "$DISPLAY"
     then
         local ip=$(ip-address [Addr:%s])
-        test -f ~/.batterystatus && local battery="[Battery:$(cat ~/.batterystatus | sed -e 's`%`%%`g')]"
+        test -f /tmp/batterystatus && local battery="[Battery:$(sed -e 's`%`%%`g' /tmp/batterystatus)]"
+        battery-status %s >/tmp/batterystatus &
     fi
     local tty=$(__try_exec tty | sed -e 's:/dev/::')
     # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${tty} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
+
 }
 
