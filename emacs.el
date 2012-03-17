@@ -500,7 +500,7 @@
 (defun dllib-if-unfound (lib url &optional bite-compile-p force-download-p) ; new version
   "if LIB does not exist, download it from URL and locate it to \"~/emacs.d/lisp/LIB.el\".
 return nil if LIB unfound and downloading failed, otherwise the path of LIB."
-  (let* ((dir (expand-file-name "~/.emacs.d/lisp/"))
+  (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
          (lpath (concat dir lib ".el"))
          (locate-p (locate-library lib)))
     (if (or force-download-p (not locate-p))
@@ -511,7 +511,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                                          t)
                           (when bite-compile-p
                             (byte-compile-file lpath)))
-                 (error (message "downloading %s...something wrong happened!" url)
+                 (error (and (file-readable-p lpath)
+                             (delete-file lpath))
+                        (message "downloading %s...something wrong happened!" url)
                         nil))
                (locate-library lib))
       locate-p)))
@@ -524,6 +526,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;requireが必要なelispおよびhook
 
 (require 'simple nil t)
+
+(and window-system
+     (dllib-if-unfound "save-window-size" "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el" t)
+     (require 'save-window-size nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
@@ -1844,6 +1850,11 @@ this is test, does not rename files"
   (global-set-key [henkan] (lambda () (interactive) (anthy-mode-on)))
   (when (>= emacs-major-version 23)
     (setq anthy-accept-timeout 1)))
+
+;; quail
+;; aproposs input-method for some information
+(setq default-input-method "japanese")
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; windows用設定
