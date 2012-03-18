@@ -546,6 +546,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; http://garin.jp/doc/Linux/xwindow_clipboard
 
 (and (not x-select-enable-clipboard)
+     (getenv "DISPLAY")
      (executable-find "xclip")
      (dllib-if-unfound "xclip" "http://www.emacswiki.org/emacs/download/xclip.el" t)
      (require 'xclip nil t)
