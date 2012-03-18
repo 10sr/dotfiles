@@ -25,7 +25,7 @@ stippled_borders 0
 border_width 1
 alignment top_right
 gap_x 20
-gap_y 50
+gap_y 40
 
 default_color green # slategrey 
 default_shade_color lightgrey
@@ -47,8 +47,8 @@ ${color2}uptm ${color1}:${color0} ${uptime}
 ${color2}lgin ${color1}:${color0} ${uptime}
 #${color2}os   ${color1}:${color0} ${sysname} ${kernel}
 ${color0}${stippled_hr}
-${color2}freq ${color1}:${color0} ${freq 1}Mhz | ${freq 2}Mhz
 ${color2}cpu  ${color1}:${color0} ${cpu}% ${cpubar}
+${color2}freq ${color1}:${color0} ${freq 1}Mhz | ${freq 2}Mhz
 #${color2}btry ${color1}:${color0} ${battery}
 #${color2}btime${color1}:${color0} ${battery_time}
 ${color0}${hr}
@@ -69,5 +69,5 @@ ${color #888888}${downspeedgraph ff0000 0000ff}
 ${color2}up   ${color1}:${color0} ${upspeed}/s
 ${color #888888}${upspeedgraph 0000ff ff0000}
 ${color0}${hr}
-${alignr}conky ${conky_version} on ${desktop_name}
+${alignr}conky ${conky_version} on Page${desktop}
 #${color0}${alignr}${execi 900 cal -1}
