@@ -324,27 +324,38 @@ _chengecolors(){
 
 # printf "\e]P7353535" \
 
-_echocolors(){
+_colors(){
     echo -e \
-        "\e[30mBlack\n" \
-        "\e[31mRed\n" \
-        "\e[32mGreen\n" \
-        "\e[33mYellow\n" \
-        "\e[34mBlue\n" \
-        "\e[35mMagenta\n" \
-        "\e[36mCyan\n" \
-        "\e[37mWhite\n" \
-        "\e[30;1mBright Black\n" \
-        "\e[31;1mBright Red\n" \
-        "\e[32;1mBright Green\n" \
-        "\e[33;1mBright Yellow\n" \
-        "\e[34;1mBright Blue\n" \
-        "\e[35;1mBright Magenta\n" \
-        "\e[36;1mBright Cyan\n" \
+        "\e[30mBlack" \
+        "\e[31mRed" \
+        "\e[32mGreen" \
+        "\e[33mYellow" \
+        "\e[34mBlue" \
+        "\e[35mMagenta" \
+        "\e[36mCyan" \
+        "\e[37mWhite"
+    echo -e \
+        "\e[30;1mBright Black" \
+        "\e[31;1mBright Red" \
+        "\e[32;1mBright Green" \
+        "\e[33;1mBright Yellow" \
+        "\e[34;1mBright Blue" \
+        "\e[35;1mBright Magenta" \
+        "\e[36;1mBright Cyan" \
         "\e[37;1mBright White\n" \
         "\e[0m"
 }
-# http://myminios.googlecode.com/svn-history/r10/trunk/colortable16.sh
+# http://www.frexx.de/xterm-256-notes/data/colortable16.sh
+
+_install_script(){
+    mkdir -p $HOMO/bin/
+    for f in "$@"
+    do
+        bn=$(basename "$f")
+        type ${bn} >/dev/null 2>&1 || wget "$f" -P "$HOME/bin/"
+        chmod u+x "$HOME/bin/${bn}"
+    done
+}
 
 winln(){
     # for windose make link (actually junction)
