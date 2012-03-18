@@ -53,7 +53,7 @@ ${color2}freq ${color1}:${color0} ${freq 1}Mhz | ${freq 2}Mhz
 #${color2}btime${color1}:${color0} ${battery_time}
 ${color0}${hr}
 ${color2}ram  ${color1}:${color0} ${memperc}% ${membar}
-${color2}swap ${color1}:${color0} ${if_match ${swapmax} == 0}None${else}${swapperc} ${swapbar}${endif}
+${color2}swap ${color1}:${color0} ${if_match "${swapperc}" == "No swap"}None${else}${swapperc} ${swapbar}${endif}
 ${color0}${stippled_hr}
 ${color2}root ${color1}:${color0} ${fs_used /} #/${fs_size /}
 ${fs_bar /}
