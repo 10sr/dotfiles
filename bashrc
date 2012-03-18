@@ -39,10 +39,9 @@ then
 else
     export EDITOR=vi
 fi
-export VISUAL="$EDITOR"
-export LESS="-iRMX"
 export LC_MESSAGES=C
 export CDPATH=".:~"
+export VISUAL="$EDITOR"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
@@ -77,7 +76,11 @@ fi
 ###################################
 # some aliases and functions
 
-alias ls="ls -hCF $(test "$TERM" == dumb || echo --color=auto\ )--time-style=long-iso"
+test "$TERM" == dumb || _ENABLECOLOR="--color=always "
+
+export LESS="-iRMX"
+export GREP_OPTIONS="${_ENABLECOLOR}"
+alias ls="ls -hCF ${_ENABLECOLOR}--time-style=long-iso"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
@@ -439,3 +442,43 @@ __my_prompt_function(){              # used by PS1
 
 }
 
+# from https://wiki.archlinux.org/index.php/X_resources
+invader(){
+    # ANSI color scheme script featuring Space Invaders
+    #
+    # Original: http://crunchbanglinux.org/forums/post/126921/#p126921
+    # Modified by lolilolicon
+    #
+
+    f=3 b=4
+    for j in f b; do
+        for i in {0..7}; do
+            printf -v $j$i %b "\e[${!j}${i}m"
+        done
+    done
+    bld=$'\e[1m'
+    rst=$'\e[0m'
+
+    cat << EOF
+
+ $f1  ▀▄   ▄▀     $f2 ▄▄▄████▄▄▄    $f3  ▄██▄     $f4  ▀▄   ▄▀     $f5 ▄▄▄████▄▄▄    $f6  ▄██▄  $rst
+ $f1 ▄█▀███▀█▄    $f2███▀▀██▀▀███   $f3▄█▀██▀█▄   $f4 ▄█▀███▀█▄    $f5███▀▀██▀▀███   $f6▄█▀██▀█▄$rst
+ $f1█▀███████▀█   $f2▀▀███▀▀███▀▀   $f3▀█▀██▀█▀   $f4█▀███████▀█   $f5▀▀███▀▀███▀▀   $f6▀█▀██▀█▀$rst
+ $f1▀ ▀▄▄ ▄▄▀ ▀   $f2 ▀█▄ ▀▀ ▄█▀    $f3▀▄    ▄▀   $f4▀ ▀▄▄ ▄▄▀ ▀   $f5 ▀█▄ ▀▀ ▄█▀    $f6▀▄    ▄▀$rst
+
+ $bld$f1▄ ▀▄   ▄▀ ▄   $f2 ▄▄▄████▄▄▄    $f3  ▄██▄     $f4▄ ▀▄   ▄▀ ▄   $f5 ▄▄▄████▄▄▄    $f6  ▄██▄  $rst
+ $bld$f1█▄█▀███▀█▄█   $f2███▀▀██▀▀███   $f3▄█▀██▀█▄   $f4█▄█▀███▀█▄█   $f5███▀▀██▀▀███   $f6▄█▀██▀█▄$rst
+ $bld$f1▀█████████▀   $f2▀▀▀██▀▀██▀▀▀   $f3▀▀█▀▀█▀▀   $f4▀█████████▀   $f5▀▀▀██▀▀██▀▀▀   $f6▀▀█▀▀█▀▀$rst
+ $bld$f1 ▄▀     ▀▄    $f2▄▄▀▀ ▀▀ ▀▀▄▄   $f3▄▀▄▀▀▄▀▄   $f4 ▄▀     ▀▄    $f5▄▄▀▀ ▀▀ ▀▀▄▄   $f6▄▀▄▀▀▄▀▄$rst
+
+
+                                     $f7▌$rst
+
+                                   $f7▌$rst
+
+                              $f7    ▄█▄    $rst
+                              $f7▄█████████▄$rst
+                              $f7▀▀▀▀▀▀▀▀▀▀▀$rst
+
+EOF
+}
