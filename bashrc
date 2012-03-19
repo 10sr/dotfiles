@@ -62,6 +62,15 @@ fi
 
 uname -a
 
+null type fortune && {
+    echo
+    fortune
+    echo
+    fortune -o
+    echo
+}
+
+
 if [ "${EMACS}" = "t" ]; then   # for emacs shell
     true export PS1="\u@\H \d \t \w\nemacs shell\$ "
 elif echo "$EMACS" | grep term >/dev/null 2>&1; then # for emacs term
@@ -401,6 +410,7 @@ ip-address(){
 }
 
 __my_prompt_function(){              # used by PS1
+    # remove __try_exec from function
     local lastreturn=$?
     if test "${TERM}" == dumb
     then
