@@ -531,7 +531,7 @@ ext.add("list-tab-history", function () {
 // ========================= Special key settings ========================== //
 
 key.quitKey              = "<delete>";
-key.helpKey              = "C-h";
+key.helpKey              = "<f1>";
 key.escapeKey            = "C-q";
 key.macroStartKey        = "";
 key.macroEndKey          = "";
