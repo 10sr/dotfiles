@@ -1604,6 +1604,8 @@ when SEC is nil, stop auto save if enabled."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(defalias 'qcalc 'quick-calc)
+
 ;; (when (require 'ansi-color nil t)
 ;;   (ansi-color-for-comint-mode-on))
 (defvar git-command-history nil

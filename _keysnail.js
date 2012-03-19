@@ -159,6 +159,7 @@ plugins.options["twitter_client.use_jmp"] = true;
 // エクステ
 
 ext.add("my-setpref2", function(){
+    // navigator.platform
     util.setPrefs(
         {
             "browser.cache.disk.parent_directory":"/tmp"
