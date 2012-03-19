@@ -253,9 +253,9 @@ o(){
         open "$f"
     elif type pcmanfm >/dev/null 2>&1
     then
-        pcmanfm "$f"
+        LC_MESSAGES= pcmanfm "$f"
     else
-        xdg-open "$f"
+        LC_MESSAGES= xdg-open "$f"
     fi
 }
 convmv-sjis2utf8-test(){
