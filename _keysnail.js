@@ -498,7 +498,7 @@ ext.add("list-tab-history", function () {
 // ========================= Special key settings ========================== //
 
 key.quitKey              = "<delete>";
-key.helpKey              = "C-h";
+key.helpKey              = "<f1>";
 key.escapeKey            = "C-q";
 key.macroStartKey        = "";
 key.macroEndKey          = "";
@@ -510,11 +510,11 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-hook.addToHook('KeySnailInitialized', function () {
+hook.setHook('KeySnailInitialized', function () {
     ext.exec("shiitake-enable-style");
 });
 
-hook.addToHook('KeyBoardQuit', function (aEvent) {
+hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
@@ -540,16 +540,6 @@ hook.setHook('Unload', function () {
     });
 });
 
-// hook.addToHook('LocationChange', function (aNsURI) {
-//     if(window.content.document.body){
-//         display.prettyPrint(window.content.document.title); 
-//     }else{
-//         window.addEventListener("load", function(){
-//             disp = display;
-//             disp.prettyPrint(window.content.document.title);
-//         }, false);
-//     }
-// });
 
 // ============================= Key bindings ============================== //
 
@@ -722,7 +712,8 @@ key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
 }, 'ignore');
 
 key.setViewKey(':', function (ev, arg) {
-    return !document.getElementById("keysnail-prompt").hidden && document.getElementById("keysnail-prompt-textbox").focus();
+    return !document.getElementById("keysnail-prompt").hidden &&
+        document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
 
 key.setViewKey('H', function (ev, arg) {
@@ -745,14 +736,10 @@ key.setViewKey('C-<backspace>', function (ev, arg) {
     ext.exec("list-tab-history", arg, ev);
 }, 'List tab history', true);
 
+key.setViewKey('I', function (ev, arg) {
+    ext.exec("instapaper-post-page-with-comment", arg, ev);
+}, 'post page and comment', true);
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
-
-key.setViewKey('I', function (ev, arg) {
-    ext.exec('instapaper-post-page-with-comment', arg, ev);
-}, 'post page and comment', true);
-
-key.setViewKey('C-<backspace>', function (ev, arg) {
-    ext.exec('list-tab-history', arg, ev);
-}, 'List tab history', true);
