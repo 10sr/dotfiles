@@ -108,6 +108,7 @@ alias p="$PAGER"
 alias c=cat
 alias pcalc="python -i -c 'from math import *' "
 alias py3=python3
+alias py2=python2
 alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 alias sudo="sudo "              # use aliases through sudo
 alias e3=e3em
@@ -166,7 +167,7 @@ showinfo(){
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        exec nohup startx # >~/.backup/log/xorg.log 2>&1 &
+        nohup startx # >~/.backup/log/xorg.log 2>&1 &
     else
         echo "X cant be started! Maybe another X is already running!" 1>&2
     fi
