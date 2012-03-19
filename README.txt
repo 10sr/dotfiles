@@ -1,13 +1,16 @@
-~/.xsessionrc                        <= graphical login
+~/.bash_profile           <= console login
 |
-`-- ~/.profile                       <= text login
-    |
-    |-- ~/.dotfiles/profile
-    |
-    * if shell is bash
-    |
-    `-- ~/.bashrc                    <= run bash
-        |
-        `-- ~/.dotfiles/bashrc
-            |
-            `-- /etc/bashrc
+|--~/.dotfiles/profile
+|
+`--~/.bashrc
+   |
+   `--~/.dotfiles/bashrc
+
+~/.xinitrc                <= startx
+|
+`--openbox-session
+   |
+   |--~/.dotfiles/xprofile
+   |
+   `--~/.dotfiles/xprograms
+

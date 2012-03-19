@@ -1,32 +1,15 @@
 #!/bin/sh
-env > $HOME/.env.txt
-
-if [ -n "${DESKTOP_SESSION}" ]; then
-    xmodmap -e 'keycode 135 = Alt_R Meta_R' # menu key as alt
-    xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
-    xmodmap -e 'remove Lock = Caps_Lock'
-    xmodmap -e 'add Control = Caps_Lock'
-
-    synclient VertEdgeScroll=0
-    synclient HorizEdgeScroll=0
-    synclient MaxTapTime=0 
-    synclient MaxSpeed=0.4
-    synclient MinSpeed=0.2
-
-    test -f "$HOME/.fehbg" &&
-    type feh >/dev/null 2>&1 &&
-    sh "$HOME/.fehbg"
-else
-    export LANG=C
-fi
 
 # export PS1="\$ "
+# export LANG=ja_JP.UTF-8
 export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
-export BROWSER=firefox
+export ENV=~/.shrc
 # export TMP=/tmp
 # export TEMP=/tmp
+test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
+export PYTHONPATH=~/.py
 
 addtopath(){
     for p in "$@"
@@ -37,6 +20,7 @@ addtopath(){
 # export PATH="${PATH}:${HOME}/bin"
 addtopath ${HOME}/bin
 
-test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
-export PYTHONPATH=~/.py
+type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
+# in my environment powerdown does not work
 
+mkdir -p ~/.backup/log

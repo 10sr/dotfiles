@@ -27,25 +27,6 @@ function ignore(k, i) [k, null];
 //// firefox
 // style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
 
-util.setPrefs(
-    {
-        "browser.tabs.loadDivertedInBackground": true,
-        "dom.disable_window_open_feature.location": false,
-        "dom.max_script_run_time": 30,
-        "browser.bookmarks.max_backups":0,
-        "browser.urlbar.autocomplete.enabled":false,
-        "browser.cache.memory.capacity":16384,
-        "browser.sessionhistory.max_total_viewers":8,
-        "browser.download.manager.closeWhenDone":true,
-        "browser.download.useDownloadDir":false,
-        "browser.tabs.closeWindowWithLastTab":false,
-        "network.dns.disableIPv6":true,
-        "browser.urlbar.trimURLs":false,
-        "browser.fullscreen.autohide":false,
-        "keyword.URL":"http://www.bing.com/search?q=",
-    }
-);
-
 ///////////////////////////////////
 //検索エンジン
 plugins.options["search-url-list"] = [
@@ -177,16 +158,67 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // エクステ
 
+ext.add("my-setpref2", function(){
+    // navigator.platform
+    util.setPrefs(
+        {
+            "browser.cache.disk.parent_directory":"/tmp"
+        }
+    );
+}, "my setpref2");
+
+ext.add('my-setpref', function(){
+    util.setPrefs(
+        {
+            "browser.bookmarks.max_backups":0,
+            "browser.cache.memory.capacity":16384,
+            "browser.download.manager.closeWhenDone":true,
+            "browser.download.useDownloadDir":false,
+            "browser.fullscreen.autohide":false,
+            "browser.search.openintab":true,
+            "browser.sessionhistory.max_total_viewers":8,
+            "browser.sessionstore.restore_on_demand":true,
+            "browser.tabs.closeWindowWithLastTab":false,
+            "browser.tabs.loadDivertedInBackground": true,
+            "browser.urlbar.autocomplete.enabled":false,
+            "browser.urlbar.trimURLs":false,
+            "dom.disable_window_open_feature.location": false,
+            "dom.max_script_run_time": 30,
+            "extensions.chaika.bbsmenu.open_new_tab":true,
+            "extensions.chaika.bbsmenu.open_single_click":false,
+            "extensions.chaika.board.open_new_tab":true,
+            "extensions.chaika.board.open_single_click":false,
+            "extensions.foxage2ch.openThreadInTab":true,
+            "extensions.saveimageinfolder.general-duplicatefilenamevalue":1,
+            "extensions.saveimageinfolder.general-fileprefixvalue":"%yyyy%%MM%%dd%-%hh%%mm%%ss%_",
+            "extensions.saveimageinfolder.usecache":true,
+            "extensions.tabutils.openTabNext":1,
+            "extensions.tabutils.styles.current":"{\"bold\":false,\"italic\":false,\"underline\":true,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#EEEEEE\",\"bgColor\":true,\"bgColorCode\":\"#000000\",\"outline\":false,\"outlineColorCode\":\"#000000\"}",
+            "extensions.yass.edgetype":0,
+            "extensions.yass.selectedpreset":"red",
+            "font.default.x-western":"sans-serif",
+            "general.warnOnAboutConfig":false,
+            "keyword.URL":"http://www.bing.com/search?q=",
+            "network.dns.disableIPv6":true,
+            "refcontrol.actions":"@DEFAULT=@FORGE",
+            "scrapbook.tabs.open":true
+        }
+    );
+    display.showPopup("Keysnail", "My prefs done.");
+}, 'my setpref');
+
 ext.add('auto-install-plugins', function(ev, arg){
     var urls = [
-        'https://github.com/mooz/keysnail/raw/master/plugins/yet-another-twitter-client-keysnail.ks.js',
-        'https://github.com/mooz/keysnail/raw/master/plugins/site-local-keymap.ks.js',
-        'https://github.com/azu/KeySnail-Plugins/raw/master/JSReference/js-referrence.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/yet-another-twitter-client-keysnail.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/site-local-keymap.ks.js',
+        'https://raw.github.com/azu/KeySnail-Plugins/master/JSReference/js-referrence.ks.js',
         'https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js',
-        'https://github.com/tkosaka/keysnail-plugin/raw/master/nicontroller.ks.js',
+        'https://raw.github.com/tkosaka/keysnail-plugin/master/nicontroller.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
+        'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js',
+        'https://raw.github.com/gist/1450594/mstranslator.ks.js'
     ];
 
     function inst(a){
@@ -249,6 +281,7 @@ ext.add("close-and-next-tab", function (ev, arg) {
 
 /////////////////////////////////////
 // google itranslate
+// use mstranslator instead
 (function(){
     let targetLang = "ja"; // target lang to translate into
     let alternativeLang = "en"; // if given word is in targetLang, use this instead as a target lang
@@ -641,10 +674,6 @@ key.setViewKey('z', function (ev, arg) {
     ext.exec("keysnail-setting-menu", arg, ev);
 }, 'open keysnail setting menu', true);
 
-key.setViewKey('T', function (ev, arg) {
-    ext.exec("google-itranslate", arg, ev);
-}, 'google itranslate', true);
-
 key.setViewKey('C-SPC', function (ev, arg) {
     MultipleTabService.toggleSelection(gBrowser.selectedTab);
 }, 'タブの選択をトグル');
@@ -743,3 +772,7 @@ key.setViewKey('I', function (ev, arg) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setViewKey('T', function (ev, arg) {
+    ext.exec('mstranslator-open-prompt', arg, ev);
+}, 'MSTranslator - Open prompt', true);
