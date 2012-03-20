@@ -158,15 +158,6 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // エクステ
 
-ext.add("my-setpref2", function(){
-    // navigator.platform
-    util.setPrefs(
-        {
-            "browser.cache.disk.parent_directory":"/tmp"
-        }
-    );
-}, "my setpref2");
-
 ext.add('my-setpref', function(){
     util.setPrefs(
         {
@@ -202,8 +193,16 @@ ext.add('my-setpref', function(){
             "network.dns.disableIPv6":true,
             "refcontrol.actions":"@DEFAULT=@FORGE",
             "scrapbook.tabs.open":true
-        }
+        } 
     );
+    if(/^Linux/.test(navigator.platform)){
+        util.setPrefs(
+            {
+                "browser.cache.disk.parent_directory":"/tmp",
+                "browser.cache.disk.capacity":524288
+            }
+        );
+    }
     display.showPopup("Keysnail", "My prefs done.");
 }, 'my setpref');
 
