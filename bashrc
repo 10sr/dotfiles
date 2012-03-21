@@ -32,6 +32,7 @@ then
 else
     export PAGER="less"
 fi
+export LESS="-iRMX"
 
 if false null type vim
 then
@@ -69,19 +70,14 @@ elif echo "$EMACS" | grep term >/dev/null 2>&1; then # for emacs term
     echo "Emacs Term"
 fi
 
-# if test -f /etc/issue
-# then
-#     cat /etc/issue
-# fi
-
 ###################################
 # some aliases and functions
 
-test "$TERM" == dumb || _ENABLECOLOR="--color=always "
+test "$TERM" == dumb || _coloroption=" --color=always"
 
-export LESS="-iRMX"
-export GREP_OPTIONS="${_ENABLECOLOR}"
-alias ls="ls -hCF ${_ENABLECOLOR}--time-style=long-iso"
+alias ls="ls -hCF --time-style=long-iso${_coloroption}"
+# export GREP_OPTIONS=""
+alias grep="grep${_coloroption}"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
@@ -123,8 +119,8 @@ null type pacman-color && {
     export PACMAN=pacman-color         # used by yaourt
 }
 null type pacmatic && {
-    alias pacman=pacmatic
-    export PACMAN=pacmatic
+    alias pacman="pacmatic"
+    export PACMAN="pacmatic"
 }
 
 alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
