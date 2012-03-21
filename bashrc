@@ -62,14 +62,6 @@ fi
 
 uname -a
 
-null type fortune && {
-    echo
-    fortune
-    echo
-    fortune -o
-    echo
-}
-
 
 if [ "${EMACS}" = "t" ]; then   # for emacs shell
     true export PS1="\u@\H \d \t \w\nemacs shell\$ "
@@ -97,25 +89,27 @@ alias ls="ls -hCF ${_ENABLECOLOR}--time-style=long-iso"
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
 alias pstree="LANG=C pstree"
-# alias apt-get="sudo apt-get"
-alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
-alias rand="echo \$RANDOM"
-alias xunp="file-roller -h"
-alias pacome="sudo \paco -D"
+alias cp="cp -v"
+alias mv="mv -v"
 alias psall="ps auxww"
 alias q=exit
 alias p="$PAGER"
 alias c=cat
+alias sudo="sudo "              # use aliases through sudo
+alias e3=e3em
+alias halt="sudo halt"
+alias reboot="sudo reboot"
+alias rand="echo \$RANDOM"
+# alias apt-get="sudo apt-get"
+alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
+alias xunp="file-roller -h"
+# alias pacome="sudo \paco -D"
 alias pcalc="python -i -c 'from math import *' "
 alias py3=python3
 alias py2=python2
 alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
-alias sudo="sudo "              # use aliases through sudo
-alias e3=e3em
 alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
-alias halt="sudo halt"
-alias reboot="sudo reboot"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
 alias aptin="apt-get install"
@@ -134,7 +128,7 @@ null type pacmatic && {
 }
 
 alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
-alias arch-upgrade="yaourt -Syu"
+alias arch-upgrade="sudo pacman -Syu"
 alias port-upgrade="port selfupdate && port sync && port upgrade installed"
 
 if iscygwin; then
@@ -167,7 +161,8 @@ showinfo(){
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        nohup startx # >~/.backup/log/xorg.log 2>&1 &
+        #nohup startx # >~/.backup/log/xorg.log 2>&1 &
+        startx
     else
         echo "X cant be started! Maybe another X is already running!" 1>&2
     fi
@@ -199,7 +194,7 @@ git-make-local-rep(){
 bak(){
     for file in "$@"
     do
-        mv -v ${file} ${file}.bak
+        cp -v ${file} ${file}.bak
     done
 }
 di(){
@@ -281,7 +276,7 @@ _mygitconfig(){
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
     git config --global alias.st "status -s"
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"
@@ -442,8 +437,9 @@ __my_prompt_function(){              # used by PS1
     if test -z "$DISPLAY"
     then
         local ip=$(ip-address [Addr:%s])
-        test -f /tmp/batterystatus && local battery="[Battery:$(sed -e 's`%`%%`g' /tmp/batterystatus)]"
-        battery-status %s >/tmp/batterystatus &
+        local bst="/tmp/${USER}-tmp/batterystatus"
+        test -f $bst && local battery="[Battery:$(sed -e 's`%`%%`g' $bst)]"
+        battery-status %s >$bst &
     fi
     local tty=$(__try_exec tty | sed -e 's:/dev/::')
     # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow

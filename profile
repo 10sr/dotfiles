@@ -1,5 +1,13 @@
 #!/bin/sh
 
+type fortune >/dev/null 2>&1 && {
+    echo
+    fortune
+    echo
+    fortune -o
+    echo
+}
+
 # export PS1="\$ "
 # export LANG=ja_JP.UTF-8
 export LC_TIME=C
@@ -24,3 +32,4 @@ type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
 
 mkdir -p ~/.backup/log
+mkdir -p /tmp/$USER-tmp

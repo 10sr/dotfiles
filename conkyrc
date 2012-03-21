@@ -49,17 +49,18 @@ ${color2}lgin ${color1}|${color0} ${uptime}
 ${color0}${stippled_hr}
 ${color2}cpu  ${color1}|${color0} ${cpu}% ${cpubar}
 ${color2}freq ${color1}|${color0} ${freq 1}Mhz | ${freq 2}Mhz
+${color2}temp ${color1}|${color0} ${acpitemp} °C
 #${color2}btry ${color1}|${color0} ${battery}
 #${color2}btime${color1}|${color0} ${battery_time}
 ${color0}${hr}
 ${color2}ram  ${color1}|${color0} ${memperc}% ${membar}
-${color2}swap ${color1}|${color0} ${if_match "${swapperc}" == "No swap"}None${else}${swapperc} ${swapbar}${endif}
+${color2}swap ${color1}|${color0} ${if_match "${swapperc}" == "No swap"}None${else}${swapperc}% ${swapbar}${endif}
 ${color0}${stippled_hr}
 ${color2}root ${color1}|${color0} ${fs_used /} #/${fs_size /}
 ${fs_bar /}
 ${color2}/tmp ${color1}|${color0} ${fs_used /tmp} #/${fs_size /tmp}
 ${fs_bar /tmp}
-${color2}dio  ${color1}|${color0} ${diskio}
+${color2}i/o  ${color1}|${color0} ${diskio}
 ${color0}${hr}
 ${color2}${gw_iface} ${color1}|${color0} ${addr}
 ${color2}ssid ${color1}|${color0} ${wireless_essid}
