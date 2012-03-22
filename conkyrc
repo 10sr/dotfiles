@@ -39,7 +39,7 @@ uppercase no
 format_human_readable yes
 
 TEXT
-${color0}${alignr}${conky_build_arch}
+${color0}${alignr}${sysname} ${kernel} (${machine})
 ${color0}${alignr}${execi 30000 whoami}@${nodename}
 ${color0}${hr}
 #${color2}host ${color1}|${color0} ${nodename} 
@@ -53,8 +53,8 @@ ${color2}temp ${color1}|${color0} ${acpitemp} °C
 #${color2}btry ${color1}|${color0} ${battery}
 #${color2}btime${color1}|${color0} ${battery_time}
 ${color0}${hr}
-${color2}ram  ${color1}|${color0} ${memperc}% ${membar}
-${color2}swap ${color1}|${color0} ${if_match "${swapperc}" == "No swap"}None${else}${swapperc}% ${swapbar}${endif}
+${color2}ram  ${color1}|${color0} ${mem} ${membar}
+${color2}swap ${color1}|${color0} ${if_match "${swapperc}" == "No swap"}None${else}${swap} ${swapbar}${endif}
 ${color0}${stippled_hr}
 ${color2}root ${color1}|${color0} ${fs_used /} #/${fs_size /}
 ${fs_bar /}
@@ -62,7 +62,7 @@ ${color2}/tmp ${color1}|${color0} ${fs_used /tmp} #/${fs_size /tmp}
 ${fs_bar /tmp}
 ${color2}i/o  ${color1}|${color0} ${diskio}
 ${color0}${hr}
-${color2}${gw_iface} ${color1}|${color0} ${addr}
+${color2}if   ${color1}|${color0} ${gw_iface}:${addr}
 ${color2}ssid ${color1}|${color0} ${wireless_essid}
 ${color0}${stippled_hr}
 ${color2}down ${color1}|${color0} ${downspeed}/s
