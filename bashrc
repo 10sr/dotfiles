@@ -91,8 +91,8 @@ alias psall="ps auxww"
 alias q=exit
 alias p="$PAGER"
 alias c=cat
-alias sudo="sudo "              # use aliases through sudo
 alias e3=e3em
+alias sudo="sudo "              # use aliases through sudo
 alias halt="sudo halt"
 alias reboot="sudo reboot"
 alias rand="echo \$RANDOM"
@@ -239,24 +239,33 @@ setclip(){
         fi
     fi
 }
-o(){
-    if [ $# -eq 0 ]
-    then
-        local f=.
+if iswindows; then
+    alias _open_file='cmd.exe //c start ""'
+elif isdarwin; then
+    alias _open_file=open
+elif islinux; then
+    if null type pcmanfm; then
+        alias _open_file="LC_MESSAGES= pcmanfm"
     else
-        local f="$1"
+        alias _open_file="LC_MESSAGES= xdg-open"
     fi
-    if iswindows
+else
+    alias _open_file=cat
+fi
+o(){
+    if test $# -eq 0
     then
-        cmd.exe //c start "" "$f"
-    elif isdarwin
-    then
-        open "$f"
-    elif type pcmanfm >/dev/null 2>&1
-    then
-        LC_MESSAGES= pcmanfm "$f"
+        _open_file . &
     else
-        LC_MESSAGES= xdg-open "$f"
+        for f in "$@"
+        do
+            if test -d $f
+            then
+                _open_file $f &
+            else
+                _open_file $f
+            fi
+        done
     fi
 }
 convmv-sjis2utf8-test(){
