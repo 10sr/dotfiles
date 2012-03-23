@@ -27,6 +27,28 @@
                                (symbol-name system-type)
                                "] "
                                '(:eval (symbol-name last-command))))
+
+(defun set-terminal-title (&rest args)
+  ""
+  (interactive "sString to set as title: ")
+  (send-string-to-terminal (apply 'concat
+                                  "\033]0;"
+                                  `(,@args "\007"))))
+(and (getenv "DISPLAY")
+     (not window-system)
+     (defvar old-directory default-directory)
+     (add-hook 'post-command-hook
+               (lambda ()
+                 (unless (eq old-directory default-directory)
+                   (setq old-directory default-directory)
+                   (set-terminal-title "["
+                                       invocation-name
+                                       " "
+                                       emacs-version
+                                       " "
+                                       (symbol-name system-type)
+                                       "] "
+                                       (abbreviate-file-name default-directory))))))
 (defun buffer-list-not-start-with-space ()
   (let ((bl (buffer-list))
         b nbl)
@@ -53,7 +75,8 @@
 (add-hook 'kill-emacs-hook      ; 終了時に読み込んで壊れてないか調べる
           (lambda ()
             (when (file-readable-p "~/.emacs")
-              (load-file "~/.emacs"))))
+              (load-file "~/.emacs"))
+            ))
 
 (add-hook 'after-init-hook
           (lambda ()
@@ -721,8 +744,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (require 'session nil t)
 
-(when (require 'gtkbm nil t)
-  (global-set-key (kbd "C-x C-d") 'gtkbm))
+(and (dllib-if-unfound "gtkbm"
+                       "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
+                       t)
+     (require 'gtkbm nil t)
+     (global-set-key (kbd "C-x C-d") 'gtkbm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; frame buffer
@@ -1076,7 +1102,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   ;;             (recentf-add-file default-directory)))
   (recentf-mode 1)
   (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
-  (add-to-list 'recentf-exclude "\\.emacs\\.d/recentf"))
+  (add-to-list 'recentf-exclude (rx-to-string recentf-save-file)))
 
 (add-hook 'recentf-dialog-mode-hook
           (lambda ()
@@ -1285,7 +1311,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                 (delete-file file)))))
 
 (and (dllib-if-unfound "pack"
-                  "https://github.com/10sr/emacs-lisp/raw/master/pack.el"
+                  "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                   t)
      (require 'pack nil t)
      (add-hook 'dired-mode-hook
@@ -1658,11 +1684,12 @@ when SEC is nil, stop auto save if enabled."
          (call-process "cmd.exe" nil 0 nil "/c" "start" "" (convert-standard-filename file)))
         ((eq system-type 'darwin)
          (call-process "open" nil 0 nil file))
-        ((not (getenv "DISPLAY"))
-         (find-file file))
+        ((getenv "DISPLAY")
+         (call-process (or my-filer "xdg-open") nil 0 nil file))
         (t
-         (call-process (or my-filer "xdg-open") nil 0 nil file)))
-  (recentf-add-file file)
+         (find-file file))
+        )
+  ;; (recentf-add-file file)
   (message "Opening %s...done" file))
 
 (defvar my-auto-indent-buffer-mode-list
