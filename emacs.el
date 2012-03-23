@@ -116,10 +116,10 @@
 ;; display date
 (add-hook 'after-init-hook
           (lambda ()
-            ;; (setq display-time-string-forms
-            ;;       '(dayname ", " day " " monthname " " year " " 24-hours ":"minutes ":" seconds))
             (setq display-time-string-forms
-                  '((my-format-time-string)))
+                  '(dayname ", " day " " monthname " " year " " 24-hours ":"minutes ":" seconds))
+            ;; (setq display-time-string-forms
+            ;;       '((my-format-time-string)))
             (when display-time-mode
               (display-time-update))
             ))
@@ -534,7 +534,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 (when (and window-system
-           ;; (getenv "DESKTOP_SESSION")
            (not (eq window-system 'mac))
            )
   (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal

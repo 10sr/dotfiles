@@ -24,3 +24,4 @@ if ! pgrep -lf "udisks-daemon: polling /dev/sr0"; then
 fi
 udisksvm >/dev/null &
 
+xcompmgr -c &
