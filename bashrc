@@ -452,6 +452,8 @@ __my_prompt_function(){              # used by PS1
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${tty} ${date} ${BASH} ${BASH_VERSION}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 
+    TERMTITLE="${USER}@${HOSTNAME} ${PWD}"
+    test -n "$DISPLAY" && echo -n -e "\033]0;${TERMTITLE}\007"
 }
 
 # from https://wiki.archlinux.org/index.php/X_resources
