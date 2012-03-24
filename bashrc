@@ -62,8 +62,6 @@ fi
 #######################
 
 uname -a
-
-echo
 echo TERM $TERM on $(tty), running $BASH $BASH_VERSION
 echo
 
@@ -160,34 +158,11 @@ showinfo(){
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        #nohup startx # >~/.backup/log/xorg.log 2>&1 &
+        #nohup startx >~/.backup/log/xorg.log 2>&1 &
         startx
     else
         echo "X cant be started! Maybe another X is already running!" 1>&2
     fi
-}
-
-export __MYGITBAREREP="${HOME}/dbx/.git-bare"
-git-make-local-rep(){
-    test $# -eq 0 && {
-        echo "specify repository name." 1>&2
-        return 1
-    }
-
-    dir="${__MYGITBAREREP}/$1.git"
-    cdir=$PWD
-
-    if test -d "$dir"
-    then
-        echo "dir $dir already exist!" 1>&2
-    else
-        mkdir -p "$dir" && {
-            cd "$dir" &&
-            git init --bare --shared=all
-        }
-    fi
-
-    cd ${cdir}
 }
 
 bak(){
@@ -277,7 +252,7 @@ convmv-sjis2utf8-test(){
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
-_mygitconfig(){
+_my_git_config(){
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
     git config --global core.autocrlf false
@@ -361,17 +336,19 @@ _colors(){
         "\e[37;1mBright White\n" \
         "\e[0m"
 }
-# http://www.frexx.de/xterm-256-notes/data/colortable16.sh
 
-_install_script(){
+_my_install_script(){
     mkdir -p $HOMO/bin/
     for f in "$@"
     do
         bn=$(basename "$f")
-        type ${bn} >/dev/null 2>&1 || wget "$f" -P "$HOME/bin/"
-        chmod u+x "$HOME/bin/${bn}"
+        type ${bn} >/dev/null 2>&1 || {
+            wget "$f" -P "$HOME/bin/"
+            chmod u+x "$HOME/bin/${bn}"
+        }
     done
 }
+_my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh
 
 winln(){
     # for windose make link (actually junction)
@@ -388,7 +365,7 @@ winln(){
     fi
 }
 
-battery-status(){
+__my_battery_status(){
     local dir=/sys/class/power_supply/BAT0
     if test -d $dir
     then
@@ -399,14 +376,7 @@ battery-status(){
         printf "$1" "${st}:${rate}%"
     fi
 }
-alias bat='battery-status %s\\n'
-
-battery-status2(){
-    local dir=/sys/class/power_supply/BAT0
-    . $dir/uevent
-    local rate=$(expr $POWER_SUPPLY_CHARGE_NOW \* 100 / $POWER_SUPPLY_CHARGE_FULL)
-    echo ${POWER_SUPPLY_STATUS}:${rate}%
-}
+alias bat='__my_battery_status %s\\n'
 
 ip-address(){
     local ip=$(LANG=C ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{print $2}')
@@ -447,7 +417,7 @@ __my_prompt_function(){              # used by PS1
         local ip=$(ip-address [Addr:%s])
         local bst="/tmp/${USER}-tmp/batterystatus"
         test -f $bst && local battery="[Battery:$(sed -e 's`%`%%`g' $bst)]"
-        battery-status %s >$bst &
+        __my_battery_status %s >$bst &
     fi
     # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
@@ -455,7 +425,7 @@ __my_prompt_function(){              # used by PS1
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 
     TERMTITLE="${USER}@${HOSTNAME} ${PWD}"
-    test -n "$DISPLAY" && echo -n -e "\033]0;${TERMTITLE}\007"
+    test -n "$DISPLAY" && test -z "$EMACS" && echo -n -e "\033]0;${TERMTITLE}\007"
 }
 
 # from https://wiki.archlinux.org/index.php/X_resources
