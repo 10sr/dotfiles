@@ -1731,30 +1731,6 @@ this is test, does not rename files"
                (message file))
       (message "not visiting file."))))
 
-;; ;; コマンド的な
-;; (defvar my-execute-func-list nil "func list")
-;; (defvar my-execute-func-hist-list nil "func hist list")
-;; (setq my-execute-func-list '("(call-interactively 'my-francaiscd-b)"
-;;                              "(call-interactively 'my-francaiscd-a)"
-;;                              "parsec47"
-;;                              "chromium-browser"
-;;                              "inkscape"
-;;                              "audacious"
-;;                              "gnome-terminal"
-;;                              "zkaicd.py"
-;;                              "glchess"))
-
-;; (defun my-execute-start-process-or-eval-sexp ()
-;;   "execute something"
-;;   (interactive)
-;;   (let ((func (completing-read "command?: " my-execute-func-list nil nil "" my-execute-func-hist-list)))
-;;     (if (string= "(" (substring func 0 1))
-;;         (with-temp-buffer (insert func)
-;;                           (eval-buffer))
-;;       (start-process "ps"
-;;                      nil
-;;                      func))))
-
 (defvar my-revert-buffer-if-needed-last-buffer nil)
 
 (defun my-revert-buffer-if-needed ()
