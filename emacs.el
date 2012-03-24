@@ -34,6 +34,16 @@
   (send-string-to-terminal (apply 'concat
                                   "\033]0;"
                                   `(,@args "\007"))))
+(defun my-set-terminal-title ()
+  ""
+  (set-terminal-title "["
+                      invocation-name
+                      " "
+                      emacs-version
+                      " "
+                      (symbol-name system-type)
+                      "] "
+                      (abbreviate-file-name default-directory)))
 (and (getenv "DISPLAY")
      (not window-system)
      (defvar old-directory default-directory)
@@ -41,14 +51,10 @@
                (lambda ()
                  (unless (eq old-directory default-directory)
                    (setq old-directory default-directory)
-                   (set-terminal-title "["
-                                       invocation-name
-                                       " "
-                                       emacs-version
-                                       " "
-                                       (symbol-name system-type)
-                                       "] "
-                                       (abbreviate-file-name default-directory))))))
+                   (my-set-terminal-title))))
+     (add-hook 'suspend-resume-hook
+               'my-set-terminal-title))
+
 (defun buffer-list-not-start-with-space ()
   (let ((bl (buffer-list))
         b nbl)
@@ -610,7 +616,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                                                  (point))))
 
 (add-to-list 'auto-mode-alist
-             '("\\(xinitrc\\|xprograms\\|\\)\\'" . sh-mode))
+             '("\\(xinitrc\\|xprograms\\)\\'" . sh-mode))
 
 (setq python-python-command (or (executable-find "python3")
                                 (executable-find "python")))
