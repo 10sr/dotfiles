@@ -380,6 +380,10 @@
 ;; (setq delete-by-moving-to-trash t
 ;;       trash-directory "~/.emacs.d/trash")
 
+;; その他のhook
+(add-hook 'after-save-hook
+          'executable-make-buffer-file-executable-if-script-p)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editting
 (setq require-final-newline t)
@@ -513,8 +517,6 @@
 
 (mouse-avoidance-mode 'banish)
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; download library from web
 
@@ -574,10 +576,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
      (require 'xclip nil t)
      (turn-on-xclip))
 
-;; その他のhook
-(add-hook 'after-save-hook
-          'executable-make-buffer-file-executable-if-script-p)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode
 
@@ -610,6 +608,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (interactive)
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
+
+(add-to-list 'auto-mode-alist
+             '("\\(xinitrc\\|xprograms\\|\\)\\'" . sh-mode))
 
 (setq python-python-command (or (executable-find "python3")
                                 (executable-find "python")))
@@ -660,17 +661,17 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (add-hook 'outline-mode-hook
           (lambda ()
-            (if (string-match "\\.md$" buffer-file-name)
+            (if (string-match "\\.md\\'" buffer-file-name)
                 (set (make-local-variable 'outline-regexp) "#+ "))))
-(add-to-list 'auto-mode-alist (cons "\\.ol$" 'outline-mode))
+(add-to-list 'auto-mode-alist (cons "\\.ol\\'" 'outline-mode))
 
-(add-to-list 'auto-mode-alist (cons "\\.md$" 'outline-mode))
+(add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (setq markdown-command (or (executable-find "markdown")
                            (executable-find "markdown.pl")))
 (when (dllib-if-unfound "markdown-mode"
                         "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
                         t)
-  (add-to-list 'auto-mode-alist (cons "\\.md$" 'markdown-mode))
+  (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
   (autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files." nil)
   (add-hook 'markdown-mode-hook
             (lambda ()
@@ -693,8 +694,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                         "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
                         t)
   (autoload 'js2-mode "js2-mode" nil t)
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsm$" . js2-mode)))
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode)))
 ;; (add-hook 'js2-mode-hook
 ;;           (lambda ()
 ;;             (add-hook 'before-save-hook
@@ -1018,9 +1019,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                         "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
                         t)
   (setq auto-mode-alist
-        (cons '("\.gosh$" . gauche-mode) auto-mode-alist))
+        (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
   (setq auto-mode-alist
-        (cons '("\.gaucherc$" . gauche-mode) auto-mode-alist))
+        (cons '("\.gaucherc\\'" . gauche-mode) auto-mode-alist))
   (autoload 'gauche-mode "gauche-mode" "Major mode for Scheme." t)
   (autoload 'run-scheme "gauche-mode" "Run an inferior Scheme process." t)
   (add-hook 'gauche-mode-hook
@@ -1311,8 +1312,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                 (delete-file file)))))
 
 (and (dllib-if-unfound "pack"
-                  "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
-                  t)
+                       "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
+                       t)
      (require 'pack nil t)
      (add-hook 'dired-mode-hook
                (lambda ()
@@ -1643,10 +1644,6 @@ when SEC is nil, stop auto save if enabled."
                                          'git-command-history)))
   (let ((dir default-directory)
         (bf (get-buffer-create "*Git Output*"))
-        ;; (process-environment `(,@process-environment))
-        ;; (comint-preoutput-filter-functions '(ansi-color-apply . nil))
-        ;; (comint-output-filter-functions (cons 'ansi-color-process-output
-        ;;                                       comint-output-filter-functions))
         )
     (delete-windows-on bf t)
     (shell-command (concat "git "
@@ -1691,26 +1688,6 @@ when SEC is nil, stop auto save if enabled."
         )
   ;; (recentf-add-file file)
   (message "Opening %s...done" file))
-
-(defvar my-auto-indent-buffer-mode-list
-  '(emacs-lisp-mode
-    sh-mode
-    js-mode
-    sgml-mode
-    c-mode
-    c++-mode))
-(setq my-auto-indent-buffer-mode-list nil) ;disable
-(defun my-indent-buffer ()
-  "indent whole buffer."
-  (interactive)
-  (indent-region (point-min)
-                 (point-max)))
-(defun my-auto-indent-buffer ()
-  ""
-  (when (memq major-mode my-auto-indent-buffer-mode-list)
-    (my-indent-buffer)))
-(add-hook 'before-save-hook
-          'my-auto-indent-buffer)
 
 (defun my-keyboard-quit ()
   ""
