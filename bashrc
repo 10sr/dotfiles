@@ -63,6 +63,9 @@ fi
 
 uname -a
 
+echo
+echo TERM $TERM on $(tty), running $BASH $BASH_VERSION
+echo
 
 if [ "${EMACS}" = "t" ]; then   # for emacs shell
     true export PS1="\u@\H \d \t \w\nemacs shell\$ "
@@ -446,10 +449,9 @@ __my_prompt_function(){              # used by PS1
         test -f $bst && local battery="[Battery:$(sed -e 's`%`%%`g' $bst)]"
         battery-status %s >$bst &
     fi
-    local tty=$(__try_exec tty | sed -e 's:/dev/::')
     # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
-    printf "${c2}${USER}@${HOSTNAME}${cdef} ${tty} ${date} ${BASH} ${BASH_VERSION}\n"
+    printf "${c2}${USER}@${HOSTNAME}${cdef} ${date}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 
     TERMTITLE="${USER}@${HOSTNAME} ${PWD}"
