@@ -12,6 +12,29 @@
 
 (require 'cl nil t)
 
+(progn                                  ; hook run when directory changed
+  (defvar buffer-file-changed-function nil "Hook run when buffer file changed.
+Each function is called with two args, the file before changing and after changing.")
+  (declare-function run-buffer-file-change-function "emacs.el")
+  (add-hook 'post-command-hook
+            'run-buffer-file-changed-function)
+  (lexical-let (previous-file)
+    (defun run-buffer-file-changed-function ()
+      ""
+      (unless (and previous-file
+                   (equal previous-file
+                          (expand-file-name (or buffer-file-name
+                                                default-directory))))
+        (let ((pfile previous-file)
+              (cfile (expand-file-name (or buffer-file-name
+                                          default-directory))))
+          (setq previous-file cfile)
+          (run-hook-with-args 'directory-changed-function pfile cfile)))))
+  ;; (add-hook 'directory-changed-function
+  ;;           (lambda (pdir cdir)
+  ;;             (message "dir changed %s to %s !" pdir cdir)))
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; start and quit
 
@@ -31,10 +54,11 @@
 (defun set-terminal-title (&rest args)
   ""
   (interactive "sString to set as title: ")
-  (let ((tty (or (frame-parameter nil
-                                  'tty-type)
-                 "")))
-    (when (eq t (compare-strings "xterm" 0 5 tty 0 5))
+  (let ((tty (frame-parameter nil
+                              'tty-type)))
+    (when (and tty
+               (eq t (compare-strings "xterm" 0 5
+                                      tty 0 5)))
       (send-string-to-terminal (apply 'concat
                                       "\033]0;"
                                       `(,@args "\007"))))))
@@ -49,12 +73,9 @@
                       (symbol-name system-type)
                       "] "
                       (abbreviate-file-name (or buffer-file-name default-directory))))
-(defvar previous-directory default-directory)
-(add-hook 'post-command-hook
-          (lambda ()
-            (unless (eq previous-directory default-directory)
-              (setq previous-directory default-directory)
-              (my-set-terminal-title))))
+(add-hook 'directory-changed-function
+          (lambda (p c)
+            (my-set-terminal-title)))
 (add-hook 'suspend-resume-hook
           'my-set-terminal-title)
 
@@ -196,19 +217,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
 
-;; change color for border
-;; (set-face-foreground (make-face 'vertical-border-face) "white")
-;; (set-face-background 'vertical-border-face "black")
-;; (defface vertical-border-face
-;;   `((((background dark))
-;;      (:background "white"))
-;;     (((background light))
-;;      (:background "black")))
-;;   "vertical border")
-;; (set-display-table-slot standard-display-table 'vertical-border
-;;                         (make-glyph-code #x3a 'vertical-border-face))
-;; (set-face-foreground 'vertical-border "default")
-;; (set-face-background 'vertical-border "white")
+(set-face-background 'vertical-border (face-foreground 'mode-line))
 
 (when (eq system-type 'Darwin)
   (mac-set-input-method-parameter 'japanese 'cursor-color "red")
@@ -317,25 +326,27 @@
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-(defun my-set-mode-line-color-according-to-readonly-state ()
+;; inspired by http://www.emacswiki.org/emacs-en/ChangingCursorDynamically
+
+(defun my-set-modeline-color-according-to-write-mode ()
   ""
   (let ((state (if buffer-read-only
                    'readonly
                  (if overwrite-mode
                      'overwrite
                    'insert))))
-    (unless (eq state my-set-mode-line-color-state)
+    (unless (eq state my-set-modeline-color-state)
       (set-face-foreground 'modeline
                            (nth 1
                                 (assq state
-                                      my-set-mode-line-color-color)))
+                                      my-set-modeline-color-color)))
       (set-face-background 'modeline
                            (nth 2
                                 (assq state
-                                      my-set-mode-line-color-color)))
-      (setq my-set-mode-line-color-state state))))
-(defvar my-set-mode-line-color-color nil "")
-(setq my-set-mode-line-color-color
+                                      my-set-modeline-color-color)))
+      (setq my-set-modeline-color-state state))))
+(defvar my-set-modeline-color-color nil "")
+(setq my-set-modeline-color-color
       (if window-system
           `((readonly "white" "blue")
             (overwrite "white" "red")
@@ -343,12 +354,12 @@
         `((readonly "blue" "white")
           (overwrite "red" "white")
           (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))))
-(defvar my-set-mode-line-color-state nil "")
-(add-hook 'post-command-hook 'my-set-mode-line-color-according-to-readonly-state)
-(add-hook 'after-init-hook 'my-set-mode-line-color-according-to-readonly-state)
+(defvar my-set-modeline-color-state nil "")
+(add-hook 'post-command-hook 'my-set-modeline-color-according-to-write-mode)
+(add-hook 'after-init-hook 'my-set-modeline-color-according-to-write-mode)
 
 ;; (set-face-foreground 'mode-line-inactive (if window-system "gray" "white"))
-;; (set-face-background 'mode-line-inactive (if window-system "white" "gray"))
+(set-face-background 'mode-line-inactive (if window-system "white" "green"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
