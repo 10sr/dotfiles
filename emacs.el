@@ -10,7 +10,7 @@
   (make-directory (expand-file-name "~/.emacs.d/lisp")))
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
-(require 'cl)
+(require 'cl nil t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; start and quit
@@ -48,7 +48,7 @@
                       " "
                       (symbol-name system-type)
                       "] "
-                      (abbreviate-file-name default-directory)))
+                      (abbreviate-file-name (or buffer-file-name default-directory))))
 (defvar previous-directory default-directory)
 (add-hook 'post-command-hook
           (lambda ()
@@ -235,12 +235,6 @@
         Man-mode))
 
 (standard-display-ascii ?\n "$\n")
-(set-face-foreground (copy-face 'default
-                                'my-eol-face)
-                     "green")
-;; (defface my-eol-face
-;;   '((t (:foreground "green")))
-;;   "eol.")
 
 (standard-display-ascii ?\f "---------------------------------------------------------------------------------------^L")
 (defface my-pagebreak-face
@@ -248,7 +242,7 @@
   "pagebreak.")
 
 (defvar my-eol-face
-  '(("\n" . (0 my-eol-face t nil)))
+  '(("\n" . (0 font-lock-comment-face t nil)))
   )
 (defvar my-pagebreak-face
   '(("\f" . 'my-pagebreak-face)))
@@ -256,13 +250,7 @@
   '(("\t" . '(0 highlight t nil))
     ("　" . '(0 highlight t nil))))
 
-;; (defvar my-face
-;;   '(("\t" . 'highlight)
-;;     ("　" . 'highlight)
-;;     ("\n" . '(0 my-eol-face t nil))
-;;     ("\f" . 'my-pagebreak-face)))
-
-;; 現在行をハイライト
+;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
 (defface hlline-face
   '((((type x w32)
@@ -287,7 +275,7 @@
 
 (add-hook 'font-lock-mode-hook
           (lambda ()
-            ;; (font-lock-add-keywords nil my-eol-face)
+            (font-lock-add-keywords nil my-eol-face)
             ;; (font-lock-add-keywords nil my-highlight-face)
             ))
 
@@ -453,7 +441,6 @@
 (global-set-key (kbd "C-k") 'kill-whole-line)
 (global-set-key (kbd "M-k") 'my-copy-whole-line)
 ;; (global-set-key "\C-z" 'undo) ; undo is C-/
-;; (global-set-key (kbd "C-<return>") (lambda () (interactive) (insert "\f\n")))
 (global-set-key (kbd "M-u") 'undo)
 (global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
@@ -762,11 +749,19 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; frame buffer
+;; todo: work well when opening the file that was already opened on another window
 
 (add-hook 'after-make-frame-functions
-          (lambda (frame)
-            (set-window-buffer (frame-selected-window frame)
+          (lambda (f)
+            (set-window-buffer (frame-selected-window f)
                                "*Messages*")))
+
+(defun make-frame-command-with-name (name)
+  "Make frame with name specified."
+  (interactive "sName for new frame: ")
+  (set-frame-parameter (make-frame-command)
+                       'name
+                       name))
 
 (defvar my-frame-buffer-plist nil)
 
@@ -852,7 +847,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
     (delete-frame)))
 
 (define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
-(define-key my-prefix-map (kbd "C-f") 'make-frame-command)
+(define-key my-prefix-map (kbd "C-f") 'make-frame-command-with-name)
 (global-set-key (kbd "C-x C-c") 'my-delete-frame-or-kill-emacs)
 (define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
 
