@@ -28,7 +28,7 @@ function ignore(k, i) [k, null];
 // style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
 
 ///////////////////////////////////
-//検索エンジン
+//search engine
 plugins.options["search-url-list"] = [
     ["bing","http://bing.com/search?q=%q"],
     ["yatwitter search","http://yats-data.com/yats/search?query=%q"],
@@ -52,7 +52,7 @@ plugins.options["my-keysnail-bookmarks"] = [
     "twitter.com",
 ];
 
-// sitelocal
+// sitelocal keymap
 
 //////////////////////////////////////////
 // 2ch chaika
@@ -77,7 +77,7 @@ local["^http://w2.p2.2ch.net/p2/read.php"] = [
 ];
 
 /////////////////////////////////////////
-// feedly用マップ
+// feedly
 local["^http://www.feedly.com/"] = [
     ['d', null],
     ['j', null],
@@ -98,7 +98,7 @@ local["^http://www.feedly.com/"] = [
 ];
 
 /////////////////////////////////////////
-//nicovideo用
+//nicovideo
 local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
     ["i", function (ev, arg) { ext.exec("nicoinfo", arg); }],
     ["p", function (ev, arg) { ext.exec("nicopause", arg); }],
@@ -156,7 +156,7 @@ plugins.options["twitter_client.jmp_key"] = "R_c51f889a77cb4b4e993ed868f65083f5"
 plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
-// エクステ
+// my ext
 
 ext.add('my-setpref', function(){
     util.setPrefs(
@@ -279,62 +279,6 @@ ext.add("close-and-next-tab", function (ev, arg) {
     gBrowser.selectedTab = gBrowser.mTabs[n];
 }, "close and focus to next tab");
 
-/////////////////////////////////////
-// google itranslate
-// use mstranslator instead
-(function(){
-    let targetLang = "ja"; // target lang to translate into
-    let alternativeLang = "en"; // if given word is in targetLang, use this instead as a target lang
-    function translate(word, target, next) {
-        next("", "", " getting...");
-        const base = "https://www.googleapis.com/language/translate/v2?key=%s&q=%s&target=%s";
-        const apikey = "AIzaSyBq48p8NhFgaJ1DfUJ5ltbwLxeXpjEL86A";
-        let ep = util.format(base, apikey, encodeURIComponent(word), target);
-        util.httpGet(ep, false, function (res) {
-            if (res.status === 200) {
-                let json = decodeJSON(res.responseText);
-                let srclang = json.data.translations[0].detectedSourceLanguage;
-                if (target == srclang) {
-                    lookupword(word, alternativeLang);
-                } else {
-                    let result = json.data.translations[0].translatedText;
-                    next(srclang, target, result);
-                }
-            } else {
-                next("", "", "ERROR!");
-            }
-        });
-    };
-    function echo(srclang, from, tglang, to){
-        display.echoStatusBar(srclang + " : " + from + " -> " + tglang + " : " + to);
-    };
-    function decodeJSON(json) {
-        return util.safeEval("(" + json + ")");
-    };
-    function lookupword(word, target){
-        translate(word, target, function (src, tg, translated) {
-            echo(src, word, tg, translated);
-        });
-    };
-    function read (aInitialInput) {
-        let prevText = "";
-
-        prompt.reader({
-            message : "word or sentence to translate:",
-            initialinput : aInitialInput,
-            onChange: function (arg) {
-                let word = arg.textbox.value;
-                if (word !== prevText) {
-                    prevText = word;
-                    lookupword(word, targetLang);
-                }
-            },
-            callback: function (s){},
-        });
-    };
-    ext.add("google-itranslate",function(){read(content.document.getSelection() || "");},"google itranslate");
-})();
-
 //////////////////////////////////////
 //
 ext.add("restart-firefox-add-menu", function(){
@@ -410,25 +354,25 @@ ext.add("copy-url", function () {
 }, "Copy url or feed url of current page");
 
 ///////////////////////////////////////
-// 評価しちゃうっぽい とりあえずこんな感じで
+// keysnail z menu
 ext.add("keysnail-setting-menu",function(){
     var settingmenulist = [["keysnail setting dialogue", function(){return function(){KeySnail.openPreference();};}],
-                           ["keysnail plugin manager", function(){return function(){userscript.openPluginManager();}}],
+                           ["keysnail plugin manager", function(){return function(){userscript.openPluginManager();};}],
                            ["firefox addon manager", function(){return function(){BrowserOpenAddonsMgr();};}],
                            ["reload .keysnail.js", function(){return function() {userscript.reload();};}],
                            // ["check for plugins update", function(){return function(){ext.exec("check-for-plugins-update");};}],
-                           ["restart firefox", function(){return function(){ext.exec("restart-firefox");};}],
+                           ["restart firefox", function(){return function(){ext.exec("restart-firefox");};}]
                           ];
     prompt.selector(
         {
             message    : "open setting dialog",
             collection : settingmenulist,
-            callback   : function (i) { settingmenulist[i][1]()(); },
+            callback   : function (i) { settingmenulist[i][1]()(); }
         });
 },"open keysnail setting menu");
 
 ////////////////////////
-//マルチプルタブハンドラ
+// multiple tab handler
 ext.add("multiple-tab-handler-close-selected-and-current-tabs", function () {
     BrowserCloseTabOrWindow();
     // if (MultipleTabService) {
@@ -460,7 +404,7 @@ ext.add("query-then-engine", function () {
 }, "enter search word and then select engine");
 
 /////////////////////////////////////
-// 閉じたタブリスト
+// closed tab list
 ext.add("list-closed-tabs", function () {
     const fav = "chrome://mozapps/skin/places/defaultFavicon.png";
     var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
