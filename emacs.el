@@ -31,9 +31,14 @@
 (defun set-terminal-title (&rest args)
   ""
   (interactive "sString to set as title: ")
-  (send-string-to-terminal (apply 'concat
-                                  "\033]0;"
-                                  `(,@args "\007"))))
+  (let ((tty (or (frame-parameter nil
+                                  'tty-type)
+                 "")))
+    (when (eq t (compare-strings "xterm" 0 5 tty 0 5))
+      (send-string-to-terminal (apply 'concat
+                                      "\033]0;"
+                                      `(,@args "\007"))))))
+
 (defun my-set-terminal-title ()
   ""
   (set-terminal-title "["
@@ -44,16 +49,14 @@
                       (symbol-name system-type)
                       "] "
                       (abbreviate-file-name default-directory)))
-(and (getenv "DISPLAY")
-     (not window-system)
-     (defvar old-directory default-directory)
-     (add-hook 'post-command-hook
-               (lambda ()
-                 (unless (eq old-directory default-directory)
-                   (setq old-directory default-directory)
-                   (my-set-terminal-title))))
-     (add-hook 'suspend-resume-hook
-               'my-set-terminal-title))
+(defvar previous-directory default-directory)
+(add-hook 'post-command-hook
+          (lambda ()
+            (unless (eq previous-directory default-directory)
+              (setq previous-directory default-directory)
+              (my-set-terminal-title))))
+(add-hook 'suspend-resume-hook
+          'my-set-terminal-title)
 
 (defun buffer-list-not-start-with-space ()
   (let ((bl (buffer-list))

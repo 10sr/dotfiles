@@ -65,12 +65,6 @@ uname -a
 echo TERM $TERM on $(tty), running $BASH $BASH_VERSION
 echo
 
-if [ "${EMACS}" = "t" ]; then   # for emacs shell
-    true export PS1="\u@\H \d \t \w\nemacs shell\$ "
-elif echo "$EMACS" | grep term >/dev/null 2>&1; then # for emacs term
-    echo "Emacs Term"
-fi
-
 ###################################
 # some aliases and functions
 
@@ -78,7 +72,7 @@ test "$TERM" == dumb || _coloroption=" --color=always"
 
 alias ls="ls -hCF --time-style=long-iso${_coloroption}"
 # export GREP_OPTIONS=""
-alias grep="grep${_coloroption}"
+alias grep="grep -n${_coloroption}"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
@@ -379,7 +373,7 @@ __my_battery_status(){
 alias bat='__my_battery_status %s\\n'
 
 ip-address(){
-    local ip=$(LANG=C ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{print $2}')
+    local ip=$(LANG=C ifconfig | grep --color=never "inet " | grep --color=never -v "127.0.0.1" | awk '{print $2}')
     test -n "$ip" && printf $1 $ip
 }
 
@@ -420,12 +414,25 @@ __my_prompt_function(){              # used by PS1
         __my_battery_status %s >$bst &
     fi
     # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
+
+    __my_set_title
+
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date}\n"
     printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 
+}
+
+__my_set_title(){
     TERMTITLE="${USER}@${HOSTNAME} ${PWD}"
-    test -n "$DISPLAY" && test -z "$EMACS" && echo -n -e "\033]0;${TERMTITLE}\007"
+ 	case $TERM in
+		rxvt*|xterm*|aterm)
+            test -t 1 &&
+            test -n "$DISPLAY" &&
+            test -z "$EMACS" &&
+            echo -n -e "\033]0;${TERMTITLE}\007"
+		    ;;
+	esac
 }
 
 # from https://wiki.archlinux.org/index.php/X_resources
