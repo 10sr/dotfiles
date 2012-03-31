@@ -102,6 +102,7 @@ alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
+alias wicdc=wicd-curses
 
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
@@ -142,7 +143,7 @@ showinfo(){
     __try_exec diskinfo
 
     ! isdarwin && test -n "${DISPLAY}" && {
-        __try_exec xrandr | grep --color=never ^Screen
+        __try_exec xrandr | \grep --color=never ^Screen
     }
 
     iswindows || __try_exec finger $USER
@@ -250,6 +251,7 @@ _my_git_config(){
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
     git config --global core.autocrlf false
+    git config --global core.excludesfile '~/.gitignore'
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
@@ -373,7 +375,7 @@ __my_battery_status(){
 alias bat='__my_battery_status %s\\n'
 
 ip-address(){
-    local ip=$(LANG=C ifconfig | grep --color=never "inet " | grep --color=never -v "127.0.0.1" | awk '{print $2}')
+    local ip=$(LANG=C ifconfig | \grep --color=never "inet " | \grep --color=never -v "127.0.0.1" | awk '{print $2}')
     test -n "$ip" && printf $1 $ip
 }
 

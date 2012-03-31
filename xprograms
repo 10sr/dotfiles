@@ -9,7 +9,7 @@ sh "$HOME/.fehbg"
 
 tint2 &
 
-#dropboxd & # done by ~/.config/autostart/dropbox.desktop
+dropboxd & # done by ~/.config/autostart/dropbox.desktop
 
 volumeicon &
 

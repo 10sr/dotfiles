@@ -30,9 +30,11 @@ gap_y 40
 default_color green # slategrey 
 default_shade_color lightgrey
 default_outline_color black
-color0 white
-color1 white
-color2 green
+color0 white                    # value
+color1 white                    # vertical border
+color2 green                    # name
+color3 yellow                   # displays
+color4 888888                   # border of netspeed graph
 
 no_buffers yes
 uppercase no
@@ -42,16 +44,12 @@ TEXT
 ${color0}${alignr}${sysname} ${kernel} (${machine})
 ${color0}${alignr}${execi 30000 whoami}@${nodename}
 ${color0}${hr}
-#${color2}host ${color1}|${color0} ${nodename} 
 ${color2}uptm ${color1}|${color0} ${uptime}
 ${color2}lgin ${color1}|${color0} ${uptime}
-#${color2}os   ${color1}|${color0} ${sysname} ${kernel}
 ${color0}${stippled_hr}
 ${color2}cpu  ${color1}|${color0} ${cpu}% ${cpubar}
 ${color2}freq ${color1}|${color0} ${freq 1}Mhz | ${freq 2}Mhz
 ${color2}temp ${color1}|${color0} ${acpitemp} °C
-#${color2}btry ${color1}|${color0} ${battery}
-#${color2}btime${color1}|${color0} ${battery_time}
 ${color0}${hr}
 ${color2}ram  ${color1}|${color0} ${mem} ${membar}
 ${color2}swap ${color1}|${color0} ${if_match "${swapperc}" == "No swap"}None${else}${swap} ${swapbar}${endif}
@@ -66,10 +64,9 @@ ${color2}if   ${color1}|${color0} ${gw_iface}:${addr}
 ${color2}ssid ${color1}|${color0} ${wireless_essid}
 ${color0}${stippled_hr}
 ${color2}down ${color1}|${color0} ${downspeed}/s
-${color #888888}${downspeedgraph ff0000 0000ff}
+${color4}${downspeedgraph ff0000 0000ff}
 ${color2}up   ${color1}|${color0} ${upspeed}/s
-${color #888888}${upspeedgraph 0000ff ff0000}
+${color4}${upspeedgraph 0000ff ff0000}
+${color0}${alignr}conky ${conky_version}
 ${color0}${hr}
-${alignr}conky ${conky_version}
-# on Page${desktop}
-#${color0}${alignr}${execi 900 cal -1}
+${color3}${alignr}${texeci 10 bash -c 'xrandr|\grep " connected "|cut -f 1,3 -d " "'}
