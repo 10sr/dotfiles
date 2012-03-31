@@ -14,7 +14,7 @@
 
 (progn                                  ; hook run when directory changed
   (defvar buffer-file-changed-function nil "Hook run when buffer file changed.
-Each function is called with two args, the file before changing and after changing.")
+Each function is called with two args, the filename before changing and after changing.")
   (declare-function run-buffer-file-change-function "emacs.el")
   (add-hook 'post-command-hook
             'run-buffer-file-changed-function)
@@ -34,6 +34,32 @@ Each function is called with two args, the file before changing and after changi
   ;;           (lambda (pdir cdir)
   ;;             (message "dir changed %s to %s !" pdir cdir)))
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; download library from web
+
+(require 'url)
+
+(defun dllib-if-unfound (lib url &optional bite-compile-p force-download-p)
+  "if LIB does not exist, download it from URL and locate it to \"~/emacs.d/lisp/LIB.el\".
+return nil if LIB unfound and downloading failed, otherwise the path of LIB."
+  (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
+         (lpath (concat dir lib ".el"))
+         (locate-p (locate-library lib)))
+    (if (or force-download-p (not locate-p))
+        (progn (condition-case nil
+                   (progn (message "downloading %s..." url)
+                          (url-copy-file url
+                                         lpath
+                                         t)
+                          (when bite-compile-p
+                            (byte-compile-file lpath)))
+                 (error (and (file-readable-p lpath)
+                             (delete-file lpath))
+                        (message "downloading %s...something wrong happened!" url)
+                        nil))
+               (locate-library lib))
+      locate-p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; start and quit
@@ -131,12 +157,6 @@ Each function is called with two args, the file before changing and after changi
 (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
 (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
 
-
-;; display
-(setq redisplay-dont-pause t)
-(setq visible-bell t)
-(setq ring-bell-function 'ignore)
-
 ;; (comint-show-maximum-output)
 
 ;; kill scratch
@@ -147,6 +167,43 @@ Each function is called with two args, the file before changing and after changi
 ;; modifier keys
 (setq mac-option-modifier 'control)
 (setq w32-apps-modifier 'meta)
+
+;; display
+(setq redisplay-dont-pause t)
+(setq visible-bell t)
+(setq ring-bell-function 'ignore)
+(mouse-avoidance-mode 'banish)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; global keys
+
+(define-key my-prefix-map (kbd "C-o") 'occur)
+
+;; (define-key my-prefix-map (kbd "C-h") help-map)
+(global-set-key (kbd "C-\\") help-map)
+(define-key ctl-x-map (kbd "DEL") help-map)
+(define-key ctl-x-map (kbd "C-h") help-map)
+(define-key help-map "a" 'apropos)
+
+;; compose window
+(global-set-key [?\C--] 'other-window)
+(global-set-key [?\C-0] 'delete-window)
+(global-set-key [?\C-1] 'delete-other-windows)
+(global-set-key [?\C-2] 'split-window-vertically)
+(global-set-key [?\C-3] 'split-window-horizontally)
+
+;; disable annoying keys
+(global-set-key [prior] 'ignore)
+(global-set-key (kbd "<next>") 'ignore)
+(global-set-key [menu] 'ignore)
+(global-set-key [down-mouse-1] 'ignore)
+(global-set-key [down-mouse-2] 'ignore)
+(global-set-key [down-mouse-3] 'ignore)
+(global-set-key [mouse-1] 'ignore)
+(global-set-key [mouse-2] 'ignore)
+(global-set-key [mouse-3] 'ignore)
+(global-set-key (kbd "<eisu-toggle>") 'ignore)
+(global-set-key (kbd "C-<eisu-toggle>") 'ignore)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode-line
@@ -217,7 +274,7 @@ Each function is called with two args, the file before changing and after changi
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
 
-(set-face-background 'vertical-border (face-foreground 'mode-line))
+;; (set-face-background 'vertical-border (face-foreground 'mode-line))
 
 (when (eq system-type 'Darwin)
   (mac-set-input-method-parameter 'japanese 'cursor-color "red")
@@ -326,37 +383,10 @@ Each function is called with two args, the file before changing and after changi
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-;; inspired by http://www.emacswiki.org/emacs-en/ChangingCursorDynamically
-
-(defun my-set-modeline-color-according-to-write-mode ()
-  ""
-  (let ((state (if buffer-read-only
-                   'readonly
-                 (if overwrite-mode
-                     'overwrite
-                   'insert))))
-    (unless (eq state my-set-modeline-color-state)
-      (set-face-foreground 'modeline
-                           (nth 1
-                                (assq state
-                                      my-set-modeline-color-color)))
-      (set-face-background 'modeline
-                           (nth 2
-                                (assq state
-                                      my-set-modeline-color-color)))
-      (setq my-set-modeline-color-state state))))
-(defvar my-set-modeline-color-color nil "")
-(setq my-set-modeline-color-color
-      (if window-system
-          `((readonly "white" "blue")
-            (overwrite "white" "red")
-            (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))
-        `((readonly "blue" "white")
-          (overwrite "red" "white")
-          (insert ,(face-foreground 'modeline) ,(face-background 'modeline)))))
-(defvar my-set-modeline-color-state nil "")
-(add-hook 'post-command-hook 'my-set-modeline-color-according-to-write-mode)
-(add-hook 'after-init-hook 'my-set-modeline-color-according-to-write-mode)
+(and (dllib-if-unfound "set-modeline-color"
+                       "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
+                       t)
+     (require 'set-modeline-color nil t))
 
 ;; (set-face-foreground 'mode-line-inactive (if window-system "gray" "white"))
 (set-face-background 'mode-line-inactive (if window-system "white" "green"))
@@ -388,7 +418,6 @@ Each function is called with two args, the file before changing and after changi
 ;; (setq delete-by-moving-to-trash t
 ;;       trash-directory "~/.emacs.d/trash")
 
-;; その他のhook
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
@@ -404,7 +433,7 @@ Each function is called with two args, the file before changing and after changi
 (setq kill-read-only-ok t)
 (setq truncate-partial-width-windows nil) ; when splitted horizontally
 ;; (setq-default line-spacing 0.2)
-(setq-default indicate-empty-lines t)   ; なんだろうこれ
+(setq-default indicate-empty-lines t)   ; when using x indicate empty line
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function nil)
@@ -455,12 +484,7 @@ Each function is called with two args, the file before changing and after changi
 (global-set-key (kbd "M-u") 'undo)
 (global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "M-i")
-                (lambda ()
-                  (interactive)
-                  (call-interactively (key-binding (kbd "M-TAB"))))
-                ;; (kbd "M-TAB")
-                )
+(global-set-key (kbd "M-i") (kbd "ESC TAB"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
@@ -485,70 +509,6 @@ Each function is called with two args, the file before changing and after changi
 (substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
 ;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; for emacsclient
-;; (if window-system (server-start))
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; global keys
-
-(define-key my-prefix-map (kbd "C-o") 'occur)
-
-;; (define-key my-prefix-map (kbd "C-h") help-map)
-(global-set-key (kbd "C-\\") help-map)
-(define-key ctl-x-map (kbd "DEL") help-map)
-(define-key ctl-x-map (kbd "C-h") help-map)
-(define-key help-map "a" 'apropos)
-
-;; compose window
-(global-set-key [?\C--] 'other-window)
-(global-set-key [?\C-0] 'delete-window)
-(global-set-key [?\C-1] 'delete-other-windows)
-(global-set-key [?\C-2] 'split-window-vertically)
-(global-set-key [?\C-3] 'split-window-horizontally)
-
-;; disable annoying keys
-(global-set-key [prior] 'ignore)
-(global-set-key (kbd "<next>") 'ignore)
-(global-set-key [menu] 'ignore)
-(global-set-key [down-mouse-1] 'ignore)
-(global-set-key [down-mouse-2] 'ignore)
-(global-set-key [down-mouse-3] 'ignore)
-(global-set-key [mouse-1] 'ignore)
-(global-set-key [mouse-2] 'ignore)
-(global-set-key [mouse-3] 'ignore)
-(global-set-key (kbd "<eisu-toggle>") 'ignore)
-(global-set-key (kbd "C-<eisu-toggle>") 'ignore)
-
-(mouse-avoidance-mode 'banish)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; download library from web
-
-(require 'url)
-
-(defun dllib-if-unfound (lib url &optional bite-compile-p force-download-p) ; new version
-  "if LIB does not exist, download it from URL and locate it to \"~/emacs.d/lisp/LIB.el\".
-return nil if LIB unfound and downloading failed, otherwise the path of LIB."
-  (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
-         (lpath (concat dir lib ".el"))
-         (locate-p (locate-library lib)))
-    (if (or force-download-p (not locate-p))
-        (progn (condition-case nil
-                   (progn (message "downloading %s..." url)
-                          (url-copy-file url
-                                         lpath
-                                         t)
-                          (when bite-compile-p
-                            (byte-compile-file lpath)))
-                 (error (and (file-readable-p lpath)
-                             (delete-file lpath))
-                        (message "downloading %s...something wrong happened!" url)
-                        nil))
-               (locate-library lib))
-      locate-p)))
 
 '(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
                           ("gnu" . "http://elpa.gnu.org/packages/")
@@ -758,110 +718,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
      (require 'gtkbm nil t)
      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; frame buffer
-;; todo: work well when opening the file that was already opened on another window
-
-(add-hook 'after-make-frame-functions
-          (lambda (f)
-            (set-window-buffer (frame-selected-window f)
-                               "*Messages*")))
-
-(defun make-frame-command-with-name (name)
-  "Make frame with name specified."
-  (interactive "sName for new frame: ")
-  (set-frame-parameter (make-frame-command)
-                       'name
-                       name))
-
-(defvar my-frame-buffer-plist nil)
-
-(defun my-frame-buffer-add (&optional buf frame)
-  ""
-  (setq my-frame-buffer-plist
-        (plist-put my-frame-buffer-plist
-                   (or frame
-                       (selected-frame))
-                   (let ((lst (my-frame-buffer-get frame)))
-                     (if lst
-                         (add-to-list 'lst
-                                      (or buf
-                                          (current-buffer)))
-                       (list (or buf
-                                 (current-buffer))))))))
-
-(defun my-frame-buffer-remove (&optional buf frame)
-  ""
-  (setq my-frame-buffer-plist
-        (plist-put my-frame-buffer-plist
-                   (or frame
-                       (selected-frame))
-                   (delq (or buf
-                             (current-buffer))
-                         (my-frame-buffer-get frame)))))
-
-(defun my-frame-buffer-get (&optional frame)
-  ""
-  (plist-get my-frame-buffer-plist
-             (or frame
-                 (selected-frame))))
-
-(defun my-frame-buffer-kill-all-buffer (&optional frame)
-  ""
-  (mapcar 'kill-buffer
-          (my-frame-buffer-get frame)))
-
-(add-hook 'find-file-hook
-          'my-frame-buffer-add)
-(add-hook 'term-mode-hook
-          'my-frame-buffer-add)
-(add-hook 'eshell-mode-hook
-          'my-frame-buffer-add)
-(add-hook 'Man-mode-hook
-          'my-frame-buffer-add)
-
-(add-hook 'kill-buffer-hook
-          'my-frame-buffer-remove)
-(add-hook 'delete-frame-functions
-          'my-frame-buffer-kill-all-buffer)
-
-
-(defvar my-desktop-terminal "roxterm")
-(defun my-execute-terminal ()
-  ""
-  (interactive)
-  (if (and (or (eq system-type 'windows-nt)
-               window-system)
-           my-desktop-terminal
-           )
-      (let ((process-environment (cons "TERM=xterm" process-environment)))
-        (start-process "terminal"
-                       nil
-                       my-desktop-terminal))
-    (my-term)))
-
-(defun my-term ()
-  "open terminal buffer and return that buffer."
-  (interactive)
-  (if (eq system-type 'windows-nt)
-      (eshell t)
-    (if (featurep 'multi-term)
-        (multi-term)
-      (ansi-term "/bin/bash"))))
-
-(defun my-delete-frame-or-kill-emacs ()
-  "delete frame when opening multiple frame, kill emacs when only one."
-  (interactive)
-  (if (eq 1
-          (length (frame-list)))
-      (save-buffers-kill-emacs)
-    (delete-frame)))
-
-(define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
-(define-key my-prefix-map (kbd "C-f") 'make-frame-command-with-name)
-(global-set-key (kbd "C-x C-c") 'my-delete-frame-or-kill-emacs)
-(define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
 
@@ -1049,8 +905,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
 
-(add-hook 'recentf-dialog-mode-hook
-          'my-recentf-abbrev-list)
+;; (add-hook 'recentf-dialog-mode-hook
+;;           'my-recentf-abbrev-list)
 
 (defun my-recentf-delete-entry ()
   ""
@@ -1117,7 +973,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
   (recentf-mode 1)
-  (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
+  ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (add-to-list 'recentf-exclude (rx-to-string recentf-save-file)))
 
 (add-hook 'recentf-dialog-mode-hook
@@ -1254,32 +1110,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   )
 (setq dired-listing-switches "-lhFG")
 
-(define-minor-mode my-dired-display-all-mode
-  ""
-  :init-value nil
-  :global nil
-  :lighter " ALL"
-  (when (eq major-mode 'dired-mode)
-    (my-dired-display-all-set)
-    (revert-buffer)))
-(defun my-dired-display-all-set ()
-  ""
-  (if my-dired-display-all-mode
-      (or (string-match-p my-dired-display-all-switch
-                          dired-actual-switches)
-          (setq dired-actual-switches
-                (concat my-dired-display-all-switch
-                        " "
-                        dired-actual-switches)))
-    (setq dired-actual-switches
-          (replace-regexp-in-string (concat my-dired-display-all-switch
-                                            " ")
-                                    ""
-                                    dired-actual-switches))))
-(defvar my-dired-display-all-switch "-A")
-(add-hook 'dired-mode-hook
-          'my-dired-display-all-set)
-
 (put 'dired-find-alternate-file 'disabled nil) ; when using dired-find-alternate-file reuse current dired buffer for the file to open
 (setq dired-ls-F-marks-symlinks t)
 
@@ -1315,7 +1145,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (define-key dired-mode-map "@" (lambda () (interactive) (my-x-open ".")))
             (define-key dired-mode-map (kbd "TAB") 'other-window)
             ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
-            (define-key dired-mode-map "a" 'my-dired-display-all-mode)
             (define-key dired-mode-map "/" 'dired-isearch-filenames)
             (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
             (substitute-key-definition 'dired-next-line 'my-dired-next-line dired-mode-map)
@@ -1333,6 +1162,17 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
      (add-hook 'dired-mode-hook
                (lambda ()
                  (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
+
+(and (dllib-if-unfound "dired-list-all-mode"
+                       "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
+                       t)
+     (require 'dired-list-all-mode nil t)
+     (setq dired-listing-switches "-lhFG")
+     (add-hook 'dired-mode-hook
+               (lambda ()
+                 (define-key dired-mode-map "a" 'dired-list-all-mode)
+                 )))
+
 
 ;; http://blog.livedoor.jp/tek_nishi/archives/4693204.html
 
@@ -1600,6 +1440,110 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 (add-hook 'after-revert-hook
           'my-set-buffer-file-last-modified-time)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; frame buffer
+;; todo: work well when opening the file that was already opened on another window
+
+(add-hook 'after-make-frame-functions
+          (lambda (f)
+            (set-window-buffer (frame-selected-window f)
+                               "*Messages*")))
+
+(defun make-frame-command-with-name (name)
+  "Make frame with name specified."
+  (interactive "sName for new frame: ")
+  (set-frame-parameter (make-frame-command)
+                       'name
+                       name))
+
+(defvar my-frame-buffer-plist nil)
+
+(defun my-frame-buffer-add (&optional buf frame)
+  ""
+  (setq my-frame-buffer-plist
+        (plist-put my-frame-buffer-plist
+                   (or frame
+                       (selected-frame))
+                   (let ((lst (my-frame-buffer-get frame)))
+                     (if lst
+                         (add-to-list 'lst
+                                      (or buf
+                                          (current-buffer)))
+                       (list (or buf
+                                 (current-buffer))))))))
+
+(defun my-frame-buffer-remove (&optional buf frame)
+  ""
+  (setq my-frame-buffer-plist
+        (plist-put my-frame-buffer-plist
+                   (or frame
+                       (selected-frame))
+                   (delq (or buf
+                             (current-buffer))
+                         (my-frame-buffer-get frame)))))
+
+(defun my-frame-buffer-get (&optional frame)
+  ""
+  (plist-get my-frame-buffer-plist
+             (or frame
+                 (selected-frame))))
+
+(defun my-frame-buffer-kill-all-buffer (&optional frame)
+  ""
+  (mapcar 'kill-buffer
+          (my-frame-buffer-get frame)))
+
+(add-hook 'find-file-hook
+          'my-frame-buffer-add)
+(add-hook 'term-mode-hook
+          'my-frame-buffer-add)
+(add-hook 'eshell-mode-hook
+          'my-frame-buffer-add)
+(add-hook 'Man-mode-hook
+          'my-frame-buffer-add)
+
+(add-hook 'kill-buffer-hook
+          'my-frame-buffer-remove)
+(add-hook 'delete-frame-functions
+          'my-frame-buffer-kill-all-buffer)
+
+
+(defvar my-desktop-terminal "roxterm")
+(defun my-execute-terminal ()
+  ""
+  (interactive)
+  (if (and (or (eq system-type 'windows-nt)
+               window-system)
+           my-desktop-terminal
+           )
+      (let ((process-environment (cons "TERM=xterm" process-environment)))
+        (start-process "terminal"
+                       nil
+                       my-desktop-terminal))
+    (my-term)))
+
+(defun my-term ()
+  "open terminal buffer and return that buffer."
+  (interactive)
+  (if (eq system-type 'windows-nt)
+      (eshell t)
+    (if (featurep 'multi-term)
+        (multi-term)
+      (ansi-term "/bin/bash"))))
+
+(defun my-delete-frame-or-kill-emacs ()
+  "delete frame when opening multiple frame, kill emacs when only one."
+  (interactive)
+  (if (eq 1
+          (length (frame-list)))
+      (save-buffers-kill-emacs)
+    (delete-frame)))
+
+(define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
+(define-key my-prefix-map (kbd "C-f") 'make-frame-command-with-name)
+(global-set-key (kbd "C-x C-c") 'my-delete-frame-or-kill-emacs)
+(define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; auto saving
 
@@ -1831,30 +1775,35 @@ this is test, does not rename files"
 (defun my-load-scim ()
   "use scim-bridge.el as japanese im."
   ;; Load scim-bridge.
-  (require 'scim-bridge)
-  ;; Turn on scim-mode automatically after loading .emacs
-  (add-hook 'after-init-hook 'scim-mode-on)
-  (setq scim-cursor-color "red")
-  (scim-define-preedit-key ?\^h t)
-  (scim-define-common-key ?\* nil)
-  (scim-define-common-key ?\^/ nil))
+  (when (require 'scim-bridge nil t)
+    ;; Turn on scim-mode automatically after loading .emacs
+    (add-hook 'after-init-hook 'scim-mode-on)
+    (setq scim-cursor-color "red")
+    (scim-define-preedit-key ?\^h t)
+    (scim-define-common-key ?\* nil)
+    (scim-define-common-key ?\^/ nil)))
 
 (defun my-load-anthy ()
   "use anthy.el as japanese im."
   ;; anthy
-  (require 'anthy)
-  (global-set-key [muhenkan] (lambda () (interactive) (anthy-mode-off)))
-  (global-set-key [henkan] (lambda () (interactive) (anthy-mode-on)))
-  (when (>= emacs-major-version 23)
-    (setq anthy-accept-timeout 1)))
+  (when (require 'anthy nil t)
+    (global-set-key (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
+    (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
+    (when (>= emacs-major-version 23)
+      (setq anthy-accept-timeout 1))))
 
 ;; quail
 ;; aproposs input-method for some information
-(setq default-input-method "japanese")
-
+;; (setq default-input-method "japanese")
+(defun my-load-mozc-el ()
+  ""
+  (setq mozc-leim-title "[MZ]")
+  (when (require 'mozc nil t)
+    (setq defauit-input-method "japanese-mozc")
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; windows用設定
+;; for windows
 
 ;; (add-to-list 'exec-path "c:/Program Files/Gauche/bin/")
 
