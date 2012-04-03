@@ -41,7 +41,7 @@ else
     export EDITOR=vi
 fi
 export LC_MESSAGES=C
-export CDPATH=".:~"
+# export CDPATH=".:~"
 export VISUAL="$EDITOR"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
@@ -87,11 +87,13 @@ alias q=exit
 alias p="$PAGER"
 alias c=cat
 alias e3=e3em
+alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
+alias po=popd
+alias pu=pushd
 alias sudo="sudo "              # use aliases through sudo
 alias halt="sudo halt"
 alias reboot="sudo reboot"
 alias rand="echo \$RANDOM"
-# alias apt-get="sudo apt-get"
 alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
 alias xunp="file-roller -h"
 # alias pacome="sudo \paco -D"
@@ -99,7 +101,7 @@ alias pcalc="python -i -c 'from math import *' "
 alias py3=python3
 alias py2=python2
 alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
-alias mytime="date +%Y%m%d-%H%M%S"
+# alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
 alias wicdc=wicd-curses
@@ -115,8 +117,8 @@ null type pacman-color && {
     export PACMAN=pacman-color         # used by yaourt
 }
 null type pacmatic && {
-    alias pacman="pacmatic"
-    export PACMAN="pacmatic"
+    alias pacman="env pacman_program=${pacman_program} pacmatic"
+    export PACMAN="env pacman_program=${pacman_program} pacmatic"
 }
 
 alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
@@ -166,6 +168,7 @@ bak(){
         cp -v ${file} ${file}.bak
     done
 }
+
 di(){
     if type colordiff >/dev/null 2>&1 && test $TERM != dumb
     then
@@ -175,6 +178,7 @@ di(){
     fi
     ${diffcmd} -u "$@" | ${PAGER}
 }
+
 throw-away(){
     mkdir -p ~/.backup/tb
     for file in "$@"
@@ -182,10 +186,12 @@ throw-away(){
         mv $file ~/.backup/tb
     done
 }
+
 mkcd(){
     mkdir -p $1
     cd $1
 }
+
 catclip(){
     if iswindows
     then
@@ -194,6 +200,7 @@ catclip(){
         xclip -o -selection "clipboard"
     fi
 }
+
 setclip(){
     if iswindows
     then
@@ -212,6 +219,7 @@ setclip(){
         fi
     fi
 }
+
 if iswindows; then
     alias _open_file='cmd.exe //c start ""'
 elif isdarwin; then
@@ -225,6 +233,7 @@ elif islinux; then
 else
     alias _open_file=cat
 fi
+
 o(){
     if test $# -eq 0
     then
@@ -241,12 +250,15 @@ o(){
         done
     fi
 }
+
 convmv-sjis2utf8-test(){
     convmv -r -f sjis -t utf8 *
 }
+
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
+
 _my_git_config(){
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
@@ -407,6 +419,7 @@ __my_prompt_function(){              # used by PS1
         local git=$(__try_exec __git_ps1 [GIT:%s])
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
     fi
+    local dirs=$(dirs | wc -l)
     # local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
     if test -z "$DISPLAY"
     then
@@ -417,22 +430,22 @@ __my_prompt_function(){              # used by PS1
     fi
     # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
 
-    __my_set_title
+    # __my_set_title ${USER}@${HOSTNAME} ${PWD}
 
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date}\n"
-    printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
+    printf "shlv:${SHLVL} jobs:${jobnum} dirs:${dirs} last:${lastreturn} "
 
 }
 
 __my_set_title(){
-    TERMTITLE="${USER}@${HOSTNAME} ${PWD}"
+    title="$(echo $@)"
  	case $TERM in
 		rxvt*|xterm*|aterm)
             test -t 1 &&
             test -n "$DISPLAY" &&
             test -z "$EMACS" &&
-            echo -n -e "\033]0;${TERMTITLE}\007"
+            echo -n -e "\033]0;${title}\007"
 		    ;;
 	esac
 }

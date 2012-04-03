@@ -17,7 +17,7 @@ export ENV=~/.shrc
 # export TMP=/tmp
 # export TEMP=/tmp
 test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
-export PYTHONPATH=~/.py
+export PYTHONPATH="~/.local/share/lib/python3.2/site-packages"
 
 addtopath(){
     for p in "$@"
