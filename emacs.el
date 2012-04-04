@@ -65,7 +65,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; start and quit
 
 (setq inhibit-startup-message t)
-(setq frame-title-format (list '(:eval (my-format-time-string))
+(setq frame-title-format (list '(:eval (format-time-string (or display-time-format "")))
                                " | %b "
                                '(:eval (number-to-string (length (buffer-list-not-start-with-space))))
                                " buffers ["
@@ -226,15 +226,12 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; display date
 (add-hook 'after-init-hook
           (lambda ()
-            (setq display-time-string-forms
-                  '(dayname ", " day " " monthname " " year " " 24-hours ":"minutes ":" seconds))
-            ;; (setq display-time-string-forms
-            ;;       '((my-format-time-string)))
             (when display-time-mode
               (display-time-update))
             ))
 (setq display-time-interval 29)
 (setq display-time-day-and-date t)
+(setq display-time-format "%a, %-d %b %Y %T")
 (if window-system
     (display-time-mode 0)
   (display-time-mode 1))
@@ -1622,11 +1619,6 @@ when SEC is nil, stop auto save if enabled."
             (when (buffer-file-name buf)
               (kill-buffer buf)))
           (buffer-list)))
-
-(defun my-format-time-string (&optional time)
-  ""
-  (let ((system-time-locale "C"))
-    (format-time-string "%a, %d %b %Y %T" time)))
 
 (defvar my-filer nil)
 (setq my-filer (or (executable-find "pcmanfm")
