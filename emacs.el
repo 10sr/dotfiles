@@ -1609,7 +1609,10 @@ when SEC is nil, stop auto save if enabled."
       (cd dir)
       (and (require 'ansi-color nil t)
            (ansi-color-apply-on-region (point-min)
-                                       (point-max))))))
+                                       (point-max)))
+      (setq buffer-read-only t)
+      (view-mode 1)
+      )))
 (define-key ctl-x-map "g" 'my-git-shell-command)
 
 (defun my-kill-buffers ()
