@@ -62,7 +62,7 @@ fi
 #######################
 
 uname -a
-echo TERM $TERM on $(tty), running $BASH $BASH_VERSION
+echo TERM $TERM connected to $(tty), running $BASH $BASH_VERSION
 echo
 
 ###################################
@@ -450,7 +450,7 @@ __my_set_title(){
 	esac
 }
 
-# from https://wiki.archlinux.org/index.php/X_resources
+# copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){
     # ANSI color scheme script featuring Space Invaders
     #

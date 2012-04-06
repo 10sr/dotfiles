@@ -231,7 +231,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             ))
 (setq display-time-interval 29)
 (setq display-time-day-and-date t)
-(setq display-time-format "%a, %-d %b %Y %T")
+(setq display-time-format "%a, %d %b %Y %T")
 (if window-system
     (display-time-mode 0)
   (display-time-mode 1))
