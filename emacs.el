@@ -454,18 +454,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (global-set-key (kbd "C-<left>") 'scroll-down)
 (global-set-key (kbd "C-<right>") 'scroll-up)
 (global-set-key (kbd "<select>") 'previous-line-mark)
-(define-key ctl-x-map (kbd "M-x") 'execute-extended-command)
-(define-key ctl-x-map (kbd "M-:") 'eval-expression)
+(define-key ctl-x-map (kbd "ESC x") 'execute-extended-command)
+(define-key ctl-x-map (kbd "ESC :") 'eval-expression)
 
 ;; C-h and DEL
-(global-set-key (kbd "C-h") (kbd "DEL"))
-;; (global-set-key (kbd "C-h") 'backward-delete-char-untabify)
-;; (global-set-key (kbd "DEL") help-map)
-;; (global-set-key (kbd "C-h") (lambda ()
-;;                               (interactive)
-;;                               (call-interactively (key-binding (kbd "DEL")))))
-;; (keyboard-translate ?\^h ?\^?) ; scimにはC-hを送りたい
-;; (keyboard-translate ?\b ?\^h)          ; dont translate backspace
+;(global-set-key (kbd "C-h") (kbd "DEL"))
 
 (global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
 (global-set-key (kbd "C-o")
@@ -477,11 +470,20 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                 )
 (global-set-key (kbd "C-k") 'kill-whole-line)
 (global-set-key (kbd "M-k") 'my-copy-whole-line)
-;; (global-set-key "\C-z" 'undo) ; undo is C-/
+;; (global-set-key "\C-z" 'undo) ; undo is M-u
 (global-set-key (kbd "M-u") 'undo)
 (global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "M-i") (kbd "ESC TAB"))
+
+'(and (dllib-if-unfound "drill-instructor"
+                       "https://raw.github.com/k1LoW/emacs-drill-instructor/master/drill-instructor.el"
+                       t)
+     (require 'drill-instructor nil t)
+     (setq drill-instructor-global t))
+(mapc (lambda (key)
+        (global-set-key (read-kbd-macro key) 'ignore))
+      '("<up>" "<down>" "<right>" "<left>"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
