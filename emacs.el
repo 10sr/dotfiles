@@ -120,12 +120,12 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (add-to-list 'default-frame-alist '(cursor-type . box))
   (add-to-list 'default-frame-alist '(background-color . "white"))
   (add-to-list 'default-frame-alist '(foreground-color . "gray10"))
-  ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100))) ;聞いてないみたい
+  ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100))) ; does not work?
   )
 (if window-system (menu-bar-mode 1) (menu-bar-mode 0))
 (tool-bar-mode 0)
 (set-scroll-bar-mode nil)
-(add-hook 'kill-emacs-hook      ; 終了時に読み込んで壊れてないか調べる
+(add-hook 'kill-emacs-hook      ; load when exitting to examine if file is written properly
           (lambda ()
             (when (file-readable-p "~/.emacs")
               (load-file "~/.emacs"))
@@ -403,7 +403,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (setq revert-without-query '(".+"))
 
-;; カーソルの場所を保存する
+;; save cursor position
 (setq save-place-file (concat user-emacs-directory
                               "places"))
 (when (require 'saveplace nil t)
@@ -515,7 +515,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                           ("marmalade" . "http://marmalade-repo.org/packages/")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;requireが必要なelispおよびhook
+;; some modes and hooks
 
 (require 'simple nil t)
 
@@ -525,6 +525,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
+
+;; this page describes this in details, but only these sexps are needed
+;; http://garin.jp/doc/Linux/xwindow_clipboard
 (when (and window-system
            (not (eq window-system 'mac))
            )
@@ -532,9 +535,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
         x-select-enable-primary nil)
   ;; (global-set-key "\C-y" 'x-clipboard-yank)
   )
-
-;; urlに細かい説明あり。でも設定は上記だけでよさそう
-;; http://garin.jp/doc/Linux/xwindow_clipboard
 
 (and (not x-select-enable-clipboard)
      (getenv "DISPLAY")
@@ -1416,7 +1416,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;      (add-to-list 'recentf-exclude (concat eshell-directory-name "alias"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 最終更新日時を得る
+;; get last modified date
 
 (defvar my-buffer-file-last-modified-time nil "")
 
@@ -1568,7 +1568,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;          (not buffer-read-only)
 ;;          (buffer-modified-p)
 ;;          (file-writable-p buffer-file-name))
-;;     (save-buffer))) ; 静かな方
+;;     (save-buffer))) ; silent one
 
 (defvar my-auto-save-this-buffer nil "auto save timer object")
 
