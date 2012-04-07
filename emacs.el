@@ -1,9 +1,6 @@
 ;; load another file
 ;; (load-file "~/filepath")
 
-;; (thing-at-point 'word)
-;; (define-generic-mode)
-
 (unless (file-directory-p (expand-file-name "~/.emacs.d"))
   (make-directory (expand-file-name "~/.emacs.d")))
 (unless (file-directory-p (expand-file-name "~/.emacs.d/lisp"))
