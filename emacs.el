@@ -1,4 +1,4 @@
-;; 外部ファイル読み込み
+;; load another file
 ;; (load-file "~/filepath")
 
 ;; (thing-at-point 'word)
@@ -150,10 +150,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;; my prefix map
 (define-prefix-command 'my-prefix-map)
-(add-hook 'after-init-hook
+'(add-hook 'after-init-hook
           (lambda ()
             (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
             ))
+(define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
 (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
 (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
 
@@ -176,6 +177,18 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
+
+(and (dllib-if-unfound "drill-instructor"
+                       "https://raw.github.com/k1LoW/emacs-drill-instructor/master/drill-instructor.el"
+                       t)
+     (require 'drill-instructor nil t)
+     (setq drill-instructor-global t)
+     (let ((map drill-instructor-key-map))
+       (define-key map (kbd "RET") nil)
+       (define-key map (kbd "DEL") nil)))
+'(mapc (lambda (key)
+        (global-set-key (read-kbd-macro key) 'ignore))
+      '("<up>" "<down>" "<right>" "<left>"))
 
 (define-key my-prefix-map (kbd "C-o") 'occur)
 
@@ -434,7 +447,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function nil)
-(pc-selection-mode 1)
+;(pc-selection-mode 1) ; this reverts back all keybind defined until this line
 (delete-selection-mode 1)
 (cua-mode 0)
 
@@ -453,7 +466,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
 (global-set-key (kbd "C-<left>") 'scroll-down)
 (global-set-key (kbd "C-<right>") 'scroll-up)
-(global-set-key (kbd "<select>") 'previous-line-mark)
+(global-set-key (kbd "<select>") 'ignore) ; 'previous-line-mark)
 (define-key ctl-x-map (kbd "ESC x") 'execute-extended-command)
 (define-key ctl-x-map (kbd "ESC :") 'eval-expression)
 
@@ -475,15 +488,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "M-i") (kbd "ESC TAB"))
-
-'(and (dllib-if-unfound "drill-instructor"
-                       "https://raw.github.com/k1LoW/emacs-drill-instructor/master/drill-instructor.el"
-                       t)
-     (require 'drill-instructor nil t)
-     (setq drill-instructor-global t))
-(mapc (lambda (key)
-        (global-set-key (read-kbd-macro key) 'ignore))
-      '("<up>" "<down>" "<right>" "<left>"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail

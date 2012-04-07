@@ -34,7 +34,7 @@ else
 fi
 export LESS="-iRMX"
 
-if false null type vim
+if null type vim
 then
     export EDITOR=vim
 else
@@ -79,6 +79,7 @@ alias grep="grep -n${_coloroption}"
 # alias less=""
 alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
+null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
 alias cp="cp -v"
 alias mv="mv -v"
@@ -450,7 +451,7 @@ __my_set_title(){
 		;;
 	esac
 }
-PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};${PROMPT_COMMAND}"
+export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};${PROMPT_COMMAND}"
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){

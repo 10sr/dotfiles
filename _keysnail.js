@@ -550,6 +550,10 @@ key.setGlobalKey('M-:', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
 
+key.setGlobalKey('C-h', function (ev, arg) {
+    return;
+}, 'ignore');
+
 key.setViewKey('D', function (ev, arg) {
     ext.exec("dig-url", arg, ev);
 }, 'dig url with selector', true);
@@ -684,7 +688,7 @@ key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
     return;
 }, 'ignore');
 
-key.setViewKey(':', function (ev, arg) {
+key.setViewKey([[':'], ['P']], function (ev, arg) {
     return !document.getElementById("keysnail-prompt").hidden &&
         document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
@@ -713,10 +717,10 @@ key.setViewKey('I', function (ev, arg) {
     ext.exec("instapaper-post-page-with-comment", arg, ev);
 }, 'post page and comment', true);
 
+key.setViewKey('T', function (ev, arg) {
+    ext.exec("mstranslator-open-prompt", arg, ev);
+}, 'MSTranslator - Open prompt', true);
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
-
-key.setViewKey('T', function (ev, arg) {
-    ext.exec('mstranslator-open-prompt', arg, ev);
-}, 'MSTranslator - Open prompt', true);
