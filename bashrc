@@ -93,6 +93,10 @@ alias pu=pushd
 alias sudo="sudo "              # use aliases through sudo
 alias halt="sudo halt"
 alias reboot="sudo reboot"
+alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
+    /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
+alias hibernate="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
+/org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
 alias rand="echo \$RANDOM"
 alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
 alias xunp="file-roller -h"
