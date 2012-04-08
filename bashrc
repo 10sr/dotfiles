@@ -101,7 +101,7 @@ alias hibernate="dbus-send --system --print-reply --dest=org.freedesktop.UPower 
 alias rand="echo \$RANDOM"
 alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
 alias xunp="file-roller -h"
-# alias pacome="sudo \paco -D"
+alias pc="sudo \paco -D"
 alias pcalc="python -i -c 'from math import *' "
 alias py3=python3
 alias py2=python2
@@ -122,8 +122,8 @@ null type pacman-color && {
     export PACMAN=pacman-color         # used by yaourt
 }
 null type pacmatic && {
-    alias pacman="env pacman_program=${pacman_program} pacmatic"
-    export PACMAN="env pacman_program=${pacman_program} pacmatic"
+    true alias pacman="env pacman_program=${pacman_program} pacmatic"
+    true export PACMAN="env pacman_program=${pacman_program} pacmatic"
 }
 
 alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
@@ -451,7 +451,7 @@ __my_set_title(){
 		;;
 	esac
 }
-export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};${PROMPT_COMMAND}"
+# export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};${PROMPT_COMMAND}"
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){

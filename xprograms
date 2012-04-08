@@ -25,3 +25,5 @@ fi
 udisksvm >/dev/null &
 
 xcompmgr -c &
+
+(cd ~/src/saku-3.11.1/ && python2 saku.py) &
