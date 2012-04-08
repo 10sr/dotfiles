@@ -122,8 +122,8 @@ null type pacman-color && {
     export PACMAN=pacman-color         # used by yaourt
 }
 null type pacmatic && {
-    true alias pacman="env pacman_program=${pacman_program} pacmatic"
-    true export PACMAN="env pacman_program=${pacman_program} pacmatic"
+    alias pacman="pacman_program=${pacman_program} pacmatic"
+    export PACMAN="pacmatic"
 }
 
 alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"

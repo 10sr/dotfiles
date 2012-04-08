@@ -397,8 +397,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             ;(set-face-bold-p 'modeline-buffer-id t)
             (require 'set-modeline-color nil t)))
 
-
-;; (set-face-foreground 'mode-line-inactive (if window-system "gray" "white"))
 (set-face-background 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "white" "black"))
 (set-face-foreground 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "black" "white"))
 

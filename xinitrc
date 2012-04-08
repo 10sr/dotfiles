@@ -8,7 +8,7 @@ xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
 #xmodmap -e 'add Control = Caps_Lock'
 
 type synclient >/dev/null 2>&1 && {
-    synclient MaxSpeed=2.0
+    synclient MaxSpeed=1.6
     synclient MinSpeed=0.2
     synclient TouchpadOff=2     # tapping and scrolling are disabled
 }
