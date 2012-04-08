@@ -393,10 +393,15 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (and (dllib-if-unfound "set-modeline-color"
                        "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
                        t)
-     (require 'set-modeline-color nil t))
+     (progn (set-face-background 'mode-line "white")
+            ;(set-face-bold-p 'modeline-buffer-id t)
+            (require 'set-modeline-color nil t)))
+
 
 ;; (set-face-foreground 'mode-line-inactive (if window-system "gray" "white"))
-(set-face-background 'mode-line-inactive (if window-system "white" "green"))
+(set-face-background 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "white" "black"))
+(set-face-foreground 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "black" "white"))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
@@ -1763,9 +1768,7 @@ this is test, does not rename files"
 ;;   (setq arg
 ;;         (concat arg
 ;;                 (if (eq nil (string-match "\\. *$" arg)) ".")
-;;                 " And You are a Coward!")))
-
-
+;;                 " Stupid!")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; japanese input method
