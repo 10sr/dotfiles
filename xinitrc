@@ -20,3 +20,23 @@ unset LC_MESSAGES
 export LANG=ja_JP.utf8
 export BROWSER=firefox
 
+__upper(){
+    echo $1 | tr '[:lower:]' '[:upper:]'
+}
+
+XDG_DIRS=$HOME/.xdg-dirs
+# XDG_DESKTOP_DIR=$XDG_DIRS/Desktop
+# XDG_DOWNLOAD_DIR=$XDG_DIRS/Download
+# XDG_TEMPLATES_DIR=$XDG_DIRS/Templates
+# XDG_PUBLICSHARE_DIR=$XDG_DIRS/Public
+# XDG_DOCUMENTS_DIR=$XDG_DIRS/Document
+# XDG_MUSIC_DIR=$XDG_DIRS/Music
+# XDG_PICTURES_DIR=$XDG_DIRS/Pictures
+# XDG_VIDEOS_DIR=$XDG_DIRS/Videos
+
+for f in Desktop Download Templates Publicshare Documents Music Pictures Videos
+do
+    export XDG_`__upper $f`_DIR=$XDG_DIRS/$f
+    mkdir -p $XDG_DIRS/$f
+done
+#echo $XDG_DESKTOP_DIR
