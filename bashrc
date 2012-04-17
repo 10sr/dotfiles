@@ -77,7 +77,7 @@ alias grep="grep -n${_coloroption}"
 # alias la="ls -A"
 # alias lla="ls -Al"
 # alias less=""
-alias vl=/usr/share/vim/vimcurrent/macros/less.sh
+# alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
 null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
@@ -122,7 +122,7 @@ null type pacman-color && {
     export PACMAN=pacman-color         # used by yaourt
 }
 null type pacmatic && {
-    alias pacman="pacman_program=${pacman_program} pacmatic"
+    alias pacman="pacmatic"
     export PACMAN="pacmatic"
 }
 
@@ -242,15 +242,15 @@ fi
 o(){
     if test $# -eq 0
     then
-        _open_file . &
+        _open_file . >/dev/null 2>&1 &
     else
         for f in "$@"
         do
             if test -d $f
             then
-                _open_file $f &
+                _open_file $f >/dev/null 2>&1 &
             else
-                _open_file $f
+                _open_file $f >/dev/null 2>&1 &
             fi
         done
     fi
@@ -272,7 +272,7 @@ _my_git_config(){
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso"
     git config --global alias.st "status -s"
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"

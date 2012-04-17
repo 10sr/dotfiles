@@ -28,6 +28,7 @@ set wrapscan " 折り返し検索
 set showmatch " 括弧を閉じた時、対になる括弧を一瞬ハイライトする
 set ignorecase
 set smartcase " 検索時に大文字を含んでいたら大/小を区別
+set incsearch
 set wildmode=longest,list,full
 set ruler " 行番号、カーソル位置を表示
 set nonumber "  do not show line number at left side
@@ -68,7 +69,7 @@ if has('gui_running')
 endif
 
 if has('win32')
-" Windows 用の設定
+" prefs for Windows
 endif
 
 """""""""""""""""""""""""""""""""""""""
