@@ -471,7 +471,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (define-key ctl-x-map (kbd "ESC :") 'eval-expression)
 
 ;; C-h and DEL
-;(global-set-key (kbd "C-h") (kbd "DEL"))
+(global-set-key (kbd "C-h") (kbd "DEL"))
 
 (global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
 (global-set-key (kbd "C-o")

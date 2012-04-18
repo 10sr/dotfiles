@@ -5,16 +5,23 @@
 
 alias ismsys=false
 alias iscygwin=false
-alias iswindows="iscygwin || ismsys"
+alias iswindows=false
 alias isdarwin=false
 alias islinux=false
 
 case `uname` in
-    (MINGW32*) alias ismsys=true ;;
-    (CYGWIN*) alias iscygwin=true ;;
+    (MINGW*)
+        alias ismsys=true
+        alias iswindows=true
+        ;;
+    (CYGWIN*)
+        alias iscygwin=true
+        alias iswindows=true
+        ;;
     (Darwin*) alias isdarwin=true ;;
     (Linux*) alias islinux=true ;;
 esac
+
 
 ##########################################
 null(){
@@ -68,9 +75,10 @@ echo
 ###################################
 # some aliases and functions
 
-test "$TERM" == dumb || _coloroption=" --color=always"
+iswindows || test "$TERM" == dumb || _coloroption=" --color=always"
 
 alias ls="ls -hCF --time-style=long-iso${_coloroption}"
+iswindows && alias ls="ls -hCF"
 # export GREP_OPTIONS=""
 alias grep="grep -n${_coloroption}"
 # alias ll="ls -l"
@@ -97,7 +105,7 @@ alias reboot="sudo reboot"
 alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
     /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
 alias hibernate="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
-/org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
+    /org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
 alias rand="echo \$RANDOM"
 alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
 alias xunp="file-roller -h"
@@ -134,7 +142,7 @@ if iscygwin; then
     null type windate || alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
     alias cygsu="cygstart /cygwinsetup.exe"
     alias emacs="CYGWIN=tty emacs -nw"
-    alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto)"
+    alias ls="ls -CFG $(iswindows || test "$TERM" == dumb || echo --color=auto)"
 fi
 
 alias g=git
@@ -355,8 +363,8 @@ _my_install_script(){
     for f in "$@"
     do
         bn=$(basename "$f")
-        type ${bn} >/dev/null 2>&1 || {
-            wget "$f" -P "$HOME/bin/"
+        type $bn >/dev/null 2>&1 || {
+            wget "$f" -P "$HOME/bin/" &&
             chmod u+x "$HOME/bin/${bn}"
         }
     done
@@ -426,7 +434,7 @@ __my_prompt_function(){              # used by PS1
     fi
     local dirs=$(dirs | wc -l)
     # local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
-    if test -z "$DISPLAY"
+    if test -z "$DISPLAY" && ! iswindows
     then
         local ip=$(ip-address [Addr:%s])
         local bst="/tmp/${USER}-tmp/batterystatus"
