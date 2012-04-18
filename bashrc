@@ -5,19 +5,13 @@
 
 alias ismsys=false
 alias iscygwin=false
-alias iswindows=false
+alias iswindows="(ismsys || iscygwin)"
 alias isdarwin=false
 alias islinux=false
 
 case `uname` in
-    (MINGW*)
-        alias ismsys=true
-        alias iswindows=true
-        ;;
-    (CYGWIN*)
-        alias iscygwin=true
-        alias iswindows=true
-        ;;
+    (MINGW*) alias ismsys=true ;;
+    (CYGWIN*) alias iscygwin=true ;;
     (Darwin*) alias isdarwin=true ;;
     (Linux*) alias islinux=true ;;
 esac
