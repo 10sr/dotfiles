@@ -616,8 +616,9 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (add-hook 'apropos-mode-hook
           (lambda ()
-            (define-key apropos-mode-map "j" 'next-line)
-            (define-key apropos-mode-map "k" 'previous-line)))
+            (define-key apropos-mode-map "n" 'next-line)
+            (define-key apropos-mode-map "p" 'previous-line)
+            ))
 
 (define-key minibuffer-local-map (kbd "C-u") (lambda () (interactive) (delete-region (point-at-bol) (point))))
 
@@ -919,76 +920,25 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
 
-;; (add-hook 'recentf-dialog-mode-hook
-;;           'my-recentf-abbrev-list)
-
-(defun my-recentf-delete-entry ()
-  ""
-  (interactive)
-  (let ((p (point)))
-    (setq recentf-list
-          (delete (my-recentf-get-filename) recentf-list))
-    (recentf-open-files)
-    (goto-char p)))
-
-(defun my-recentf-abbrev-list ()
-  ""
-  (setq recentf-list
-        (mapcar 'abbreviate-file-name
-                recentf-list)))
-
-(defun my-recentf-view-file ()
-  ""
-  (interactive)
-  (view-file (my-recentf-get-filename)))
-
-(defun my-recentf-dired ()
-  ""
-  (interactive)
-  (let ((file (my-recentf-get-filename)))
-    (if (file-directory-p file)
-        (dired file)
-      (dired (or (file-name-directory file)
-                 ".")))))
-
-(defun my-recentf-x-open ()
-  ""
-  (interactive)
-  (my-x-open (my-recentf-get-filename)))
-
-(defun my-recentf-cd-and-find-file ()
-  ""
-  (interactive)
-  (cd (file-name-directory (my-recentf-get-filename)))
-  (call-interactively 'find-file))
-
-(defun my-recentf-get-filename ()
-  "get file name in recentf-mode"
-  (replace-regexp-in-string "  \\(\\[.+?\\] \\)?" ; "  " or "  [\\d] "
-                            ""
-                            (buffer-substring-no-properties (point-at-bol)
-                                                            (point-at-eol))))
-
 (setq recentf-save-file (expand-file-name "~/.emacs.d/recentf")
       recentf-max-menu-items 20
       recentf-max-saved-items 30
       recentf-show-file-shortcuts-flag nil)
 
-(defun my-recentf-pop-to-buffer ()
-  ""
-  (interactive)
-  (let ((bf (save-excursion
-              (recentf-open-files))))
-    (pop-to-buffer bf)))
-
 (when (require 'recentf nil t)
-  (global-set-key "\C-x\C-r" 'recentf-open-files)
+  ;; (global-set-key "\C-x\C-r" 'recentf-open-files)
+  (define-key ctl-x-map (kbd "C-r") 'recentf-open-files)
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
   (recentf-mode 1)
   ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
-  (add-to-list 'recentf-exclude (rx-to-string recentf-save-file)))
+  (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
+  (and (dllib-if-unfound "recentf-show"
+                         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
+                         t)
+       (require 'recentf-show nil t)
+       (define-key ctl-x-map (kbd "C-r") 'recentf-show)))
 
 (add-hook 'recentf-dialog-mode-hook
           (lambda ()
@@ -996,10 +946,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f") 'my-recentf-cd-and-find-file)
             (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
             (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
-            (define-key recentf-dialog-mode-map "o" 'my-recentf-x-open)
-            (define-key recentf-dialog-mode-map "d" 'my-recentf-delete-entry)
-            (define-key recentf-dialog-mode-map "@" 'my-recentf-dired)
-            (define-key recentf-dialog-mode-map "v" 'my-recentf-view-file)
+            (define-key recentf-dialog-mode-map "p" 'previous-line)
+            (define-key recentf-dialog-mode-map "n" 'next-line)
             (cd "~/")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
