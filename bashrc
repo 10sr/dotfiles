@@ -495,3 +495,4 @@ invader(){
 
 EOF
 }
+#/etc/lsb-release
