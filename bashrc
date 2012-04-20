@@ -111,7 +111,10 @@ alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
-alias wicdc=wicd-curses
+
+alias wic=wicd-curses
+alias wlist="wicd-cli -y -l"
+alias wcn="wicd-cli -y -c -n"
 
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
