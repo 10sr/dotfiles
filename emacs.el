@@ -1,11 +1,13 @@
 ;; load another file
 ;; (load-file "~/filepath")
 
-(unless (file-directory-p (expand-file-name "~/.emacs.d"))
-  (make-directory (expand-file-name "~/.emacs.d")))
-(unless (file-directory-p (expand-file-name "~/.emacs.d/lisp"))
-  (make-directory (expand-file-name "~/.emacs.d/lisp")))
-(add-to-list 'load-path "~/.emacs.d/lisp")
+(unless (file-directory-p (expand-file-name user-emacs-directory))
+  (make-directory (expand-file-name user-emacs-directory)))
+(let ((d (expand-file-name (concat user-emacs-directory
+                                   "lisp"))))
+  (unless (file-directory-p d)
+    (make-directory d))
+  (add-to-list 'load-path d))
 
 (require 'cl nil t)
 
@@ -447,7 +449,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function nil)
-;(pc-selection-mode 1) ; this reverts back all keybind defined until this line
+;(pc-selection-mode 1) ; this make some already defined keybind back to default
 (delete-selection-mode 1)
 (cua-mode 0)
 
