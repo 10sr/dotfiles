@@ -422,7 +422,7 @@ __my_prompt_function(){              # used by PS1
     else
         local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
         local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
-        local jobnum=$(jobs | wc -l)
+        local jobnum=$(jobs | wc -l) # a strange job exists...
         local git=$(__try_exec __git_ps1 [GIT:%s])
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
     fi
@@ -439,7 +439,7 @@ __my_prompt_function(){              # used by PS1
 
     printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
     printf "${c2}${USER}@${HOSTNAME}${cdef} ${date}\n"
-    printf "shlv:${SHLVL} jobs:${jobnum} dirs:${dirs} last:${lastreturn} "
+    printf "shlv:${SHLVL} dirs:${dirs} last:${lastreturn} "
 
 }
 __my_set_title(){
