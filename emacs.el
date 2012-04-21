@@ -1111,6 +1111,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
             (define-key dired-mode-map "/" 'dired-isearch-filenames)
             (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
+            (define-key dired-mode-map (kbd "C-h") 'dired-up-directory)
             (substitute-key-definition 'dired-next-line 'my-dired-next-line dired-mode-map)
             (substitute-key-definition 'dired-previous-line 'my-dired-previous-line dired-mode-map)
             (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)

@@ -49,7 +49,7 @@ export GIT_EDITOR="$EDITOR"
 
 null type stty && {
     stty stop undef        # unbind C-s to stop displaying output
-    test -z "$TMUX" && stty erase '^h'
+    # test -z "$TMUX" && stty erase '^h'
 }
 
 if iswindows; then
