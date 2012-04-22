@@ -5,7 +5,7 @@
 
 alias ismsys=false
 alias iscygwin=false
-alias iswindows="(ismsys || iscygwin)"
+alias iswindows=false
 alias isdarwin=false
 alias islinux=false
 
@@ -16,6 +16,7 @@ case `uname` in
     (Linux*) alias islinux=true ;;
 esac
 
+( ismsys || iscygwin ) && alias iswindows=true
 
 ##########################################
 null(){
@@ -49,7 +50,7 @@ export GIT_EDITOR="$EDITOR"
 
 null type stty && {
     stty stop undef        # unbind C-s to stop displaying output
-    # test -z "$TMUX" && stty erase '^h'
+    # stty erase '^h'
 }
 
 if iswindows; then
@@ -165,10 +166,12 @@ showinfo(){
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        #nohup startx >~/.backup/log/xorg.log 2>&1 &
+        #mkdir -p ~/.backup/log
+        # nohup startx >~/.backup/log/xorg.log 2>&1 &
+        # exit
         startx
     else
-        echo "X cant be started! Maybe another X is already running!" 1>&2
+        echo "X cant be started! Maybe another X is already running or something." 1>&2
     fi
 }
 

@@ -7,6 +7,7 @@ test -f "$HOME/.fehbg" &&
 type feh >/dev/null 2>&1 &&
 sh "$HOME/.fehbg"
 
+#tint2 -c ~/.dotfiles/tint2rc &
 tint2 &
 
 dropboxd & # done by ~/.config/autostart/dropbox.desktop
