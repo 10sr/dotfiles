@@ -60,8 +60,10 @@ ${color2}/tmp ${color1}|${color0} ${fs_used /tmp} #/${fs_size /tmp}
 ${fs_bar /tmp}
 ${color2}i/o  ${color1}|${color0} ${diskio}
 ${color0}${hr}
-${color2}if   ${color1}|${color0} ${gw_iface}:${addr}
-${color2}ssid ${color1}|${color0} ${wireless_essid}
+${if_up wlan0}\
+${color2}if   ${color1}|${color0} wlan:${addr wlan0}
+${color2}ssid ${color1}|${color0} ${wireless_essid wlan0} ${wireless_link_qual_perc wlan0}%
+${endif}\
 ${color0}${stippled_hr}
 ${color2}down ${color1}|${color0} ${downspeed}/s
 ${color4}${downspeedgraph ff0000 0000ff}
