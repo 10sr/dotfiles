@@ -1557,14 +1557,22 @@ when SEC is nil, stop auto save if enabled."
 
 (defalias 'qcalc 'quick-calc)
 
-;; (when (require 'ansi-color nil t)
-;;   (ansi-color-for-comint-mode-on))
 (defvar git-command-history nil
   "History list for git command.")
+(defun my-git-branch-name ()
+  ""
+  (interactive)
+  (with-temp-buffer
+    (shell-command "git branch --no-color" t)
+    (when (search-forward "*" nil t)
+      (forward-char 1)
+      (buffer-substring-no-properties (point)
+                                      (point-at-eol)))))
 (defun my-git-shell-command (cmd)
   ""
-  (interactive (list (read-shell-command (format "[%s] $ git : "
-                                                 (abbreviate-file-name default-directory))
+  (interactive (list (read-shell-command (format "[%s][GIT:%s] $ git : "
+                                                 (abbreviate-file-name default-directory)
+                                                 (my-git-branch-name))
                                          nil
                                          'git-command-history)))
   (let ((dir default-directory)
