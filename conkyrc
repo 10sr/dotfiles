@@ -40,6 +40,8 @@ no_buffers yes
 uppercase no
 format_human_readable yes
 
+if_up_strictness link
+
 TEXT
 ${color0}${alignr}${sysname} ${kernel} (${machine})
 ${color0}${alignr}${execi 30000 whoami}@${nodename}
@@ -63,6 +65,9 @@ ${color0}${hr}
 ${if_up wlan0}\
 ${color2}if   ${color1}|${color0} wlan:${addr wlan0}
 ${color2}ssid ${color1}|${color0} ${wireless_essid wlan0} ${wireless_link_qual_perc wlan0}%
+${endif}\
+${if_up eth0}\
+${color2}if   ${color1}|${color0} eth0:${addr eth0}
 ${endif}\
 ${color0}${stippled_hr}
 ${color2}down ${color1}|${color0} ${downspeed}/s

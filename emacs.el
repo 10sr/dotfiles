@@ -124,6 +124,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (add-to-list 'default-frame-alist '(foreground-color . "gray10"))
   ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100))) ; does not work?
   )
+;; (add-to-list 'default-frame-alist '(cursor-type . box))
 (if window-system (menu-bar-mode 1) (menu-bar-mode 0))
 (tool-bar-mode 0)
 (set-scroll-bar-mode nil)
@@ -395,13 +396,11 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (and (dllib-if-unfound "set-modeline-color"
                        "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
                        t)
-     (progn (set-face-background 'mode-line "white")
-            ;(set-face-bold-p 'modeline-buffer-id t)
-            (require 'set-modeline-color nil t)))
+     (progn
+       (require 'set-modeline-color nil t)))
 
 (set-face-background 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "white" "black"))
 (set-face-foreground 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "black" "white"))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
