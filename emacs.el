@@ -399,8 +399,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
      (progn
        (require 'set-modeline-color nil t)))
 
-(set-face-background 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "white" "black"))
-(set-face-foreground 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "black" "white"))
+(let ((fg (face-foreground 'default))
+      (bg (face-background 'default)))
+  (set-face-background 'mode-line-inactive (if (face-inverse-video-p 'mode-line) fg bg))
+  (set-face-foreground 'mode-line-inactive (if (face-inverse-video-p 'mode-line) bg fg)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
