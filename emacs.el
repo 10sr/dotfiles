@@ -1559,20 +1559,21 @@ when SEC is nil, stop auto save if enabled."
 
 (defvar git-command-history nil
   "History list for git command.")
-(defun my-git-branch-name ()
+(defun my-git-branch-name (str)
   ""
-  (interactive)
   (with-temp-buffer
     (shell-command "git branch --no-color" t)
-    (when (search-forward "*" nil t)
-      (forward-char 1)
-      (buffer-substring-no-properties (point)
-                                      (point-at-eol)))))
+    (if (search-forward "*" nil t)
+        (progn (forward-char 1)
+               (format str
+                       (buffer-substring-no-properties (point)
+                                                       (point-at-eol))))
+      "")))
 (defun my-git-shell-command (cmd)
   ""
-  (interactive (list (read-shell-command (format "[%s][GIT:%s] $ git : "
+  (interactive (list (read-shell-command (format "[%s]%s $ git : "
                                                  (abbreviate-file-name default-directory)
-                                                 (my-git-branch-name))
+                                                 (my-git-branch-name "[GIT:%s]"))
                                          nil
                                          'git-command-history)))
   (let ((dir default-directory)
