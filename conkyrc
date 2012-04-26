@@ -63,17 +63,22 @@ ${fs_bar /tmp}
 ${color2}i/o  ${color1}|${color0} ${diskio}
 ${color0}${hr}
 ${if_up wlan0}\
-${color2}if   ${color1}|${color0} wlan:${addr wlan0}
+${color2}if   ${color1}|${color0} wlan0:${addr wlan0}
 ${color2}ssid ${color1}|${color0} ${wireless_essid wlan0} ${wireless_link_qual_perc wlan0}%
+${color0}${stippled_hr}
+${color2}down ${color1}|${color0} ${downspeed wlan0}/s
+${color4}${downspeedgraph wlan0 ff0000 0000ff}
+${color2}up   ${color1}|${color0} ${upspeed wlan0}/s
+${color4}${upspeedgraph wlan0 0000ff ff0000}
 ${endif}\
 ${if_up eth0}\
 ${color2}if   ${color1}|${color0} eth0:${addr eth0}
-${endif}\
 ${color0}${stippled_hr}
-${color2}down ${color1}|${color0} ${downspeed}/s
-${color4}${downspeedgraph ff0000 0000ff}
-${color2}up   ${color1}|${color0} ${upspeed}/s
-${color4}${upspeedgraph 0000ff ff0000}
+${color2}down ${color1}|${color0} ${downspeed eth0}/s
+${color4}${downspeedgraph eth0 ff0000 0000ff}
+${color2}up   ${color1}|${color0} ${upspeed eth0}/s
+${color4}${upspeedgraph eth0 0000ff ff0000}
+${endif}\
 ${color0}${alignr}conky ${conky_version}
 ${color0}${hr}
 ${color3}${alignr}${texeci 10 bash -c 'xrandr|grep " connected "|cut -f 1,3 -d " "'}
