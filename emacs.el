@@ -312,19 +312,19 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (standard-display-ascii ?\n "$\n")
 
-(standard-display-ascii ?\f "---------------------------------------------------------------------------------------^L")
-(defface my-pagebreak-face
-  '((t (:foreground "gray")))
-  "pagebreak.")
-
 (defvar my-eol-face
   '(("\n" . (0 font-lock-comment-face t nil)))
   )
-(defvar my-pagebreak-face
-  '(("\f" . 'my-pagebreak-face)))
-(defvar my-highlight-face
-  '(("\t" . '(0 highlight t nil))
-    ("　" . '(0 highlight t nil))))
+(defvar my-tab-face
+  '(("\t" . '(0 highlight t nil))))
+(defvar my-jspace-face
+  '(("\u3000" . '(0 highlight t nil))))
+
+(add-hook 'font-lock-mode-hook
+          (lambda ()
+            (font-lock-add-keywords nil my-eol-face)
+            (font-lock-add-keywords nil my-jspace-face)
+            ))
 
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
@@ -348,12 +348,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (setq hl-line-global-modes
       '(not
         term-mode))
-
-(add-hook 'font-lock-mode-hook
-          (lambda ()
-            (font-lock-add-keywords nil my-eol-face)
-            ;; (font-lock-add-keywords nil my-highlight-face)
-            ))
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
