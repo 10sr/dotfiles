@@ -1565,10 +1565,17 @@ when SEC is nil, stop auto save if enabled."
                                                        (point-at-eol))))
       "")))
 (defun my-git-ps1 (str)
-  (shell-command-to-string (concat "bash -c "
-                                   (shell-quote-argument (concat ". /etc/bash_completion.d/git; __git_ps1 "
-                                                                 (shell-quote-argument str)
-                                                                 ";")))))
+  (with-temp-buffer
+    (insert ". /etc/bash_completion.d/git; __git_ps1 "
+            (shell-quote-argument str)
+            ";")
+    (shell-command-on-region (point-min)
+                             (point-max)
+                             "bash -s"
+                             nil
+                             t)
+    (buffer-substring-no-properties (point-min)
+                                    (point-max))))
 (defun my-git-shell-command (cmd)
   ""
   (interactive (list (read-shell-command (format "[%s]%s $ git : "
