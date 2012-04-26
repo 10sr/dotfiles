@@ -447,6 +447,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;(pc-selection-mode 1) ; this make some already defined keybind back to default
 (delete-selection-mode 1)
 (cua-mode 0)
+(setq line-move-visual nil)
 
 ;; key bindings
 ;; moving around
@@ -1563,11 +1564,16 @@ when SEC is nil, stop auto save if enabled."
                        (buffer-substring-no-properties (point)
                                                        (point-at-eol))))
       "")))
+(defun my-git-ps1 (str)
+  (shell-command-to-string (concat "bash -c "
+                                   (shell-quote-argument (concat ". /etc/bash_completion.d/git; __git_ps1 "
+                                                                 (shell-quote-argument str)
+                                                                 ";")))))
 (defun my-git-shell-command (cmd)
   ""
   (interactive (list (read-shell-command (format "[%s]%s $ git : "
                                                  (abbreviate-file-name default-directory)
-                                                 (my-git-branch-name "[GIT:%s]"))
+                                                 (my-git-ps1 "[GIT:%s]"))
                                          nil
                                          'git-command-history)))
   (let ((dir default-directory)
