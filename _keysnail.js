@@ -158,6 +158,10 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+ext.add('view-page-source', function(){
+    window.content.location.href = "view-source:" + window.content.location.href;
+}, 'view page source');
+
 ext.add('my-setpref', function(){
     util.setPrefs(
         {
