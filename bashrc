@@ -114,8 +114,8 @@ alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
 alias wic=wicd-curses
-alias wlist="wicd-cli -y -l"
-alias wcn="wicd-cli -y -c -n"
+alias wil="wicd-cli -y -l | head"
+alias wicn="wicd-cli -y -c -n"
 
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
