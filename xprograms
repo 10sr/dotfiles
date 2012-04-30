@@ -3,8 +3,6 @@
 # These programs are basically for Openbox Window Manager.
 # Japanese IM settings are not included in this list.
 
-# isarch && p="feh tint2 dropbox volumeicon conky udisksvm xcompmgr saku"
-
 _feh(){
     test -f "$HOME/.fehbg" &&
     type feh >/dev/null 2>&1 &&
@@ -15,6 +13,7 @@ _tint2(){
 #tint2 -c ~/.dotfiles/tint2rc &
     tint2 &
 }
+
 _dropbox(){
     dropboxd & # done by ~/.config/autostart/dropbox.desktop
 }
@@ -27,9 +26,10 @@ _conky(){
     conky -c ~/.dotfiles/conkyrc   >~/.backup/log/conky.log 2>&1 &
     conky -c ~/.dotfiles/conkyrc.2 >~/.backup/log/conky.2.log 2>&1 &
 }
+
 _wicd(){
-#wicd-client --tray & # done by /etc/xdg/autostart/wicd-client.desktop
-    true
+# done by /etc/xdg/autostart/wicd-client.desktop
+    wicd-client --tray &
 }
 
 _udisksvm(){
