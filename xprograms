@@ -3,28 +3,61 @@
 # These programs are basically for Openbox Window Manager.
 # Japanese IM settings are not included in this list.
 
-test -f "$HOME/.fehbg" &&
-type feh >/dev/null 2>&1 &&
-sh "$HOME/.fehbg"
+# isarch && p="feh tint2 dropbox volumeicon conky udisksvm xcompmgr saku"
 
+_feh(){
+    test -f "$HOME/.fehbg" &&
+    type feh >/dev/null 2>&1 &&
+    sh "$HOME/.fehbg"
+}
+
+_tint2(){
 #tint2 -c ~/.dotfiles/tint2rc &
-tint2 &
+    tint2 &
+}
+_dropbox(){
+    dropboxd & # done by ~/.config/autostart/dropbox.desktop
+}
 
-dropboxd & # done by ~/.config/autostart/dropbox.desktop
+_volumeicon(){
+    volumeicon &
+}
 
-volumeicon &
-
-conky -c ~/.dotfiles/conkyrc   >~/.backup/log/conky.log 2>&1 &
-conky -c ~/.dotfiles/conkyrc.2 >~/.backup/log/conky.2.log 2>&1 &
-
+_conky(){
+    conky -c ~/.dotfiles/conkyrc   >~/.backup/log/conky.log 2>&1 &
+    conky -c ~/.dotfiles/conkyrc.2 >~/.backup/log/conky.2.log 2>&1 &
+}
+_wicd(){
 #wicd-client --tray & # done by /etc/xdg/autostart/wicd-client.desktop
+    true
+}
 
+_udisksvm(){
 # Detection of insertion of an optical disk
-if ! pgrep -lf "udisks-daemon: polling /dev/sr0"; then
-    udisks --poll-for-media /dev/sr0
-fi
-udisksvm >/dev/null &
+    if ! pgrep -lf "udisks-daemon: polling /dev/sr0"; then
+        udisks --poll-for-media /dev/sr0
+    fi
+    udisksvm >/dev/null &
+}
 
-xcompmgr -c &
+_xcompmgr(){
+    xcompmgr -c &
+}
 
-(cd ~/src/saku-3.11.1/ && python2 saku.py) &
+_saku(){
+    (cd ~/src/saku-3.11.1/ && python2 saku.py) &
+}
+
+_gkeyring(){
+    LANG=C gnome-keyring-daemon &
+}
+
+_nmapplet(){
+    nm-applet &
+}
+
+for p in $@
+do
+    _$p
+done
+
