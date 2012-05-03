@@ -40,11 +40,11 @@ Each function is called with two args, the filename before changing and after ch
 (require 'url)
 
 (defun dllib-if-unfound (url &optional bite-compile-p force-download-p)
-  "if LIB does not exist, download it from URL and locate it to \"~/emacs.d/lisp/LIB.el\".
-return nil if LIB unfound and downloading failed, otherwise the path of LIB."
+  "If library does not exist, download it from URL and locate it in \"~/emacs.d/lisp/\".
+Return nil if library unfound and downloading failed, otherwise the path where the library installed."
   (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
-         (lib (file-name-nondirectory url))
-         (lpath (concat dir lib))
+         (lib (file-name-sans-extension (file-name-nondirectory url)))
+         (lpath (concat dir lib ".el"))
          (locate-p (locate-library lib)))
     (if (or force-download-p (not locate-p))
         (progn (condition-case nil
@@ -53,8 +53,10 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                                          lpath
                                          t)
                           (when bite-compile-p
+                            (and (file-writable-p (byte-compile-dest-file lpath))
+                                 (delete-file (byte-compile-dest-file lpath)))
                             (byte-compile-file lpath)))
-                 (error (and (file-readable-p lpath)
+                 (error (and (file-writable-p lpath)
                              (delete-file lpath))
                         (message "downloading %s...something wrong happened!" url)
                         nil))
