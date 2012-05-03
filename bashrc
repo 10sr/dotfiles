@@ -150,6 +150,16 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
+encrypt-stream(){
+    test $# -eq 1 &&
+    mcrypt --key $1 2>/dev/null | base64
+}
+
+decrypt-stream(){
+    test $# -eq 1 &&
+    base64 -d | mcrypt -d --key $1 2>/dev/null
+}
+
 showinfo(){
     echo "Japanese letters are 表示可能"
 
