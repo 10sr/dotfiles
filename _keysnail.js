@@ -192,6 +192,7 @@ ext.add('my-setpref', function(){
             "extensions.tabutils.styles.unread":"{\"bold\":false,\"italic\":false,\"underline\":false,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#CC0000\",\"bgColor\":false,\"bgColorCode\":\"undefined\",\"outline\":false,\"outlineColorCode\":\"undefined\"}",
             "extensions.yass.edgetype":0,
             "extensions.yass.selectedpreset":"red",
+            "refcontrol.actions":"@DEFAULT=@FORGE www.heartrails.com=@NORMAL www.pixiv.net=@NORMAL",
             "font.default.x-western":"sans-serif",
             "general.warnOnAboutConfig":false,
             "keyword.URL":"http://www.bing.com/search?q=",
