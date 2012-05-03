@@ -1549,6 +1549,16 @@ when SEC is nil, stop auto save if enabled."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(defun dir-show (&optional dir)
+  (interactive)
+  (let ((bf (get-buffer-create "*dir show*"))
+        (list-directory-brief-switches "-C"))
+    (with-current-buffer bf
+      (list-directory (or nil
+                           default-directory)
+                      nil))
+    ))
+
 (defalias 'qcalc 'quick-calc)
 
 (defvar git-command-history nil
@@ -1570,7 +1580,7 @@ when SEC is nil, stop auto save if enabled."
                                           (point-max)))
       "")))
 (defun my-git-shell-command (cmd)
-  ""
+  "Shell like git command interface."
   (interactive (list (read-shell-command (format "[%s]%s $ git : "
                                                  (abbreviate-file-name default-directory)
                                                  (my-git-ps1 "[GIT:%s]"))
