@@ -39,11 +39,12 @@ Each function is called with two args, the filename before changing and after ch
 
 (require 'url)
 
-(defun dllib-if-unfound (lib url &optional bite-compile-p force-download-p)
+(defun dllib-if-unfound (url &optional bite-compile-p force-download-p)
   "if LIB does not exist, download it from URL and locate it to \"~/emacs.d/lisp/LIB.el\".
 return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
-         (lpath (concat dir lib ".el"))
+         (lib (file-name-nondirectory url))
+         (lpath (concat dir lib))
          (locate-p (locate-library lib)))
     (if (or force-download-p (not locate-p))
         (progn (condition-case nil
@@ -178,8 +179,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
-(and (dllib-if-unfound "drill-instructor"
-                       "https://raw.github.com/k1LoW/emacs-drill-instructor/master/drill-instructor.el"
+(and (dllib-if-unfound "https://raw.github.com/k1LoW/emacs-drill-instructor/master/drill-instructor.el"
                        t)
      (require 'drill-instructor nil t)
      (setq drill-instructor-global t)
@@ -388,8 +388,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-(and (dllib-if-unfound "set-modeline-color"
-                       "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
                        t)
      (progn
        (require 'set-modeline-color nil t)))
@@ -522,7 +521,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (require 'simple nil t)
 
 (and window-system
-     (dllib-if-unfound "save-window-size" "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el" t)
+     (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el" t)
      (require 'save-window-size nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -541,7 +540,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (and (not x-select-enable-clipboard)
      (getenv "DISPLAY")
      (executable-find "xclip")
-     (dllib-if-unfound "xclip" "http://www.emacswiki.org/emacs/download/xclip.el" t)
+     (dllib-if-unfound "http://www.emacswiki.org/emacs/download/xclip.el" t)
      (require 'xclip nil t)
      (turn-on-xclip))
 
@@ -638,8 +637,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (setq markdown-command (or (executable-find "markdown")
                            (executable-find "markdown.pl")))
-(when (dllib-if-unfound "markdown-mode"
-                        "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
+(when (dllib-if-unfound "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
                         t)
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
   (autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files." nil)
@@ -660,8 +658,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (c-toggle-hungry-state 1)
             ))
 
-(when (dllib-if-unfound "js2-mode"
-                        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
+(when (dllib-if-unfound "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
                         t)
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
@@ -723,14 +720,12 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (require 'session nil t)
 
-(and (dllib-if-unfound "gtkbm"
-                       "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                        t)
      (require 'gtkbm nil t)
      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
-(and (dllib-if-unfound "git-command"
-                       "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
                        t)
      (require 'git-command nil t)
      (define-key ctl-x-map "g" 'git-command))
@@ -739,8 +734,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; term mode
 
 ;; (setq multi-term-program shell-file-name)
-(and (dllib-if-unfound "multi-term"
-                       "http://www.emacswiki.org/emacs/download/multi-term.el"
+(and (dllib-if-unfound "http://www.emacswiki.org/emacs/download/multi-term.el"
                        t)
      (require 'multi-term nil t)
      (setq multi-term-switch-after-close nil))
@@ -904,8 +898,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
 
-(when (dllib-if-unfound "gauche-mode"
-                        "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
+(when (dllib-if-unfound "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
                         t)
   (setq auto-mode-alist
         (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
@@ -937,8 +930,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (recentf-mode 1)
   ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
-  (and (dllib-if-unfound "recentf-show"
-                         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
+  (and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
                          t)
        (require 'recentf-show nil t)
        (define-key ctl-x-map (kbd "C-r") 'recentf-show)))
@@ -1121,16 +1113,14 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
               (when (file-readable-p file)
                 (delete-file file)))))
 
-(and (dllib-if-unfound "pack"
-                       "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                        t)
      (require 'pack nil t)
      (add-hook 'dired-mode-hook
                (lambda ()
                  (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
 
-(and (dllib-if-unfound "dired-list-all-mode"
-                       "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
                        t)
      (require 'dired-list-all-mode nil t)
      (setq dired-listing-switches "-lhFG")
