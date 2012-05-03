@@ -169,7 +169,7 @@ x(){
         #mkdir -p ~/.backup/log
         # nohup startx >~/.backup/log/xorg.log 2>&1 &
         # exit
-        startx
+        exec startx
     else
         echo "X cant be started! Maybe another X is already running or something." 1>&2
     fi
