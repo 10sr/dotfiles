@@ -853,8 +853,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; (require 'vc)
 
 (setq vc-handled-backends '())
-(and (executable-find "git")
-     (add-to-list 'vc-handled-backends 'GIT))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gauche-mode
@@ -1555,28 +1553,22 @@ when SEC is nil, stop auto save if enabled."
 
 (defvar git-command-history nil
   "History list for git command.")
-(defun my-git-branch-name (str)
-  ""
-  (with-temp-buffer
-    (shell-command "git branch --no-color" t)
-    (if (search-forward "*" nil t)
-        (progn (forward-char 1)
-               (format str
-                       (buffer-substring-no-properties (point)
-                                                       (point-at-eol))))
-      "")))
 (defun my-git-ps1 (str)
-  (with-temp-buffer
-    (insert ". /etc/bash_completion.d/git; __git_ps1 "
-            (shell-quote-argument str)
-            ";")
-    (shell-command-on-region (point-min)
-                             (point-max)
-                             "bash -s"
-                             nil
-                             t)
-    (buffer-substring-no-properties (point-min)
-                                    (point-max))))
+  (let ((gcmpl "/etc/bash_completion.d/git"))
+    (if (file-readable-p gcmpl)
+        (with-temp-buffer
+          (insert ". " gcmpl
+                  "; __git_ps1 "
+                  (shell-quote-argument str)
+                  ";")
+          (shell-command-on-region (point-min)
+                                   (point-max)
+                                   "bash -s"
+                                   nil
+                                   t)
+          (buffer-substring-no-properties (point-min)
+                                          (point-max)))
+      "")))
 (defun my-git-shell-command (cmd)
   ""
   (interactive (list (read-shell-command (format "[%s]%s $ git : "
