@@ -11,14 +11,14 @@
 
 (require 'cl nil t)
 
-(progn                                  ; hook run when directory changed
-  (defvar buffer-file-changed-function nil "Hook run when buffer file changed.
+(progn
+  (defvar buffer-file-changed-functions nil "Hook run when buffer file changed.
 Each function is called with two args, the filename before changing and after changing.")
-  (declare-function run-buffer-file-change-function "emacs.el")
+  (declare-function run-buffer-file-changed-functions "emacs.el")
   (add-hook 'post-command-hook
-            'run-buffer-file-changed-function)
+            'run-buffer-file-changed-functions)
   (lexical-let (previous-file)
-    (defun run-buffer-file-changed-function ()
+    (defun run-buffer-file-changed-functions ()
       ""
       (unless (and previous-file
                    (equal previous-file
@@ -28,8 +28,8 @@ Each function is called with two args, the filename before changing and after ch
               (cfile (expand-file-name (or buffer-file-name
                                           default-directory))))
           (setq previous-file cfile)
-          (run-hook-with-args 'directory-changed-function pfile cfile)))))
-  ;; (add-hook 'directory-changed-function
+          (run-hook-with-args 'buffer-file-changed-functions pfile cfile)))))
+  ;; (add-hook 'buffer-file-changed-function
   ;;           (lambda (pdir cdir)
   ;;             (message "dir changed %s to %s !" pdir cdir)))
   )
@@ -101,7 +101,7 @@ Return nil if library unfound and failed to download, otherwise the path where t
                       (symbol-name system-type)
                       "] "
                       (abbreviate-file-name (or buffer-file-name default-directory))))
-(add-hook 'directory-changed-function
+(add-hook 'buffer-file-changed-functions
           (lambda (p c)
             (my-set-terminal-title)))
 (add-hook 'suspend-resume-hook
