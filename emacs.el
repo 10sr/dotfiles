@@ -41,7 +41,7 @@ Each function is called with two args, the filename before changing and after ch
 
 (defun dllib-if-unfound (url &optional bite-compile-p force-download-p)
   "If library does not exist, download it from URL and locate it in \"~/emacs.d/lisp/\".
-Return nil if library unfound and downloading failed, otherwise the path where the library installed."
+Return nil if library unfound and failed to download, otherwise the path where the library installed."
   (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
          (lib (file-name-sans-extension (file-name-nondirectory url)))
          (lpath (concat dir lib ".el"))
@@ -79,18 +79,18 @@ Return nil if library unfound and downloading failed, otherwise the path where t
                                "] "
                                '(:eval (symbol-name last-command))))
 
+(setq set-terminal-title-regexp "^\\(xterm\\|screen\\)")
 (defun set-terminal-title (&rest args)
   ""
   (interactive "sString to set as title: ")
   (let ((tty (frame-parameter nil
                               'tty-type)))
     (when (and tty
-               (eq t (compare-strings "xterm" 0 5
-                                      tty 0 5)))
+               (string-match set-terminal-title-regexp
+                             tty))
       (send-string-to-terminal (apply 'concat
                                       "\033]0;"
                                       `(,@args "\007"))))))
-
 (defun my-set-terminal-title ()
   ""
   (set-terminal-title "["
