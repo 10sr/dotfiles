@@ -79,7 +79,7 @@ Return nil if library unfound and failed to download, otherwise the path where t
                                "] "
                                '(:eval (symbol-name last-command))))
 
-(setq set-terminal-title-regexp "^\\(xterm\\|screen\\)")
+(setq set-terminal-title-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
 (defun set-terminal-title (&rest args)
   ""
   (interactive "sString to set as title: ")

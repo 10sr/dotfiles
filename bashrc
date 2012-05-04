@@ -461,15 +461,15 @@ __my_prompt_function(){              # used by PS1
 __my_set_title(){
     title="$(echo $@)"
     case $TERM in
-        (rxvt*|xterm*|aterm)
+        (rxvt*|xterm*|aterm|screen*)
         test -t 1 &&
         test -n "$DISPLAY" &&
         test -z "$EMACS" &&
-        echo -n -e "\033]0;${1}\007"
+        echo -n -e "\033]0;${title}\007"
 		;;
 	esac
 }
-# export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};${PROMPT_COMMAND}"
+export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};"
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){
