@@ -550,7 +550,7 @@ key.setGlobalKey('C-<down>', function () {
     }
 }, '選択中のタブを左へ');
 
-key.setGlobalKey('M-:', function (ev) {
+key.setViewKey('c', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
 
