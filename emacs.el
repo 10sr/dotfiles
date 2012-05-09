@@ -39,7 +39,7 @@ Each function is called with two args, the filename before changing and after ch
 
 (require 'url)
 
-(defun dllib-if-unfound (url &optional bite-compile-p force-download-p)
+(defun dllib-if-unfound (url &optional byte-compile-p force-download-p)
   "If library does not exist, download it from URL and locate it in \"~/emacs.d/lisp/\".
 Return nil if library unfound and failed to download, otherwise the path where the library installed."
   (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
@@ -52,10 +52,12 @@ Return nil if library unfound and failed to download, otherwise the path where t
                           (url-copy-file url
                                          lpath
                                          t)
-                          (when bite-compile-p
-                            (and (file-writable-p (byte-compile-dest-file lpath))
+                          (when (and byte-compile-p
+                                     (require 'bytecomp nil t))
+                            (and (file-exists-p (byte-compile-dest-file lpath)) 
                                  (delete-file (byte-compile-dest-file lpath)))
-                            (byte-compile-file lpath)))
+                            (byte-compile-file lpath))
+                          )
                  (error (and (file-writable-p lpath)
                              (delete-file lpath))
                         (message "downloading %s...something wrong happened!" url)
