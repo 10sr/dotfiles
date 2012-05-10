@@ -222,8 +222,7 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
         'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js',
-        'https://raw.github.com/gist/1450594/mstranslator.ks.js',
-        'https://raw.github.com/mooz/keysnail/master/plugins/hok.ks.js'
+        'https://raw.github.com/gist/1450594/mstranslator.ks.js'
     ];
 
     function inst(a){
@@ -479,7 +478,7 @@ ext.add("list-tab-history", function () {
 
 // ========================= Special key settings ========================== //
 
-key.quitKey              = "<delete>";
+key.quitKey              = "ESC";
 key.helpKey              = "<f1>";
 key.escapeKey            = "C-q";
 key.macroStartKey        = "";
@@ -554,6 +553,10 @@ key.setGlobalKey('C-<down>', function () {
 key.setGlobalKey('C-h', function (ev, arg) {
     return;
 }, 'ignore');
+
+key.setGlobalKey('C-l', function (ev, arg) {
+    ext.exec("hok-start-foreground-mode", arg, ev);
+}, 'Start Hit a Hint foreground mode', true);
 
 key.setViewKey('c', function (ev) {
     command.interpreter();
@@ -730,6 +733,8 @@ key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
 
-key.setGlobalKey('C-l', function (ev, arg) {
-    ext.exec('hok-start-foreground-mode', arg, ev);
-}, 'Start Hit a Hint foreground mode', true);
+key.setGlobalKey('<delete>', function (ev, arg) {
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+}, 'コンテンツへフォーカス', true);
