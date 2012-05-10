@@ -222,7 +222,8 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
         'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js',
-        'https://raw.github.com/gist/1450594/mstranslator.ks.js'
+        'https://raw.github.com/gist/1450594/mstranslator.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/hok.ks.js'
     ];
 
     function inst(a){
@@ -550,13 +551,13 @@ key.setGlobalKey('C-<down>', function () {
     }
 }, '選択中のタブを左へ');
 
-key.setViewKey('c', function (ev) {
-    command.interpreter();
-}, 'JavaScript のコードを評価');
-
 key.setGlobalKey('C-h', function (ev, arg) {
     return;
 }, 'ignore');
+
+key.setViewKey('c', function (ev) {
+    command.interpreter();
+}, 'JavaScript のコードを評価');
 
 key.setViewKey('D', function (ev, arg) {
     ext.exec("dig-url", arg, ev);
@@ -728,3 +729,7 @@ key.setViewKey('T', function (ev, arg) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setGlobalKey('C-l', function (ev, arg) {
+    ext.exec('hok-start-foreground-mode', arg, ev);
+}, 'Start Hit a Hint foreground mode', true);
