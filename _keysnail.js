@@ -558,12 +558,6 @@ key.setGlobalKey('C-l', function (ev, arg) {
     ext.exec("hok-start-foreground-mode", arg, ev);
 }, 'Start Hit a Hint foreground mode', true);
 
-key.setGlobalKey('<delete>', function (ev, arg) {
-    let (elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-    gBrowser.focus();
-    content.focus();
-}, 'コンテンツへフォーカス', true);
-
 key.setViewKey('c', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
@@ -690,6 +684,14 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
+key.setViewKey('<left>', function (ev) {
+    goDoCommand("cmd_scrollPageUp");
+}, '一画面分スクロールアップ');
+
+key.setViewKey('<right>', function (ev) {
+    goDoCommand("cmd_scrollPageDown");
+}, '一画面スクロールダウン');
+
 key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
     return;
 }, 'ignore');
@@ -731,10 +733,8 @@ key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
 
-key.setViewKey('<right>', function (ev) {
-    getBrowser().mTabContainer.advanceSelectedTab(1, true);
-}, 'ひとつ右のタブへ');
-
-key.setViewKey('<left>', function (ev) {
-    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
-}, 'ひとつ左のタブへ');
+key.setGlobalKey('<delete>', function (ev, arg) {
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+}, 'コンテンツへフォーカス', true);
