@@ -558,6 +558,12 @@ key.setGlobalKey('C-l', function (ev, arg) {
     ext.exec("hok-start-foreground-mode", arg, ev);
 }, 'Start Hit a Hint foreground mode', true);
 
+key.setGlobalKey('<delete>', function (ev, arg) {
+    let (elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+}, 'コンテンツへフォーカス', true);
+
 key.setViewKey('c', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
@@ -696,7 +702,12 @@ key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
     return;
 }, 'ignore');
 
-key.setViewKey([[':'], ['P']], function (ev, arg) {
+key.setViewKey(':', function (ev, arg) {
+    return !document.getElementById("keysnail-prompt").hidden &&
+        document.getElementById("keysnail-prompt-textbox").focus();
+}, 'KeySnail のプロンプトへフォーカス', true);
+
+key.setGlobalKey('C-p', function (ev, arg) {
     return !document.getElementById("keysnail-prompt").hidden &&
         document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
@@ -732,9 +743,3 @@ key.setViewKey('T', function (ev, arg) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
-
-key.setGlobalKey('<delete>', function (ev, arg) {
-    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-    gBrowser.focus();
-    content.focus();
-}, 'コンテンツへフォーカス', true);
