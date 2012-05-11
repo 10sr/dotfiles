@@ -49,7 +49,8 @@ _saku(){
 }
 
 _gkeyring(){
-    LANG=C gnome-keyring-daemon --start -c pkcs11 &
+    /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
+    eval $(gnome-keyring-daemon -s) &
 }
 
 _nmapplet(){
