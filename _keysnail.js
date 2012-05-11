@@ -478,7 +478,7 @@ ext.add("list-tab-history", function () {
 
 // ========================= Special key settings ========================== //
 
-key.quitKey              = "<delete>";
+key.quitKey              = "ESC";
 key.helpKey              = "<f1>";
 key.escapeKey            = "C-q";
 key.macroStartKey        = "";
@@ -550,13 +550,17 @@ key.setGlobalKey('C-<down>', function () {
     }
 }, '選択中のタブを左へ');
 
-key.setGlobalKey('M-:', function (ev) {
-    command.interpreter();
-}, 'JavaScript のコードを評価');
-
 key.setGlobalKey('C-h', function (ev, arg) {
     return;
 }, 'ignore');
+
+key.setGlobalKey('C-l', function (ev, arg) {
+    ext.exec("hok-start-foreground-mode", arg, ev);
+}, 'Start Hit a Hint foreground mode', true);
+
+key.setViewKey('c', function (ev) {
+    command.interpreter();
+}, 'JavaScript のコードを評価');
 
 key.setViewKey('D', function (ev, arg) {
     ext.exec("dig-url", arg, ev);
@@ -728,3 +732,9 @@ key.setViewKey('T', function (ev, arg) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setGlobalKey('<delete>', function (ev, arg) {
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+}, 'コンテンツへフォーカス', true);

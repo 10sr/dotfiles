@@ -1,8 +1,7 @@
 test "`hostname`" == "arch-aspireone" &&
 setxkbmap -model "acer_laptop" -layout "jp" # this line must comes first
 
-setxkbmap -option "ctrl:nocaps"
-setxkbmap -option "ctrl:menu_rctrl"
+setxkbmap -option "ctrl:nocaps,ctrl:menu_rctrl"
 xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
 #xmodmap -e 'remove Lock = Caps_Lock'
 #xmodmap -e 'add Control = Caps_Lock'
