@@ -71,6 +71,15 @@ ${color4}${downspeedgraph wlan0 ff0000 0000ff}
 ${color2}up   ${color1}|${color0} ${upspeed wlan0}/s
 ${color4}${upspeedgraph wlan0 0000ff ff0000}
 ${endif}\
+${if_up wlan2}\
+${color2}if   ${color1}|${color0} wlan0:${addr wlan2}
+${color2}ssid ${color1}|${color0} ${wireless_essid wlan2} ${wireless_link_qual_perc wlan2}%
+${color0}${stippled_hr}
+${color2}down ${color1}|${color0} ${downspeed wlan2}/s
+${color4}${downspeedgraph wlan2 ff0000 0000ff}
+${color2}up   ${color1}|${color0} ${upspeed wlan2}/s
+${color4}${upspeedgraph wlan2 0000ff ff0000}
+${endif}\
 ${if_up eth0}\
 ${color2}if   ${color1}|${color0} eth0:${addr eth0}
 ${color0}${stippled_hr}
@@ -78,6 +87,14 @@ ${color2}down ${color1}|${color0} ${downspeed eth0}/s
 ${color4}${downspeedgraph eth0 ff0000 0000ff}
 ${color2}up   ${color1}|${color0} ${upspeed eth0}/s
 ${color4}${upspeedgraph eth0 0000ff ff0000}
+${endif}\
+${if_up eth2}\
+${color2}if   ${color1}|${color0} eth2:${addr eth2}
+${color0}${stippled_hr}
+${color2}down ${color1}|${color0} ${downspeed eth2}/s
+${color4}${downspeedgraph eth2 ff0000 0000ff}
+${color2}up   ${color1}|${color0} ${upspeed eth2}/s
+${color4}${upspeedgraph eth2 0000ff ff0000}
 ${endif}\
 ${color0}${alignr}conky ${conky_version}
 ${color0}${hr}
