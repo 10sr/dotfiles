@@ -506,6 +506,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
 
+(defun my-delete-window-killing-buffer () nil)
+
 (defun my-query-kill-this-buffer ()
   ""
   (interactive)
@@ -514,6 +516,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
 (substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
 ;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; package
 
 '(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
                           ("gnu" . "http://elpa.gnu.org/packages/")
