@@ -150,15 +150,27 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
-encrypt-stream(){
-    test $# -eq 1 &&
-    mcrypt --key $1 2>/dev/null | base64
+crypt-stream(){
+    test $# -eq 2 || return 1
+    case $1 in
+        en)
+            mcrypt --key $2 | base64 ;;
+        de)
+            base64 -d | mcrypt -d --key $2 ;;
+    esac
+}
+gpg-stream(){
+    test $# -eq 2 || return 1
+    case $1 in
+        en)
+            gpg --passphrase $2 -c --batch |base64 ;;
+        de)
+            base64 -d|gpg --passphrase $2 -d --batch ;;
+    esac
 }
 
-decrypt-stream(){
-    test $# -eq 1 &&
-    base64 -d | mcrypt -d --key $1 2>/dev/null
-}
+alias enst="gpg-stream en"
+alias dest="gpg-stream de"
 
 showinfo(){
     echo "Japanese letters are 表示可能"
@@ -290,6 +302,7 @@ _my_git_config(){
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
+    git config --global log.date iso
     git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso"
     git config --global alias.st "status -s -b"
     git config --global alias.b "branch"
