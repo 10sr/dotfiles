@@ -18,6 +18,7 @@ xset dpms 1810 1820 1830        # standby, suspend and off seem not to be differ
 unset LC_MESSAGES
 export LANG=ja_JP.utf8
 export BROWSER=firefox
+export DMENU_FONT='-*-dejavu sans mono-*-r-*-*-11-*-*-*-*-*-*-*'
 
 __upper(){
     echo $1 | tr '[:lower:]' '[:upper:]'

@@ -150,7 +150,7 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
-crypt-stream(){
+mcrypt-stream(){
     test $# -eq 2 || return 1
     case $1 in
         en)
@@ -159,6 +159,7 @@ crypt-stream(){
             base64 -d | mcrypt -d --key $2 ;;
     esac
 }
+
 gpg-stream(){
     test $# -eq 2 || return 1
     case $1 in
