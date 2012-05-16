@@ -114,8 +114,8 @@ alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
 
 alias wic=wicd-curses
-alias wlist="wicd-cli -y -l"
-alias wcn="wicd-cli -y -c -n"
+alias wil="wicd-cli -y -l | head"
+alias wicn="wicd-cli -y -c -n"
 
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
@@ -150,6 +150,29 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
+mcrypt-stream(){
+    test $# -eq 2 || return 1
+    case $1 in
+        en)
+            mcrypt --key $2 | base64 ;;
+        de)
+            base64 -d | mcrypt -d --key $2 ;;
+    esac
+}
+
+gpg-stream(){
+    test $# -eq 2 || return 1
+    case $1 in
+        en)
+            gpg --passphrase $2 -c --batch |base64 ;;
+        de)
+            base64 -d|gpg --passphrase $2 -d --batch ;;
+    esac
+}
+
+alias enst="gpg-stream en"
+alias dest="gpg-stream de"
+
 showinfo(){
     echo "Japanese letters are 表示可能"
 
@@ -169,7 +192,7 @@ x(){
         #mkdir -p ~/.backup/log
         # nohup startx >~/.backup/log/xorg.log 2>&1 &
         # exit
-        startx
+        exec startx
     else
         echo "X cant be started! Maybe another X is already running or something." 1>&2
     fi
@@ -280,8 +303,9 @@ _my_git_config(){
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
+    git config --global log.date iso
     git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso"
-    git config --global alias.st "status -s"
+    git config --global alias.st "status -s -b"
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"
     git config --global alias.co "checkout"
@@ -451,15 +475,15 @@ __my_prompt_function(){              # used by PS1
 __my_set_title(){
     title="$(echo $@)"
     case $TERM in
-        (rxvt*|xterm*|aterm)
+        (rxvt*|xterm*|aterm|screen*)
         test -t 1 &&
         test -n "$DISPLAY" &&
         test -z "$EMACS" &&
-        echo -n -e "\033]0;${1}\007"
+        echo -n -e "\033]0;${title}\007"
 		;;
 	esac
 }
-# export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};${PROMPT_COMMAND}"
+export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};"
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){

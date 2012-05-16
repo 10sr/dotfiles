@@ -11,14 +11,14 @@
 
 (require 'cl nil t)
 
-(progn                                  ; hook run when directory changed
-  (defvar buffer-file-changed-function nil "Hook run when buffer file changed.
+(progn
+  (defvar buffer-file-changed-functions nil "Hook run when buffer file changed.
 Each function is called with two args, the filename before changing and after changing.")
-  (declare-function run-buffer-file-change-function "emacs.el")
+  (declare-function run-buffer-file-changed-functions "emacs.el")
   (add-hook 'post-command-hook
-            'run-buffer-file-changed-function)
+            'run-buffer-file-changed-functions)
   (lexical-let (previous-file)
-    (defun run-buffer-file-changed-function ()
+    (defun run-buffer-file-changed-functions ()
       ""
       (unless (and previous-file
                    (equal previous-file
@@ -28,8 +28,8 @@ Each function is called with two args, the filename before changing and after ch
               (cfile (expand-file-name (or buffer-file-name
                                           default-directory))))
           (setq previous-file cfile)
-          (run-hook-with-args 'directory-changed-function pfile cfile)))))
-  ;; (add-hook 'directory-changed-function
+          (run-hook-with-args 'buffer-file-changed-functions pfile cfile)))))
+  ;; (add-hook 'buffer-file-changed-function
   ;;           (lambda (pdir cdir)
   ;;             (message "dir changed %s to %s !" pdir cdir)))
   )
@@ -39,10 +39,11 @@ Each function is called with two args, the filename before changing and after ch
 
 (require 'url)
 
-(defun dllib-if-unfound (lib url &optional bite-compile-p force-download-p)
-  "if LIB does not exist, download it from URL and locate it to \"~/emacs.d/lisp/LIB.el\".
-return nil if LIB unfound and downloading failed, otherwise the path of LIB."
+(defun dllib-if-unfound (url &optional byte-compile-p force-download-p)
+  "If library does not exist, download it from URL and locate it in \"~/emacs.d/lisp/\".
+Return nil if library unfound and failed to download, otherwise the path where the library installed."
   (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
+         (lib (file-name-sans-extension (file-name-nondirectory url)))
          (lpath (concat dir lib ".el"))
          (locate-p (locate-library lib)))
     (if (or force-download-p (not locate-p))
@@ -51,9 +52,13 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                           (url-copy-file url
                                          lpath
                                          t)
-                          (when bite-compile-p
-                            (byte-compile-file lpath)))
-                 (error (and (file-readable-p lpath)
+                          (when (and byte-compile-p
+                                     (require 'bytecomp nil t))
+                            (and (file-exists-p (byte-compile-dest-file lpath)) 
+                                 (delete-file (byte-compile-dest-file lpath)))
+                            (byte-compile-file lpath))
+                          )
+                 (error (and (file-writable-p lpath)
                              (delete-file lpath))
                         (message "downloading %s...something wrong happened!" url)
                         nil))
@@ -76,18 +81,18 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                                "] "
                                '(:eval (symbol-name last-command))))
 
+(setq set-terminal-title-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
 (defun set-terminal-title (&rest args)
   ""
   (interactive "sString to set as title: ")
   (let ((tty (frame-parameter nil
                               'tty-type)))
     (when (and tty
-               (eq t (compare-strings "xterm" 0 5
-                                      tty 0 5)))
+               (string-match set-terminal-title-regexp
+                             tty))
       (send-string-to-terminal (apply 'concat
                                       "\033]0;"
                                       `(,@args "\007"))))))
-
 (defun my-set-terminal-title ()
   ""
   (set-terminal-title "["
@@ -98,7 +103,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
                       (symbol-name system-type)
                       "] "
                       (abbreviate-file-name (or buffer-file-name default-directory))))
-(add-hook 'directory-changed-function
+(add-hook 'buffer-file-changed-functions
           (lambda (p c)
             (my-set-terminal-title)))
 (add-hook 'suspend-resume-hook
@@ -124,6 +129,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (add-to-list 'default-frame-alist '(foreground-color . "gray10"))
   ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100))) ; does not work?
   )
+;; (add-to-list 'default-frame-alist '(cursor-type . box))
 (if window-system (menu-bar-mode 1) (menu-bar-mode 0))
 (tool-bar-mode 0)
 (set-scroll-bar-mode nil)
@@ -177,14 +183,14 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
-(and (dllib-if-unfound "drill-instructor"
-                       "https://raw.github.com/k1LoW/emacs-drill-instructor/master/drill-instructor.el"
+(and (dllib-if-unfound "https://raw.github.com/k1LoW/emacs-drill-instructor/master/drill-instructor.el"
                        t)
      (require 'drill-instructor nil t)
      (setq drill-instructor-global t)
      (let ((map drill-instructor-key-map))
        (define-key map (kbd "RET") nil)
-       (define-key map (kbd "DEL") nil)))
+       (define-key map (kbd "DEL") nil)
+       (define-key map (kbd "C-h") nil)))
 '(mapc (lambda (key)
         (global-set-key (read-kbd-macro key) 'ignore))
       '("<up>" "<down>" "<right>" "<left>"))
@@ -311,19 +317,19 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (standard-display-ascii ?\n "$\n")
 
-(standard-display-ascii ?\f "---------------------------------------------------------------------------------------^L")
-(defface my-pagebreak-face
-  '((t (:foreground "gray")))
-  "pagebreak.")
-
 (defvar my-eol-face
   '(("\n" . (0 font-lock-comment-face t nil)))
   )
-(defvar my-pagebreak-face
-  '(("\f" . 'my-pagebreak-face)))
-(defvar my-highlight-face
-  '(("\t" . '(0 highlight t nil))
-    ("　" . '(0 highlight t nil))))
+(defvar my-tab-face
+  '(("\t" . '(0 highlight t nil))))
+(defvar my-jspace-face
+  '(("\u3000" . '(0 highlight t nil))))
+
+(add-hook 'font-lock-mode-hook
+          (lambda ()
+            (font-lock-add-keywords nil my-eol-face)
+            (font-lock-add-keywords nil my-jspace-face)
+            ))
 
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
@@ -347,12 +353,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (setq hl-line-global-modes
       '(not
         term-mode))
-
-(add-hook 'font-lock-mode-hook
-          (lambda ()
-            (font-lock-add-keywords nil my-eol-face)
-            ;; (font-lock-add-keywords nil my-highlight-face)
-            ))
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
@@ -392,16 +392,15 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-(and (dllib-if-unfound "set-modeline-color"
-                       "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
                        t)
-     (progn (set-face-background 'mode-line "white")
-            ;(set-face-bold-p 'modeline-buffer-id t)
-            (require 'set-modeline-color nil t)))
+     (progn
+       (require 'set-modeline-color nil t)))
 
-(set-face-background 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "white" "black"))
-(set-face-foreground 'mode-line-inactive (if (face-inverse-video-p 'mode-line) "black" "white"))
-
+(let ((fg (face-foreground 'default))
+      (bg (face-background 'default)))
+  (set-face-background 'mode-line-inactive (if (face-inverse-video-p 'mode-line) fg bg))
+  (set-face-foreground 'mode-line-inactive (if (face-inverse-video-p 'mode-line) bg fg)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
@@ -452,6 +451,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;(pc-selection-mode 1) ; this make some already defined keybind back to default
 (delete-selection-mode 1)
 (cua-mode 0)
+(setq line-move-visual nil)
 
 ;; key bindings
 ;; moving around
@@ -506,6 +506,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
 
+(defun my-delete-window-killing-buffer () nil)
+
 (defun my-query-kill-this-buffer ()
   ""
   (interactive)
@@ -514,6 +516,8 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
 ;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; package
 
 '(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
                           ("gnu" . "http://elpa.gnu.org/packages/")
@@ -525,7 +529,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (require 'simple nil t)
 
 (and window-system
-     (dllib-if-unfound "save-window-size" "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el" t)
+     (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el" t)
      (require 'save-window-size nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -544,7 +548,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (and (not x-select-enable-clipboard)
      (getenv "DISPLAY")
      (executable-find "xclip")
-     (dllib-if-unfound "xclip" "http://www.emacswiki.org/emacs/download/xclip.el" t)
+     (dllib-if-unfound "http://www.emacswiki.org/emacs/download/xclip.el" t)
      (require 'xclip nil t)
      (turn-on-xclip))
 
@@ -641,8 +645,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (setq markdown-command (or (executable-find "markdown")
                            (executable-find "markdown.pl")))
-(when (dllib-if-unfound "markdown-mode"
-                        "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
+(when (dllib-if-unfound "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
                         t)
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
   (autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files." nil)
@@ -663,8 +666,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
             (c-toggle-hungry-state 1)
             ))
 
-(when (dllib-if-unfound "js2-mode"
-                        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
+(when (dllib-if-unfound "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
                         t)
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
@@ -726,18 +728,21 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 (require 'session nil t)
 
-(and (dllib-if-unfound "gtkbm"
-                       "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                        t)
      (require 'gtkbm nil t)
      (global-set-key (kbd "C-x C-d") 'gtkbm))
+
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
+                       t)
+     (require 'git-command nil t)
+     (define-key ctl-x-map "g" 'git-command))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
 
 ;; (setq multi-term-program shell-file-name)
-(and (dllib-if-unfound "multi-term"
-                       "http://www.emacswiki.org/emacs/download/multi-term.el"
+(and (dllib-if-unfound "http://www.emacswiki.org/emacs/download/multi-term.el"
                        t)
      (require 'multi-term nil t)
      (setq multi-term-switch-after-close nil))
@@ -856,8 +861,6 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; (require 'vc)
 
 (setq vc-handled-backends '())
-(and (executable-find "git")
-     (add-to-list 'vc-handled-backends 'GIT))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gauche-mode
@@ -903,8 +906,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
 
-(when (dllib-if-unfound "gauche-mode"
-                        "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
+(when (dllib-if-unfound "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
                         t)
   (setq auto-mode-alist
         (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
@@ -936,8 +938,7 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
   (recentf-mode 1)
   ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
-  (and (dllib-if-unfound "recentf-show"
-                         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
+  (and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
                          t)
        (require 'recentf-show nil t)
        (define-key ctl-x-map (kbd "C-r") 'recentf-show)))
@@ -1120,16 +1121,14 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
               (when (file-readable-p file)
                 (delete-file file)))))
 
-(and (dllib-if-unfound "pack"
-                       "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                        t)
      (require 'pack nil t)
      (add-hook 'dired-mode-hook
                (lambda ()
                  (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
 
-(and (dllib-if-unfound "dired-list-all-mode"
-                       "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
                        t)
      (require 'dired-list-all-mode nil t)
      (setq dired-listing-switches "-lhFG")
@@ -1554,34 +1553,17 @@ when SEC is nil, stop auto save if enabled."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
-(defalias 'qcalc 'quick-calc)
-
-;; (when (require 'ansi-color nil t)
-;;   (ansi-color-for-comint-mode-on))
-(defvar git-command-history nil
-  "History list for git command.")
-(defun my-git-shell-command (cmd)
-  ""
-  (interactive (list (read-shell-command (format "[%s] $ git : "
-                                                 (abbreviate-file-name default-directory))
-                                         nil
-                                         'git-command-history)))
-  (let ((dir default-directory)
-        (bf (get-buffer-create "*Git Output*"))
-        )
-    (delete-windows-on bf t)
-    (shell-command (concat "git "
-                           cmd)
-                   bf)
+(defun dir-show (&optional dir)
+  (interactive)
+  (let ((bf (get-buffer-create "*dir show*"))
+        (list-directory-brief-switches "-C"))
     (with-current-buffer bf
-      (cd dir)
-      (and (require 'ansi-color nil t)
-           (ansi-color-apply-on-region (point-min)
-                                       (point-max)))
-      (setq buffer-read-only t)
-      (view-mode 1)
-      )))
-(define-key ctl-x-map "g" 'my-git-shell-command)
+      (list-directory (or nil
+                           default-directory)
+                      nil))
+    ))
+
+(defalias 'qcalc 'quick-calc)
 
 (defun my-kill-buffers ()
   ""
