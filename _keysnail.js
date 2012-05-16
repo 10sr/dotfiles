@@ -554,10 +554,6 @@ key.setGlobalKey('C-h', function (ev, arg) {
     return;
 }, 'ignore');
 
-key.setViewKey('L', function (ev, arg) {
-    ext.exec("hok-start-foreground-mode", arg, ev);
-}, 'Start Hit a Hint foreground mode', true);
-
 key.setGlobalKey('<delete>', function (ev, arg) {
     let (elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
@@ -568,6 +564,18 @@ key.setGlobalKey('C-p', function (ev, arg) {
     return !document.getElementById("keysnail-prompt").hidden &&
         document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
+
+key.setGlobalKey('C-j', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(1, true);
+}, 'ひとつ右のタブへ');
+
+key.setGlobalKey('C-k', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
+}, 'ひとつ左のタブへ');
+
+key.setViewKey('L', function (ev, arg) {
+    ext.exec("hok-start-foreground-mode", arg, ev);
+}, 'Start Hit a Hint foreground mode', true);
 
 key.setViewKey('c', function (ev) {
     command.interpreter();
@@ -691,11 +699,11 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
-key.setViewKey('<left>', function (ev) {
+key.setViewKey([['<left>'], ['h']], function (ev) {
     goDoCommand("cmd_scrollPageUp");
 }, '一画面分スクロールアップ');
 
-key.setViewKey('<right>', function (ev) {
+key.setViewKey([['<right>'], ['l']], function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
@@ -732,10 +740,6 @@ key.setViewKey('T', function (ev, arg) {
     ext.exec("mstranslator-open-prompt", arg, ev);
 }, 'MSTranslator - Open prompt', true);
 
-key.setEditKey('C-<tab>', function (ev) {
-    command.walkInputElement(command.elementsRetrieverTextarea, true, true);
-}, '次のテキストエリアへフォーカス');
-
 key.setViewKey('j', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_DOWN, true);
 }, '一行スクロールダウン');
@@ -743,14 +747,6 @@ key.setViewKey('j', function (ev) {
 key.setViewKey('k', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
 }, '一行スクロールアップ');
-
-key.setViewKey('J', function (ev) {
-    getBrowser().mTabContainer.advanceSelectedTab(1, true);
-}, 'ひとつ右のタブへ');
-
-key.setViewKey('K', function (ev) {
-    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
-}, 'ひとつ左のタブへ');
 
 key.setViewKey('b', function (ev) {
     BrowserBack();
@@ -760,10 +756,6 @@ key.setViewKey('B', function (ev) {
     BrowserForward();
 }, '進む');
 
-key.setViewKey('l', function (ev) {
-    goDoCommand("cmd_scrollPageDown");
-}, '一画面スクロールダウン');
-
-key.setViewKey('h', function (ev) {
-    goDoCommand("cmd_scrollPageUp");
-}, '一画面分スクロールアップ');
+key.setEditKey('C-<tab>', function (ev) {
+    command.walkInputElement(command.elementsRetrieverTextarea, true, true);
+}, '次のテキストエリアへフォーカス');
