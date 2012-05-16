@@ -1790,12 +1790,15 @@ this is test, does not rename files"
   ;; (setq python-python-command "c:/Python26/python.exe")
 
   (define-key my-prefix-map (kbd "C-c") 'start-ckw-bash)
-  (my-w32-add-export-path "c:/WINDOWS"
+  (my-w32-add-export-path "c:/Windows/system"
+                          "c:/Windows/System32"
+                          "c:/Program Files/Git/bin"
+                          "c:/MinGW/bin"
+                          "c:/MinGW/mingw32/bin"
                           (expand-file-name "~/bin")
                           (expand-file-name "~/dbx/apps/bin"))
 
   (when window-system
     (setq w32-enable-synthesized-fonts t))
   (setq file-name-coding-system 'sjis))
-
 
