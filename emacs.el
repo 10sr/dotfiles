@@ -585,8 +585,13 @@ Return nil if library unfound and failed to download, otherwise the path where t
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
 
-(add-to-list 'auto-mode-alist
-             '("\\(xinitrc\\|xprograms\\)\\'" . sh-mode))
+;; (add-to-list 'auto-mode-alist
+;;              '("\\(xinitrc\\|xprograms\\)\\'" . sh-mode))
+(setq auto-mode-alist
+      `(("autostart\\'" . sh-mode)
+        ("xinitrc\\'" . sh-mode)
+        ("xprograms\\'" . sh-mode)
+        ,@auto-mode-alist))
 
 (setq python-python-command (or (executable-find "python3")
                                 (executable-find "python")))
