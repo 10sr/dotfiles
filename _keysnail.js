@@ -699,11 +699,11 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
-key.setViewKey([['<left>'], ['h']], function (ev) {
+key.setViewKey('<left>', function (ev) {
     goDoCommand("cmd_scrollPageUp");
 }, '一画面分スクロールアップ');
 
-key.setViewKey([['<right>'], ['l']], function (ev) {
+key.setViewKey('<right>', function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
@@ -759,3 +759,11 @@ key.setViewKey('B', function (ev) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setViewKey('l', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_RIGHT, true);
+}, '右へスクロール');
+
+key.setViewKey('h', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_LEFT, true);
+}, '左へスクロール');
