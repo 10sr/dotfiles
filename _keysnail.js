@@ -565,11 +565,11 @@ key.setGlobalKey('C-p', function (ev, arg) {
         document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
 
-key.setGlobalKey('C-j', function (ev) {
+key.setViewKey('J', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(1, true);
 }, 'ひとつ右のタブへ');
 
-key.setGlobalKey('C-k', function (ev) {
+key.setViewKey('K', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(-1, true);
 }, 'ひとつ左のタブへ');
 
@@ -767,3 +767,21 @@ key.setViewKey('h', function (ev) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setViewKey('H', function (ev) {
+    var browser = getBrowser();
+    if (browser.mCurrentTab.previousSibling) {
+        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
+    } else {
+        browser.moveTabTo(browser.mCurrentTab, browser.mTabContainer.childNodes.length - 1);
+    }
+}, '選択中のタブを左へ');
+
+key.setViewKey('L', function (ev) {
+    var browser = getBrowser();
+    if (browser.mCurrentTab.nextSibling) {
+        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos + 1);
+    } else {
+        browser.moveTabTo(browser.mCurrentTab, 0);
+    }
+}, '選択中のタブを右へ');
