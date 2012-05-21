@@ -573,7 +573,7 @@ key.setGlobalKey('C-k', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(-1, true);
 }, 'ひとつ左のタブへ');
 
-key.setViewKey('L', function (ev, arg) {
+key.setViewKey('o', function (ev, arg) {
     ext.exec("hok-start-foreground-mode", arg, ev);
 }, 'Start Hit a Hint foreground mode', true);
 
@@ -756,10 +756,6 @@ key.setViewKey('B', function (ev) {
     BrowserForward();
 }, '進む');
 
-key.setEditKey('C-<tab>', function (ev) {
-    command.walkInputElement(command.elementsRetrieverTextarea, true, true);
-}, '次のテキストエリアへフォーカス');
-
 key.setViewKey('l', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_RIGHT, true);
 }, '右へスクロール');
@@ -767,3 +763,7 @@ key.setViewKey('l', function (ev) {
 key.setViewKey('h', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_LEFT, true);
 }, '左へスクロール');
+
+key.setEditKey('C-<tab>', function (ev) {
+    command.walkInputElement(command.elementsRetrieverTextarea, true, true);
+}, '次のテキストエリアへフォーカス');
