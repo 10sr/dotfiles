@@ -603,9 +603,9 @@ key.setViewKey(['t', 'p'], function (ev, arg) {
     ext.exec("twitter-client-tweet-this-page", arg, ev);
 }, 'このページのタイトルと URL を使ってつぶやく', true);
 
-key.setViewKey('u', function () {
-    undoCloseTab();
-}, '閉じたタブを元に戻す');
+key.setViewKey([['u'], ['<left>']], function (ev) {
+    goDoCommand("cmd_scrollPageUp");
+}, '一画面分スクロールアップ');
 
 key.setViewKey('g', function () {
     goDoCommand("cmd_scrollTop");
@@ -689,11 +689,7 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
-key.setViewKey('<left>', function (ev) {
-    goDoCommand("cmd_scrollPageUp");
-}, '一画面分スクロールアップ');
-
-key.setViewKey('<right>', function (ev) {
+key.setViewKey([['<right>'], ['d']], function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
@@ -743,14 +739,6 @@ key.setViewKey('k', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
 }, '一行スクロールアップ');
 
-key.setViewKey('b', function (ev) {
-    BrowserBack();
-}, '戻る');
-
-key.setViewKey('B', function (ev) {
-    BrowserForward();
-}, '進む');
-
 key.setViewKey('l', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_RIGHT, true);
 }, '右へスクロール');
@@ -768,18 +756,10 @@ key.setViewKey('L', function (ev) {
     }
 }, '選択中のタブを右へ');
 
-key.setEditKey('C-<tab>', function (ev) {
-    command.walkInputElement(command.elementsRetrieverTextarea, true, true);
-}, '次のテキストエリアへフォーカス');
-
-key.setViewKey('u', function (ev) {
-    goDoCommand("cmd_scrollPageUp");
-}, '一画面分スクロールアップ');
-
-key.setViewKey('d', function (ev) {
-    goDoCommand("cmd_scrollPageDown");
-}, '一画面スクロールダウン');
-
 key.setViewKey('U', function (ev) {
     undoCloseTab();
 }, '閉じたタブを元に戻す');
+
+key.setEditKey('C-<tab>', function (ev) {
+    command.walkInputElement(command.elementsRetrieverTextarea, true, true);
+}, '次のテキストエリアへフォーカス');
