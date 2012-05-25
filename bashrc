@@ -383,7 +383,7 @@ _colors(){
 }
 
 _my_install_script(){
-    mkdir -p $HOMO/bin/
+    mkdir -p "$HOME/bin/"
     for f in "$@"
     do
         bn=$(basename "$f")
@@ -394,6 +394,14 @@ _my_install_script(){
     done
 }
 _my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh
+
+_my_install_symlink_script(){
+    mkdir -p "$HOME/bin/"
+    for f in "$@"
+    do
+        ln -s "$PWD/$f" "$HOME/bin/"
+    done
+}
 
 winln(){
     # for windose make link (actually junction)
