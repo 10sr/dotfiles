@@ -446,8 +446,8 @@ __my_prompt_function(){              # used by PS1
         local c3=
         local cdef=
     else
-        local c1="\e[33m"
-        local c2="\e[36m"
+        local c1="\e[31m"
+        local c2="\e[32m"
         local c3="\e[37m"
         local cdef="\e[0m"
     fi
