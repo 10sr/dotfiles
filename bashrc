@@ -393,7 +393,7 @@ _my_install_script(){
         }
     done
 }
-_my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh
+_my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
 
 _my_install_symlink_script(){
     mkdir -p "$HOME/bin/"
