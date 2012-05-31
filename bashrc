@@ -388,8 +388,15 @@ _my_install_script(){
     do
         bn=$(basename "$f")
         type $bn >/dev/null 2>&1 || {
-            wget "$f" -P "$HOME/bin/" &&
-            chmod u+x "$HOME/bin/${bn}"
+            if type wget >/dev/null 2>&1
+            then
+                wget "$f" -P "$HOME/bin/" &&
+                chmod u+x "$HOME/bin/${bn}"
+            elif  type curl >/dev/null 2>&1
+            then
+                curl --url "$f" --output "$HOME/bin/${bn}" &&
+                chmod u+x "$HOME/bin/${bn}"
+            fi
         }
     done
 }
