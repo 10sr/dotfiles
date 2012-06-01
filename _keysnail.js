@@ -102,7 +102,7 @@ local["^http://www.feedly.com/"] = [
 local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
     ["i", function (ev, arg) { ext.exec("nicoinfo", arg); }],
     ["p", function (ev, arg) { ext.exec("nicopause", arg); }],
-    ["o", function (ev, arg) { ext.exec("nicommentvisible", arg); }],
+    // ["o", function (ev, arg) { ext.exec("nicommentvisible", arg); }],
     ["m", function (ev, arg) { ext.exec("nicomute", arg); }],
     [".", function (ev, arg) { ext.exec("nicovolumeIncrement", arg); }],
     [",", function (ev, arg) { ext.exec("nicovolumeDecrement", arg); }],
