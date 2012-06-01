@@ -221,12 +221,14 @@ ext.add('auto-install-plugins', function(ev, arg){
     var urls = [
         'https://raw.github.com/mooz/keysnail/master/plugins/yet-another-twitter-client-keysnail.ks.js',
         'https://raw.github.com/mooz/keysnail/master/plugins/site-local-keymap.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/hok.ks.js',
         'https://raw.github.com/azu/KeySnail-Plugins/master/JSReference/js-referrence.ks.js',
         'https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js',
         'https://raw.github.com/tkosaka/keysnail-plugin/master/nicontroller.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
+        'https://raw.github.com/10sr/keysnail-plugin/master/pixiv_autojump.ks.js',
         'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js',
         'https://raw.github.com/gist/1450594/mstranslator.ks.js'
     ];
