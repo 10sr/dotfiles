@@ -70,10 +70,10 @@ echo
 ###################################
 # some aliases and functions
 
-iswindows || test "$TERM" == dumb || _coloroption=" --color=always"
+test "$TERM" == dumb || _coloroption=" --color=always"
 
-alias ls="ls -hCF --time-style=long-iso${_coloroption}"
-iswindows && alias ls="ls -hCF"
+alias ls="ls -hCF${_coloroption}"
+iswindows || alias ls="ls --time-style=long-iso"
 # export GREP_OPTIONS=""
 alias grep="grep -n${_coloroption}"
 # alias ll="ls -l"
