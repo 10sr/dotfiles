@@ -37,4 +37,4 @@ format_human_readable yes
 TEXT
 ${color yellow}$$ tail -f -n 10 /var/log/everything.log
 ${color white}${tail /var/log/everything.log 10}
-${time %b %d %T}
+${time %b %_d %T}
