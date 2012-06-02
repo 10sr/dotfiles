@@ -71,9 +71,9 @@ echo
 # some aliases and functions
 
 test "$TERM" == dumb || _coloroption=" --color=always"
+iswindows || _timeoption=" --time-style=long-iso"
 
-alias ls="ls -hCF${_coloroption}"
-iswindows || alias ls="ls --time-style=long-iso"
+alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
 alias grep="grep -n${_coloroption}"
 # alias ll="ls -l"
