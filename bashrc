@@ -456,7 +456,7 @@ __my_prompt_function(){              # used by PS1
         local c1="\e[31m"       # color for PWD
         local c2="\e[36m"       # color for user
         local c3="\e[37m"       # color for OLDPWD
-        local c4="\e[32m"       # color for ::
+        local c4="\e[1;32m"       # color for ::
         local cdef="\e[0m"
     fi
     if iswindows
