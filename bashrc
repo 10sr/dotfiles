@@ -76,6 +76,7 @@ iswindows || _timeoption=" --time-style=long-iso"
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
 alias grep="grep -n${_coloroption}"
+iswindows && alias grep="grep -n"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
@@ -445,7 +446,7 @@ ip-address(){
 
 __my_prompt_function(){              # used by PS1
     # remove __try_exec from function
-    local lastreturn=$?
+    local lastreturn=$
     if test "${TERM}" == dumb
     then
         local c1=
@@ -463,7 +464,6 @@ __my_prompt_function(){              # used by PS1
     then
         local pwd=$PWD
         local oldpwd=$OLDPWD
-        git branch >/dev/null 2>&1 && local git="[GIT]"
         local date=$(/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%')
     else
         local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
@@ -471,8 +471,8 @@ __my_prompt_function(){              # used by PS1
         local jobnum=$(jobs | wc -l) # a strange job exists...
         local git=$(__try_exec __git_ps1 [GIT:%s])
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
+        local dirs=$(dirs | wc -l)
     fi
-    local dirs=$(dirs | wc -l)
     # local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
     if test -z "$DISPLAY" && ! iswindows
     then
@@ -488,6 +488,11 @@ __my_prompt_function(){              # used by PS1
     printf "${c4}:: ${cdef}shlv:${SHLVL} dirs:${dirs} last:${lastreturn} "
 
 }
+_PS1="\e[32m:: \e[0m[\e[31m\w/\e[0m]\n\
+\e[32m:: \e[36m\u@\H \e[0m\d \t bash \v\n\
+\e[32m:: \e[0mshlv:${SHLVL} hist:\! last:\$? \$ "
+iswindows && PS1=$_PS1
+
 __my_set_title(){
     title="$(echo $@)"
     case $TERM in
