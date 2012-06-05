@@ -190,8 +190,8 @@ showinfo(){
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        #mkdir -p ~/.backup/log
-        # nohup startx >~/.backup/log/xorg.log 2>&1 &
+        #mkdir -p ~/.my/log
+        # nohup startx >~/.my/log/xorg.log 2>&1 &
         # exit
         exec startx
     else
@@ -217,10 +217,10 @@ di(){
 }
 
 throw-away(){
-    mkdir -p ~/.backup/tb
+    mkdir -p ~/.my/tb
     for file in "$@"
     do
-        mv $file ~/.backup/tb
+        mv $file ~/.my/tb
     done
 }
 

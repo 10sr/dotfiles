@@ -17,7 +17,7 @@ export ENV=~/.shrc
 # export TMP=/tmp
 # export TEMP=/tmp
 test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
-export PYTHONPATH="~/.local/share/lib/python3.2/site-packages"
+#export PYTHONPATH="~/.local/share/lib/python3.2/site-packages"
 
 __add_to_path(){
     for p in "$@"
@@ -31,6 +31,6 @@ __add_to_path ${HOME}/bin
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
 
-mkdir -p ~/.backup/log
+mkdir -p ~/.my/log
 mkdir -p /tmp/$USER-tmp
 
