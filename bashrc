@@ -81,7 +81,6 @@ iswindows && alias grep="grep -n"
 # alias la="ls -A"
 # alias lla="ls -Al"
 # alias less=""
-# alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
 null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
@@ -121,6 +120,12 @@ alias wicn="wicd-cli -y -c -n"
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
+
+for f in /usr/share/vim/vimcurrent/macros/less.sh \
+    /usr/share/vim/vim73/macros/less.sh
+do
+    test -f $f && alias vl=$f && break
+done
 
 alias yt=yaourt
 null type pacman-color && {
