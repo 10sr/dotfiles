@@ -27,6 +27,7 @@ __add_to_path(){
 }
 # export PATH="${PATH}:${HOME}/bin"
 __add_to_path ${HOME}/bin
+#PATH="/c/mingw/bin/:$PATH:/c/mingw/msys/1.0/bin/"
 
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
