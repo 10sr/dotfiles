@@ -474,7 +474,7 @@ __my_prompt_function(){              # used by PS1
         local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
         local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
         local jobnum=$(jobs | wc -l) # a strange job exists...
-        local git=$(__try_exec __git_ps1 [GIT:%s])
+        local git="$(__try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]")"
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
         local dirs=$(dirs | wc -l)
     fi
