@@ -451,7 +451,7 @@ ip-address(){
 
 __my_prompt_function(){              # used by PS1
     # remove __try_exec from function
-    local lastreturn=$
+    local lastreturn=$?
     if test "${TERM}" == dumb
     then
         local c1=
@@ -460,7 +460,7 @@ __my_prompt_function(){              # used by PS1
         local cdef=
     else
         local c1="\e[1;31m"       # color for PWD
-        local c2="\e[36m"       # color for user
+        local c2="\e[36m"         # color for user
         local c3="\e[1;30m"       # color for OLDPWD
         local c4="\e[1;32m"       # color for ::
         local cdef="\e[0m"
@@ -491,8 +491,8 @@ __my_prompt_function(){              # used by PS1
     printf "${c4}::${cdef} [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
     printf "${c4}::${cdef} ${c2}${USER}@${HOSTNAME}${cdef} ${date}\n"
     printf "${c4}::${cdef} shlv:${SHLVL} dirs:${dirs} last:${lastreturn} "
-
 }
+
 _PS1="\e[32m:: \e[0m[\e[31m\w/\e[0m]\n\
 \e[32m:: \e[36m\u@\H \e[0m\d \t bash \v\n\
 \e[32m:: \e[0mshlv:${SHLVL} hist:\! last:\$? \$ "
