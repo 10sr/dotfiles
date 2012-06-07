@@ -424,7 +424,7 @@ ext.add("list-closed-tabs", function () {
     var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
 
     if (!closedTabs.length)
-        return void display.echoStatusBar("最近閉じたタブが見つかりませんでした", 2000);
+        return void display.echoStatusBar("No recently closed tab.", 2000);
 
     prompt.selector(
         {
