@@ -175,23 +175,39 @@ ext.add("list-url", function(){
         urls.push([text, decodeURIComponent(aa[i].href)]);
     }
 
-    prompt.selector(
-        {
-            message    : "Select URL",
-            collection : urls,
-            width : [35, 65],
-            header : ["text", "url"],
-            callback   : function (i) {
-                if (i >= 0)
-                    openUILinkIn(urls[i][1], "tab"); // or current tabshifted window
+    if(urls.length == 0){
+        display.echoStatusBar("No url found.");
+    }else{
+        prompt.selector(
+            {
+                message    : "Select URL",
+                collection : urls,
+                width : [35, 65],
+                header : ["text", "url"],
+                callback   : function (i) {
+                    if (i >= 0)
+                        openUILinkIn(urls[i][1], "tab"); // or current tabshifted window
+                }
             }
-        }
-    );
+        );
+    }
 }, "list url");
 
 ext.add("bookmark-delicious", function(){
-    if (window.loadURI) {
-        loadURI("javascript:(function(){f='http://www.delicious.com/save?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)+'&notes='+encodeURIComponent(''+(window.getSelection?window.getSelection():document.getSelection?document.getSelection():document.selection.createRange().text))+'&v=6&';a=function(){if(!window.open(f+'noui=1&jump=doclose','deliciousuiv6','location=1,links=0,scrollbars=0,toolbar=0,width=550,height=585'))location.href=f+'jump=yes'};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()");
+    f= 'http://www.delicious.com/save?url=' + encodeURIComponent(window.location.href) + 
+        '&title=' + encodeURIComponent(document.title) + 
+        '&notes=' + encodeURIComponent('' + (window.getSelection ? 
+                                             window.getSelection() : document.getSelection ? 
+                                             document.getSelection() : document.selection.createRange().text)) + '&v=6&';
+    a = function(){
+        if(! window.open(f + 'noui=1&jump=doclose', 'deliciousuiv6', 'location=1,links=0,scrollbars=0,toolbar=0,width=710,height=660')){
+            location.href = f + 'jump=yes';
+        };
+    }
+    if(/Firefox/.test(navigator.userAgent)){
+        setTimeout(a,0);
+    }else{
+        a();
     }
 }, "bookmark delicious");
 
