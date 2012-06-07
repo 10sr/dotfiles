@@ -158,6 +158,33 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+ext.add("list-url", function(){
+    var urls = [];
+    var aa = window.content.document.getElementsByTagName("a");
+    var text = "";
+    for (var i = 0; i < aa.length ; i++) {
+        if (aa[i].text == "" && aa[i].childNodes[0].nodeName == "IMG"){
+            text = "img: " + aa[i].childNodes[0].getAttribute("alt");
+        }else{
+            text = aa[i].text;
+        }
+        urls.push([text, aa[i].href]);
+    }
+
+    prompt.selector(
+        {
+            message    : "Select URL",
+            collection : urls,
+            width : [35, 65],
+            header : ["text", "url"],
+            callback   : function (i) {
+                if (i >= 0)
+                    openUILinkIn(urls[i][1], "tab"); // or current tabshifted window
+            }
+        }
+    );
+}, "list url");
+
 ext.add("bookmark-delicious", function(){
     if (window.loadURI) {
         loadURI("javascript:(function(){f='http://www.delicious.com/save?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)+'&notes='+encodeURIComponent(''+(window.getSelection?window.getSelection():document.getSelection?document.getSelection():document.selection.createRange().text))+'&v=6&';a=function(){if(!window.open(f+'noui=1&jump=doclose','deliciousuiv6','location=1,links=0,scrollbars=0,toolbar=0,width=550,height=585'))location.href=f+'jump=yes'};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()");
@@ -297,7 +324,7 @@ ext.add("restart-firefox-add-menu", function(){
     const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
     var cmdelm = document.createElementNS(XUL_NS, "command");
-    cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs")
+    cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs");
     cmdelm.setAttribute("oncommand", "ext.exec('restart-firefox');");
     var commandset = document.getElementById("mainCommandSet");
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
@@ -305,7 +332,7 @@ ext.add("restart-firefox-add-menu", function(){
 
     var menuelm = document.createElementNS(XUL_NS, "menuitem");
     menuelm.setAttribute("label", "Restart Firefox");
-    menuelm.setAttribute("id", "my_menu_restartFirefoxKs")
+    menuelm.setAttribute("id", "my_menu_restartFirefoxKs");
     menuelm.setAttribute("command", "my_cmd_restartFirefoxKs");
     var menu = document.getElementById("menu_FilePopup");
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
