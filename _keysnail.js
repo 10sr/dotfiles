@@ -435,16 +435,16 @@ ext.add("list-closed-tabs", function () {
         });
 }, "List closed tabs");
 
-ext.add("echo-closed-tabs", function () {
-    var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-    var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-    // var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
-    var lasttab = json.decode(ss.getClosedTabData(window))[0];
-    dump = ""
-    for (var i in lasttab) { dump += lasttab[i] + "\n"; }
-    confirm(dump);
+// ext.add("echo-closed-tabs", function () {
+//     var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+//     var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+//     // var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
+//     var lasttab = json.decode(ss.getClosedTabData(window))[0];
+//     dump = ""
+//     for (var i in lasttab) { dump += lasttab[i] + "\n"; }
+//     confirm(dump);
 
-}, "List closed tabs");
+// }, "List closed tabs");
 
 ///////////////////////////////
 // http://malblue.tumblr.com/post/349001250/tips-japanese-keysnail-github
