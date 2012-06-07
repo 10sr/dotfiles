@@ -1010,7 +1010,7 @@ Return nil if library unfound and failed to download, otherwise the path where t
         (progn
           (message "calculating du...")
           (shell-command (concat "du -hsD "
-                                 f)))
+                                 (shell-quote-argument f))))
       (shell-command (concat "file "
                              f)))))
 
@@ -1032,8 +1032,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
     (dired-previous-line 1)
     (when (eq (line-number-at-pos)
               2)
-      (goto-line (- (line-number-at-pos (point-max))
-                    1))
+      (goto-char (point-max))
+      (forward-line -1)
       (dired-move-to-filename))
     (my-dired-previous-line (- arg 1))
     ))
@@ -1046,7 +1046,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
     (dired-next-line 1)
     (when (eq (point)
               (point-max))
-      (goto-line 3)
+      (goto-char (point-min))
+      (forward-line 2)
       (dired-move-to-filename))
     (my-dired-next-line (- arg 1))
     ))
