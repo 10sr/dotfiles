@@ -162,9 +162,17 @@ ext.add("list-url", function(){
     var urls = [];
     var aa = window.content.document.getElementsByTagName("a");
     var text = "";
+    var alt = "";
     for (var i = 0; i < aa.length ; i++) {
-        if (aa[i].text == "" && aa[i].childNodes[0].nodeName == "IMG"){
-            text = "img: " + aa[i].childNodes[0].getAttribute("alt");
+        if(aa[i].href == ""){ continue; }
+
+        if (aa[i].text == "" && aa[i].hasChildNodes() && aa[i].childNodes[0].nodeType == Node.ELEMENT_NODE){
+            alt = aa[i].childNodes[0].getAttribute("alt");
+            if (alt != null){
+                text = aa[i].childNodes[0].nodeName + ": " + alt;
+            }else{
+                text = "";
+            }
         }else{
             text = aa[i].text;
         }
