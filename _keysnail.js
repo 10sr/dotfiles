@@ -168,15 +168,11 @@ ext.add("list-url", function(){
 
         if (aa[i].text == "" && aa[i].hasChildNodes() && aa[i].childNodes[0].nodeType == Node.ELEMENT_NODE){
             alt = aa[i].childNodes[0].getAttribute("alt");
-            if (alt != null){
-                text = aa[i].childNodes[0].nodeName + ": " + alt;
-            }else{
-                text = "";
-            }
+            text = " " + aa[i].childNodes[0].nodeName + (alt ? ": " + alt : "");
         }else{
             text = aa[i].text;
         }
-        urls.push([text, aa[i].href]);
+        urls.push([text, decodeURIComponent(aa[i].href)]);
     }
 
     prompt.selector(
