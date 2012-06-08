@@ -22,12 +22,11 @@ test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
 __add_to_path(){
     for p in "$@"
     do
-        echo $PATH | grep -E "^$p:|:$p:|:$p$" >/dev/null 2>&1 || PATH="$p:${PATH}"
+        echo $PATH | grep -E "^$p:|:$p:|:$p$" >/dev/null 2>&1 || PATH="${PATH}:$p"
     done
 }
 # export PATH="${PATH}:${HOME}/bin"
-__add_to_path ${HOME}/bin
-#PATH="/c/mingw/bin/:$PATH:/c/mingw/msys/1.0/bin/"
+__add_to_path ${HOME}/bin /c/mingw/bin /c/mingw/msys/1.0/bin
 
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
