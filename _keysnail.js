@@ -158,9 +158,56 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+ext.add("list-url", function(){
+    var urls = [];
+    var aa = window.content.document.getElementsByTagName("a");
+    var text = "";
+    var alt = "";
+    for (var i = 0; i < aa.length ; i++) {
+        if(aa[i].href == ""){ continue; }
+
+        if (aa[i].text == "" && aa[i].hasChildNodes() && aa[i].childNodes[0].nodeType == Node.ELEMENT_NODE){
+            alt = aa[i].childNodes[0].getAttribute("alt");
+            text = " " + aa[i].childNodes[0].nodeName + (alt ? ": " + alt : "");
+        }else{
+            text = aa[i].text;
+        }
+        urls.push([text, decodeURIComponent(aa[i].href)]);
+    }
+
+    if(urls.length == 0){
+        display.echoStatusBar("No url found.");
+    }else{
+        prompt.selector(
+            {
+                message    : "Select URL",
+                collection : urls,
+                width : [35, 65],
+                header : ["text", "url"],
+                callback   : function (i) {
+                    if (i >= 0)
+                        openUILinkIn(urls[i][1], "tab"); // or current tabshifted window
+                }
+            }
+        );
+    }
+}, "list url");
+
 ext.add("bookmark-delicious", function(){
-    if (window.loadURI) {
-        loadURI("javascript:(function(){f='http://www.delicious.com/save?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)+'&notes='+encodeURIComponent(''+(window.getSelection?window.getSelection():document.getSelection?document.getSelection():document.selection.createRange().text))+'&v=6&';a=function(){if(!window.open(f+'noui=1&jump=doclose','deliciousuiv6','location=1,links=0,scrollbars=0,toolbar=0,width=550,height=585'))location.href=f+'jump=yes'};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()");
+    f= 'http://www.delicious.com/save?url=' + encodeURIComponent(window.location.href) + 
+        '&title=' + encodeURIComponent(document.title) + 
+        '&notes=' + encodeURIComponent('' + (window.getSelection ? 
+                                             window.getSelection() : document.getSelection ? 
+                                             document.getSelection() : document.selection.createRange().text)) + '&v=6&';
+    a = function(){
+        if(! window.open(f + 'noui=1&jump=doclose', 'deliciousuiv6', 'location=1,links=0,scrollbars=0,toolbar=0,width=710,height=660')){
+            location.href = f + 'jump=yes';
+        }
+    };
+    if(/Firefox/.test(navigator.userAgent)){
+        setTimeout(a,0);
+    }else{
+        a();
     }
 }, "bookmark delicious");
 
@@ -297,7 +344,7 @@ ext.add("restart-firefox-add-menu", function(){
     const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
     var cmdelm = document.createElementNS(XUL_NS, "command");
-    cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs")
+    cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs");
     cmdelm.setAttribute("oncommand", "ext.exec('restart-firefox');");
     var commandset = document.getElementById("mainCommandSet");
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
@@ -305,7 +352,7 @@ ext.add("restart-firefox-add-menu", function(){
 
     var menuelm = document.createElementNS(XUL_NS, "menuitem");
     menuelm.setAttribute("label", "Restart Firefox");
-    menuelm.setAttribute("id", "my_menu_restartFirefoxKs")
+    menuelm.setAttribute("id", "my_menu_restartFirefoxKs");
     menuelm.setAttribute("command", "my_cmd_restartFirefoxKs");
     var menu = document.getElementById("menu_FilePopup");
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
@@ -424,7 +471,7 @@ ext.add("list-closed-tabs", function () {
     var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
 
     if (!closedTabs.length)
-        return void display.echoStatusBar("最近閉じたタブが見つかりませんでした", 2000);
+        return void display.echoStatusBar("No recently closed tab.", 2000);
 
     prompt.selector(
         {
@@ -435,16 +482,16 @@ ext.add("list-closed-tabs", function () {
         });
 }, "List closed tabs");
 
-ext.add("echo-closed-tabs", function () {
-    var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-    var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-    // var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
-    var lasttab = json.decode(ss.getClosedTabData(window))[0];
-    dump = ""
-    for (var i in lasttab) { dump += lasttab[i] + "\n"; }
-    confirm(dump);
+// ext.add("echo-closed-tabs", function () {
+//     var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+//     var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+//     // var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
+//     var lasttab = json.decode(ss.getClosedTabData(window))[0];
+//     dump = ""
+//     for (var i in lasttab) { dump += lasttab[i] + "\n"; }
+//     confirm(dump);
 
-}, "List closed tabs");
+// }, "List closed tabs");
 
 ///////////////////////////////
 // http://malblue.tumblr.com/post/349001250/tips-japanese-keysnail-github

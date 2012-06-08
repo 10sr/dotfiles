@@ -82,7 +82,6 @@ iswindows && alias grep="grep -n"
 # alias la="ls -A"
 # alias lla="ls -Al"
 # alias less=""
-# alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
 null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
@@ -122,6 +121,12 @@ alias wicn="wicd-cli -y -c -n"
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
+
+for f in /usr/share/vim/vimcurrent/macros/less.sh \
+    /usr/share/vim/vim73/macros/less.sh
+do
+    test -f $f && alias vl=$f && break
+done
 
 alias yt=yaourt
 null type pacman-color && {
@@ -447,7 +452,7 @@ ip-address(){
 
 __my_prompt_function(){              # used by PS1
     # remove __try_exec from function
-    local lastreturn=$
+    local lastreturn=$?
     if test "${TERM}" == dumb
     then
         local c1=
@@ -456,7 +461,7 @@ __my_prompt_function(){              # used by PS1
         local cdef=
     else
         local c1="\e[1;31m"       # color for PWD
-        local c2="\e[36m"       # color for user
+        local c2="\e[36m"         # color for user
         local c3="\e[1;30m"       # color for OLDPWD
         local c4="\e[1;32m"       # color for ::
         local cdef="\e[0m"
@@ -470,7 +475,7 @@ __my_prompt_function(){              # used by PS1
         local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
         local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
         local jobnum=$(jobs | wc -l) # a strange job exists...
-        local git=$(__try_exec __git_ps1 [GIT:%s])
+        local git="$(__try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]")"
         local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
         local dirs=$(dirs | wc -l)
     fi
@@ -487,8 +492,8 @@ __my_prompt_function(){              # used by PS1
     printf "${c4}::${cdef} [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
     printf "${c4}::${cdef} ${c2}${USER}@${HOSTNAME}${cdef} ${date}\n"
     printf "${c4}::${cdef} shlv:${SHLVL} dirs:${dirs} last:${lastreturn} "
-
 }
+
 _PS1="\e[32m:: \e[0m[\e[31m\w/\e[0m]\n\
 \e[32m:: \e[36m\u@\H \e[0m\d \t bash \v\n\
 \e[32m:: \e[0mshlv:${SHLVL} hist:\! last:\$? \$ "
