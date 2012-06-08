@@ -48,7 +48,7 @@ export VISUAL="$EDITOR"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
-null type stty && {
+! iswindows && null type stty && {
     stty stop undef        # unbind C-s to stop displaying output
     # stty erase '^h'
 }
@@ -63,6 +63,7 @@ fi
 
 #######################
 
+iswindows && alias tty="echo cmd.exe"
 uname -a
 echo TERM $TERM connected to $(tty), running $BASH $BASH_VERSION
 echo
