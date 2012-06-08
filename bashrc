@@ -26,7 +26,7 @@ __try_exec(){
     type $1 >/dev/null 2>&1 && "$@"
 }
 
-export PS1="\$(__my_prompt_function)\$ "
+export PS1                      # PS1 is defined later
 # PROMPT_COMMAND=prompt_function
 if false iswindows
 then
@@ -451,54 +451,38 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
-__my_prompt_function(){              # used by PS1
-    # remove __try_exec from function
-    local lastreturn=$?
-    if test "${TERM}" == dumb
-    then
-        local c1=
-        local c2=
-        local c3=
-        local cdef=
-    else
-        local c1="\e[1;31m"       # color for PWD
-        local c2="\e[36m"         # color for user
-        local c3="\e[1;30m"       # color for OLDPWD
-        local c4="\e[1;32m"       # color for ::
-        local cdef="\e[0m"
-    fi
-    if iswindows
-    then
-        local pwd=$PWD
-        local oldpwd=$OLDPWD
-        local date=$(/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%')
-    else
-        local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
-        local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
-        local jobnum=$(jobs | wc -l) # a strange job exists...
-        local git="$(__try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]")"
-        local date=$(LANG=C __try_exec date +"%a, %d %b %Y %T %z")
-        local dirs=$(dirs | wc -l)
-    fi
-    # local svn=$(type svn >/dev/null 2>&1 && __try_exec __my_svn_ps1 [SVN:%s])
+__my_ps1_git(){
+    __try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
+}
+__my_ps1_ipaddr(){
+    test -z "$DISPLAY" && ! iswindows && ip-address [Addr:%s]
+}
+__my_ps1_bttry(){
+    local bst="/tmp/${USER}-tmp/batterystatus"
     if test -z "$DISPLAY" && ! iswindows
     then
-        local ip=$(ip-address [Addr:%s])
-        local bst="/tmp/${USER}-tmp/batterystatus"
-        test -f $bst && local battery="[Battery:$(sed -e 's`%`%%`g' $bst)]"
+        test -f $bst && echo "[Battery:$(cat $bst)]"
         __my_battery_status %s >$bst &
     fi
-    # local battery=$(battery-state [%s] | sed -e 's`%`%%`g') # very slow
-
-    printf "${c4}::${cdef} [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}${battery}${ip}\n"
-    printf "${c4}::${cdef} ${c2}${USER}@${HOSTNAME}${cdef} ${date}\n"
-    printf "${c4}::${cdef} shlv:${SHLVL} dirs:${dirs} last:${lastreturn} "
 }
-
-_PS1="\e[32m:: \e[0m[\e[31m\w/\e[0m]\n\
-\e[32m:: \e[36m\u@\H \e[0m\d \t bash \v\n\
-\e[32m:: \e[0mshlv:${SHLVL} hist:\! last:\$? \$ "
-iswindows && PS1=$_PS1
+__my_ps1_dirs(){
+    dirs | wc -l
+}
+__my_ps1_jobs(){
+    jobs | wc -l
+}
+if test "$TERM" != dumb
+then
+    __my_c1="\e[1;31m"       # color for PWD
+    __my_c2="\e[36m"         # color for user
+    __my_c3="\e[1;30m"       # color for OLDPWD
+    __my_c4="\e[1;32m"       # color for ::
+    __my_cdef="\e[0m"
+fi
+_PS1="${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${PWD}${__my_cdef}]\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\n\
+${__my_c4}:: ${__my_cdef}${__my_c2}\u@\H${__my_cdef} \D{%a, %d %b %Y %T %z} ${SHELL} \V\n\
+${__my_c4}:: ${__my_cdef}shlv:${SHLVL} hist:\! jobs:\j last:\$? \$ "
+PS1=$_PS1
 
 __my_set_title(){
     title="$(echo $@)"
