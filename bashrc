@@ -452,18 +452,24 @@ ip-address(){
 }
 
 __my_ps1_git(){
+    local last=$?
     __try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
+    return $last
 }
 __my_ps1_ipaddr(){
+    local last=$?
     test -z "$DISPLAY" && ! iswindows && ip-address [Addr:%s]
+    return $last
 }
 __my_ps1_bttry(){
+    local last=$?
     local bst="/tmp/${USER}-tmp/batterystatus"
     if test -z "$DISPLAY" && ! iswindows
     then
         test -f $bst && echo "[Battery:$(cat $bst)]"
         __my_battery_status %s >$bst &
     fi
+    return $last
 }
 __my_ps1_dirs(){
     dirs | wc -l
@@ -482,7 +488,7 @@ fi
 _PS1="\
 ${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${PWD}${__my_cdef}]\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\n\
 ${__my_c4}:: ${__my_c2}\u@\H${__my_cdef} \D{%a, %d %b %Y %T %z} ${SHELL} \V\n\
-${__my_c4}:: ${__my_cdef}shlv:${SHLVL} hist:\! jobs:\j last:\$? \$ "
+${__my_c4}:: ${__my_cdef}shlv:${SHLVL} cnum:\# jobs:\j last:\$? \$ "
 PS1=$_PS1
 
 __my_set_title(){
