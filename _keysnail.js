@@ -194,7 +194,7 @@ ext.add("list-url", function(){
 }, "list url");
 
 ext.add("bookmark-delicious", function(){
-    f= 'http://www.delicious.com/save?url=' + encodeURIComponent(window.location.href) + 
+    f= 'http://www.delicious.com/save?url=' + encodeURIComponent(window.content.location.href) + 
         '&title=' + encodeURIComponent(document.title) + 
         '&notes=' + encodeURIComponent('' + (window.getSelection ? 
                                              window.getSelection() : document.getSelection ? 
