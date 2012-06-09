@@ -14,6 +14,7 @@ export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
 export ENV=~/.shrc
+export PYTHONDOCS=/usr/share/doc/python/html/
 # export TMP=/tmp
 # export TEMP=/tmp
 test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
