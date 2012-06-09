@@ -158,6 +158,12 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
+__my_moc_state(){
+    type mocp >/dev/null 2>&1 || return
+    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
+    printf "$1" "`mocp -Q %title 2>/dev/null`"
+}
+
 mcrypt-stream(){
     test $# -eq 2 || return 1
     case $1 in
@@ -451,6 +457,11 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
+__my_ps1_moc(){
+    local last=$?
+    __my_moc_state "[MOC:%s]"
+    return $last
+}
 __my_ps1_git(){
     local last=$?
     __try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
@@ -486,7 +497,7 @@ then
     __my_cdef="\e[0m"
 fi
 _PS1="\
-${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${PWD}${__my_cdef}]\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\n\
+${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${PWD}${__my_cdef}]\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
 ${__my_c4}:: ${__my_c2}\u@\H${__my_cdef} \D{%a, %d %b %Y %T %z} ${SHELL} \V\n\
 ${__my_c4}:: ${__my_cdef}shlv:${SHLVL} cnum:\# jobs:\j last:\$? \$ "
 PS1=$_PS1
