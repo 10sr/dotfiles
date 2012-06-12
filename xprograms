@@ -1,6 +1,5 @@
 #!/bin/sh
 # Programs run in background when starting x.
-# These programs are basically for Openbox Window Manager.
 # Japanese IM settings are not included in this list.
 
 _feh(){
@@ -20,6 +19,10 @@ _dropbox(){
 
 _volumeicon(){
     volumeicon &
+}
+
+_gsoundap(){
+    gnome-sound-applet &
 }
 
 _conky(){
