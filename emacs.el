@@ -519,9 +519,11 @@ Return nil if library unfound and failed to download, otherwise the path where t
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
 
-'(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
-                          ("gnu" . "http://elpa.gnu.org/packages/")
-                          ("marmalade" . "http://marmalade-repo.org/packages/")))
+(when (require 'package nil t)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/"))
+  (package-initialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
@@ -548,6 +550,7 @@ Return nil if library unfound and failed to download, otherwise the path where t
 (and (not x-select-enable-clipboard)
      (getenv "DISPLAY")
      (executable-find "xclip")
+     ;; (< emacs-major-version 24)
      (dllib-if-unfound "http://www.emacswiki.org/emacs/download/xclip.el" t)
      (require 'xclip nil t)
      (turn-on-xclip))
