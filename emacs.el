@@ -537,17 +537,11 @@ Return nil if library unfound and failed to download, otherwise the path where t
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 
-;; this page describes this in details, but only these sexps are needed
+;; this page describes this in details, but only these sexps seem to be needed
 ;; http://garin.jp/doc/Linux/xwindow_clipboard
-(when (and window-system
-           (not (eq window-system 'mac))
-           )
-  (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal
-        x-select-enable-primary nil)
-  ;; (global-set-key "\C-y" 'x-clipboard-yank)
-  )
 
-(and (not x-select-enable-clipboard)
+(and (not window-system)
+     (not (eq window-system 'mac))
      (getenv "DISPLAY")
      (executable-find "xclip")
      ;; (< emacs-major-version 24)
