@@ -34,7 +34,7 @@ then
 else
     export PAGER="less"
 fi
-export LESS="-iRMX"
+export LESS="-iRMXF"
 
 if null type vim
 then
