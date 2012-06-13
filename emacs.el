@@ -525,6 +525,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
   (add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/"))
   (package-initialize))
 
+(require 'sudoku nil t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
