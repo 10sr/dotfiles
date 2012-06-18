@@ -667,7 +667,7 @@ Return nil if library unfound and failed to download, otherwise the path where t
             (setq c-basic-offset 2
                   indent-tabs-mode nil)
             ;; (set-face-foreground 'font-lock-keyword-face "blue")
-            (c-toggle-hungry-state 1)
+            (c-toggle-hungry-state -1)
             ))
 
 (when (dllib-if-unfound "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
