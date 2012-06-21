@@ -490,11 +490,11 @@ __my_ps1_jobs(){
 }
 if test "$TERM" != dumb
 then
-    __my_c1="\e[1;31m"       # color for PWD
-    __my_c2="\e[0;36m"         # color for user
-    __my_c3="\e[1;30m"       # color for OLDPWD
-    __my_c4="\e[1;32m"       # color for ::
-    __my_cdef="\e[0m"
+    __my_c1="\[\e[1;31m\]"       # color for PWD
+    __my_c2="\[\e[0;36m\]"         # color for user
+    __my_c3="\[\e[1;30m\]"       # color for OLDPWD
+    __my_c4="\[\e[1;32m\]"       # color for ::
+    __my_cdef="\[\e[0m\]"
 fi
 _PS1="\
 ${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${OLDPWD}${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
