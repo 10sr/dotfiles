@@ -61,6 +61,8 @@ if iswindows; then
     export USER=$USERNAME
 fi
 
+mkdir -p "/tmp/${USER}-tmp"
+
 #######################
 
 iswindows && alias tty="echo cmd.exe"
