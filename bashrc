@@ -452,6 +452,7 @@ __my_battery_status(){
 alias bat='__my_battery_status %s\\n'
 
 ip-address(){
+    test type ifconfig >/dev/null 2>&1 || return 1
     local ip=$(LANG=C ifconfig | \grep --color=never "inet " | \grep --color=never -v "127.0.0.1" | awk '{print $2}')
     test -n "$ip" && printf $1 $ip
 }

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# ~/.dotfiles/profile
+
 type fortune >/dev/null 2>&1 && {
     echo
     fortune
@@ -33,5 +35,5 @@ type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
 
 mkdir -p ~/.my/log
-mkdir -p /tmp/$USER-tmp
+mkdir -p "/tmp/$USER-tmp"
 
