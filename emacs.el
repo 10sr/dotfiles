@@ -131,8 +131,10 @@ Return nil if library unfound and failed to download, otherwise the path where t
   )
 ;; (add-to-list 'default-frame-alist '(cursor-type . box))
 (if window-system (menu-bar-mode 1) (menu-bar-mode 0))
-(tool-bar-mode 0)
-(set-scroll-bar-mode nil)
+(and (fboundp 'tool-bar-mode)
+(tool-bar-mode 0))
+(and (fboundp 'set-scroll-bar-mode)
+(set-scroll-bar-mode nil))
 (add-hook 'kill-emacs-hook      ; load when exitting to examine if file is written properly
           (lambda ()
             (when (file-readable-p "~/.emacs")
