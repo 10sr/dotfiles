@@ -20,24 +20,25 @@ set viminfo+=n~/.vim/viminfo " viminfo
 set list " タブ文字、行末など不可視文字を表示する
 set listchars=tab:>-,extends:<,trail:-,eol:$ " listで表示される文字のフォーマットを指定する
 set showmatch " 閉じ括弧が入力されたとき、対応する括弧を表示する
-set ignorecase
-set smartcase " 検索時に大文字を含んでいたら大/小を区別
-set whichwrap=b,s,h,l,<,>,[,] " カーソルを行頭、行末で止まらないようにする
+"set whichwrap=b,s,h,l,<,>,[,] " カーソルを行頭、行末で止まらないようにする
 set showmode " モード表示
-set notitle "  do not display editting file on titlebar
-set incsearch
+set title " display editting file on titlebar
+"set incsearch
 set wrapscan " 折り返し検索
 set showmatch " 括弧を閉じた時、対になる括弧を一瞬ハイライトする
+set ignorecase
+set smartcase " 検索時に大文字を含んでいたら大/小を区別
+set incsearch
 set wildmode=longest,list,full
 set ruler " 行番号、カーソル位置を表示
 set nonumber "  do not show line number at left side
-set laststatus=2 " ステータスラインを常に表示
+"set laststatus=2 " ステータスラインを常に表示
 set showcmd
 set scrolloff=2 " 常に前後2行を表示
 syntax enable " シンタックス
 set hidden " 編集中でも他ファイルへ移動可
-set backspace=indent,eol,start " バックスペースでなんでも消せるように
-" set autochdir " 自動的にカレントディレクトリを現在のファイルのディレクトリにする macだと出来ないってゆわれた
+"set backspace=indent,eol,start " バックスペースでなんでも消せるように
+"set autochdir " 自動的にカレントディレクトリを現在のファイルのディレクトリにする macだと出来ないってゆわれた
 set encoding=utf-8 " 言語設定
 set fileencodings=utf-8,shift-jis,euc-jp,latin1
 set mouse=h " マウス使わない
@@ -51,6 +52,7 @@ set shiftwidth=4 " width of indent
 set expandtab " タブをスペースに展開する
 set autoindent " オートインデント
 set smartindent
+set cindent
 filetype plugin indent on
 
 let g:netrw_liststyle = 1
@@ -67,7 +69,7 @@ if has('gui_running')
 endif
 
 if has('win32')
-" Windows 用の設定
+" prefs for Windows
 endif
 
 """""""""""""""""""""""""""""""""""""""
@@ -84,19 +86,6 @@ endif
 inoremap <ESC> <ESC>:<C-u>w<CR>
 inoremap <C-c> <ESC>:<C-u>w<CR>
 noremap <C-c> <ESC>:<C-u>w<CR>
-
-" 方向キーでバッファ操作
-" nnoremap <LEFT> <C-c>:bp!<CR>
-" nnoremap <RIGHT> <C-c>:bn!<CR>
-" nnoremap <UP> <C-c>:ls!<CR>
-" nnoremap <DOWN> <C-c>:bd
-" nnoremap <C-m>cd <C-c>:cd%:h<CR>
-nnoremap <C-o> <C-c>:Explore<CR>
-
-" http://d.hatena.ne.jp/yuroyoro/20101104/1288879591
-" 見た目で行移動
-nnoremap j gj
-nnoremap k gk
 
 " highlight current line
 " set cursorline

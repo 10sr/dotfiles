@@ -1,42 +1,39 @@
 #!/bin/sh
-env > $HOME/.env.txt
 
-if [ -n "${DESKTOP_SESSION}" ]; then
-    xmodmap -e 'keycode 135 = Alt_R Meta_R' # menu key as alt
-    xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
-    xmodmap -e 'remove Lock = Caps_Lock'
-    xmodmap -e 'add Control = Caps_Lock'
+# ~/.dotfiles/profile
 
-    synclient VertEdgeScroll=0
-    synclient HorizEdgeScroll=0
-    synclient MaxTapTime=0 
-    synclient MaxSpeed=0.4
-    synclient MinSpeed=0.2
-
-    test -f "$HOME/.fehbg" &&
-    type feh >/dev/null 2>&1 &&
-    sh "$HOME/.fehbg"
-else
-    export LANG=C
-fi
+type fortune >/dev/null 2>&1 && {
+    echo
+    fortune
+    echo
+    fortune -o
+    echo
+}
 
 # export PS1="\$ "
+# export LANG=ja_JP.UTF-8
 export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
-export BROWSER=firefox
+export ENV=~/.shrc
+export PYTHONDOCS=/usr/share/doc/python/html/
 # export TMP=/tmp
 # export TEMP=/tmp
+test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
+#export PYTHONPATH="~/.local/share/lib/python3.2/site-packages"
 
-addtopath(){
+__add_to_path(){
     for p in "$@"
     do
-        echo $PATH | grep -E "^$p:|:$p:|:$p$" >/dev/null 2>&1 || PATH="$p:${PATH}"
+        echo $PATH | grep -E "^$p:|:$p:|:$p$" >/dev/null 2>&1 || PATH="${PATH}:$p"
     done
 }
 # export PATH="${PATH}:${HOME}/bin"
-addtopath ${HOME}/bin
+__add_to_path ${HOME}/bin /c/mingw/bin /c/mingw/msys/1.0/bin
 
-test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
-export PYTHONPATH=~/.py
+type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
+# in my environment powerdown does not work
+
+mkdir -p ~/.my/log
+mkdir -p "/tmp/$USER-tmp"
 

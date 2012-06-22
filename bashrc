@@ -1,151 +1,225 @@
 #!/bin/bash
 
-test -r /etc/bashrc && . /etc/bashrc
-
 ##########################
 # system type
-# $OSTYPEとか使えるのかな
 
-if uname | grep -E "^MINGW32" >/dev/null 2>&1
-then
-    alias ismsys=true
-else
-    alias ismsys=false
-fi
+alias ismsys=false
+alias iscygwin=false
+alias iswindows=false
+alias isdarwin=false
+alias islinux=false
 
-if uname | grep -E "^CYGWIN" >/dev/null 2>&1
-then
-    alias iscygwin=true
-else
-    alias iscygwin=false
-fi
+case `uname` in
+    (MINGW*) alias ismsys=true ;;
+    (CYGWIN*) alias iscygwin=true ;;
+    (Darwin*) alias isdarwin=true ;;
+    (Linux*) alias islinux=true ;;
+esac
 
-alias iswindows="iscygwin || ismsys"
-
-if uname | grep -E 'Darwin' >/dev/null 2>&1
-then
-    alias isdarwin=true
-else
-    alias isdarwin=false
-fi
+( ismsys || iscygwin ) && alias iswindows=true
 
 ##########################################
 null(){
     "$@" >/dev/null 2>&1
 }
-safe-cmd(){
+__try_exec(){
     type $1 >/dev/null 2>&1 && "$@"
 }
-replace-cmd(){
-    type $1 1>/dev/null || alias $1=true
-}
 
-export PS1="\$(__my_prompt_function)\$ "
+export PS1                      # PS1 is defined later
 # PROMPT_COMMAND=prompt_function
-if false # iswindows
+if false iswindows
 then
     export PAGER='tr -d \\r | less'
 else
     export PAGER="less"
 fi
+export LESS="-iRMXF"
 
-if type vim >/dev/null 2>&1
+if null type vim
 then
     export EDITOR=vim
 else
     export EDITOR=vi
 fi
+export LC_MESSAGES=C
+# export CDPATH=".:~"
 export VISUAL="$EDITOR"
-export LESS="-iRMX"
-# export LC_MESSAGES="C"
-# export LANG=ja_JP.UTF-8
-# export CDPATH=".:~"             # 使い方がよく分からない
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
-alias ls="ls -hCFG $(test "$TERM" == dumb || echo --color=auto) --time-style=long-iso"
+! iswindows && null type stty && {
+    stty stop undef        # unbind C-s to stop displaying output
+    # stty erase '^h'
+}
+
+if iswindows; then
+    # export TMP=/tmp
+    # export TEMP=/tmp
+    # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
+    # export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
+    export USER=$USERNAME
+fi
+
+mkdir -p "/tmp/${USER}-tmp"
+
+#######################
+
+iswindows && alias tty="echo cmd.exe"
+uname -a
+echo TERM $TERM connected to $(tty), running $BASH $BASH_VERSION
+echo
+
+###################################
+# some aliases and functions
+
+test "$TERM" == dumb || _coloroption=" --color=always"
+iswindows || _timeoption=" --time-style=long-iso"
+
+alias ls="ls -hCF${_coloroption}${_timeoption}"
+# export GREP_OPTIONS=""
+alias grep="grep -n${_coloroption}"
+iswindows && alias grep="grep -n"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
 # alias less=""
-alias vl=/usr/share/vim/vimcurrent/macros/less.sh
 alias em="emacs -nw"
-# alias apt-get="sudo apt-get"
+null type vim && alias vi=vim
+alias pstree="LANG=C pstree"
+alias cp="cp -v"
+alias mv="mv -v"
+alias psall="ps auxww"
+alias q=exit
+alias e3=e3em
+alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
+alias po=popd
+alias pu=pushd
+alias sudo="sudo "              # use aliases through sudo
+alias halt="sudo halt"
+alias reboot="sudo reboot"
+alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
+    /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
+alias hibernate="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
+    /org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
+alias rand="echo \$RANDOM"
+alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
+alias xunp="file-roller -h"
+alias pc="sudo \paco -D"
+alias pcalc="python -i -c 'from math import *' "
+alias py3=python3
+alias py2=python2
+alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
+# alias mytime="date +%Y%m%d-%H%M%S"
+alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
+# type trash >/dev/null 2>&1 && alias rm=trash
+alias mpg123="mpg123 -C -v --title"
+export PLAYER="mpg123 -C -v --title"
+
+alias wic=wicd-curses
+alias wil="wicd-cli -y -l | head"
+alias wicn="wicd-cli -y -c -n"
+
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
-alias ut="ssh t110414@un001.ecc.u-tokyo.ac.jp"
-alias rand="echo \$RANDOM"
-alias xunp="file-roller -h"
-alias pacome="sudo \paco -D"
-alias destroy="rm -rf"
-alias psall="ps auxww"
-alias g=git
-alias q=exit
-alias p="$PAGER"
-alias c=cat
-alias pcalc="python -i -c 'from math import *' "
-alias reloadrc="test -f ~/.bashrc && source ~/.bashrc"
-alias sudo="sudo "              # use aliases through sudo
-alias e3=e3em
-alias mytime="date +%Y%m%d-%H%M%S"
-alias sh="ENV=$HOME/.shrc sh"
-if isdarwin
-then
-    alias upgrade="port selfupdate && port sync && port upgrade installed"
-else
-    alias upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
-fi
-# alias diff="$(type colordiff >/dev/null 2>&1 && test $TERM != dumb && echo color)diff -u"
-# type trash >/dev/null 2>&1 && alias rm=trash
 
-export __MYGITBAREREP="${HOME}/dbx/.git-bare"
-git-make-bare-rep(){
-    test $# -eq 0 && {
-        echo "specify repository name." 1>&2
-        return 1
-    }
+for f in /usr/share/vim/vimcurrent/macros/less.sh \
+    /usr/share/vim/vim73/macros/less.sh
+do
+    test -f $f && alias vl=$f && break
+done
 
-    dir="${__MYGITBAREREP}/$1.git"
-
-    if test -d "$dir"
-    then
-        echo "dir $dir already exist!" 1>&2
-    else
-        mkdir -p "$dir" &&
-        pushd "$dir" &&
-        git init --bare --shared=all
-        popd
-    fi
+alias yt=yaourt
+null type pacman-color && {
+    alias pacman=pacman-color
+    export pacman_program=pacman-color # used by pacmatic
+    export PACMAN=pacman-color         # used by yaourt
+}
+null type pacmatic && {
+    alias pacman="pacmatic"
+    export PACMAN="pacmatic"
 }
 
-git-add-bare-rep(){
-    test $# -ne 2 && {
-        echo "specify repository name and shortname." 1>&2
-        return 1
+alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
+alias arch-upgrade="sudo pacman -Syu"
+alias port-upgrade="port selfupdate && port sync && port upgrade installed"
+
+if iscygwin; then
+    null type windate || alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
+    alias cygsu="cygstart /cygwinsetup.exe"
+    alias emacs="CYGWIN=tty emacs -nw"
+    alias ls="ls -CFG $(iswindows || test "$TERM" == dumb || echo --color=auto)"
+fi
+
+alias g=git
+if null type _git    # enable programmable completion for g
+then
+    complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
+	|| complete -o default -o nospace -F _git g
+fi
+
+__my_moc_state(){
+    type mocp >/dev/null 2>&1 || return
+    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
+    printf "$1" "`mocp -Q %title 2>/dev/null`"
+}
+
+mcrypt-stream(){
+    test $# -eq 2 || return 1
+    case $1 in
+        en)
+            mcrypt --key $2 | base64 ;;
+        de)
+            base64 -d | mcrypt -d --key $2 ;;
+    esac
+}
+
+gpg-stream(){
+    test $# -eq 2 || return 1
+    case $1 in
+        en)
+            gpg --passphrase $2 -c --batch |base64 ;;
+        de)
+            base64 -d|gpg --passphrase $2 -d --batch ;;
+    esac
+}
+
+alias enst="gpg-stream en"
+alias dest="gpg-stream de"
+
+showinfo(){
+    echo "Japanese letters are 表示可能"
+
+    __try_exec diskinfo
+
+    ! isdarwin && test -n "${DISPLAY}" && {
+        __try_exec xrandr | \grep --color=never ^Screen
     }
 
-    dir="${__MYGITBAREREP}/$2.git"
+    iswindows || __try_exec finger $USER
+    LANG=C __try_exec id
+    __try_exec xset q
+}
 
-    # git-make-bare-rep $2 &&
-    # git remote add $1 "$dir"
-    # git remote -v
-
-    if test -d "$dir"
-    then
-        git remote add $1 "$dir"
-        git remote -v
+x(){
+    if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
+        #mkdir -p ~/.my/log
+        # nohup startx >~/.my/log/xorg.log 2>&1 &
+        # exit
+        exec startx
     else
-        echo "dir $dir does not exist!" 1>&2
+        echo "X cant be started! Maybe another X is already running or something." 1>&2
     fi
 }
 
 bak(){
     for file in "$@"
     do
-        cp ${file} ${file}.bak
+        cp -v ${file} ${file}.bak
     done
 }
+
 di(){
     if type colordiff >/dev/null 2>&1 && test $TERM != dumb
     then
@@ -155,23 +229,20 @@ di(){
     fi
     ${diffcmd} -u "$@" | ${PAGER}
 }
-memo(){
-    __MYMEMO="# $*\n"
-}
-rmmemo(){
-    __MYMEMO=""
-}
+
 throw-away(){
-    mkdir -p ~/bu/tb
+    mkdir -p ~/.my/tb
     for file in "$@"
     do
-        mv $file ~/bu/tb
+        mv $file ~/.my/tb
     done
 }
+
 mkcd(){
     mkdir -p $1
     cd $1
 }
+
 catclip(){
     if iswindows
     then
@@ -180,6 +251,7 @@ catclip(){
         xclip -o -selection "clipboard"
     fi
 }
+
 setclip(){
     if iswindows
     then
@@ -198,62 +270,62 @@ setclip(){
         fi
     fi
 }
-o(){
-    if [ $# -eq 0 ]
-    then
-        local f=.
+
+if iswindows; then
+    alias _open_file='cmd.exe //c start ""'
+elif isdarwin; then
+    alias _open_file=open
+elif islinux; then
+    if null type pcmanfm; then
+        alias _open_file="LC_MESSAGES= pcmanfm"
     else
-        local f="$1"
+        alias _open_file="LC_MESSAGES= xdg-open"
     fi
-    if iswindows
+else
+    alias _open_file=cat
+fi
+
+o(){
+    if test $# -eq 0
     then
-        cmd.exe //c start "" "$f"
-    elif isdarwin
-    then
-        open "$f"
+        _open_file . >/dev/null 2>&1 &
     else
-        xdg-open "$f"
+        for f in "$@"
+        do
+            if test -d $f
+            then
+                _open_file $f >/dev/null 2>&1 &
+            else
+                _open_file $f >/dev/null 2>&1 &
+            fi
+        done
     fi
 }
+
 convmv-sjis2utf8-test(){
     convmv -r -f sjis -t utf8 *
 }
+
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
-_my-dl-init-files(){
-    for file in .bashrc .vimrc .emacs
-    do
-        local flag=0
-        if test -f ~/${file}.new
-        then
-            mv ~/${file}.new ~/${file}.old
-            echo "${file}.new already exist. Rename it to ${file}.old."
-            flag=1
-        fi
-        wget https://dl.dropbox.com/u/1751156/${file} -O ~/${file}.new
-        local wgetreturn=$?
-        if test ${flag} -eq 1 -a ${wgetreturn} -eq 0
-        then
-            rm ~/${file}.old
-            echo "${file}.old deleted."
-        fi
-    done
-}
-_mygitconfig(){
+
+_my_git_config(){
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
     git config --global core.autocrlf false
+    git config --global core.excludesfile '~/.gitignore'
     git config --global color.ui auto
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short"
-    git config --global alias.st "status -s"
+    git config --global log.date iso
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso"
+    git config --global alias.st "status -s -b"
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"
     git config --global alias.co "checkout"
     git config --global alias.cim "commit --verbose -m"
-    git config --global alias.di "diff"
+    git config --global alias.di "diff --color"
     git config --global alias.me "merge --no-ff --stat -v"
     git config --global alias.ls "ls-files -v --full-name"
     git config --global alias.sl "!sl"
@@ -265,12 +337,6 @@ _mygitconfig(){
     fi
 }
 
-if type _git >/dev/null 2>&1    # enable programmable completion of g
-then
-    complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
-	|| complete -o default -o nospace -F _git g
-fi
-
 __my_parse_svn_branch() {
     local LANG=C
     local svn_url=$(svn info 2>/dev/null | sed -ne 's#^URL: ##p')
@@ -279,59 +345,12 @@ __my_parse_svn_branch() {
 }
 
 __my_svn_ps1(){
-    local svn_branch=$(__my_parse_svn_branch)
-    test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
-}
-
-__my_prompt_function(){              # used by PS1
-    local lastreturn=$?
-    if test "${TERM}" == dumb
+    if svn status >/dev/null 2>&1
     then
-        local c1=
-        local c2=
-        local c3=
-        local cdef=
-    else
-        local c1="\e[33m"
-        local c2="\e[36m"
-        local c3="\e[37m"
-        local cdef="\e[0m"
+        local svn_branch=$(__my_parse_svn_branch)
+        test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
     fi
-    if iswindows
-    then
-        local pwd=$PWD
-        local oldpwd=$OLDPWD
-        local jobnum=
-        if git branch >/dev/null 2>&1
-        then
-            local git="[GIT]"
-        else
-            local git=
-        fi
-        local date=$(/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%')
-        :
-    else
-        local pwd=$(echo "${PWD}/" | sed -e "s#${HOME}#~#")
-        local oldpwd=$(echo "${OLDPWD}/" | sed -e "s#${HOME}#~#")
-        local jobnum=$(jobs | wc -l)
-        local git=$(safe-cmd __git_ps1 [GIT:%s])
-        local date=$(LANG=C safe-cmd date +"%a, %d %b %Y %T %z")
-    fi
-    local svn=$(type svn >/dev/null 2>&1 && safe-cmd __my_svn_ps1 [SVN:%s])
-    printf "${_MEMO}"
-    printf "$(test -f ~/.prompt.sh && bash ~/.prompt.sh)\n"
-    printf " [${c1}${pwd}${cdef}<${c3}${oldpwd}${cdef}]${git}${svn}\n"
-    printf "${c2}${USER}@${HOSTNAME}${cdef} ${date} ${BASH} ${BASH_VERSION}\n"
-    printf "shlv:${SHLVL} jobs:${jobnum} last:${lastreturn} "
 }
-
-# type date >/dev/null 2>&1 || alias date=":" # "cmd /c echo %time%"
-
-if [ "${EMACS}" = "t" ]; then   # emacs shell用
-    : export PS1="\u@\H \d \t \w\nemacs shell\$ "
-elif echo "$EMACS" | grep term >/dev/null 2>&1; then # emacs term用
-    echo "emacs term"
-fi
 
 #Change ANSI Colors
 _chengecolors(){
@@ -356,36 +375,58 @@ _chengecolors(){
 
 # printf "\e]P7353535" \
 
-_echocolors(){
+_colors(){
     echo -e \
-        "\e[30mBlack\n" \
-        "\e[31mRed\n" \
-        "\e[32mGreen\n" \
-        "\e[33mYellow\n" \
-        "\e[34mBlue\n" \
-        "\e[35mMagenta\n" \
-        "\e[36mCyan\n" \
-        "\e[37mWhite\n" \
-        "\e[30;1mBright Black\n" \
-        "\e[31;1mBright Red\n" \
-        "\e[32;1mBright Green\n" \
-        "\e[33;1mBright Yellow\n" \
-        "\e[34;1mBright Blue\n" \
-        "\e[35;1mBright Magenta\n" \
-        "\e[36;1mBright Cyan\n" \
+        "\e[30mBlack" \
+        "\e[31mRed" \
+        "\e[32mGreen" \
+        "\e[33mYellow" \
+        "\e[34mBlue" \
+        "\e[35mMagenta" \
+        "\e[36mCyan" \
+        "\e[37mWhite"
+    echo -e \
+        "\e[30;1mBright Black" \
+        "\e[31;1mBright Red" \
+        "\e[32;1mBright Green" \
+        "\e[33;1mBright Yellow" \
+        "\e[34;1mBright Blue" \
+        "\e[35;1mBright Magenta" \
+        "\e[36;1mBright Cyan" \
         "\e[37;1mBright White\n" \
         "\e[0m"
 }
 
-null type stty && {
-    stty stop undef        # unbind C-s to stop displaying output
-    stty erase '^h'
+_my_install_script(){
+    mkdir -p "$HOME/bin/"
+    for f in "$@"
+    do
+        bn=$(basename "$f")
+        type $bn >/dev/null 2>&1 || {
+            if type wget >/dev/null 2>&1
+            then
+                wget "$f" -P "$HOME/bin/" &&
+                chmod u+x "$HOME/bin/${bn}"
+            elif  type curl >/dev/null 2>&1
+            then
+                curl --url "$f" --output "$HOME/bin/${bn}" &&
+                chmod u+x "$HOME/bin/${bn}"
+            fi
+        }
+    done
+}
+_my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
+
+_my_install_symlink_script(){
+    mkdir -p "$HOME/bin/"
+    for f in "$@"
+    do
+        ln -s "$PWD/$f" "$HOME/bin/"
+    done
 }
 
-#########################
-# for windose
-
 winln(){
+    # for windose make link (actually junction)
     if test $# -eq 0
     then
         {
@@ -399,39 +440,121 @@ winln(){
     fi
 }
 
-########################
-
-if iscygwin; then
-    alias cygsu="cygstart /cygwinsetup.exe"
-    alias emacs="CYGWIN=tty emacs -nw"
-    echo "cygwin bash"
-fi
-
-if iswindows; then
-    # export TMP=/tmp
-    # export TEMP=/tmp
-    # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
-    # export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
-    alias ls="ls -CFG $(test "$TERM" == dumb || echo --color=auto)"
-    export USER=$USERNAME
-fi
-
-#######################
-
-_testjp(){
-    echo "Japanese letters are 表示可能"
+__my_battery_status(){
+    local dir=/sys/class/power_supply/BAT0
+    if test -d $dir
+    then
+        local st=$(cat $dir/status)
+        local full=$(cat $dir/charge_full)
+        local now=$(cat $dir/charge_now)
+        local rate=$(expr $now \* 100 / $full)
+        printf "$1" "${st}:${rate}%"
+    fi
 }
-_testjp
+alias bat='__my_battery_status %s\\n'
 
-uname -a
-test -f /etc/issue.net && cat /etc/issue.net
-
-safe-cmd diskinfo
-
-! isdarwin && test -n "${DESKTOP_SESSION}" && type xrandr >/dev/null 2>&1 && {
-    xrandr | grep --color=never ^Screen
+ip-address(){
+    test type ifconfig >/dev/null 2>&1 || return 1
+    local ip=$(LANG=C ifconfig | \grep --color=never "inet " | \grep --color=never -v "127.0.0.1" | awk '{print $2}')
+    test -n "$ip" && printf $1 $ip
 }
 
-iswindows || safe-cmd finger $USER
-LANG=C safe-cmd id
+__my_ps1_moc(){
+    local last=$?
+    __my_moc_state "[MOC:%s]"
+    return $last
+}
+__my_ps1_git(){
+    local last=$?
+    __try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
+    return $last
+}
+__my_ps1_ipaddr(){
+    local last=$?
+    test -z "$DISPLAY" && ! iswindows && ip-address [Addr:%s]
+    return $last
+}
+__my_ps1_bttry(){
+    local last=$?
+    local bst="/tmp/${USER}-tmp/batterystatus"
+    if test -z "$DISPLAY" && ! iswindows
+    then
+        test -f $bst && echo "[Battery:$(cat $bst)]"
+        __my_battery_status %s >$bst &
+    fi
+    return $last
+}
+__my_ps1_dirs(){
+    dirs | wc -l
+}
+__my_ps1_jobs(){
+    jobs | wc -l
+}
+if test "$TERM" != dumb
+then
+    __my_c1="\[\e[1;31m\]"       # color for PWD
+    __my_c2="\[\e[0;36m\]"         # color for user
+    __my_c3="\[\e[1;30m\]"       # color for OLDPWD
+    __my_c4="\[\e[1;32m\]"       # color for ::
+    __my_cdef="\[\e[0m\]"
+fi
+_PS1="\
+${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${OLDPWD}${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
+${__my_c4}:: ${__my_c2}\u@\H${__my_cdef} \D{%a, %d %b %Y %T %z} ${SHELL} \V\n\
+${__my_c4}:: ${__my_cdef}shlv:${SHLVL} cnum:\# jobs:\j last:\$? \$ "
+PS1=$_PS1
 
+__my_set_title(){
+    title="$(echo $@)"
+    case $TERM in
+        (rxvt*|xterm*|aterm|screen*)
+        test -t 1 &&
+        test -n "$DISPLAY" &&
+        test -z "$EMACS" &&
+        echo -n -e "\033]0;${title}\007"
+		;;
+	esac
+}
+export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD};"
+
+# copied from https://wiki.archlinux.org/index.php/X_resources
+invader(){
+    # ANSI color scheme script featuring Space Invaders
+    #
+    # Original: http://crunchbanglinux.org/forums/post/126921/#p126921
+    # Modified by lolilolicon
+    #
+
+    f=3 b=4
+    for j in f b; do
+        for i in {0..7}; do
+            printf -v $j$i %b "\e[${!j}${i}m"
+        done
+    done
+    bld=$'\e[1m'
+    rst=$'\e[0m'
+
+    cat << EOF
+
+ $f1  ▀▄   ▄▀     $f2 ▄▄▄████▄▄▄    $f3  ▄██▄     $f4  ▀▄   ▄▀     $f5 ▄▄▄████▄▄▄    $f6  ▄██▄  $rst
+ $f1 ▄█▀███▀█▄    $f2███▀▀██▀▀███   $f3▄█▀██▀█▄   $f4 ▄█▀███▀█▄    $f5███▀▀██▀▀███   $f6▄█▀██▀█▄$rst
+ $f1█▀███████▀█   $f2▀▀███▀▀███▀▀   $f3▀█▀██▀█▀   $f4█▀███████▀█   $f5▀▀███▀▀███▀▀   $f6▀█▀██▀█▀$rst
+ $f1▀ ▀▄▄ ▄▄▀ ▀   $f2 ▀█▄ ▀▀ ▄█▀    $f3▀▄    ▄▀   $f4▀ ▀▄▄ ▄▄▀ ▀   $f5 ▀█▄ ▀▀ ▄█▀    $f6▀▄    ▄▀$rst
+
+ $bld$f1▄ ▀▄   ▄▀ ▄   $f2 ▄▄▄████▄▄▄    $f3  ▄██▄     $f4▄ ▀▄   ▄▀ ▄   $f5 ▄▄▄████▄▄▄    $f6  ▄██▄  $rst
+ $bld$f1█▄█▀███▀█▄█   $f2███▀▀██▀▀███   $f3▄█▀██▀█▄   $f4█▄█▀███▀█▄█   $f5███▀▀██▀▀███   $f6▄█▀██▀█▄$rst
+ $bld$f1▀█████████▀   $f2▀▀▀██▀▀██▀▀▀   $f3▀▀█▀▀█▀▀   $f4▀█████████▀   $f5▀▀▀██▀▀██▀▀▀   $f6▀▀█▀▀█▀▀$rst
+ $bld$f1 ▄▀     ▀▄    $f2▄▄▀▀ ▀▀ ▀▀▄▄   $f3▄▀▄▀▀▄▀▄   $f4 ▄▀     ▀▄    $f5▄▄▀▀ ▀▀ ▀▀▄▄   $f6▄▀▄▀▀▄▀▄$rst
+
+
+                                     $f7▌$rst
+
+                                   $f7▌$rst
+
+                              $f7    ▄█▄    $rst
+                              $f7▄█████████▄$rst
+                              $f7▀▀▀▀▀▀▀▀▀▀▀$rst
+
+EOF
+}
+#/etc/lsb-release

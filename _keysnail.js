@@ -27,27 +27,8 @@ function ignore(k, i) [k, null];
 //// firefox
 // style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
 
-util.setPrefs(
-    {
-        "browser.tabs.loadDivertedInBackground": true,
-        "dom.disable_window_open_feature.location": false,
-        "dom.max_script_run_time": 30,
-        "browser.bookmarks.max_backups":0,
-        "browser.urlbar.autocomplete.enabled":false,
-        "browser.cache.memory.capacity":16384,
-        "browser.sessionhistory.max_total_viewers":8,
-        "browser.download.manager.closeWhenDone":true,
-        "browser.download.useDownloadDir":false,
-        "browser.tabs.closeWindowWithLastTab":false,
-        "network.dns.disableIPv6":true,
-        "browser.urlbar.trimURLs":false,
-        "browser.fullscreen.autohide":false,
-        "keyword.URL":"http://www.bing.com/search?q=",
-    }
-);
-
 ///////////////////////////////////
-//検索エンジン
+//search engine
 plugins.options["search-url-list"] = [
     ["bing","http://bing.com/search?q=%q"],
     ["yatwitter search","http://yats-data.com/yats/search?query=%q"],
@@ -71,7 +52,7 @@ plugins.options["my-keysnail-bookmarks"] = [
     "twitter.com",
 ];
 
-// sitelocal
+// sitelocal keymap
 
 //////////////////////////////////////////
 // 2ch chaika
@@ -96,7 +77,7 @@ local["^http://w2.p2.2ch.net/p2/read.php"] = [
 ];
 
 /////////////////////////////////////////
-// feedly用マップ
+// feedly
 local["^http://www.feedly.com/"] = [
     ['d', null],
     ['j', null],
@@ -117,11 +98,11 @@ local["^http://www.feedly.com/"] = [
 ];
 
 /////////////////////////////////////////
-//nicovideo用
+//nicovideo
 local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
     ["i", function (ev, arg) { ext.exec("nicoinfo", arg); }],
     ["p", function (ev, arg) { ext.exec("nicopause", arg); }],
-    ["o", function (ev, arg) { ext.exec("nicommentvisible", arg); }],
+    // ["o", function (ev, arg) { ext.exec("nicommentvisible", arg); }],
     ["m", function (ev, arg) { ext.exec("nicomute", arg); }],
     [".", function (ev, arg) { ext.exec("nicovolumeIncrement", arg); }],
     [",", function (ev, arg) { ext.exec("nicovolumeDecrement", arg); }],
@@ -175,18 +156,128 @@ plugins.options["twitter_client.jmp_key"] = "R_c51f889a77cb4b4e993ed868f65083f5"
 plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
-// エクステ
+// my ext
+
+ext.add("list-url", function(){
+    var urls = [];
+    var aa = window.content.document.getElementsByTagName("a");
+    var text = "";
+    var alt = "";
+    for (var i = 0; i < aa.length ; i++) {
+        if(aa[i].href == ""){ continue; }
+
+        if (aa[i].text == "" && aa[i].hasChildNodes() && aa[i].childNodes[0].nodeType == Node.ELEMENT_NODE){
+            alt = aa[i].childNodes[0].getAttribute("alt");
+            text = " " + aa[i].childNodes[0].nodeName + (alt ? ": " + alt : "");
+        }else{
+            text = aa[i].text;
+        }
+        urls.push([text, decodeURIComponent(aa[i].href)]);
+    }
+
+    if(urls.length == 0){
+        display.echoStatusBar("No url found.");
+    }else{
+        prompt.selector(
+            {
+                message    : "Select URL",
+                collection : urls,
+                width : [35, 65],
+                header : ["text", "url"],
+                callback   : function (i) {
+                    if (i >= 0)
+                        openUILinkIn(urls[i][1], "tab"); // or current tabshifted window
+                }
+            }
+        );
+    }
+}, "list url");
+
+ext.add("bookmark-delicious", function(){
+    f= 'http://www.delicious.com/save?url=' + encodeURIComponent(window.content.location.href) + 
+        '&title=' + encodeURIComponent(document.title) + 
+        '&notes=' + encodeURIComponent('' + (window.getSelection ? 
+                                             window.getSelection() : document.getSelection ? 
+                                             document.getSelection() : document.selection.createRange().text)) + '&v=6&';
+    a = function(){
+        if(! window.open(f + 'noui=1&jump=doclose', 'deliciousuiv6', 'location=1,links=0,scrollbars=0,toolbar=0,width=710,height=660')){
+            location.href = f + 'jump=yes';
+        }
+    };
+    if(/Firefox/.test(navigator.userAgent)){
+        setTimeout(a,0);
+    }else{
+        a();
+    }
+}, "bookmark delicious");
+
+ext.add('view-page-source', function(){
+    window.content.location.href = "view-source:" + window.content.location.href;
+}, 'view page source');
+
+ext.add('my-setpref', function(){
+    util.setPrefs(
+        {
+            "browser.bookmarks.max_backups":0,
+            "browser.cache.memory.capacity":16384,
+            "browser.download.manager.closeWhenDone":true,
+            "browser.download.useDownloadDir":false,
+            "browser.fullscreen.autohide":false,
+            "browser.search.openintab":true,
+            "browser.sessionhistory.max_total_viewers":8,
+            "browser.sessionstore.restore_on_demand":true,
+            "browser.tabs.closeWindowWithLastTab":false,
+            "browser.tabs.loadDivertedInBackground": true,
+            "browser.urlbar.autocomplete.enabled":false,
+            "browser.urlbar.trimURLs":false,
+            "dom.disable_window_open_feature.location": false,
+            "dom.max_script_run_time": 30,
+            "extensions.chaika.bbsmenu.open_new_tab":true,
+            "extensions.chaika.bbsmenu.open_single_click":false,
+            "extensions.chaika.board.open_new_tab":true,
+            "extensions.chaika.board.open_single_click":false,
+            "extensions.foxage2ch.openThreadInTab":true,
+            "extensions.saveimageinfolder.general-duplicatefilenamevalue":1,
+            "extensions.saveimageinfolder.general-fileprefixvalue":"%yyyy%%MM%%dd%-%hh%%mm%%ss%_",
+            "extensions.saveimageinfolder.usecache":true,
+            "extensions.tabutils.openTabNext":1,
+            "extensions.tabutils.styles.current":"{\"bold\":true,\"italic\":false,\"underline\":true,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#000000\",\"bgColor\":false,\"bgColorCode\":\"#000000\",\"outline\":false,\"outlineColorCode\":\"#000000\"}",
+            "extensions.tabutils.styles.unread":"{\"bold\":false,\"italic\":false,\"underline\":false,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#CC0000\",\"bgColor\":false,\"bgColorCode\":\"undefined\",\"outline\":false,\"outlineColorCode\":\"undefined\"}",
+            "extensions.yass.edgetype":0,
+            "extensions.yass.selectedpreset":"red",
+            "font.default.x-western":"sans-serif",
+            "general.warnOnAboutConfig":false,
+            "keyword.URL":"http://www.bing.com/search?q=",
+            "network.dns.disableIPv6":true,
+            "refcontrol.actions":"@DEFAULT=@FORGE www.heartrails.com=@NORMAL www.pixiv.net=@NORMAL",
+            "scrapbook.tabs.open":true
+        } 
+    );
+    if(/^Linux/.test(navigator.platform)){
+        util.setPrefs(
+            {
+                "browser.cache.disk.parent_directory":"/tmp",
+                "browser.cache.disk.capacity":524288
+            }
+        );
+    }
+    display.showPopup("Keysnail", "My prefs done.");
+}, 'my setpref');
 
 ext.add('auto-install-plugins', function(ev, arg){
     var urls = [
-        'https://github.com/mooz/keysnail/raw/master/plugins/yet-another-twitter-client-keysnail.ks.js',
-        'https://github.com/mooz/keysnail/raw/master/plugins/site-local-keymap.ks.js',
-        'https://github.com/azu/KeySnail-Plugins/raw/master/JSReference/js-referrence.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/yet-another-twitter-client-keysnail.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/site-local-keymap.ks.js',
+        'https://raw.github.com/mooz/keysnail/master/plugins/hok.ks.js',
+        'https://raw.github.com/azu/KeySnail-Plugins/master/JSReference/js-referrence.ks.js',
         'https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js',
-        'https://github.com/tkosaka/keysnail-plugin/raw/master/nicontroller.ks.js',
+        'https://raw.github.com/tkosaka/keysnail-plugin/master/nicontroller.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
+        'https://raw.github.com/10sr/keysnail-plugin/master/pixiv_autojump.ks.js',
+        'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js',
+        'https://raw.github.com/gist/1450594/mstranslator.ks.js'
     ];
 
     function inst(a){
@@ -247,68 +338,13 @@ ext.add("close-and-next-tab", function (ev, arg) {
     gBrowser.selectedTab = gBrowser.mTabs[n];
 }, "close and focus to next tab");
 
-/////////////////////////////////////
-// google itranslate
-(function(){
-    let targetLang = "ja"; // target lang to translate into
-    let alternativeLang = "en"; // if given word is in targetLang, use this instead as a target lang
-    function translate(word, target, next) {
-        next("", "", " getting...");
-        const base = "https://www.googleapis.com/language/translate/v2?key=%s&q=%s&target=%s";
-        const apikey = "AIzaSyBq48p8NhFgaJ1DfUJ5ltbwLxeXpjEL86A";
-        let ep = util.format(base, apikey, encodeURIComponent(word), target);
-        util.httpGet(ep, false, function (res) {
-            if (res.status === 200) {
-                let json = decodeJSON(res.responseText);
-                let srclang = json.data.translations[0].detectedSourceLanguage;
-                if (target == srclang) {
-                    lookupword(word, alternativeLang);
-                } else {
-                    let result = json.data.translations[0].translatedText;
-                    next(srclang, target, result);
-                }
-            } else {
-                next("", "", "ERROR!");
-            }
-        });
-    };
-    function echo(srclang, from, tglang, to){
-        display.echoStatusBar(srclang + " : " + from + " -> " + tglang + " : " + to);
-    };
-    function decodeJSON(json) {
-        return util.safeEval("(" + json + ")");
-    };
-    function lookupword(word, target){
-        translate(word, target, function (src, tg, translated) {
-            echo(src, word, tg, translated);
-        });
-    };
-    function read (aInitialInput) {
-        let prevText = "";
-
-        prompt.reader({
-            message : "word or sentence to translate:",
-            initialinput : aInitialInput,
-            onChange: function (arg) {
-                let word = arg.textbox.value;
-                if (word !== prevText) {
-                    prevText = word;
-                    lookupword(word, targetLang);
-                }
-            },
-            callback: function (s){},
-        });
-    };
-    ext.add("google-itranslate",function(){read(content.document.getSelection() || "");},"google itranslate");
-})();
-
 //////////////////////////////////////
 //
 ext.add("restart-firefox-add-menu", function(){
     const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
     var cmdelm = document.createElementNS(XUL_NS, "command");
-    cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs")
+    cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs");
     cmdelm.setAttribute("oncommand", "ext.exec('restart-firefox');");
     var commandset = document.getElementById("mainCommandSet");
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
@@ -316,7 +352,7 @@ ext.add("restart-firefox-add-menu", function(){
 
     var menuelm = document.createElementNS(XUL_NS, "menuitem");
     menuelm.setAttribute("label", "Restart Firefox");
-    menuelm.setAttribute("id", "my_menu_restartFirefoxKs")
+    menuelm.setAttribute("id", "my_menu_restartFirefoxKs");
     menuelm.setAttribute("command", "my_cmd_restartFirefoxKs");
     var menu = document.getElementById("menu_FilePopup");
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
@@ -377,25 +413,25 @@ ext.add("copy-url", function () {
 }, "Copy url or feed url of current page");
 
 ///////////////////////////////////////
-// 評価しちゃうっぽい とりあえずこんな感じで
+// keysnail z menu
 ext.add("keysnail-setting-menu",function(){
     var settingmenulist = [["keysnail setting dialogue", function(){return function(){KeySnail.openPreference();};}],
-                           ["keysnail plugin manager", function(){return function(){userscript.openPluginManager();}}],
+                           ["keysnail plugin manager", function(){return function(){userscript.openPluginManager();};}],
                            ["firefox addon manager", function(){return function(){BrowserOpenAddonsMgr();};}],
                            ["reload .keysnail.js", function(){return function() {userscript.reload();};}],
                            // ["check for plugins update", function(){return function(){ext.exec("check-for-plugins-update");};}],
-                           ["restart firefox", function(){return function(){ext.exec("restart-firefox");};}],
+                           ["restart firefox", function(){return function(){ext.exec("restart-firefox");};}]
                           ];
     prompt.selector(
         {
             message    : "open setting dialog",
             collection : settingmenulist,
-            callback   : function (i) { settingmenulist[i][1]()(); },
+            callback   : function (i) { settingmenulist[i][1]()(); }
         });
 },"open keysnail setting menu");
 
 ////////////////////////
-//マルチプルタブハンドラ
+// multiple tab handler
 ext.add("multiple-tab-handler-close-selected-and-current-tabs", function () {
     BrowserCloseTabOrWindow();
     // if (MultipleTabService) {
@@ -427,7 +463,7 @@ ext.add("query-then-engine", function () {
 }, "enter search word and then select engine");
 
 /////////////////////////////////////
-// 閉じたタブリスト
+// closed tab list
 ext.add("list-closed-tabs", function () {
     const fav = "chrome://mozapps/skin/places/defaultFavicon.png";
     var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
@@ -435,7 +471,7 @@ ext.add("list-closed-tabs", function () {
     var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
 
     if (!closedTabs.length)
-        return void display.echoStatusBar("最近閉じたタブが見つかりませんでした", 2000);
+        return void display.echoStatusBar("No recently closed tab.", 2000);
 
     prompt.selector(
         {
@@ -446,16 +482,16 @@ ext.add("list-closed-tabs", function () {
         });
 }, "List closed tabs");
 
-ext.add("echo-closed-tabs", function () {
-    var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-    var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-    // var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
-    var lasttab = json.decode(ss.getClosedTabData(window))[0];
-    dump = ""
-    for (var i in lasttab) { dump += lasttab[i] + "\n"; }
-    confirm(dump);
+// ext.add("echo-closed-tabs", function () {
+//     var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+//     var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
+//     // var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
+//     var lasttab = json.decode(ss.getClosedTabData(window))[0];
+//     dump = ""
+//     for (var i in lasttab) { dump += lasttab[i] + "\n"; }
+//     confirm(dump);
 
-}, "List closed tabs");
+// }, "List closed tabs");
 
 ///////////////////////////////
 // http://malblue.tumblr.com/post/349001250/tips-japanese-keysnail-github
@@ -497,8 +533,8 @@ ext.add("list-tab-history", function () {
 
 // ========================= Special key settings ========================== //
 
-key.quitKey              = "<delete>";
-key.helpKey              = "C-h";
+key.quitKey              = "ESC";
+key.helpKey              = "<f1>";
 key.escapeKey            = "C-q";
 key.macroStartKey        = "";
 key.macroEndKey          = "";
@@ -510,11 +546,11 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-hook.addToHook('KeySnailInitialized', function () {
+hook.setHook('KeySnailInitialized', function () {
     ext.exec("shiitake-enable-style");
 });
 
-hook.addToHook('KeyBoardQuit', function (aEvent) {
+hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
@@ -540,16 +576,6 @@ hook.setHook('Unload', function () {
     });
 });
 
-// hook.addToHook('LocationChange', function (aNsURI) {
-//     if(window.content.document.body){
-//         display.prettyPrint(window.content.document.title); 
-//     }else{
-//         window.addEventListener("load", function(){
-//             disp = display;
-//             disp.prettyPrint(window.content.document.title);
-//         }, false);
-//     }
-// });
 
 // ============================= Key bindings ============================== //
 
@@ -579,7 +605,34 @@ key.setGlobalKey('C-<down>', function () {
     }
 }, '選択中のタブを左へ');
 
-key.setGlobalKey('M-:', function (ev) {
+key.setGlobalKey('C-h', function (ev, arg) {
+    return;
+}, 'ignore');
+
+key.setGlobalKey('<delete>', function (ev, arg) {
+    let (elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    gBrowser.focus();
+    content.focus();
+}, 'コンテンツへフォーカス', true);
+
+key.setGlobalKey('C-p', function (ev, arg) {
+    return !document.getElementById("keysnail-prompt").hidden &&
+        document.getElementById("keysnail-prompt-textbox").focus();
+}, 'KeySnail のプロンプトへフォーカス', true);
+
+key.setViewKey('J', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(1, true);
+}, 'ひとつ右のタブへ');
+
+key.setViewKey('K', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
+}, 'ひとつ左のタブへ');
+
+key.setViewKey('o', function (ev, arg) {
+    ext.exec("hok-start-foreground-mode", arg, ev);
+}, 'Start Hit a Hint foreground mode', true);
+
+key.setViewKey('c', function (ev) {
     command.interpreter();
 }, 'JavaScript のコードを評価');
 
@@ -605,9 +658,9 @@ key.setViewKey(['t', 'p'], function (ev, arg) {
     ext.exec("twitter-client-tweet-this-page", arg, ev);
 }, 'このページのタイトルと URL を使ってつぶやく', true);
 
-key.setViewKey('u', function () {
-    undoCloseTab();
-}, '閉じたタブを元に戻す');
+key.setViewKey([['u'], ['<left>']], function (ev) {
+    goDoCommand("cmd_scrollPageUp");
+}, '一画面分スクロールアップ');
 
 key.setViewKey('g', function () {
     goDoCommand("cmd_scrollTop");
@@ -624,12 +677,6 @@ key.setViewKey('r', function (aEvent) {
 key.setViewKey('m', function (ev, arg) {
     _fi.toogle();
 }, 'fetchimiをトグル');
-
-key.setViewKey('d', function (ev, arg) {
-    if (window.loadURI) {
-        loadURI("javascript:(function(){f='http://www.delicious.com/save?url='+encodeURIComponent(window.location.href)+'&title='+encodeURIComponent(document.title)+'&notes='+encodeURIComponent(''+(window.getSelection?window.getSelection():document.getSelection?document.getSelection():document.selection.createRange().text))+'&v=6&';a=function(){if(!window.open(f+'noui=1&jump=doclose','deliciousuiv6','location=1,links=0,scrollbars=0,toolbar=0,width=550,height=585'))location.href=f+'jump=yes'};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})()");
-    }
-}, 'deliciousでブックマーク');
 
 key.setViewKey('p', function (ev, arg) {
     if (window.loadURI) {
@@ -651,17 +698,9 @@ key.setViewKey('z', function (ev, arg) {
     ext.exec("keysnail-setting-menu", arg, ev);
 }, 'open keysnail setting menu', true);
 
-key.setViewKey('T', function (ev, arg) {
-    ext.exec("google-itranslate", arg, ev);
-}, 'google itranslate', true);
-
 key.setViewKey('C-SPC', function (ev, arg) {
     MultipleTabService.toggleSelection(gBrowser.selectedTab);
 }, 'タブの選択をトグル');
-
-key.setViewKey('U', function (ev, arg) {
-    ext.exec("list-closed-tabs", arg, ev);
-}, 'List closed tabs', true);
 
 key.setViewKey('e', function () {
     command.focusElement(command.elementsRetrieverTextarea, 0);
@@ -676,10 +715,6 @@ key.setViewKey('S', function (ev, arg) {
 key.setViewKey('!', function (ev, arg) {
     shell.input();
 }, 'Command system');
-
-key.setViewKey('b', function (ev, arg) {
-    BarTap.putOnTap(gBrowser.mCurrentTab, gBrowser);
-}, 'bartab put on tab');
 
 key.setViewKey('R', function () {
     BrowserReloadSkipCache();
@@ -709,11 +744,7 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
-key.setViewKey('<left>', function (ev) {
-    goDoCommand("cmd_scrollPageUp");
-}, '一画面分スクロールアップ');
-
-key.setViewKey('<right>', function (ev) {
+key.setViewKey([['<right>'], ['d']], function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
@@ -722,16 +753,18 @@ key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
 }, 'ignore');
 
 key.setViewKey(':', function (ev, arg) {
-    return !document.getElementById("keysnail-prompt").hidden && document.getElementById("keysnail-prompt-textbox").focus();
+    return !document.getElementById("keysnail-prompt").hidden &&
+        document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
 
-key.setViewKey('H', function (ev, arg) {
-    ext.exec("open-hatebu-comment", arg, ev);
-}, 'hatebu', true);
-
-key.setViewKey('l', function (ev) {
-    command.focusToById("urlbar");
-}, 'ロケーションバーへフォーカス', true);
+key.setViewKey('H', function (ev) {
+    var browser = getBrowser();
+    if (browser.mCurrentTab.previousSibling) {
+        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
+    } else {
+        browser.moveTabTo(browser.mCurrentTab, browser.mTabContainer.childNodes.length - 1);
+    }
+}, '選択中のタブを左へ');
 
 key.setViewKey('0', function (ev) {
     BrowserCloseTabOrWindow();
@@ -745,14 +778,43 @@ key.setViewKey('C-<backspace>', function (ev, arg) {
     ext.exec("list-tab-history", arg, ev);
 }, 'List tab history', true);
 
+key.setViewKey('I', function (ev, arg) {
+    ext.exec("instapaper-post-page-with-comment", arg, ev);
+}, 'post page and comment', true);
+
+key.setViewKey('T', function (ev, arg) {
+    ext.exec("mstranslator-open-prompt", arg, ev);
+}, 'MSTranslator - Open prompt', true);
+
+key.setViewKey('j', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_DOWN, true);
+}, '一行スクロールダウン');
+
+key.setViewKey('k', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
+}, '一行スクロールアップ');
+
+key.setViewKey('l', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_RIGHT, true);
+}, '右へスクロール');
+
+key.setViewKey('h', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_LEFT, true);
+}, '左へスクロール');
+
+key.setViewKey('L', function (ev) {
+    var browser = getBrowser();
+    if (browser.mCurrentTab.nextSibling) {
+        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos + 1);
+    } else {
+        browser.moveTabTo(browser.mCurrentTab, 0);
+    }
+}, '選択中のタブを右へ');
+
+key.setViewKey('U', function (ev) {
+    undoCloseTab();
+}, '閉じたタブを元に戻す');
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
-
-key.setViewKey('I', function (ev, arg) {
-    ext.exec('instapaper-post-page-with-comment', arg, ev);
-}, 'post page and comment', true);
-
-key.setViewKey('C-<backspace>', function (ev, arg) {
-    ext.exec('list-tab-history', arg, ev);
-}, 'List tab history', true);
