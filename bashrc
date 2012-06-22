@@ -73,8 +73,8 @@ echo
 ###################################
 # some aliases and functions
 
-test "$TERM" == dumb || _coloroption=" --color=always"
-iswindows || _timeoption=" --time-style=long-iso"
+isdarwin || test "$TERM" == dumb || _coloroption=" --color=always"
+isdarwin || iswindows || _timeoption=" --time-style=long-iso"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
