@@ -115,6 +115,7 @@ alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
 alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"
+alias screen="screen -e^z^z"
 
 alias wic=wicd-curses
 alias wil="wicd-cli -y -l | head"
