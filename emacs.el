@@ -16,7 +16,7 @@
 ;; start and quit
 
 (setq inhibit-startup-message t)
-(setq frame-title-format (list '(:eval (my-format-time-string))
+(setq frame-title-format (list ;; '(:eval (my-format-time-string))
                                " | %b "
                                '(:eval (number-to-string (length (buffer-list-not-start-with-space))))
                                " buffers ["
@@ -48,8 +48,8 @@
   ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100))) ;聞いてないみたい
   )
 (if window-system (menu-bar-mode 1) (menu-bar-mode 0))
-(tool-bar-mode 0)
-(set-scroll-bar-mode nil)
+;(tool-bar-mode 0)
+;(set-scroll-bar-mode nil)
 (add-hook 'kill-emacs-hook      ; 終了時に読み込んで壊れてないか調べる
           (lambda ()
             (when (file-readable-p "~/.emacs")
@@ -599,13 +599,14 @@ return nil if LIB unfound and downloading failed, otherwise the path of LIB."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
-(when (and window-system
+(if (and window-system
           ;; (getenv "DESKTOP_SESSION")
           (not (eq window-system 'mac))
           )
-  (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal
-        x-select-enable-primary nil)
-  (global-set-key "\C-y" 'x-clipboard-yank))
+    (progn (setq x-select-enable-clipboard t     ; these settings seems to be useless when using emacs in terminal
+                 x-select-enable-primary nil)
+           (global-set-key "\C-y" 'x-clipboard-yank))
+  (setq x-select-enable-clipboard nil))
 
 ;; urlに細かい説明あり。でも設定は上記だけでよさそう
 ;; http://garin.jp/doc/Linux/xwindow_clipboard
