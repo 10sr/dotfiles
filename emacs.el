@@ -317,7 +317,7 @@ Return nil if library unfound and failed to download, otherwise the path where t
         term-mode
         Man-mode))
 
-(standard-display-ascii ?\n "$\n")
+;; (standard-display-ascii ?\n "$\n")
 
 (defvar my-eol-face
   '(("\n" . (0 font-lock-comment-face t nil)))
@@ -329,9 +329,15 @@ Return nil if library unfound and failed to download, otherwise the path where t
 
 (add-hook 'font-lock-mode-hook
           (lambda ()
-            (font-lock-add-keywords nil my-eol-face)
+            ;; (font-lock-add-keywords nil my-eol-face)
             (font-lock-add-keywords nil my-jspace-face)
             ))
+
+(when (require 'whitespace nil t)
+  (setq whitespace-style '(face newline newline-mark empty tabs lines trailing))
+  ;; (setq whitespace-newline 'font-lock-comment-face)
+  (add-to-list 'whitespace-display-mappings `(newline-mark ?\n ,(vconcat "$\n")))
+  (global-whitespace-mode t))
 
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
