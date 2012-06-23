@@ -13,7 +13,8 @@
 
 (progn
   (defvar buffer-file-changed-functions nil "Hook run when buffer file changed.
-Each function is called with two args, the filename before changing and after changing.")
+Each function is called with two args, the filename before changing and after
+changing.")
   (declare-function run-buffer-file-changed-functions "emacs.el")
   (add-hook 'post-command-hook
             'run-buffer-file-changed-functions)
@@ -40,8 +41,9 @@ Each function is called with two args, the filename before changing and after ch
 (require 'url)
 
 (defun dllib-if-unfound (url &optional byte-compile-p force-download-p)
-  "If library does not exist, download it from URL and locate it in \"~/emacs.d/lisp/\".
-Return nil if library unfound and failed to download, otherwise the path where the library installed."
+  "If library does not exist, download it from URL and locate it in
+\"~/emacs.d/lisp/\". Return nil if library unfound and failed to download,
+otherwise the path where the library installed."
   (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
          (lib (file-name-sans-extension (file-name-nondirectory url)))
          (lpath (concat dir lib ".el"))
@@ -54,13 +56,14 @@ Return nil if library unfound and failed to download, otherwise the path where t
                                          t)
                           (when (and byte-compile-p
                                      (require 'bytecomp nil t))
-                            (and (file-exists-p (byte-compile-dest-file lpath)) 
+                            (and (file-exists-p (byte-compile-dest-file lpath))
                                  (delete-file (byte-compile-dest-file lpath)))
                             (byte-compile-file lpath))
                           )
                  (error (and (file-writable-p lpath)
                              (delete-file lpath))
-                        (message "downloading %s...something wrong happened!" url)
+                        (message "downloading %s...something wrong happened!"
+                                 url)
                         nil))
                (locate-library lib))
       locate-p)))
@@ -69,17 +72,20 @@ Return nil if library unfound and failed to download, otherwise the path where t
 ;; start and quit
 
 (setq inhibit-startup-message t)
-(setq frame-title-format (list '(:eval (format-time-string (or display-time-format "")))
-                               " | %b "
-                               '(:eval (number-to-string (length (buffer-list-not-start-with-space))))
-                               " buffers ["
-                               invocation-name
-                               " "
-                               emacs-version
-                               " "
-                               (symbol-name system-type)
-                               "] "
-                               '(:eval (symbol-name last-command))))
+(setq frame-title-format
+      (list '(:eval (format-time-string (or display-time-format
+                                            "")))
+            " | %b "
+            '(:eval (number-to-string (length
+                                       (buffer-list-not-start-with-space))))
+            " buffers ["
+            invocation-name
+            " "
+            emacs-version
+            " "
+            (symbol-name system-type)
+            "] "
+            '(:eval (symbol-name last-command))))
 
 (setq set-terminal-title-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
 (defun set-terminal-title (&rest args)
@@ -102,7 +108,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
                       " "
                       (symbol-name system-type)
                       "] "
-                      (abbreviate-file-name (or buffer-file-name default-directory))))
+                      (abbreviate-file-name (or buffer-file-name
+                                                default-directory))))
 (add-hook 'buffer-file-changed-functions
           (lambda (p c)
             (my-set-terminal-title)))
@@ -127,7 +134,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
   (add-to-list 'default-frame-alist '(cursor-type . box))
   (add-to-list 'default-frame-alist '(background-color . "white"))
   (add-to-list 'default-frame-alist '(foreground-color . "gray10"))
-  ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100))) ; does not work?
+  ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100)))
+                                        ;; does not work?
   )
 ;; (add-to-list 'default-frame-alist '(cursor-type . box))
 (if window-system (menu-bar-mode 1) (menu-bar-mode 0))
@@ -135,7 +143,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
 (tool-bar-mode 0))
 (and (fboundp 'set-scroll-bar-mode)
 (set-scroll-bar-mode nil))
-(add-hook 'kill-emacs-hook      ; load when exitting to examine if file is written properly
+(add-hook 'kill-emacs-hook
+          ;; load when exitting to examine if file is written properly
           (lambda ()
             (when (file-readable-p "~/.emacs")
               (load-file "~/.emacs"))
@@ -185,8 +194,10 @@ Return nil if library unfound and failed to download, otherwise the path where t
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
-(and (dllib-if-unfound "https://raw.github.com/k1LoW/emacs-drill-instructor/master/drill-instructor.el"
-                       t)
+(and (dllib-if-unfound
+      "https://raw.github.com/k1LoW/emacs-drill-instructor/master/\
+drill-instructor.el"
+      t)
      (require 'drill-instructor nil t)
      (setq drill-instructor-global t)
      (let ((map drill-instructor-key-map))
@@ -194,8 +205,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
        (define-key map (kbd "DEL") nil)
        (define-key map (kbd "C-h") nil)))
 '(mapc (lambda (key)
-        (global-set-key (read-kbd-macro key) 'ignore))
-      '("<up>" "<down>" "<right>" "<left>"))
+         (global-set-key (read-kbd-macro key) 'ignore))
+       '("<up>" "<down>" "<right>" "<left>"))
 
 (define-key my-prefix-map (kbd "C-o") 'occur)
 
@@ -286,7 +297,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol) ; complete symbol when `eval'
+(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
+                                        ;; complete symbol when `eval'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
@@ -297,7 +309,7 @@ Return nil if library unfound and failed to download, otherwise the path where t
   (mac-set-input-method-parameter 'japanese 'cursor-color "red")
   (mac-set-input-method-parameter 'roman 'cursor-color "black"))
 
-(when (and (boundp 'input-method-activate-hook) ;ちょっと正しいかわかんない
+(when (and (boundp 'input-method-activate-hook) ; i dont know this is correct
            (boundp 'input-method-inactivate-hook))
   (add-hook 'input-method-activate-hook
             (lambda () (set-cursor-color "red")))
@@ -336,7 +348,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
 (when (require 'whitespace nil t)
   (setq whitespace-style '(face newline newline-mark empty tabs lines trailing))
   ;; (setq whitespace-newline 'font-lock-comment-face)
-  (add-to-list 'whitespace-display-mappings `(newline-mark ?\n ,(vconcat "$\n")))
+  (add-to-list 'whitespace-display-mappings
+               `(newline-mark ?\n ,(vconcat "$\n")))
   (global-whitespace-mode t))
 
 ;; highlight current line
@@ -345,7 +358,7 @@ Return nil if library unfound and failed to download, otherwise the path where t
   '((((type x w32)
       (class color)
       (background dark))
-     (:background "midnightblue")) ; :foreground "white")) ;; ハイライトの文字色は変えない方がいいかも
+     (:background "midnightblue"))
     (((type x w32)
       (class color)
       (background light))
@@ -367,9 +380,9 @@ Return nil if library unfound and failed to download, otherwise the path where t
 
 ;; fonts
 
-(defun my-set-ascii-and-jp-font-with-size (list)
+(defun my-set-ascii-and-jp-font (list)
   ""
-  (if (> emacs-major-version 22)
+  (if (> emacs-major-version 22) ;; font spec is available in emacs23 and later
       (progn                            ; 23 or later
         (set-face-attribute 'default nil
                             :family (nth 0 list)
@@ -380,7 +393,6 @@ Return nil if library unfound and failed to download, otherwise the path where t
         (set-fontset-font "fontset-default"
                           'katakana-jisx0201
                           (font-spec :family (nth 2 list) :size (nth 3 list))))
-                                        ; font spec is available in emacs23 and later, cannot used in emacs22
     (progn                              ; 22
       (set-face-attribute 'default nil
                           :family (nth 0 list)
@@ -392,23 +404,26 @@ Return nil if library unfound and failed to download, otherwise the path where t
                         'katakana-jisx0201
                         (cons (nth 2 list) "jisx0201.*"))
       )))
-;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 90 "takaogothic" 13))
-;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 100 "takaogothic" 14))
-;; (my-set-ascii-and-jp-font-with-size '("dejavu sans mono" 100 "ms gothic" 14))
-;; (my-set-ascii-and-jp-font-with-size '("monaco" 75 "takaogothic" 11))
-;; (my-set-ascii-and-jp-font-with-size '("monaco" 90 "takaogothic" 13))
-;; (my-set-ascii-and-jp-font-with-size '("ProggyCleanTTSZ" 120 "takaogothic" 11))
+;; (my-set-ascii-and-jp-font '("dejavu sans mono" 90 "takaogothic" 13))
+;; (my-set-ascii-and-jp-font '("dejavu sans mono" 100 "takaogothic" 14))
+;; (my-set-ascii-and-jp-font '("dejavu sans mono" 100 "ms gothic" 14))
+;; (my-set-ascii-and-jp-font '("monaco" 75 "takaogothic" 11))
+;; (my-set-ascii-and-jp-font '("monaco" 90 "takaogothic" 13))
+;; (my-set-ascii-and-jp-font '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
+(and (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
                        t)
      (progn
        (require 'set-modeline-color nil t)))
 
 (let ((fg (face-foreground 'default))
       (bg (face-background 'default)))
-  (set-face-background 'mode-line-inactive (if (face-inverse-video-p 'mode-line) fg bg))
-  (set-face-foreground 'mode-line-inactive (if (face-inverse-video-p 'mode-line) bg fg)))
+  (set-face-background 'mode-line-inactive
+                       (if (face-inverse-video-p 'mode-line) fg bg))
+  (set-face-foreground 'mode-line-inactive
+                       (if (face-inverse-video-p 'mode-line) bg fg)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
@@ -507,8 +522,10 @@ Return nil if library unfound and failed to download, otherwise the path where t
       ;; message-send-mail-function 'smtpmail-send-it
       smtpmail-smtp-server "smtp.gmail.com"
       smtpmail-smtp-service 587
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
-      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "8.slashes@gmail.com" nil))
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587
+                                       "8.slashes@gmail.com" nil))
+      smtpmail-auth-credentials '(("smtp.gmail.com" 587
+                                   "8.slashes@gmail.com" nil))
       user-mail-address "8.slashes@gmail.com")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -528,9 +545,13 @@ Return nil if library unfound and failed to download, otherwise the path where t
 ;; package
 
 (when (require 'package nil t)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-  (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-  (add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/"))
+  (add-to-list 'package-archives
+               '("melpa" . "http://melpa.milkbox.net/packages/")
+               t)
+  (add-to-list 'package-archives
+               '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (add-to-list 'package-archives
+               '("ELPA" . "http://tromey.com/elpa/"))
   (package-initialize))
 
 (require 'sudoku nil t)
@@ -541,7 +562,9 @@ Return nil if library unfound and failed to download, otherwise the path where t
 (require 'simple nil t)
 
 (and window-system
-     (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el" t)
+     (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
+                       t)
      (require 'save-window-size nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -584,7 +607,9 @@ Return nil if library unfound and failed to download, otherwise the path where t
 
 (add-hook 'sh-mode-hook
           (lambda ()
-            (define-key sh-mode-map (kbd "C-x C-e") 'my-execute-shell-command-current-line)))
+            (define-key sh-mode-map
+              (kbd "C-x C-e")
+              'my-execute-shell-command-current-line)))
 
 (defun my-execute-shell-command-current-line ()
   ""
@@ -614,15 +639,19 @@ Return nil if library unfound and failed to download, otherwise the path where t
                           7))
 (add-hook 'python-mode-hook
           (lambda ()
-            (define-key python-mode-map (kbd "C-c C-e") 'my-python-run-as-command)
-            (define-key python-mode-map (kbd "C-c C-b") 'my-python-display-python-buffer)
+            (define-key python-mode-map
+              (kbd "C-c C-e") 'my-python-run-as-command)
+            (define-key python-mode-map
+              (kbd "C-c C-b") 'my-python-display-python-buffer)
             (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
 
 (add-hook 'inferior-python-mode-hook
           (lambda ()
             (my-python-display-python-buffer)
-            (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
-            (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)))
+            (define-key inferior-python-mode-map
+              (kbd "<up>") 'comint-previous-input)
+            (define-key inferior-python-mode-map
+              (kbd "<down>") 'comint-next-input)))
 
 (add-hook 'text-mode-hook
           (lambda ()
@@ -638,15 +667,20 @@ Return nil if library unfound and failed to download, otherwise the path where t
             (define-key apropos-mode-map "p" 'previous-line)
             ))
 
-(define-key minibuffer-local-map (kbd "C-u") (lambda () (interactive) (delete-region (point-at-bol) (point))))
+(define-key minibuffer-local-map (kbd "C-u")
+  (lambda () (interactive) (delete-region (point-at-bol) (point))))
 
 (add-hook 'isearch-mode-hook
           (lambda ()
-            ;; (define-key isearch-mode-map (kbd "C-j") 'isearch-other-control-char)
-            ;; (define-key isearch-mode-map (kbd "C-k") 'isearch-other-control-char)
-            ;; (define-key isearch-mode-map (kbd "C-h") 'isearch-other-control-char)
+            ;; (define-key isearch-mode-map
+            ;;   (kbd "C-j") 'isearch-other-control-char)
+            ;; (define-key isearch-mode-map
+            ;;   (kbd "C-k") 'isearch-other-control-char)
+            ;; (define-key isearch-mode-map
+            ;;   (kbd "C-h") 'isearch-other-control-char)
             (define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
-            (define-key isearch-mode-map (kbd "M-r") 'isearch-query-replace-regexp)))
+            (define-key isearch-mode-map (kbd "M-r")
+              'isearch-query-replace-regexp)))
 
 (add-hook 'outline-mode-hook
           (lambda ()
@@ -657,10 +691,12 @@ Return nil if library unfound and failed to download, otherwise the path where t
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (setq markdown-command (or (executable-find "markdown")
                            (executable-find "markdown.pl")))
-(when (dllib-if-unfound "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
+(when (dllib-if-unfound
+       "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
                         t)
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
-  (autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files." nil)
+  (autoload 'markdown-mode
+    "markdown-mode" "Major mode for editing Markdown files." nil)
   (add-hook 'markdown-mode-hook
             (lambda ()
               (outline-minor-mode 1)
@@ -678,7 +714,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
             (c-toggle-hungry-state -1)
             ))
 
-(when (dllib-if-unfound "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
+(when (dllib-if-unfound
+       "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
                         t)
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
@@ -714,14 +751,18 @@ Return nil if library unfound and failed to download, otherwise the path where t
 
 (add-hook 'view-mode-hook
           (lambda()
-            (define-key view-mode-map "j" (lambda() (interactive) (scroll-up 1)))
-            (define-key view-mode-map "k" (lambda() (interactive) (scroll-down 1)))
+            (define-key view-mode-map "j"
+              (lambda() (interactive) (scroll-up 1)))
+            (define-key view-mode-map "k"
+              (lambda() (interactive) (scroll-down 1)))
             (define-key view-mode-map "v" 'toggle-read-only)
             (define-key view-mode-map "q" 'bury-buffer)
             ;; (define-key view-mode-map "/" 'nonincremental-re-search-forward)
             ;; (define-key view-mode-map "?" 'nonincremental-re-search-backward)
-            ;; (define-key view-mode-map "n" 'nonincremental-repeat-search-forward)
-            ;; (define-key view-mode-map "N" 'nonincremental-repeat-search-backward)
+            ;; (define-key view-mode-map
+            ;;   "n" 'nonincremental-repeat-search-forward)
+            ;; (define-key view-mode-map
+            ;;   "N" 'nonincremental-repeat-search-backward)
             (define-key view-mode-map "/" 'isearch-forward-regexp)
             (define-key view-mode-map "?" 'isearch-backward-regexp)
             (define-key view-mode-map "n" 'isearch-repeat-forward)
@@ -745,8 +786,9 @@ Return nil if library unfound and failed to download, otherwise the path where t
      (require 'gtkbm nil t)
      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
-(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
-                       t)
+(and (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
+      t)
      (require 'git-command nil t)
      (define-key ctl-x-map "g" 'git-command))
 
@@ -773,16 +815,20 @@ Return nil if library unfound and failed to download, otherwise the path where t
             (setq term-display-table (make-display-table))))
 (add-hook 'term-mode-hook
           (lambda ()
-            (unless (memq (current-buffer) (and (featurep 'multi-term) ; current buffer is not multi-term buffer
-                                                (multi-term-list)))
+            (unless (memq (current-buffer)
+                          (and (featurep 'multi-term)
+                               ;; current buffer is not multi-term buffer
+                               (multi-term-list)))
               ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
               ;; (define-key term-raw-map "\C-r" 'term-send-raw)
               ;; (define-key term-raw-map "\C-s" 'term-send-raw)
               ;; (define-key term-raw-map "\C-f" 'forward-char)
               ;; (define-key term-raw-map "\C-b" 'backward-char)
               ;; (define-key term-raw-map "\C-t" 'set-mark-command)
-              (define-key term-raw-map "\C-x" (lookup-key (current-global-map) "\C-x"))
-              (define-key term-raw-map "\C-z" (lookup-key (current-global-map) "\C-z")))
+              (define-key term-raw-map
+                "\C-x" (lookup-key (current-global-map) "\C-x"))
+              (define-key term-raw-map
+                "\C-z" (lookup-key (current-global-map) "\C-z")))
             (define-key term-raw-map (kbd "C-p") 'term-send-raw)
             (define-key term-raw-map (kbd "C-n") 'term-send-raw)
             (define-key term-raw-map "q" 'my-term-quit-or-send-raw)
@@ -790,7 +836,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
             (define-key term-raw-map [delete] 'term-send-raw)
             (define-key term-raw-map (kbd "DEL") 'term-send-backspace)
             (define-key term-raw-map "\C-y" 'term-paste)
-            (define-key term-raw-map "\C-c" 'term-send-raw) ;; 'term-interrupt-subjob)
+            (define-key term-raw-map
+              "\C-c" 'term-send-raw) ;; 'term-interrupt-subjob)
             '(define-key term-mode-map (kbd "C-x C-q") 'term-pager-toggle)
             ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
             ;;   (define-key term-raw-map (read-kbd-macro key) 'term-send-raw))
@@ -800,7 +847,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
             ;; (cua-mode 0)
             ;; (and cua-mode
             ;;      (local-unset-key (kbd "C-c")))
-            ;; (define-key cua--prefix-override-keymap "\C-c" 'term-interrupt-subjob)
+            ;; (define-key cua--prefix-override-keymap
+            ;;"\C-c" 'term-interrupt-subjob)
             (set (make-local-variable 'hl-line-range-function)
                  (lambda ()
                    '(0 . 0)))
@@ -814,11 +862,18 @@ Return nil if library unfound and failed to download, otherwise the path where t
   ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show))
 
-;; (add-to-list 'bs-configurations '("processes" nil get-buffer-process ".*" nil nil))
-(add-to-list 'bs-configurations '("same-dir" nil buffer-same-dir-p ".*" nil nil))
-(add-to-list 'bs-configurations '("this-frame" nil (lambda (buf) (memq buf (my-frame-buffer-get))) ".*" nil nil))
-;; (setq bs-configurations (list '("processes" nil get-buffer-process ".*" nil nil)
-;;                               '("files-and-scratch" "^\\*scratch\\*$" nil nil bs-visits-non-file bs-sort-buffer-interns-are-last)))
+;; (add-to-list 'bs-configurations
+;; '("processes" nil get-buffer-process ".*" nil nil))
+(add-to-list 'bs-configurations
+             '("same-dir" nil buffer-same-dir-p ".*" nil nil))
+(add-to-list 'bs-configurations
+             '("this-frame" nil (lambda (buf)
+                                  (memq buf (my-frame-buffer-get)))
+               ".*" nil nil))
+;; (setq bs-configurations (list
+;; '("processes" nil get-buffer-process ".*" nil nil)
+;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
+;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
 (setq bs-default-configuration "this-frame")
 (setq bs-default-sort-name "by name")
 (add-hook 'bs-mode-hook
@@ -855,13 +910,17 @@ Return nil if library unfound and failed to download, otherwise the path where t
     (set-buffer sdic-buffer-name)
     (message (buffer-substring (point-min)
                                (progn (goto-char (point-min))
-                                      (or (and (re-search-forward "^\\w" nil t 4)
+                                      (or (and (re-search-forward "^\\w"
+                                                                  nil
+                                                                  t
+                                                                  4)
                                                (progn (previous-line) t)
                                                (point-at-eol))
                                           (point-max)))))))
 
 (setq sdic-eiwa-dictionary-list '((sdicf-client "/usr/share/dict/gene.sdic")))
-(setq sdic-waei-dictionary-list '((sdicf-client "/usr/share/dict/jedict.sdic" (add-keys-to-headword t))))
+(setq sdic-waei-dictionary-list
+      '((sdicf-client "/usr/share/dict/jedict.sdic" (add-keys-to-headword t))))
 (setq sdic-disable-select-window t)
 (setq sdic-window-height 7)
 (when (require 'sdic nil t)
@@ -918,7 +977,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
 
-(when (dllib-if-unfound "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
+(when (dllib-if-unfound
+       "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
                         t)
   (setq auto-mode-alist
         (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
@@ -928,9 +988,12 @@ Return nil if library unfound and failed to download, otherwise the path where t
   (autoload 'run-scheme "gauche-mode" "Run an inferior Scheme process." t)
   (add-hook 'gauche-mode-hook
             (lambda ()
-              (define-key gauche-mode-map (kbd "C-c C-z") 'run-gauche-other-window)
-              (define-key scheme-mode-map (kbd "C-c C-c") 'scheme-send-buffer)
-              (define-key scheme-mode-map (kbd "C-c C-b") 'my-scheme-display-scheme-buffer)
+              (define-key gauche-mode-map
+                (kbd "C-c C-z") 'run-gauche-other-window)
+              (define-key scheme-mode-map
+                (kbd "C-c C-c") 'scheme-send-buffer)
+              (define-key scheme-mode-map
+                (kbd "C-c C-b") 'my-scheme-display-scheme-buffer)
               )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -950,7 +1013,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
   (recentf-mode 1)
   ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
-  (and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
+  (and (dllib-if-unfound
+        "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
                          t)
        (require 'recentf-show nil t)
        (define-key ctl-x-map (kbd "C-r") 'recentf-show)))
@@ -958,7 +1022,8 @@ Return nil if library unfound and failed to download, otherwise the path where t
 (add-hook 'recentf-dialog-mode-hook
           (lambda ()
             (recentf-save-list)
-            ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f") 'my-recentf-cd-and-find-file)
+            ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f")
+            ;; 'my-recentf-cd-and-find-file)
             (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
             (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
             (define-key recentf-dialog-mode-map "p" 'previous-line)
@@ -977,11 +1042,12 @@ Return nil if library unfound and failed to download, otherwise the path where t
     (message "%s"
              (with-temp-buffer
                (insert-file-contents f)
-               (buffer-substring-no-properties (point-min)
-                                               (progn (goto-line (if arg
-                                                                     (prefix-numeric-value arg)
-                                                                   10))
-                                                      (point-at-eol)))))))
+               (buffer-substring-no-properties
+                (point-min)
+                (progn (goto-line (if arg
+                                      (prefix-numeric-value arg)
+                                    10))
+                       (point-at-eol)))))))
 
 (defun my-dired-diff ()
   ""
@@ -1071,8 +1137,10 @@ Return nil if library unfound and failed to download, otherwise the path where t
   (let ((file (dired-get-filename t)))
     (if (file-executable-p file)
         (start-process file nil file)
-      (when (y-or-n-p "this file cant be executed. mark as executable and go? : ")
-        (set-file-modes file (file-modes-symbolic-to-number "u+x" (file-modes file)))
+      (when (y-or-n-p
+             "this file cant be executed. mark as executable and go? : ")
+        (set-file-modes file
+                        (file-modes-symbolic-to-number "u+x" (file-modes file)))
         (start-process file nil file)))))
 
 ;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
@@ -1088,7 +1156,9 @@ Return nil if library unfound and failed to download, otherwise the path where t
   )
 (setq dired-listing-switches "-lhFG")
 
-(put 'dired-find-alternate-file 'disabled nil) ; when using dired-find-alternate-file reuse current dired buffer for the file to open
+(put 'dired-find-alternate-file 'disabled nil)
+;; when using dired-find-alternate-file
+;; reuse current dired buffer for the file to open
 (setq dired-ls-F-marks-symlinks t)
 
 (require 'ls-lisp)
@@ -1120,14 +1190,17 @@ Return nil if library unfound and failed to download, otherwise the path where t
             (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
             (define-key dired-mode-map "b" 'gtkbm)
             (define-key dired-mode-map "h" 'my-dired-echo-file-head)
-            (define-key dired-mode-map "@" (lambda () (interactive) (my-x-open ".")))
+            (define-key dired-mode-map "@" (lambda ()
+                                             (interactive) (my-x-open ".")))
             (define-key dired-mode-map (kbd "TAB") 'other-window)
             ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
             (define-key dired-mode-map "/" 'dired-isearch-filenames)
             (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
             (define-key dired-mode-map (kbd "C-h") 'dired-up-directory)
-            (substitute-key-definition 'dired-next-line 'my-dired-next-line dired-mode-map)
-            (substitute-key-definition 'dired-previous-line 'my-dired-previous-line dired-mode-map)
+            (substitute-key-definition 'dired-next-line
+                                       'my-dired-next-line dired-mode-map)
+            (substitute-key-definition 'dired-previous-line
+                                       'my-dired-previous-line dired-mode-map)
             (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
             (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
             (let ((file "._Icon\015"))
@@ -1141,8 +1214,9 @@ Return nil if library unfound and failed to download, otherwise the path where t
                (lambda ()
                  (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
 
-(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
-                       t)
+(and (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
+      t)
      (require 'dired-list-all-mode nil t)
      (setq dired-listing-switches "-lhFG")
      (add-hook 'dired-mode-hook
@@ -1202,7 +1276,8 @@ Optional prefix ARG says how many lines to unflag; default is one line."
   "t if FILE is owned by me."
   (eq (user-uid) (nth 2 (file-attributes file))))
 
-;; ;; http://www.bookshelf.jp/pukiwiki/pukiwiki.php?Eshell%A4%F2%BB%C8%A4%A4%A4%B3%A4%CA%A4%B9
+"http://www.bookshelf.jp/pukiwiki/pukiwiki.php\
+?Eshell%A4%F2%BB%C8%A4%A4%A4%B3%A4%CA%A4%B9"
 ;; ;; written by Stefan Reichoer <reichoer@web.de>
 ;; (defun eshell/less (&rest args)
 ;;   "Invoke `view-file' on the file.
@@ -1304,8 +1379,9 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (insert user-login-name
                     "@"
                     (or (getenv "HOSTNAME")
-                        (substring (shell-command-to-string (or (executable-find "hostname")
-                                                                "echo ''"))
+                        (substring (shell-command-to-string
+                                    (or (executable-find "hostname")
+                                        "echo ''"))
                                    0
                                    -1)))
             (setq p4 (point))
@@ -1331,7 +1407,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
           (lambda ()
             ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
             ;;                                               (interactive)
-            ;;                                               (switch-to-buffer (other-buffer))))
+            ;;                             (switch-to-buffer (other-buffer))))
             (define-key eshell-mode-map (kbd "C-u") (lambda ()
                                                       (interactive)
                                                       (eshell-goto-prompt)
@@ -1340,9 +1416,12 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                                       (interactive)
                                                       (eshell-goto-prompt)
                                                       (my-keyboard-quit)))
-            (define-key eshell-mode-map (kbd "DEL") 'my-eshell-backward-delete-char)
-            (define-key eshell-mode-map (kbd "C-p") 'eshell-previous-matching-input-from-input)
-            (define-key eshell-mode-map (kbd "C-n") 'eshell-next-matching-input-from-input)
+            (define-key eshell-mode-map
+              (kbd "DEL") 'my-eshell-backward-delete-char)
+            (define-key eshell-mode-map
+              (kbd "C-p") 'eshell-previous-matching-input-from-input)
+            (define-key eshell-mode-map
+              (kbd "C-n") 'eshell-next-matching-input-from-input)
             (apply 'eshell/addpath exec-path)
             (set (make-local-variable 'scroll-margin) 0)
             ;; (eshell/export "GIT_PAGER=")
@@ -1364,7 +1443,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
           (lambda ()
             (add-to-list 'eshell-visual-commands "vim")
             ;; (add-to-list 'eshell-visual-commands "git")
-            (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+            (add-to-list 'eshell-output-filter-functions
+                         'eshell-truncate-buffer)
             (mapcar (lambda (alias)
                       (add-to-list 'eshell-command-aliases-list
                                    alias))
@@ -1374,7 +1454,13 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                         ; ("lla" "ls -al $*")
                       ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp $*")
                       ("aptin" "apt-get install $*")
-                      ("eless" "cat >>> (with-current-buffer (get-buffer-create \"*eshell output\") (erase-buffer) (setq buffer-read-only nil) (current-buffer)); (view-buffer (get-buffer \"*eshell output*\"))")
+                      ("eless"
+                       "cat >>> (with-current-buffer \
+(get-buffer-create \"*eshell output\") \
+(erase-buffer) \
+(setq buffer-read-only nil) \
+(current-buffer));\
+(view-buffer (get-buffer \"*eshell output*\"))")
                       ("g" "git $*")
                       ))
             ))
@@ -1408,7 +1494,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   ""
   (make-local-variable 'my-buffer-file-last-modified-time)
   (setq my-buffer-file-last-modified-time
-        (format-time-string "%Y/%m/%d %H:%M" (my-get-file-last-modified-time buffer-file-name))))
+        (format-time-string "%Y/%m/%d %H:%M"
+                            (my-get-file-last-modified-time buffer-file-name))))
 
 (add-hook 'find-file-hook
           'my-set-buffer-file-last-modified-time)
@@ -1419,7 +1506,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; frame buffer
-;; todo: work well when opening the file that was already opened on another window
+;; todo:
+;;    work well when opening the file that was already opened on another window
 
 (add-hook 'after-make-frame-functions
           (lambda (f)
@@ -1533,11 +1621,26 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                   'ignore
                                 'message))))
     (cond ((active-minibuffer-window) nil)
-          ((not buffer-file-name) (funcall fun "%ssaving... this buffer doesn't visit any file." cm) nil)
-          ((not (file-exists-p buffer-file-name)) (funcall fun "%ssaving... file not exist. save manually first." com) nil)
-          (buffer-read-only (funcall fun "%ssaving... this buffer is read-only." cm) nil)
-          ((not (buffer-modified-p)) (funcal fun "%ssaving... not modified yet." cm) nil)
-          ((not (file-writable-p buffer-file-name)) (funcall fun "%ssaving... you cannot change this file." cm) nil)
+          ((not buffer-file-name)
+           (funcall fun
+                    "%ssaving... this buffer doesn't visit any file." cm)
+           nil)
+          ((not (file-exists-p buffer-file-name))
+           (funcall fun
+                    "%ssaving... file not exist. save manually first." cm)
+           nil)
+          (buffer-read-only
+           (funcall fun
+                    "%ssaving... this buffer is read-only." cm)
+           nil)
+          ((not (buffer-modified-p))
+           (funcal fun
+                   "%ssaving... not modified yet." cm)
+           nil)
+          ((not (file-writable-p buffer-file-name))
+           (funcall fun
+                    "%ssaving... you cannot change this file." cm)
+           nil)
           (t (funcall fun "%ssaving..." cm)
              (save-buffer)
              (funcall fun "%ssaving... done." cm)))))
@@ -1556,7 +1659,8 @@ when SEC is nil, stop auto save if enabled."
       (progn (when my-auto-save-this-buffer
                (cancel-timer my-auto-save-this-buffer)
                (setq my-auto-save-this-buffer nil))
-             (setq my-auto-save-this-buffer (run-with-idle-timer sec t 'my-save-this-buffer silent-p)))
+             (setq my-auto-save-this-buffer
+                   (run-with-idle-timer sec t 'my-save-this-buffer silent-p)))
     (when my-auto-save-this-buffer
       (cancel-timer my-auto-save-this-buffer)
       (setq my-auto-save-this-buffer nil))))
@@ -1595,7 +1699,8 @@ when SEC is nil, stop auto save if enabled."
   (setq file (expand-file-name file))
   (message "Opening %s..." file)
   (cond ((eq system-type 'windows-nt)
-         (call-process "cmd.exe" nil 0 nil "/c" "start" "" (convert-standard-filename file)))
+         (call-process "cmd.exe" nil 0 nil
+                       "/c" "start" "" (convert-standard-filename file)))
         ((eq system-type 'darwin)
          (call-process "open" nil 0 nil file))
         ((getenv "DISPLAY")
@@ -1682,7 +1787,9 @@ this is test, does not rename files"
       (catch 'end-flag
         (while t
           (setq action
-                (read-key-sequence-vector (format "size[%dx%d] 1: maximize; 2, 3: split; 0: delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
+                (read-key-sequence-vector
+                 (format "size[%dx%d] 1: maximize; 2, 3: split; 0: \
+delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
                                                   (window-width)
                                                   (window-height))))
           (setq c (aref action 0))
@@ -1699,7 +1806,8 @@ this is test, does not rename files"
                 ((= c ?o)
                  (other-window 1))
                 ((memq c '(?d ?0))
-                 (unless (eq (selected-window) (next-window (selected-window) 0 1))
+                 (unless (eq (selected-window)
+                             (next-window (selected-window) 0 1))
                    (delete-window (selected-window))))
                 ((= c ?1)
                  (delete-other-windows))
@@ -1743,7 +1851,8 @@ this is test, does not rename files"
   "use anthy.el as japanese im."
   ;; anthy
   (when (require 'anthy nil t)
-    (global-set-key (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
+    (global-set-key
+     (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
     (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
     (when (>= emacs-major-version 23)
       (setq anthy-accept-timeout 1))))
@@ -1766,9 +1875,11 @@ this is test, does not rename files"
 (defun start-ckw-bash ()
   ""
   (interactive)
-  (start-process "ckw_bash"
-                 nil
-                 "C:/Documents and Settings/sr/Application Data/dbx/apps/ckw/ckw.exe")) ; cじゃないといけないらしい
+  (start-process
+   "ckw_bash"
+   nil
+   "C:/Documents and Settings/sr/Application Data/dbx/apps/ckw/ckw.exe"))
+;; command seems to have to be in c drive
 
 (defun my-w32-add-export-path (&rest args)
   ""
