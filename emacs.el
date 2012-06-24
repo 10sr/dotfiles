@@ -346,10 +346,11 @@ drill-instructor.el"
             ))
 
 (when (require 'whitespace nil t)
-  (setq whitespace-style '(face newline newline-mark empty tabs lines trailing))
+  (setq whitespace-style '(face newline newline-mark empty tabs lines-trail trailing))
   ;; (setq whitespace-newline 'font-lock-comment-face)
   (add-to-list 'whitespace-display-mappings
-               `(newline-mark ?\n ,(vconcat "$\n")))
+               `(newline-mark ?\n ,(vconcat "$\n"))
+               )
   (global-whitespace-mode t))
 
 ;; highlight current line

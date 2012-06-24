@@ -26,8 +26,8 @@ _gsoundap(){
 }
 
 _conky(){
-    conky -c ~/.dotfiles/conkyrc   >~/.backup/log/conky.log 2>&1 &
-    conky -c ~/.dotfiles/conkyrc.2 >~/.backup/log/conky.2.log 2>&1 &
+    conky -c ~/.dotfiles/conkyrc   >~/.my/log/conky.log 2>&1 &
+    conky -c ~/.dotfiles/conkyrc.2 >~/.my/log/conky.2.log 2>&1 &
 }
 
 _wicd(){
