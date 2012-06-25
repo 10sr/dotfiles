@@ -231,11 +231,12 @@ di(){
     ${diffcmd} -u "$@" | ${PAGER}
 }
 
-throw-away(){
-    mkdir -p ~/.my/tb
+tb(){
+    local tb=~/.my/tb
+    mkdir -p $tb
     for file in "$@"
     do
-        mv $file ~/.my/tb
+        mv $file $tb
     done
 }
 
