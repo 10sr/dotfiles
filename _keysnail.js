@@ -424,21 +424,40 @@ ext.add("copy-url", function () {
 
 ///////////////////////////////////////
 // keysnail z menu
-ext.add("keysnail-setting-menu",function(){
-    var settingmenulist = [["keysnail setting dialogue", function(){return function(){KeySnail.openPreference();};}],
-                           ["keysnail plugin manager", function(){return function(){userscript.openPluginManager();};}],
-                           ["firefox addon manager", function(){return function(){BrowserOpenAddonsMgr();};}],
-                           ["reload .keysnail.js", function(){return function() {userscript.reload();};}],
-                           // ["check for plugins update", function(){return function(){ext.exec("check-for-plugins-update");};}],
-                           ["restart firefox", function(){return function(){ext.exec("restart-firefox");};}]
-                          ];
+
+ext.add("keysnail-setting-dialog", function(){
+    KeySnail.openPreference();
+}, "keysnail setting dialog");
+
+ext.add("keysnail-plugin-manager", function(){
+    userscript.openPluginManager();
+}, "keysnail plugin manager");
+
+ext.add("firefox-open-addon-manager", function(){
+    BrowserOpenAddonsMgr();
+}, "firefox addon manager");
+
+ext.add("keysnail-reload-init-file", function(){
+    userscript.reload();
+}, "keysnail reload init file");
+
+ext.add("keysnail-z-menu",function(){
+    var list = [["keysnail-setting-dialog"],
+                ["keysnail-plugin-manager"],
+                ["forefox-open-addon-manager"],
+                ["keysnail-reload-init-file"],
+                // ["check-for-plugins-update"],
+                ["restart-firefox"]
+               ];
     prompt.selector(
         {
             message    : "open setting dialog",
-            collection : settingmenulist,
-            callback   : function (i) { settingmenulist[i][1]()(); }
+            collection : list,
+            callback   : function (i) {
+                ext.exec(list[i][0]);
+            }
         });
-},"open keysnail setting menu");
+},"open keysnail z menu");
 
 ///////////////////////////////////
 // search web
@@ -692,7 +711,7 @@ key.setViewKey('S-SPC', function (ev, arg) {
 }, 'タブの選択をトグルして前のタブ');
 
 key.setViewKey('z', function (ev, arg) {
-    ext.exec("keysnail-setting-menu", arg, ev);
+    ext.exec("keysnail-z-menu", arg, ev);
 }, 'open keysnail setting menu', true);
 
 key.setViewKey('C-SPC', function (ev, arg) {
