@@ -186,20 +186,21 @@ ext.add("list-url", function(){
 
     if(urls.length == 0){
         display.echoStatusBar("No url found.");
-    }else{
-        prompt.selector(
-            {
-                message    : "Select URL",
-                collection : urls,
-                width : [35, 65],
-                header : ["text", "url"],
-                callback   : function (i) {
-                    if (i >= 0)
-                        openUILinkIn(urls[i][1], "tab"); // or current tabshifted window
-                }
-            }
-        );
+        return;
     }
+
+    prompt.selector(
+        {
+            message    : "Select URL",
+            collection : urls,
+            width : [35, 65],
+            header : ["text", "url"],
+            callback   : function (i) {
+                if (i >= 0)
+                    openUILinkIn(urls[i][1], "tab"); // or current tabshifted window
+            }
+        }
+    );
 }, "list url");
 
 ext.add("bookmark-delicious", function(){
@@ -260,7 +261,7 @@ ext.add('my-setpref', function(){
             "network.dns.disableIPv6":true,
             "refcontrol.actions":"@DEFAULT=@FORGE www.heartrails.com=@NORMAL www.pixiv.net=@NORMAL",
             "scrapbook.tabs.open":true
-        } 
+        }
     );
     if(/^Linux/.test(navigator.platform)){
         util.setPrefs(
@@ -439,31 +440,18 @@ ext.add("keysnail-setting-menu",function(){
         });
 },"open keysnail setting menu");
 
-////////////////////////
-// multiple tab handler
-ext.add("multiple-tab-handler-close-selected-and-current-tabs", function () {
-    BrowserCloseTabOrWindow();
-    // if (MultipleTabService) {
-    //     //BrowserCloseTabOrWindow();
-    //     //MultipleTabService.setSelection(gBrowser.mCurrentTab, true);
-    MultipleTabService.closeTabs(MultipleTabService.getSelectedTabs());
-    // } else {
-    //     BrowserCloseTabOrWindow();}
-}, '選択タブと現在のタブを閉じる');
-
-ext.add("if-mth-exist", function() {
-    if (MultipleTabService === undefined) display.echoStatusBar("mth not exist.");
-},'if mth exist');
-
+///////////////////////////////////
 // search web
 ext.add("query-then-engine", function () {
-    prompt.reader({message : "Search Word?:", 
+    prompt.reader({message : "Search Word?:",
                    callback : function (q) {
                        if (q) {
                            prompt.selector({ message : "search \"" + q + "\" with?",
                                              collection : plugins.options["search-url-list"],
                                              width : [20,80],
-                                             callback : function (i) { getBrowser().selectedTab = getBrowser().addTab(plugins.options["search-url-list"][i][1].replace("%r",q).replace("%q",encodeURIComponent(q))); },
+                                             callback : function (i) {
+                                                 getBrowser().selectedTab = getBrowser().addTab(plugins.options["search-url-list"][i][1].replace("%r",q).replace("%q",encodeURIComponent(q)));
+                                             },
                                            });
                        };
                    },
