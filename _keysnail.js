@@ -158,6 +158,15 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+ext.add("open-url-from-clipboard", function(){
+    var list = command.getClipboardText().split("\n");
+    for(var i = 0; i < list.length; i++){
+        if(list[i] != ""){
+            gBrowser.loadOneTab(list[i], null, null, null, false);
+        }
+    }
+}, "open tabs of newline separated url list from clipboard");
+
 ext.add("list-url", function(){
     var urls = [];
     var aa = window.content.document.getElementsByTagName("a");
