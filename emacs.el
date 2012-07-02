@@ -346,7 +346,7 @@ drill-instructor.el"
             ))
 
 (when (require 'whitespace nil t)
-  (setq whitespace-style '(face newline newline-mark empty tabs lines-trail trailing))
+  (setq whitespace-style '(face newline newline-mark empty lines-trail trailing))
   ;; (setq whitespace-newline 'font-lock-comment-face)
   (add-to-list 'whitespace-display-mappings
                `(newline-mark ?\n ,(vconcat "$\n"))
@@ -1006,23 +1006,27 @@ drill-instructor.el"
       recentf-show-file-shortcuts-flag nil)
 
 (when (require 'recentf nil t)
-  ;; (global-set-key "\C-x\C-r" 'recentf-open-files)
+  (recentf-mode 1)
+  (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
   (define-key ctl-x-map (kbd "C-r") 'recentf-open-files)
+  (add-hook 'find-file-hook
+            'recentf-save-list
+            t)   ; save to file immediately after adding file to recentf list
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
-  (recentf-mode 1)
   ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
-  (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
   (and (dllib-if-unfound
         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
-                         t)
+        t)
        (require 'recentf-show nil t)
-       (define-key ctl-x-map (kbd "C-r") 'recentf-show)))
+       (define-key ctl-x-map (kbd "C-r") 'recentf-show)
+       (add-hook 'recentf-show-before-listing-hook
+                 'recentf-load-list)))
 
 (add-hook 'recentf-dialog-mode-hook
           (lambda ()
-            (recentf-save-list)
+            ;; (recentf-save-list)
             ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f")
             ;; 'my-recentf-cd-and-find-file)
             (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
