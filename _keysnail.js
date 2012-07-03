@@ -696,7 +696,7 @@ key.setViewKey('m', function (ev, arg) {
 
 key.setViewKey('p', function (ev, arg) {
     if (window.loadURI) {
-        loadURI("javascript:var%20b=document.body;var%20POSTEROUS___bookmarklet_domain='http://posterous.com';if(b&&!document.xmlVersion){void(z=document.createElement('script'));void(z.type='text/javascript');void(z.src='http://posterous.com/javascripts/bookmarklet2.js');void(b.appendChild(z));}else{}");
+        loadURI("javascript:var%20b=document.body;var%20POSTEROUS___bookmarklet_domain='http://posterous.com';var%20d=new%20Date();var%20e=(new%20Date(d.getFullYear(),d.getMonth(),d.getDate())).getTime();if(b&&!document.xmlVersion){void(z=document.createElement('script'));void(z.type='text/javascript');void(z.src='http://posterous.com/javascripts/bookmarklet2.js?'+e);void(b.appendChild(z));}else{}");
     }
 }, 'posterousに投稿');
 
