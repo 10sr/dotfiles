@@ -103,7 +103,6 @@ alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
 alias hibernate="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
     /org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
 alias rand="echo \$RANDOM"
-alias ut="ssh 6365454829@un001.ecc.u-tokyo.ac.jp"
 alias xunp="file-roller -h"
 alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
