@@ -27,7 +27,7 @@ changing.")
                                                 default-directory))))
         (let ((pfile previous-file)
               (cfile (expand-file-name (or buffer-file-name
-                                          default-directory))))
+                                           default-directory))))
           (setq previous-file cfile)
           (run-hook-with-args 'buffer-file-changed-functions pfile cfile)))))
   ;; (add-hook 'buffer-file-changed-function
@@ -135,14 +135,14 @@ otherwise the path where the library installed."
   (add-to-list 'default-frame-alist '(background-color . "white"))
   (add-to-list 'default-frame-alist '(foreground-color . "gray10"))
   ;; (add-to-list 'default-frame-alist '(alpha . (80 100 100 100)))
-                                        ;; does not work?
+  ;; does not work?
   )
 ;; (add-to-list 'default-frame-alist '(cursor-type . box))
 (if window-system (menu-bar-mode 1) (menu-bar-mode 0))
 (and (fboundp 'tool-bar-mode)
-(tool-bar-mode 0))
+     (tool-bar-mode 0))
 (and (fboundp 'set-scroll-bar-mode)
-(set-scroll-bar-mode nil))
+     (set-scroll-bar-mode nil))
 (add-hook 'kill-emacs-hook
           ;; load when exitting to examine if file is written properly
           (lambda ()
@@ -167,9 +167,9 @@ otherwise the path where the library installed."
 ;; my prefix map
 (define-prefix-command 'my-prefix-map)
 '(add-hook 'after-init-hook
-          (lambda ()
-            (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
-            ))
+           (lambda ()
+             (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
+             ))
 (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
 (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
 (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
@@ -298,7 +298,7 @@ drill-instructor.el"
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
-                                        ;; complete symbol when `eval'
+;; complete symbol when `eval'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
@@ -415,7 +415,7 @@ drill-instructor.el"
 
 (and (dllib-if-unfound
       "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
-                       t)
+      t)
      (progn
        (require 'set-modeline-color nil t)))
 
@@ -472,7 +472,7 @@ drill-instructor.el"
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function nil)
-;(pc-selection-mode 1) ; this make some already defined keybind back to default
+                                        ;(pc-selection-mode 1) ; this make some already defined keybind back to default
 (delete-selection-mode 1)
 (cua-mode 0)
 (setq line-move-visual nil)
@@ -565,7 +565,7 @@ drill-instructor.el"
 (and window-system
      (dllib-if-unfound
       "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
-                       t)
+      t)
      (require 'save-window-size nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -585,6 +585,10 @@ drill-instructor.el"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mode
+
+(and (dllib-if-unfound "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
+                       t)
+     (require 'read-only-only-mode nil t))
 
 (add-hook 'verilog-mode-hook
           (lambda ()
@@ -694,7 +698,7 @@ drill-instructor.el"
                            (executable-find "markdown.pl")))
 (when (dllib-if-unfound
        "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
-                        t)
+       t)
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
   (autoload 'markdown-mode
     "markdown-mode" "Major mode for editing Markdown files." nil)
@@ -717,7 +721,7 @@ drill-instructor.el"
 
 (when (dllib-if-unfound
        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
-                        t)
+       t)
   (autoload 'js2-mode "js2-mode" nil t)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode)))
@@ -980,7 +984,7 @@ drill-instructor.el"
 
 (when (dllib-if-unfound
        "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
-                        t)
+       t)
   (setq auto-mode-alist
         (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
   (setq auto-mode-alist
@@ -1328,8 +1332,8 @@ Optional prefix ARG says how many lines to unflag; default is one line."
               '("di" "diff" "log" "show"))
       (apply 'eshell-exec-visual "git" args)
     (shell-command (mapconcat 'shell-quote-argument
-                               `("git" ,@args)
-                               " ")
+                              `("git" ,@args)
+                              " ")
                    t)
     ;; (eshell-external-command "git" args)
     ))
@@ -1681,7 +1685,7 @@ when SEC is nil, stop auto save if enabled."
         (list-directory-brief-switches "-C"))
     (with-current-buffer bf
       (list-directory (or nil
-                           default-directory)
+                          default-directory)
                       nil))
     ))
 
@@ -1795,8 +1799,8 @@ this is test, does not rename files"
                 (read-key-sequence-vector
                  (format "size[%dx%d] 1: maximize; 2, 3: split; 0: \
 delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
-                                                  (window-width)
-                                                  (window-height))))
+                         (window-width)
+                         (window-height))))
           (setq c (aref action 0))
           (cond ((= c ?l)
                  (unless (eq (window-width) (frame-width))
