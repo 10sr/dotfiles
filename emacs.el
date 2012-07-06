@@ -317,7 +317,12 @@ drill-instructor.el"
             (lambda () (set-cursor-color "black"))))
 
 (show-paren-mode 1)
-(setq show-paren-style 'mixed)
+(setq show-paren-delay 0.5
+      show-paren-style 'mixed)
+(set-face-background 'show-paren-match
+                     (face-foreground 'default))
+(set-face-inverse-video-p 'show-paren-match
+                          t)
 
 (transient-mark-mode 1)
 
