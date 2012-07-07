@@ -547,6 +547,21 @@ drill-instructor.el"
 (substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
 ;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; share clipboard with x
+
+;; this page describes this in details, but only these sexps seem to be needed
+;; http://garin.jp/doc/Linux/xwindow_clipboard
+
+(and (not window-system)
+     (not (eq window-system 'mac))
+     (getenv "DISPLAY")
+     (executable-find "xclip")
+     ;; (< emacs-major-version 24)
+     (dllib-if-unfound "http://www.emacswiki.org/emacs/download/xclip.el" t)
+     (require 'xclip nil t)
+     (turn-on-xclip))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
 
@@ -573,23 +588,24 @@ drill-instructor.el"
       t)
      (require 'save-window-size nil t))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; share clipboard with x
-
-;; this page describes this in details, but only these sexps seem to be needed
-;; http://garin.jp/doc/Linux/xwindow_clipboard
-
-(and (not window-system)
-     (not (eq window-system 'mac))
-     (getenv "DISPLAY")
-     (executable-find "xclip")
-     ;; (< emacs-major-version 24)
-     (dllib-if-unfound "http://www.emacswiki.org/emacs/download/xclip.el" t)
-     (require 'xclip nil t)
-     (turn-on-xclip))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GNU GLOBAL(gtags)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(autoload 'gtags-mode "gtags" "" t)
+(setq gtags-mode-hook
+      '(lambda ()
+         (setq gtags-select-buffer-single t)
+         ;; (local-set-key "\M-t" 'gtags-find-tag)
+         ;; (local-set-key "\M-r" 'gtags-find-rtag)
+         ;; (local-set-key "\M-s" 'gtags-find-symbol)
+         ;; (local-set-key "\C-t" 'gtags-pop-stack)
+         (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
+         (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
+         (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
+         (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
+         (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
+         (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
+         ))
 
 (and (dllib-if-unfound "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
                        t)
@@ -722,6 +738,8 @@ drill-instructor.el"
                   indent-tabs-mode nil)
             ;; (set-face-foreground 'font-lock-keyword-face "blue")
             (c-toggle-hungry-state -1)
+            (and (require 'gtags nil t)
+                 (gtags-mode 1))
             ))
 
 (when (dllib-if-unfound
