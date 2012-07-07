@@ -590,7 +590,10 @@ drill-instructor.el"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GNU GLOBAL(gtags)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; http://uguisu.skr.jp/Windows/gtags.html
+;; http://eigyr.dip.jp/gtags.html
+;; http://cha.la.coocan.jp/doc/gnu_global.html
+
 (autoload 'gtags-mode "gtags" "" t)
 (setq gtags-mode-hook
       '(lambda ()
@@ -599,6 +602,7 @@ drill-instructor.el"
          ;; (local-set-key "\M-r" 'gtags-find-rtag)
          ;; (local-set-key "\M-s" 'gtags-find-symbol)
          ;; (local-set-key "\C-t" 'gtags-pop-stack)
+         (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
          (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
          (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
          (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
