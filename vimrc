@@ -66,7 +66,7 @@ let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
 " i dont use gvimrc
 if has('gui_running')
-  " hide status bar and scroll bar
+  " hide toolbar and scroll bar
   set guioptions-=T
   set guioptions-=r
   set lines=45
