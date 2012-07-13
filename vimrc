@@ -1,4 +1,4 @@
-" 外部ファイル読み込み
+" load external file
 " if filereadable(expand('~/filepath'))
 " source ~/filepath
 " endif
@@ -8,49 +8,55 @@ endif
 
 """""""""""""""""""""""""""""""""""
 set compatible " vi compatible
-" バックアップファイルを作るディレクトリ
+" directory to put backup file
 if !isdirectory(expand('~/.vim/backup'))
    call mkdir(expand('~/.vim/backup'))
 endif
-set backup " バックアップ
+set backup " enable backup
 set backupdir=$HOME/.vim/backup
-set swapfile " スワップファイル用のディレクトリ
+set swapfile " directory for swap file
 set directory=$HOME/.vim/backup
 set viminfo+=n~/.vim/viminfo " viminfo
-set list " タブ文字、行末など不可視文字を表示する
-set listchars=tab:>-,extends:<,trail:-,eol:$ " listで表示される文字のフォーマットを指定する
-set showmatch " 閉じ括弧が入力されたとき、対応する括弧を表示する
-"set whichwrap=b,s,h,l,<,>,[,] " カーソルを行頭、行末で止まらないようにする
-set showmode " モード表示
-set title " display editting file on titlebar
-"set incsearch
-set wrapscan " 折り返し検索
-set showmatch " 括弧を閉じた時、対になる括弧を一瞬ハイライトする
-set ignorecase
-set smartcase " 検索時に大文字を含んでいたら大/小を区別
-set incsearch
+"set whichwrap=b,s,h,l,<,>,[,] " wrap when moving cursor
 set wildmode=longest,list,full
-set ruler " 行番号、カーソル位置を表示
-set nonumber "  do not show line number at left side
-"set laststatus=2 " ステータスラインを常に表示
-set showcmd
-set scrolloff=2 " 常に前後2行を表示
-syntax enable " シンタックス
-set hidden " 編集中でも他ファイルへ移動可
-"set backspace=indent,eol,start " バックスペースでなんでも消せるように
-"set autochdir " 自動的にカレントディレクトリを現在のファイルのディレクトリにする macだと出来ないってゆわれた
-set encoding=utf-8 " 言語設定
-set fileencodings=utf-8,shift-jis,euc-jp,latin1
-set mouse=h " マウス使わない
-set clipboard+=unnamed " クリップボードをWindowsと連携
-set visualbell " ビープしない
-set browsedir=buffer " バッファで開いているファイルのディレクトリ
+set hidden " can switch to another buffer even when editting a file
+"set backspace=indent,eol,start " backspace can erase these things
+"set autochdir " automatically change current dir according to current file. cant use with mac
+set mouse=h " do not use mouse
+set clipboard+=unnamed " use x clipboard, seems not to work
+set browsedir=buffer " default dir for Explorer
 
-set tabstop=4 " タブの画面上での幅
+" lang
+set encoding=utf-8
+set fileencodings=utf-8,shift-jis,euc-jp,latin1
+
+" display
+set showmode
+set title " display editting file on titlebar
+set list " display spcial letters such as newline or whitespace
+set listchars=tab:>-,extends:<,trail:-,eol:$ " set letters for displaying special letter
+set ruler " display current line and column
+set nonumber "  do not show line number at left side
+"set laststatus=2 " always show status line
+set scrolloff=2 " scroll offset
+set showcmd
+set visualbell " dont beep
+syntax enable " enable syntax highlight
+
+" searching
+"set incsearch
+set wrapscan " wrap search
+set showmatch " highlight matching paren
+set ignorecase
+set smartcase " case sensitive only when capital letter is used
+set incsearch
+
+" tab and indent
+set tabstop=4 " tab width for displaying
 set softtabstop=4
 set shiftwidth=4 " width of indent
-set expandtab " タブをスペースに展開する
-set autoindent " オートインデント
+set expandtab " expand tab to space
+set autoindent
 set smartindent
 set cindent
 filetype plugin indent on
@@ -58,9 +64,9 @@ filetype plugin indent on
 let g:netrw_liststyle = 1
 let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
-" gvimrc分けるのめんどい
+" i dont use gvimrc
 if has('gui_running')
-  " ツールバー、スクロールバー消す
+  " hide status bar and scroll bar
   set guioptions-=T
   set guioptions-=r
   set lines=45
@@ -89,7 +95,7 @@ noremap <C-c> <ESC>:<C-u>w<CR>
 
 " highlight current line
 " set cursorline
-" カレントウィンドウにのみ罫線を引く
+" show cursor line only in current window
 augroup cch
   autocmd! cch
   autocmd WinLeave * set nocursorline
@@ -99,7 +105,7 @@ augroup END
 hi clear CursorLine
 highlight CursorLine term=underline cterm=underline gui=underline
 
-" 入力モード時、ステータスラインのカラーを変更
+" change status line color when in insert mode
 augroup InsertHook
 autocmd!
 autocmd InsertEnter * highlight StatusLine guifg=#ccdc90 guibg=#2E4340
