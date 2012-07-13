@@ -735,7 +735,6 @@ drill-instructor.el"
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; c-mode
 ;; (setq c-default-style "bsd")
-;; BackSpace キーを「賢く」し，インデント幅は2桁，タブはスペースに展開
 (add-hook 'c-mode-common-hook
           (lambda ()
             (setq c-basic-offset 2
@@ -1112,7 +1111,7 @@ drill-instructor.el"
         (replace-match "none")))))
 
 (defun dired-get-file-info ()
-  "dired get disk usage"
+  "dired get file info"
   (interactive)
   (let ((f (dired-get-filename)))
     (if (file-directory-p f)
