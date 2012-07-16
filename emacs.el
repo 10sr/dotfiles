@@ -647,12 +647,11 @@ drill-instructor.el"
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
 
-;; (add-to-list 'auto-mode-alist
-;;              '("\\(xinitrc\\|xprograms\\)\\'" . sh-mode))
 (setq auto-mode-alist
       `(("autostart\\'" . sh-mode)
         ("xinitrc\\'" . sh-mode)
         ("xprograms\\'" . sh-mode)
+        ("PKGBUILD\\'" . sh-mode)
         ,@auto-mode-alist))
 
 (setq python-python-command (or (executable-find "python3")
