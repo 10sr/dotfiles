@@ -72,61 +72,6 @@ otherwise the path where the library installed."
 ;; start and quit
 
 (setq inhibit-startup-message t)
-(setq frame-title-format
-      (list '(:eval (format-time-string (or display-time-format
-                                            "")))
-            " | %b "
-            '(:eval (number-to-string (length
-                                       (buffer-list-not-start-with-space))))
-            " buffers ["
-            invocation-name
-            " "
-            emacs-version
-            " "
-            (symbol-name system-type)
-            "] "
-            '(:eval (symbol-name last-command))))
-
-(setq set-terminal-title-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
-(defun set-terminal-title (&rest args)
-  ""
-  (interactive "sString to set as title: ")
-  (let ((tty (frame-parameter nil
-                              'tty-type)))
-    (when (and tty
-               (string-match set-terminal-title-regexp
-                             tty))
-      (send-string-to-terminal (apply 'concat
-                                      "\033]0;"
-                                      `(,@args "\007"))))))
-(defun my-set-terminal-title ()
-  ""
-  (set-terminal-title "["
-                      invocation-name
-                      " "
-                      emacs-version
-                      " "
-                      (symbol-name system-type)
-                      "] "
-                      (abbreviate-file-name (or buffer-file-name
-                                                default-directory))))
-(add-hook 'buffer-file-changed-functions
-          (lambda (p c)
-            (my-set-terminal-title)))
-(add-hook 'suspend-resume-hook
-          'my-set-terminal-title)
-
-(defun buffer-list-not-start-with-space ()
-  (let ((bl (buffer-list))
-        b nbl)
-    (while bl
-      (setq b (pop bl))
-      (unless (string-equal " "
-                            (substring (buffer-name b)
-                                       0
-                                       1))
-        (add-to-list 'nbl b)))
-    nbl))
 (setq confirm-kill-emacs 'y-or-n-p)
 (setq gc-cons-threshold (* 1024 1024 4))
 
@@ -283,6 +228,65 @@ drill-instructor.el"
 ;;           (cons '(:eval (concat " "
 ;;                                 my-buffer-file-last-modified-time))
 ;;                 (cdr ls))))
+
+(setq frame-title-format
+      (list '(:eval (format-time-string (or display-time-format
+                                            "")))
+            " | %b "
+            '(:eval (number-to-string (length
+                                       (buffer-list-not-start-with-space))))
+            " buffers ["
+            invocation-name
+            " "
+            emacs-version
+            " "
+            (symbol-name system-type)
+            "] "
+            '(:eval (symbol-name last-command))))
+
+'(setq-default header-line-format (list " "
+                                        'display-time-string))
+
+(setq set-terminal-title-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
+(defun set-terminal-title (&rest args)
+  ""
+  (interactive "sString to set as title: ")
+  (let ((tty (frame-parameter nil
+                              'tty-type)))
+    (when (and tty
+               (string-match set-terminal-title-regexp
+                             tty))
+      (send-string-to-terminal (apply 'concat
+                                      "\033]0;"
+                                      `(,@args "\007"))))))
+(defun my-set-terminal-title ()
+  ""
+  (set-terminal-title "["
+                      invocation-name
+                      " "
+                      emacs-version
+                      " "
+                      (symbol-name system-type)
+                      "] "
+                      (abbreviate-file-name (or buffer-file-name
+                                                default-directory))))
+(add-hook 'buffer-file-changed-functions
+          (lambda (p c)
+            (my-set-terminal-title)))
+(add-hook 'suspend-resume-hook
+          'my-set-terminal-title)
+
+(defun buffer-list-not-start-with-space ()
+  (let ((bl (buffer-list))
+        b nbl)
+    (while bl
+      (setq b (pop bl))
+      (unless (string-equal " "
+                            (substring (buffer-name b)
+                                       0
+                                       1))
+        (add-to-list 'nbl b)))
+    nbl))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; minibuffer
