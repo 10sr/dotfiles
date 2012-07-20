@@ -182,7 +182,7 @@ drill-instructor.el"
 (global-set-key (kbd "C-<eisu-toggle>") 'ignore)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; mode-line
+;; title and mode-line
 
 (setq eol-mnemonic-dos "crlf")
 (setq eol-mnemonic-mac "cr")
@@ -229,21 +229,6 @@ drill-instructor.el"
 ;;                                 my-buffer-file-last-modified-time))
 ;;                 (cdr ls))))
 
-(setq frame-title-format
-      (list '(:eval (format-time-string (or display-time-format
-                                            "")))
-            " | %b "
-            '(:eval (number-to-string (length
-                                       (buffer-list-not-start-with-space))))
-            " buffers ["
-            invocation-name
-            " "
-            emacs-version
-            " "
-            (symbol-name system-type)
-            "] "
-            '(:eval (symbol-name last-command))))
-
 '(setq-default header-line-format (list " "
                                         'display-time-string))
 
@@ -261,15 +246,20 @@ drill-instructor.el"
                                       `(,@args "\007"))))))
 (defun my-set-terminal-title ()
   ""
-  (set-terminal-title "["
+  (set-terminal-title (abbreviate-file-name (or buffer-file-name
+                                                default-directory))
+                      " | "
+                      (number-to-string (length
+                                         (buffer-list-not-start-with-space)))
+                      " buffers in "
+                      (frame-parameter nil 'name)
+                      " ["
                       invocation-name
                       " "
                       emacs-version
                       " "
                       (symbol-name system-type)
-                      "] "
-                      (abbreviate-file-name (or buffer-file-name
-                                                default-directory))))
+                      "] "))
 (add-hook 'buffer-file-changed-functions
           (lambda (p c)
             (my-set-terminal-title)))
