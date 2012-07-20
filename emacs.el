@@ -648,6 +648,11 @@ drill-instructor.el"
         ("PKGBUILD\\'" . sh-mode)
         ,@auto-mode-alist))
 
+(when (locate-library "pkgbuild-mode")
+  (autoload 'pkgbuild-mode "pkgbuild-mode.el" "PKGBUILD mode." t)
+  (setq auto-mode-alist (append '(("/PKGBUILD$" . pkgbuild-mode))
+                                auto-mode-alist)))
+
 (setq python-python-command (or (executable-find "python3")
                                 (executable-find "python")))
 (defun my-python-run-as-command ()
