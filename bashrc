@@ -118,7 +118,19 @@ alias screen="screen -e^z^z"
 
 alias wic=wicd-curses
 alias wil="wicd-cli -y -l | head"
-alias wicn="wicd-cli -y -c -n"
+#alias wicn="wicd-cli -y -c -n"
+wicn(){
+    if test $# -eq 0
+    then
+        local num
+        wicd-cli -y -l | head
+        echo -n "input num: "
+        read num
+        test -n "$num" && wicd-cli -y -c -n $num
+    else
+        wicd-cli -y -c -n $1
+    fi
+}
 
 alias aptin="apt-get install"
 alias aptsearch="apt-cache search"
