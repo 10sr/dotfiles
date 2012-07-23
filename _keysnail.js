@@ -56,6 +56,11 @@ plugins.options["my-keysnail-bookmarks"] = [
 
 //////////////////////////////////////////
 // 2ch chaika
+
+// change chaika port every time firefox starts
+util.setIntPref("extensions.chaika.server_port.firefox",
+                8800 + Math.floor(Math.random() * 30));
+
 local["^http://127.0.0.1:8823/thread/"] = [
     ['k', function (ev, arg) {
         curl = window.content.location.href;
