@@ -1,5 +1,6 @@
 ;; load another file
-;; (load-file "~/filepath")
+;; (and (file-readable-p "~/.dotfiles/emacs.el")
+;;      (load-file "~/.dotfiles/emacs.el"))
 
 (unless (file-directory-p (expand-file-name user-emacs-directory))
   (make-directory (expand-file-name user-emacs-directory)))
