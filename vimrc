@@ -1,6 +1,6 @@
 " load external file
-" if filereadable(expand('~/filepath'))
-" source ~/filepath
+" if filereadable(expand('~/.dotfiles/vimrc'))
+" source ~/.dotfiles/vimrc
 " endif
 if !isdirectory(expand('~/.vim'))
    call mkdir(expand('~/.vim'))
