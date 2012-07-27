@@ -49,7 +49,7 @@ plugins.options["search-url-list"] = [
 ];
 
 plugins.options["my-keysnail-bookmarks"] = [
-    "twitter.com",
+    "twitter.com"
 ];
 
 // sitelocal keymap
@@ -67,7 +67,7 @@ local["^http://127.0.0.1:8823/thread/"] = [
         kurl = curl.replace(/http:.*thread\/(.*\/).*/, "chaika://post/$1");
         window.content.location.href = kurl;
     }
-    ],
+    ]
 ];
 
 local["^http://w2.p2.2ch.net/p2/read.php"] = [
@@ -78,7 +78,7 @@ local["^http://w2.p2.2ch.net/p2/read.php"] = [
         var k = format("chaika://post/http://%s/test/read.cgi/%s/%s/", result[1], result[2], result[3]);
         window.content.location.href = k;
     }
-    ],
+    ]
 ];
 
 /////////////////////////////////////////
@@ -99,7 +99,7 @@ local["^http://www.feedly.com/"] = [
     // ['x', function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("g", true));}],
     ['l', function (ev, arg) {window.content.location.href = "http://www.feedly.com/home#latest";}],
     [['t', 'p'], function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("t", true));}],
-    [['t', 'w'], function (ev, arg) {ext.exec("twitter-client-tweet", arg, ev);}],
+    [['t', 'w'], function (ev, arg) {ext.exec("twitter-client-tweet", arg, ev);}]
 ];
 
 /////////////////////////////////////////
@@ -116,7 +116,7 @@ local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
         kurl = curl.replace(/nicovideo.jp/, "nicovideofire.jp");
         window.content.location.href = kurl;
     }
-    ],
+    ]
 ];
 
 /////////////////////////////////////////
@@ -130,7 +130,7 @@ local["^http://www.tumblr.com/dashboard"] = [
         if (window.loadURI) {
             loadURI("javascript:(function(){b=20;s=100;t=document.getElementById('next_page_link').href.split('/')[5];max=t.substr(0,t.length-5);min=max-s;i=Math.floor(Math.random()*(max-min)+min);u=(i<b)?'http://www.tumblr.com/dashboard':'http://www.tumblr.com/dashboard/2/'+i+'00000';window.content.location.href=u;}())");
         }
-    }],
+    }]
 ];
 
 ///////////////////////////////////////////
@@ -162,6 +162,15 @@ plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
 // my ext
+
+ext.add("strong-fullscreen", function(){
+    BrowserFullScreen();
+    var isfullscreen = window.fullScreen;
+    var toolbox = document.getElementById("navigator-toolbox");
+    var tabbox = document.getElementById("verticaltabs-box");
+    var tabsplitter = document.getElementById("verticaltabs-splitter");
+    toolbox.hidden = tabbox.hidden = tabsplitter.hidden = isfullscreen;
+}, "go fullscreen with hiding toolbar and tabbar");
 
 ext.add("open-url-from-clipboard", function(){
     var list = command.getClipboardText().split("\n");
