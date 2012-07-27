@@ -164,12 +164,18 @@ plugins.options["twitter_client.use_jmp"] = true;
 // my ext
 
 ext.add("strong-fullscreen", function(){
+    var elemids = [
+        "navigator-toolbox",
+        "verticaltabs-box",
+        "verticaltabs-splitter"
+    ];
     BrowserFullScreen();
     var isfullscreen = window.fullScreen;
-    var toolbox = document.getElementById("navigator-toolbox");
-    var tabbox = document.getElementById("verticaltabs-box");
-    var tabsplitter = document.getElementById("verticaltabs-splitter");
-    toolbox.hidden = tabbox.hidden = tabsplitter.hidden = isfullscreen;
+
+    for(var i = 0; i < elemids.length; i++){
+        var elem = document.getElementById(elemids[i]);
+        if(elem){ elem.hidden = isfullscreen; }
+    }
 }, "go fullscreen with hiding toolbar and tabbar");
 
 ext.add("open-url-from-clipboard", function(){
@@ -337,11 +343,6 @@ ext.add("open-hatebu-comment", function (ev, arg) {
         loadURI("javascript:location.href='http://b.hatena.ne.jp/entry?mode=more&url='+escape(location.href);");
     }
 }, 'hatebu');
-
-ext.add("fullscreen-page",function (ev) {
-    getBrowser().selectedTab = getBrowser().addTab("http://home.tiscali.nl/annejan/swf/timeline.swf");
-    BrowserFullScreen();
-}, "fullscreen page");
 
 ext.add("focus-on-content", function(){
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
