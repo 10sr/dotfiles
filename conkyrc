@@ -8,14 +8,14 @@ xftfont DejaVu Sans Mono:size=10
 xftalpha 0.8
 
 update_interval 1.0
- 
+
 total_run_times 0
 
 own_window yes
 own_window_type desktop
 own_window_transparent yes
 own_window_colour hotpink
-own_window_hints undecorated,below,skip_taskbar,sticky,skip_pager
+#own_window_hints undecorated,below,skip_taskbar,sticky,skip_pager
 
 minimum_size 200
 draw_shades no
@@ -27,13 +27,13 @@ alignment top_right
 gap_x 20
 gap_y 40
 
-default_color green # slategrey 
+default_color green # slategrey
 default_shade_color lightgrey
 default_outline_color black
 color0 white                    # value
 color1 white                    # vertical border
 color2 green                    # name
-color3 gray                   # displays
+color3 gray                     # displays
 color4 888888                   # border of netspeed graph
 
 no_buffers yes
