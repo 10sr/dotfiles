@@ -136,6 +136,12 @@ local["^http://www.tumblr.com/dashboard"] = [
 ///////////////////////////////////////////
 // plugin option
 
+plugins.options["builtin_commands_ext.ext_list"] = [
+    "focus-to-prompt",
+    "open-url-from-clipboard",
+    "restart-firefox"
+];
+
 plugins.options["instapaper.close_after_post"] = true;
 plugins.options["instapaper.initial_comment_function"] = function(){
     var now = new Date();
@@ -163,6 +169,17 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+ext.add("echo-tab-info", function(){
+    var all = gBrowser.tabs.length;
+    var ix = gBrowser.mCurrentTab._tPos;
+    var title = window.document.title;
+    var url = window.content.location.href;
+    display.echoStatusBar((ix + 1).toString() + " / " +
+                          all.toString() + " : " +
+                          title + " <" +
+                          url + ">");
+}, "echo tab info");
+
 ext.add("strong-fullscreen", function(){
     var elemids = [
         "navigator-toolbox",
@@ -178,16 +195,16 @@ ext.add("strong-fullscreen", function(){
     }
 }, "go fullscreen with hiding toolbar and tabbar");
 
-ext.add("open-url-from-clipboard", function(){
-    var list = command.getClipboardText().split("\n");
-    for(var i = 0; i < list.length; i++){
-        if(list[i] != ""){
-            gBrowser.loadOneTab(list[i], null, null, null, false);
-        }
-    }
-}, "open tabs of newline separated url list from clipboard");
+// ext.add("open-url-from-clipboard", function(){
+//     var list = command.getClipboardText().split("\n");
+//     for(var i = 0; i < list.length; i++){
+//         if(list[i] != ""){
+//             gBrowser.loadOneTab(list[i], null, null, null, false);
+//         }
+//     }
+// }, "open tabs of newline separated url list from clipboard");
 
-ext.add("list-url", function(){
+ext.add("list-page-url", function(){
     var urls = [];
     var aa = window.content.document.getElementsByTagName("a");
     var text = "";
@@ -344,11 +361,11 @@ ext.add("open-hatebu-comment", function (ev, arg) {
     }
 }, 'hatebu');
 
-ext.add("focus-on-content", function(){
-    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-    gBrowser.focus();
-    content.focus();
-}, "forcus on content");
+// ext.add("focus-on-content", function(){
+//     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+//     gBrowser.focus();
+//     content.focus();
+// }, "forcus on content");
 
 ext.add("hide-sidebar", function(){
     var sidebarBox = document.getElementById("sidebar-box");
@@ -359,7 +376,7 @@ ext.add("hide-sidebar", function(){
 
 ext.add("close-and-next-tab", function (ev, arg) {
     var n = gBrowser.mCurrentTab._tPos;
-    BrowserCloseTabOrWindow();
+    gBrowser.removeCurrentTab();
     gBrowser.selectedTab = gBrowser.mTabs[n];
 }, "close and focus to next tab");
 
@@ -387,31 +404,31 @@ ext.add("restart-firefox-add-menu", function(){
 //////////////////////////////////////
 // restart firefox
 // http://keysnail.g.hatena.ne.jp/Shinnya/20100723/1279878815
-ext.add("restart-firefox",function (ev) {
-    const nsIAppStartup = Components.interfaces.nsIAppStartup;
-    // Notify all windows that an application quit has been requested.
-    var os = Components.classes["@mozilla.org/observer-service;1"]
-        .getService(Components.interfaces.nsIObserverService);
-    var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
-        .createInstance(Components.interfaces.nsISupportsPRBool);
-    os.notifyObservers(cancelQuit, "quit-application-requested", null);
-    // Something aborted the quit process. 
-    if (cancelQuit.data)
-        return;
-    // Notify all windows that an application quit has been granted.
-    os.notifyObservers(null, "quit-application-granted", null);
-    // Enumerate all windows and call shutdown handlers
-    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-        .getService(Components.interfaces.nsIWindowMediator);
-    var windows = wm.getEnumerator(null);
-    while (windows.hasMoreElements()) {
-        var win = windows.getNext();
-        if (("tryToClose" in win) && !win.tryToClose())
-            return;
-    }
-    Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
-        .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
-}, "restart firefox");
+// ext.add("restart-firefox",function (ev) {
+//     const nsIAppStartup = Components.interfaces.nsIAppStartup;
+//     // Notify all windows that an application quit has been requested.
+//     var os = Components.classes["@mozilla.org/observer-service;1"]
+//         .getService(Components.interfaces.nsIObserverService);
+//     var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
+//         .createInstance(Components.interfaces.nsISupportsPRBool);
+//     os.notifyObservers(cancelQuit, "quit-application-requested", null);
+//     // Something aborted the quit process. 
+//     if (cancelQuit.data)
+//         return;
+//     // Notify all windows that an application quit has been granted.
+//     os.notifyObservers(null, "quit-application-granted", null);
+//     // Enumerate all windows and call shutdown handlers
+//     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+//         .getService(Components.interfaces.nsIWindowMediator);
+//     var windows = wm.getEnumerator(null);
+//     while (windows.hasMoreElements()) {
+//         var win = windows.getNext();
+//         if (("tryToClose" in win) && !win.tryToClose())
+//             return;
+//     }
+//     Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
+//         .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
+// }, "restart firefox");
 
 /////////////////////////////////////////
 // copy feed url
@@ -606,6 +623,7 @@ hook.setHook('Unload', function () {
         return true;
     });
 });
+
 
 
 // ============================= Key bindings ============================== //
@@ -849,3 +867,7 @@ key.setViewKey('U', function (ev) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setGlobalKey('<f11>', function (ev, arg) {
+    ext.exec('strong-fullscreen', arg, ev);
+}, 'go fullscreen with hiding toolbar and tabbar', true);
