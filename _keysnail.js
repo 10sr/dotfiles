@@ -594,15 +594,14 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-hook.setHook('KeySnailInitialized', function () {
-    ext.exec("shiitake-enable-style");
-});
-
 hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
+
+    // focus to content
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
     content.focus();
+
     command.closeFindBar();
     if (util.isCaretEnabled()) {
         command.resetMark(aEvent);
