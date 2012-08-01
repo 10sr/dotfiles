@@ -123,6 +123,10 @@ alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"
 alias screen="screen -e^z^z"
 
+alias pad=notepad
+null type gedit && alias pad=gedit
+null type leafpad && alias pad=leafpad
+
 alias wic=wicd-curses
 alias wil="wicd-cli -y -l | head"
 #alias wicn="wicd-cli -y -c -n"
