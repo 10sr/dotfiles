@@ -182,16 +182,22 @@ ext.add("echo-tab-info", function(){
 
 ext.add("strong-fullscreen", function(){
     var elemids = [
-        "navigator-toolbox",
-        "verticaltabs-box",
-        "verticaltabs-splitter"
+        "navigator-toolbox"
+        //"verticaltabs-box",     //dont work well when open new tab
+        //"verticaltabs-splitter"
     ];
     BrowserFullScreen();
     var isfullscreen = window.fullScreen;
 
     for(var i = 0; i < elemids.length; i++){
         var elem = document.getElementById(elemids[i]);
-        if(elem){ elem.hidden = isfullscreen; }
+        if(elem){
+            if(isfullscreen){
+                elem.style.display = "none";
+            }else{
+                elem.style.display = null;
+            }
+        }
     }
 }, "go fullscreen with hiding toolbar and tabbar");
 
