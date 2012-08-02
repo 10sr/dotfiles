@@ -49,7 +49,7 @@ plugins.options["search-url-list"] = [
 ];
 
 plugins.options["my-keysnail-bookmarks"] = [
-    "twitter.com",
+    "twitter.com"
 ];
 
 // sitelocal keymap
@@ -67,7 +67,7 @@ local["^http://127.0.0.1:8823/thread/"] = [
         kurl = curl.replace(/http:.*thread\/(.*\/).*/, "chaika://post/$1");
         window.content.location.href = kurl;
     }
-    ],
+    ]
 ];
 
 local["^http://w2.p2.2ch.net/p2/read.php"] = [
@@ -78,7 +78,7 @@ local["^http://w2.p2.2ch.net/p2/read.php"] = [
         var k = format("chaika://post/http://%s/test/read.cgi/%s/%s/", result[1], result[2], result[3]);
         window.content.location.href = k;
     }
-    ],
+    ]
 ];
 
 /////////////////////////////////////////
@@ -99,7 +99,7 @@ local["^http://www.feedly.com/"] = [
     // ['x', function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("g", true));}],
     ['l', function (ev, arg) {window.content.location.href = "http://www.feedly.com/home#latest";}],
     [['t', 'p'], function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("t", true));}],
-    [['t', 'w'], function (ev, arg) {ext.exec("twitter-client-tweet", arg, ev);}],
+    [['t', 'w'], function (ev, arg) {ext.exec("twitter-client-tweet", arg, ev);}]
 ];
 
 /////////////////////////////////////////
@@ -116,7 +116,7 @@ local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
         kurl = curl.replace(/nicovideo.jp/, "nicovideofire.jp");
         window.content.location.href = kurl;
     }
-    ],
+    ]
 ];
 
 /////////////////////////////////////////
@@ -130,11 +130,17 @@ local["^http://www.tumblr.com/dashboard"] = [
         if (window.loadURI) {
             loadURI("javascript:(function(){b=20;s=100;t=document.getElementById('next_page_link').href.split('/')[5];max=t.substr(0,t.length-5);min=max-s;i=Math.floor(Math.random()*(max-min)+min);u=(i<b)?'http://www.tumblr.com/dashboard':'http://www.tumblr.com/dashboard/2/'+i+'00000';window.content.location.href=u;}())");
         }
-    }],
+    }]
 ];
 
 ///////////////////////////////////////////
 // plugin option
+
+plugins.options["builtin_commands_ext.ext_list"] = [
+    "focus-to-prompt",
+    "open-url-from-clipboard",
+    "restart-firefox"
+];
 
 plugins.options["instapaper.close_after_post"] = true;
 plugins.options["instapaper.initial_comment_function"] = function(){
@@ -163,16 +169,48 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
-ext.add("open-url-from-clipboard", function(){
-    var list = command.getClipboardText().split("\n");
-    for(var i = 0; i < list.length; i++){
-        if(list[i] != ""){
-            gBrowser.loadOneTab(list[i], null, null, null, false);
+ext.add("echo-tab-info", function(){
+    var all = gBrowser.tabs.length;
+    var ix = gBrowser.mCurrentTab._tPos;
+    var title = window.document.title;
+    var url = window.content.location.href;
+    display.echoStatusBar((ix + 1).toString() + " / " +
+                          all.toString() + " : " +
+                          title + " <" +
+                          url + ">");
+}, "echo tab info");
+
+ext.add("strong-fullscreen", function(){
+    var elemids = [
+        "navigator-toolbox"
+        //"verticaltabs-box",     //dont work well when open new tab
+        //"verticaltabs-splitter"
+    ];
+    BrowserFullScreen();
+    var isfullscreen = window.fullScreen;
+
+    for(var i = 0; i < elemids.length; i++){
+        var elem = document.getElementById(elemids[i]);
+        if(elem){
+            if(isfullscreen){
+                elem.style.display = "none";
+            }else{
+                elem.style.display = null;
+            }
         }
     }
-}, "open tabs of newline separated url list from clipboard");
+}, "go fullscreen with hiding toolbar and tabbar");
 
-ext.add("list-url", function(){
+// ext.add("open-url-from-clipboard", function(){
+//     var list = command.getClipboardText().split("\n");
+//     for(var i = 0; i < list.length; i++){
+//         if(list[i] != ""){
+//             gBrowser.loadOneTab(list[i], null, null, null, false);
+//         }
+//     }
+// }, "open tabs of newline separated url list from clipboard");
+
+ext.add("list-page-url", function(){
     var urls = [];
     var aa = window.content.document.getElementsByTagName("a");
     var text = "";
@@ -329,16 +367,11 @@ ext.add("open-hatebu-comment", function (ev, arg) {
     }
 }, 'hatebu');
 
-ext.add("fullscreen-page",function (ev) {
-    getBrowser().selectedTab = getBrowser().addTab("http://home.tiscali.nl/annejan/swf/timeline.swf");
-    BrowserFullScreen();
-}, "fullscreen page");
-
-ext.add("focus-on-content", function(){
-    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-    gBrowser.focus();
-    content.focus();
-}, "forcus on content");
+// ext.add("focus-on-content", function(){
+//     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+//     gBrowser.focus();
+//     content.focus();
+// }, "forcus on content");
 
 ext.add("hide-sidebar", function(){
     var sidebarBox = document.getElementById("sidebar-box");
@@ -349,7 +382,7 @@ ext.add("hide-sidebar", function(){
 
 ext.add("close-and-next-tab", function (ev, arg) {
     var n = gBrowser.mCurrentTab._tPos;
-    BrowserCloseTabOrWindow();
+    gBrowser.removeCurrentTab();
     gBrowser.selectedTab = gBrowser.mTabs[n];
 }, "close and focus to next tab");
 
@@ -377,31 +410,31 @@ ext.add("restart-firefox-add-menu", function(){
 //////////////////////////////////////
 // restart firefox
 // http://keysnail.g.hatena.ne.jp/Shinnya/20100723/1279878815
-ext.add("restart-firefox",function (ev) {
-    const nsIAppStartup = Components.interfaces.nsIAppStartup;
-    // Notify all windows that an application quit has been requested.
-    var os = Components.classes["@mozilla.org/observer-service;1"]
-        .getService(Components.interfaces.nsIObserverService);
-    var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
-        .createInstance(Components.interfaces.nsISupportsPRBool);
-    os.notifyObservers(cancelQuit, "quit-application-requested", null);
-    // Something aborted the quit process. 
-    if (cancelQuit.data)
-        return;
-    // Notify all windows that an application quit has been granted.
-    os.notifyObservers(null, "quit-application-granted", null);
-    // Enumerate all windows and call shutdown handlers
-    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-        .getService(Components.interfaces.nsIWindowMediator);
-    var windows = wm.getEnumerator(null);
-    while (windows.hasMoreElements()) {
-        var win = windows.getNext();
-        if (("tryToClose" in win) && !win.tryToClose())
-            return;
-    }
-    Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
-        .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
-}, "restart firefox");
+// ext.add("restart-firefox",function (ev) {
+//     const nsIAppStartup = Components.interfaces.nsIAppStartup;
+//     // Notify all windows that an application quit has been requested.
+//     var os = Components.classes["@mozilla.org/observer-service;1"]
+//         .getService(Components.interfaces.nsIObserverService);
+//     var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
+//         .createInstance(Components.interfaces.nsISupportsPRBool);
+//     os.notifyObservers(cancelQuit, "quit-application-requested", null);
+//     // Something aborted the quit process. 
+//     if (cancelQuit.data)
+//         return;
+//     // Notify all windows that an application quit has been granted.
+//     os.notifyObservers(null, "quit-application-granted", null);
+//     // Enumerate all windows and call shutdown handlers
+//     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+//         .getService(Components.interfaces.nsIWindowMediator);
+//     var windows = wm.getEnumerator(null);
+//     while (windows.hasMoreElements()) {
+//         var win = windows.getNext();
+//         if (("tryToClose" in win) && !win.tryToClose())
+//             return;
+//     }
+//     Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
+//         .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
+// }, "restart firefox");
 
 /////////////////////////////////////////
 // copy feed url
@@ -567,15 +600,14 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-hook.setHook('KeySnailInitialized', function () {
-    ext.exec("shiitake-enable-style");
-});
-
 hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
+
+    // focus to content
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
     content.focus();
+
     command.closeFindBar();
     if (util.isCaretEnabled()) {
         command.resetMark(aEvent);
@@ -596,6 +628,7 @@ hook.setHook('Unload', function () {
         return true;
     });
 });
+
 
 
 // ============================= Key bindings ============================== //
@@ -839,3 +872,7 @@ key.setViewKey('U', function (ev) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setGlobalKey('<f11>', function (ev, arg) {
+    ext.exec('strong-fullscreen', arg, ev);
+}, 'go fullscreen with hiding toolbar and tabbar', true);

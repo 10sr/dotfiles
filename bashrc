@@ -66,6 +66,13 @@ mkdir -p "/tmp/${USER}-tmp"
 #######################
 
 iswindows && alias tty="echo cmd.exe"
+type fortune >/dev/null 2>&1 && {
+    echo
+    fortune
+    echo
+    fortune -o
+    echo
+}
 uname -a
 echo TERM $TERM connected to $(tty), running $BASH $BASH_VERSION
 echo
@@ -116,9 +123,9 @@ alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"
 alias screen="screen -e^z^z"
 
-alias xe=notepad
-null type gedit && alias xe=gedit
-null type leafpad && alias xe=leafpad
+alias pad=notepad
+null type gedit && alias pad=gedit
+null type leafpad && alias pad=leafpad
 
 alias wic=wicd-curses
 alias wil="wicd-cli -y -l | head"
