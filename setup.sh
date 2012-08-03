@@ -22,7 +22,6 @@ _my_install_script(){
         }
     done
 }
-_my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
 
 _my_install_symlink_script(){
     mkdir -p "$HOME/.local/bin/"
@@ -31,3 +30,34 @@ _my_install_symlink_script(){
         ln -s "$PWD/$f" "$HOME/.local/bin/"
     done
 }
+
+_my_git_config(){
+    git config --global user.name '10sr'
+    git config --global user.email '8slashes+git@gmail.com'
+    git config --global core.autocrlf false
+    git config --global core.excludesfile '~/.gitignore'
+    git config --global color.ui auto
+    git config --global status.relativePaths false
+    git config --global status.showUntrackedFiles normal
+    git config --global log.date iso
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso"
+    git config --global alias.st "status -s -b"
+    git config --global alias.b "branch"
+    git config --global alias.ci "commit --verbose"
+    git config --global alias.co "checkout"
+    git config --global alias.cim "commit --verbose -m"
+    git config --global alias.di "diff --color"
+    git config --global alias.me "merge --no-ff --stat -v"
+    git config --global alias.ls "ls-files -v --full-name"
+    git config --global alias.sl "!sl"
+    # git config --global alias.my-ls "ls-files | xargs ls"
+    # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
+    git config --global alias.addi "add -i"
+    if iswindows; then
+        git config --global core.fileMode false
+    fi
+}
+
+_my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
+
+type git >/dev/null 2>&1 && _my_git_config
