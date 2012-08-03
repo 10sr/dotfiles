@@ -48,20 +48,21 @@ export VISUAL="$EDITOR"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
+export TMP="/tmp/${USER}-tmp"
+export TEMP="$TMP"
+mkdir -p "$TMP"
+
 ! iswindows && null type stty && {
     stty stop undef        # unbind C-s to stop displaying output
     # stty erase '^h'
 }
 
 if iswindows; then
-    # export TMP=/tmp
-    # export TEMP=/tmp
     # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
     # export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
     export USER=$USERNAME
 fi
 
-mkdir -p "/tmp/${USER}-tmp"
 
 #######################
 
@@ -445,7 +446,7 @@ __my_ps1_ipaddr(){
 }
 __my_ps1_bttry(){
     local last=$?
-    local bst="/tmp/${USER}-tmp/batterystatus"
+    local bst="$TMP/batterystatus"
     if test -z "$DISPLAY" && ! iswindows
     then
         test -f $bst && local bstr="$(cat $bst)"
