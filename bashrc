@@ -48,8 +48,7 @@ export VISUAL="$EDITOR"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
 
-export TMP="/tmp/${USER}-tmp"
-export TEMP="$TMP"
+test -z "$TMP" && export TMP=/tmp/${USER}-tmp
 mkdir -p "$TMP"
 
 ! iswindows && null type stty && {
@@ -446,7 +445,7 @@ __my_ps1_ipaddr(){
 }
 __my_ps1_bttry(){
     local last=$?
-    local bst="$TMP/batterystatus"
+    local bst="${TMP}/batterystatus"
     if test -z "$DISPLAY" && ! iswindows
     then
         test -f $bst && local bstr="$(cat $bst)"
