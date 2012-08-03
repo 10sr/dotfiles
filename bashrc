@@ -96,7 +96,7 @@ null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
 alias cp="cp -v"
 alias mv="mv -v"
-alias psall="ps auxww"
+alias psaux="ps auxww"
 alias q=exit
 alias e3=e3em
 alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
