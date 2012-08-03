@@ -183,8 +183,6 @@ ext.add("echo-tab-info", function(){
 ext.add("strong-fullscreen", function(){
     var elemids = [
         "navigator-toolbox"
-        //"verticaltabs-box",     //dont work well when open new tab
-        //"verticaltabs-splitter"
     ];
     BrowserFullScreen();
     var isfullscreen = window.fullScreen;
@@ -199,6 +197,21 @@ ext.add("strong-fullscreen", function(){
             }
         }
     }
+
+    var tabs = document.getElementById("verticaltabs-box");
+    var pref_key = "extensions.verticaltabs.width";
+    var pref_key_bak = pref_key + "_bak"
+    if(isfullscreen){
+        var width_orig = util.getIntPref(pref_key);
+        util.setIntPref(pref_key_bak, width_orig);
+        util.setIntPref(pref_key, 0);
+        tabs.setAttribute("width", "0");
+    }else if(parseInt(tabs.getAttribute("width") || "") === 0){
+        var width_bak = util.getIntPref(pref_key_bak);
+        util.setIntPref(pref_key, width_bak);
+        tabs.setAttribute("width", width_bak.toString());
+    }
+
 }, "go fullscreen with hiding toolbar and tabbar");
 
 // ext.add("open-url-from-clipboard", function(){
