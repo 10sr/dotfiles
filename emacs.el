@@ -1,4 +1,3 @@
-;; load another file
 ;; (and (file-readable-p "~/.dotfiles/emacs.el")
 ;;      (load-file "~/.dotfiles/emacs.el"))
 

@@ -58,6 +58,12 @@ _my_git_config(){
     fi
 }
 
+_gen_source_script(){
+    # _gen_source_script file lines
+    test $# -eq 2 || return 1
+    head -n $2 $1 | \grep -v '^#!' | sed -e 's/^..//g'
+}
+
 _my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
 
 type git >/dev/null 2>&1 && _my_git_config
