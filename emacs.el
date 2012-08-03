@@ -1935,7 +1935,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
                           "c:/Program Files/Git/bin"
                           "c:/MinGW/bin"
                           "c:/MinGW/mingw32/bin"
-                          (expand-file-name "~/bin")
+                          (expand-file-name "~/.local/bin")
                           (expand-file-name "~/dbx/apps/bin"))
 
   (when window-system

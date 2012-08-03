@@ -21,10 +21,9 @@ __add_to_path(){
     done
 }
 # export PATH="${PATH}:${HOME}/bin"
-__add_to_path ${HOME}/bin /c/mingw/bin /c/mingw/msys/1.0/bin
+__add_to_path ${HOME}/.local/bin /c/mingw/bin /c/mingw/msys/1.0/bin
 
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
 
-mkdir -p ~/.my/log
 mkdir -p "/tmp/$USER-tmp"

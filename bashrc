@@ -421,34 +421,6 @@ _colors(){
         "\e[0m"
 }
 
-_my_install_script(){
-    mkdir -p "$HOME/bin/"
-    for f in "$@"
-    do
-        bn=$(basename "$f")
-        type $bn >/dev/null 2>&1 || {
-            if type wget >/dev/null 2>&1
-            then
-                wget "$f" -P "$HOME/bin/" &&
-                chmod u+x "$HOME/bin/${bn}"
-            elif  type curl >/dev/null 2>&1
-            then
-                curl --url "$f" --output "$HOME/bin/${bn}" &&
-                chmod u+x "$HOME/bin/${bn}"
-            fi
-        }
-    done
-}
-_my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
-
-_my_install_symlink_script(){
-    mkdir -p "$HOME/bin/"
-    for f in "$@"
-    do
-        ln -s "$PWD/$f" "$HOME/bin/"
-    done
-}
-
 winln(){
     # for windose make link (actually junction)
     if test $# -eq 0
