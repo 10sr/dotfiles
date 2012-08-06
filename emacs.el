@@ -345,7 +345,13 @@ drill-instructor.el"
             ))
 
 (when (require 'whitespace nil t)
-  (setq whitespace-style '(face newline newline-mark empty lines-trail trailing))
+  (setq whitespace-style '(face
+                           trailing     ; trailing blanks
+                           newline      ; newlines
+                           newline-mark ; use display table for newline
+                           empty        ; empty lines at beg or end of buffer
+                           lines-tail  ; lines over 80
+                           ))
   ;; (setq whitespace-newline 'font-lock-comment-face)
   (add-to-list 'whitespace-display-mappings
                `(newline-mark ?\n ,(vconcat "$\n"))
