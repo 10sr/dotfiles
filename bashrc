@@ -117,7 +117,7 @@ alias py3=python3
 alias py2=python2
 alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 # alias mytime="date +%Y%m%d-%H%M%S"
-alias sh="ENV=$HOME/.shrc PS1=\$\  sh"
+alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
 alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"

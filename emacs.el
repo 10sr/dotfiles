@@ -1,6 +1,7 @@
 ;; (and (file-readable-p "~/.dotfiles/emacs.el")
 ;;      (load-file "~/.dotfiles/emacs.el"))
 
+;; make directories
 (unless (file-directory-p (expand-file-name user-emacs-directory))
   (make-directory (expand-file-name user-emacs-directory)))
 (let ((d (expand-file-name (concat user-emacs-directory
@@ -477,7 +478,7 @@ drill-instructor.el"
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function nil)
-                                        ;(pc-selection-mode 1) ; this make some already defined keybind back to default
+;; (pc-selection-mode 1) ; make some already defined keybind back to default
 (delete-selection-mode 1)
 (cua-mode 0)
 (setq line-move-visual nil)
@@ -611,8 +612,9 @@ drill-instructor.el"
          (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
          ))
 
-(and (dllib-if-unfound "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
-                       t)
+(and (dllib-if-unfound
+      "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
+      t)
      (require 'read-only-only-mode nil t))
 
 (add-hook 'verilog-mode-hook
@@ -1946,4 +1948,3 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (when window-system
     (setq w32-enable-synthesized-fonts t))
   (setq file-name-coding-system 'sjis))
-

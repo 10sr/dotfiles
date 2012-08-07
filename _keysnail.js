@@ -199,7 +199,7 @@ ext.add("strong-fullscreen", function(){
     }
 
     var tabs = document.getElementById("verticaltabs-box");
-    if(tabs){ 
+    if(tabs){
         var pref_key = "extensions.verticaltabs.width";
         var pref_key_bak = pref_key + "_bak"
         if(isfullscreen){
