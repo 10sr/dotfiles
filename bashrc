@@ -74,7 +74,7 @@ type fortune >/dev/null 2>&1 && {
     echo
 }
 uname -a
-echo TERM $TERM connected to $(tty), running $BASH $BASH_VERSION
+echo TERM $TERM $(tput colors) colors connected to $(tty), running $BASH $BASH_VERSION
 echo
 
 ###################################
