@@ -122,6 +122,7 @@ alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"
 alias screen="screen -e^z^z"
+alias zcd="cd \`zenity --file-selection --directory\`"
 
 alias pad=notepad
 null type gedit && alias pad=gedit
@@ -181,6 +182,19 @@ then
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
 	|| complete -o default -o nospace -F _git g
 fi
+
+tmux_main(){
+        if tmux has -t main
+        then
+            if tmux lsc -t main
+                tmux new
+            else
+                tmux attach -t main
+            fi
+        else
+            tmux new -s main
+        fi
+    }
 
 __my_moc_state(){
     type mocp >/dev/null 2>&1 || return
