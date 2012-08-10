@@ -183,17 +183,17 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
-tmux_main(){
-    if tmux has -t main
+tmux(){
+    if test $# -eq 0
     then
-        if tmux lsc -t main
+        if command tmux has -t main
         then
-            tmux new
+            command tmux attach -t main
         else
-            tmux attach -t main
+            command tmux new -s main
         fi
     else
-        tmux new -s main
+        command tmux "$@"
     fi
 }
 
