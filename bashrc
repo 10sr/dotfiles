@@ -184,17 +184,18 @@ then
 fi
 
 tmux_main(){
-        if tmux has -t main
+    if tmux has -t main
+    then
+        if tmux lsc -t main
         then
-            if tmux lsc -t main
-                tmux new
-            else
-                tmux attach -t main
-            fi
+            tmux new
         else
-            tmux new -s main
+            tmux attach -t main
         fi
-    }
+    else
+        tmux new -s main
+    fi
+}
 
 __my_moc_state(){
     type mocp >/dev/null 2>&1 || return
