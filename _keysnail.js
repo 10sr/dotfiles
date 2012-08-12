@@ -497,7 +497,7 @@ ext.add("keysnail-reload-init-file", function(){
 ext.add("keysnail-z-menu",function(){
     var list = [["keysnail-setting-dialog"],
                 ["keysnail-plugin-manager"],
-                ["forefox-open-addon-manager"],
+                ["firefox-open-addon-manager"],
                 ["keysnail-reload-init-file"],
                 // ["check-for-plugins-update"],
                 ["restart-firefox"]
