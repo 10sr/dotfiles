@@ -184,12 +184,11 @@ then
 fi
 
 input(){
-    (
-        stty -echo
-        read foo
-        stty echo
-        echo $foo
-    )
+    local foo
+    stty -echo
+    read foo
+    stty echo
+    echo $foo
 }
 
 tmux(){
