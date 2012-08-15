@@ -183,6 +183,15 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
+input(){
+    (
+        stty -echo
+        read foo
+        stty echo
+        echo $foo
+    )
+}
+
 tmux(){
     if test $# -eq 0
     then
