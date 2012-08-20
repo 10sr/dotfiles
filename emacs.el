@@ -128,7 +128,7 @@ otherwise the path where the library installed."
             (kill-buffer "*scratch*")))
 
 ;; modifier keys
-(setq mac-option-modifier 'control)
+;; (setq mac-option-modifier 'control)
 (setq w32-apps-modifier 'meta)
 
 ;; display
@@ -300,9 +300,11 @@ drill-instructor.el"
 
 ;; (set-face-background 'vertical-border (face-foreground 'mode-line))
 
-(when (eq system-type 'Darwin)
-  (mac-set-input-method-parameter 'japanese 'cursor-color "red")
-  (mac-set-input-method-parameter 'roman 'cursor-color "black"))
+(and (or (eq system-type 'Darwin)
+         (eq system-type 'darwin))
+     (fboundp 'mac-set-input-method-parameter)
+     (mac-set-input-method-parameter 'japanese 'cursor-color "red")
+     (mac-set-input-method-parameter 'roman 'cursor-color "black"))
 
 (when (and (boundp 'input-method-activate-hook) ; i dont know this is correct
            (boundp 'input-method-inactivate-hook))
