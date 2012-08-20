@@ -26,7 +26,7 @@ set mouse=h " do not use mouse
 set clipboard+=unnamed " use x clipboard, seems not to work
 set browsedir=buffer " default dir for Explorer
 
-" lang
+" encoding
 set encoding=utf-8
 set fileencodings=utf-8,shift-jis,euc-jp,latin1
 

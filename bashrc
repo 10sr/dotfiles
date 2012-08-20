@@ -50,6 +50,7 @@ export LC_MESSAGES=C
 export VISUAL="$EDITOR"
 export GIT_PAGER="$PAGER"
 export GIT_EDITOR="$EDITOR"
+echo "$TERM" | grep '^screen' >/dev/null 2>&1 || export TERM_ORIG=$TERM
 
 test -z "$TMP" && export TMP=/tmp/${USER}-tmp
 mkdir -p "$TMP"
