@@ -321,32 +321,37 @@ setclip(){
     fi
 }
 
-if iswindows; then
-    alias _open_file='cmd.exe //c start ""'
-elif isdarwin; then
-    alias _open_file=open
-elif islinux; then
-    if null type pcmanfm; then
-        alias _open_file="LC_MESSAGES= pcmanfm"
+_open_file(){
+    if iswindows
+    then
+        cmd.exe //c start "" "$@"
+    elif isdarwin
+    then
+        open "$@"
+    elif islinux
+    then
+        if null type pcmanfm; then
+            LC_MESSAGES= pcmanfm "$@" &
+        else
+            LC_MESSAGES= xdg-open "$@"
+        fi
     else
-        alias _open_file="LC_MESSAGES= xdg-open"
+        cat "$@"
     fi
-else
-    alias _open_file=cat
-fi
+}
 
 o(){
     if test $# -eq 0
     then
-        _open_file . >/dev/null 2>&1 &
+        _open_file .
     else
         for f in "$@"
         do
-            if test -d $f
+            if test -d "$f"
             then
-                _open_file $f >/dev/null 2>&1 &
+                _open_file "$f"
             else
-                _open_file $f >/dev/null 2>&1 &
+                _open_file "$f"
             fi
         done
     fi
