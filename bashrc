@@ -469,7 +469,7 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
-TMUX_CURRENT="$(__try_exec tmux display -p '#S:#I:#W.#P')"
+TMUX_CURRENT="$(__try_exec tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
 __my_ps1_tmux(){
     local last=$?
     test -n "$TMUX" && echo "[TMUX:$TMUX_CURRENT]"
