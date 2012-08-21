@@ -343,9 +343,9 @@ _open_file(){
     elif islinux
     then
         if null type pcmanfm; then
-            LC_MESSAGES= pcmanfm "$@" &
+            LC_MESSAGES= pcmanfm "$@"
         else
-            LC_MESSAGES= xdg-open "$@"
+            LC_MESSAGES= xdg-open "$@" &
         fi
     else
         cat "$@"
@@ -359,12 +359,7 @@ o(){
     else
         for f in "$@"
         do
-            if test -d "$f"
-            then
-                _open_file "$f"
-            else
-                _open_file "$f"
-            fi
+            _open_file "$f"
         done
     fi
 }
@@ -471,6 +466,12 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
+TMUX_CURRENT="$(__try_exec tmux display -p '#S:#I:#W.#P')"
+__my_ps1_tmux(){
+    local last=$?
+    test -n "$TMUX" && echo "[TMUX:$TMUX_CURRENT]"
+    return $last
+}
 __my_ps1_moc(){
     local last=$?
     __my_moc_state "[MOC:%s]"
@@ -478,6 +479,7 @@ __my_ps1_moc(){
 }
 __my_ps1_git(){
     local last=$?
+    null type __git_ps1 || return $last
     __try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
     return $last
 }
@@ -512,7 +514,7 @@ then
     __my_cdef="\[\e[0m\]"
 fi
 _PS1="\
-${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${OLDPWD}${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
+${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${OLDPWD}${__my_cdef}]\$(__my_ps1_tmux)\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
 ${__my_c4}:: ${__my_c2}\u@\H${__my_cdef} \D{%a, %d %b %Y %T %z} ${SHELL} \V\n\
 ${__my_c4}:: ${__my_cdef}shlv:${SHLVL} cnum:\# jobs:\j last:\$? \$ "
 PS1=$_PS1
