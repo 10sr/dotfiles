@@ -331,9 +331,9 @@ _open_file(){
     elif islinux
     then
         if null type pcmanfm; then
-            LC_MESSAGES= pcmanfm "$@" &
+            LC_MESSAGES= pcmanfm "$@"
         else
-            LC_MESSAGES= xdg-open "$@"
+            LC_MESSAGES= xdg-open "$@" &
         fi
     else
         cat "$@"
@@ -347,12 +347,7 @@ o(){
     else
         for f in "$@"
         do
-            if test -d "$f"
-            then
-                _open_file "$f"
-            else
-                _open_file "$f"
-            fi
+            _open_file "$f"
         done
     fi
 }
