@@ -471,6 +471,11 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
+__my_ps1_scale(){
+    local last=$?
+    echo "[LC:${LINES}x${COLUMNS}]"
+    return $last
+}
 TMUX_CURRENT="$(__try_exec tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
 __my_ps1_tmux(){
     local last=$?
@@ -519,7 +524,7 @@ then
     __my_cdef="\[\e[0m\]"
 fi
 _PS1="\
-${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${OLDPWD}${__my_cdef}]\$(__my_ps1_tmux)\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
+${__my_c4}:: ${__my_cdef}[${__my_c1}\w/${__my_cdef}<${__my_c3}\${OLDPWD}${__my_cdef}]\$(__my_ps1_scale)\$(__my_ps1_tmux)\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
 ${__my_c4}:: ${__my_c2}\u@\H${__my_cdef} \D{%a, %d %b %Y %T %z} ${SHELL} \V\n\
 ${__my_c4}:: ${__my_cdef}shlv:${SHLVL} cnum:\# jobs:\j last:\$? \$ "
 PS1=$_PS1
