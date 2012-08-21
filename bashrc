@@ -3,6 +3,14 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+##########################################
+null(){
+    "$@" >/dev/null 2>&1
+}
+__try_exec(){
+    type $1 >/dev/null 2>&1 && "$@"
+}
+
 ##########################
 # system type
 
@@ -11,6 +19,7 @@ alias iscygwin=false
 alias iswindows=false
 alias isdarwin=false
 alias islinux=false
+alias with_coreutils=false      # for mac
 
 case `uname` in
     (MINGW*) alias ismsys=true ;;
@@ -18,16 +27,9 @@ case `uname` in
     (Darwin*) alias isdarwin=true ;;
     (Linux*) alias islinux=true ;;
 esac
+null ls --version && alias with_coreutils=true
 
 ( ismsys || iscygwin ) && alias iswindows=true
-
-##########################################
-null(){
-    "$@" >/dev/null 2>&1
-}
-__try_exec(){
-    type $1 >/dev/null 2>&1 && "$@"
-}
 
 export PS1                      # PS1 is defined later
 # PROMPT_COMMAND=prompt_function
@@ -84,8 +86,8 @@ echo
 ###################################
 # some aliases and functions
 
-isdarwin || test "$TERM" == dumb || _coloroption=" --color=always"
-isdarwin || iswindows || _timeoption=" --time-style=long-iso"
+( ! with_coreutils && isdarwin ) || test "$TERM" == dumb || _coloroption=" --color=always"
+( ! with_coreutils && isdarwin ) || iswindows || _timeoption=" --time-style=long-iso"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
