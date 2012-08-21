@@ -454,11 +454,12 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
+TMUX_CURRENT=$(tmux display -p '#S:#I:#W.#P')
 __my_ps1_tmux(){
     local last=$?
     if test -n "$TMUX"
     then
-        echo "[TMUX:$TMUX_PANE]"
+        echo "[TMUX:$TMUX_CURRENT]"
     fi
     return $last
 }
