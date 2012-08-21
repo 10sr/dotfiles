@@ -298,6 +298,9 @@ catclip(){
     if iswindows
     then
         cat /dev/clipboard | tr -d \\r
+    elif isdarwin
+    then
+        pbpaste
     else
         xclip -o -selection "clipboard"
     fi
@@ -311,6 +314,14 @@ setclip(){
             sed -e 's/$/\r/' | tee /dev/clipboard
         else
             cat "$@" | sed -e 's/$/\r/' | tee /dev/clipboard
+        fi
+    elif isdarwin
+    then
+        if test $# -eq 0
+        then
+            pbcopy
+        else
+            cat "$@" | pbcopy
         fi
     else
         if test $# -eq 0
