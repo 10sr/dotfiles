@@ -31,6 +31,8 @@ null ls --version && alias with_coreutils=true
 
 ( ismsys || iscygwin ) && alias iswindows=true
 
+#################################
+
 export PS1                      # PS1 is defined later
 # PROMPT_COMMAND=prompt_function
 if false iswindows
