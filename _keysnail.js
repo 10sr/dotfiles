@@ -61,7 +61,7 @@ plugins.options["my-keysnail-bookmarks"] = [
 util.setIntPref("extensions.chaika.server_port.firefox",
                 8800 + Math.floor(Math.random() * 30));
 
-local["^http://127.0.0.1:8823/thread/"] = [
+local["^http://127.0.0.1:..../thread/"] = [
     ['k', function (ev, arg) {
         curl = window.content.location.href;
         kurl = curl.replace(/http:.*thread\/(.*\/).*/, "chaika://post/$1");
@@ -617,12 +617,9 @@ key.suspendKey           = "Not defined";
 
 hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
-
-    // focus to content
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
     content.focus();
-
     command.closeFindBar();
     if (util.isCaretEnabled()) {
         command.resetMark(aEvent);
@@ -688,6 +685,10 @@ key.setGlobalKey('C-p', function (ev, arg) {
     return !document.getElementById("keysnail-prompt").hidden &&
         document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
+
+key.setGlobalKey('<f11>', function (ev, arg) {
+    ext.exec("strong-fullscreen", arg, ev);
+}, 'go fullscreen with hiding toolbar and tabbar', true);
 
 key.setViewKey('J', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(1, true);
@@ -880,14 +881,10 @@ key.setViewKey('L', function (ev) {
     }
 }, '選択中のタブを右へ');
 
-key.setViewKey('U', function (ev) {
-    undoCloseTab();
-}, '閉じたタブを元に戻す');
-
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
 
-key.setGlobalKey('<f11>', function (ev, arg) {
-    ext.exec('strong-fullscreen', arg, ev);
-}, 'go fullscreen with hiding toolbar and tabbar', true);
+key.setViewKey('U', function (ev, arg) {
+    ext.exec('list-closed-tabs', arg, ev);
+}, 'List closed tabs', true);
