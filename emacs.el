@@ -565,6 +565,12 @@ drill-instructor.el"
      (require 'xclip nil t)
      (turn-on-xclip))
 
+(and (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/pasteboard.el"
+      t)
+     (require 'pasteboard nil t)
+     (turn-on-pasteboard))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
 
@@ -1247,7 +1253,7 @@ drill-instructor.el"
             (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
             (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
             (let ((file "._Icon\015"))
-              (when (file-readable-p file)
+              (when  nil (file-readable-p file)
                 (delete-file file)))))
 
 (and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
