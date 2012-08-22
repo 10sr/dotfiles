@@ -176,7 +176,7 @@ null type pacmatic && {
 
 alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
 alias arch-upgrade="sudo pacman -Syu"
-alias port-upgrade="port selfupdate && port sync && port upgrade installed"
+alias port-upgrade="sudo port selfupdate && sudo port upgrade outdated && sudo port uninstall leaves"
 
 if iscygwin; then
     null type windate || alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
