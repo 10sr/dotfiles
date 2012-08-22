@@ -476,10 +476,10 @@ __my_ps1_scale(){
     echo "[LC:${LINES}x${COLUMNS}]"
     return $last
 }
-TMUX_CURRENT="$(__try_exec tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
 __my_ps1_tmux(){
     local last=$?
-    test -n "$TMUX" && echo "[TMUX:$TMUX_CURRENT]"
+    local tmuxc="$(__try_exec tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
+    test -n "$TMUX" && echo "[TMUX:$tmuxc]"
     return $last
 }
 __my_ps1_moc(){
