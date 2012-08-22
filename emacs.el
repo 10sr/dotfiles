@@ -565,7 +565,8 @@ drill-instructor.el"
      (require 'xclip nil t)
      (turn-on-xclip))
 
-(and (dllib-if-unfound
+(and (eq system-type 'darwin)
+     (dllib-if-unfound
       "https://raw.github.com/10sr/emacs-lisp/master/pasteboard.el"
       t)
      (require 'pasteboard nil t)
