@@ -378,7 +378,7 @@ ext.add('send-escape', function (ev, arg) {
 
 ext.add("open-hatebu-comment", function (ev, arg) {
     if (window.loadURI) {
-        loadURI("javascript:location.href='http://b.hatena.ne.jp/entry?mode=more&url='+escape(location.href);");
+        loadURI("javascript:location.href='http://b.hatena.ne.jp/entry?mode=more&url='+encodeURIComponent(location.href);");
     }
 }, 'hatebu');
 
