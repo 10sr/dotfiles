@@ -338,7 +338,7 @@ setclip(){
     fi
 }
 
-_open_file(){
+open_file(){
     if iswindows
     then
         cmd.exe //c start "" "$@"
@@ -360,11 +360,11 @@ _open_file(){
 o(){
     if test $# -eq 0
     then
-        _open_file .
+        open_file .
     else
         for f in "$@"
         do
-            _open_file "$f"
+            open_file "$f"
         done
     fi
 }
