@@ -520,7 +520,11 @@ then
     __my_c1="\[\e[1;31m\]"       # color for PWD
     __my_c2="\[\e[0;36m\]"         # color for user
     __my_c3="\[\e[1;30m\]"       # color for OLDPWD
-    __my_c4="\[\e[1;32m\]"       # color for ::
+    if test "`hostname`" = arch-aspireone; then __my_c4="\[\e[1;34m\]"
+    elif test "`hostname`" = darwin-mba.local; then __my_c4="\[\e[1;33m\]"
+    elif test "`hostname`" = newkiwi; then __my_c4="\[\e[1;34m\]"
+    else __my_c4="\[\e[1;32m\]"       # color for ::
+    fi
     __my_cdef="\[\e[0m\]"
 fi
 _PS1="\
