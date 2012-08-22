@@ -98,7 +98,7 @@ otherwise the path where the library installed."
 
 (add-hook 'after-init-hook
           (lambda ()
-            (message (emacs-init-time))
+            (message "%s was taken to initialize emacs." (emacs-init-time))
             (switch-to-buffer "*Messages*")
             ))
 
