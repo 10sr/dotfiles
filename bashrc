@@ -91,8 +91,9 @@ echo
 
 ( ! with_coreutils && isdarwin ) || test "$TERM" == dumb || _coloroption=" --color=auto"
 ( ! with_coreutils && isdarwin ) || iswindows || _timeoption=" --time-style=long-iso"
+( ! with_coreutils && isdarwin ) || _hideoption=" --hide=[A-Z]*"
 
-alias ls="ls -hCF${_coloroption}${_timeoption}"
+alias ls="ls -hCF${_coloroption}${_timeoption}${_hideoption}"
 # export GREP_OPTIONS=""
 alias grep="grep -n${_coloroption}"
 iswindows && alias grep="grep -n"
