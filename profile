@@ -3,7 +3,6 @@
 # ~/.dotfiles/profile
 
 # export PS1="\$ "
-# export LANG=ja_JP.UTF-8
 export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
