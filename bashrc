@@ -89,7 +89,7 @@ echo
 ###################################
 # some aliases and functions
 
-( ! with_coreutils && isdarwin ) || test "$TERM" == dumb || _coloroption=" --color=always"
+( ! with_coreutils && isdarwin ) || test "$TERM" == dumb || _coloroption=" --color=auto"
 ( ! with_coreutils && isdarwin ) || iswindows || _timeoption=" --time-style=long-iso"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
