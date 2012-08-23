@@ -49,6 +49,7 @@ then
 else
     export EDITOR=vi
 fi
+export LANG=ja_JP.UTF-8
 export LC_MESSAGES=C
 # export CDPATH=".:~"
 export VISUAL="$EDITOR"
