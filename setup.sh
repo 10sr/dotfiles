@@ -3,7 +3,7 @@
 mkdir -p ~/.my/log
 mkdir -p ~/.local/bin
 
-_my_install_script(){
+install_script(){
     local dir="$HOME/.local/bin"
     mkdir -p "$dir"
     for f in "$@"
@@ -23,7 +23,7 @@ _my_install_script(){
     done
 }
 
-_my_install_symlink_script(){
+install_symlink_script(){
     mkdir -p "$HOME/.local/bin/"
     for f in "$@"
     do
@@ -31,7 +31,7 @@ _my_install_symlink_script(){
     done
 }
 
-_my_git_config(){
+git_config(){
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
     git config --global core.autocrlf false
@@ -53,17 +53,17 @@ _my_git_config(){
     # git config --global alias.my-ls "ls-files | xargs ls"
     # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
-    if false; then
+    if false iswindows; then
         git config --global core.fileMode false
     fi
 }
 
-_gen_source_script(){
+gen_source_script(){
     # _gen_source_script file lines
     test $# -eq 2 || return 1
     head -n $2 $1 | \grep -v '^#!' | sed -e 's/^..//g'
 }
 
-_my_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
+install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
 
 type git >/dev/null 2>&1 && _my_git_config
