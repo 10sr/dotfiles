@@ -58,6 +58,20 @@ git_config(){
     fi
 }
 
+mac_defaults(){
+    # add quit entry in menu
+    defaults write com.apple.finder QuitMenuItem -bool YES
+    # show full path on titlebar
+    defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES
+    # do not show desktop icons
+    defaults write com.apple.finder CreateDesktop -boolean false
+
+    killall finder
+
+    # disable dashboard
+    #defaults write com.apple.dashboard mcx-disabled -bool YES
+}
+
 gen_source_script(){
     # _gen_source_script file lines
     test $# -eq 2 || return 1
