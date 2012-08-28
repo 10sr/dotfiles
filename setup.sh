@@ -3,7 +3,13 @@
 mkdir -p ~/.my/log
 mkdir -p ~/.local/bin
 
-install_script(){
+gen_source_script(){
+    # _gen_source_script file lines
+    test $# -eq 2 || return 1
+    head -n $2 $1 | \grep -v '^#!' | sed -e 's/^..//g'
+}
+
+get_install_script(){
     local dir="$HOME/.local/bin"
     mkdir -p "$dir"
     for f in "$@"
@@ -32,6 +38,8 @@ install_symlink_script(){
 }
 
 git_config(){
+    type git >/dev/null 2>&1 || return 1
+
     git config --global user.name '10sr'
     git config --global user.email '8slashes+git@gmail.com'
     git config --global core.autocrlf false
@@ -59,6 +67,8 @@ git_config(){
 }
 
 mac_defaults(){
+    test "`uname`" = Darwin || return 1
+
     # add quit entry in menu
     defaults write com.apple.finder QuitMenuItem -bool YES
     # show full path on titlebar
@@ -72,12 +82,8 @@ mac_defaults(){
     #defaults write com.apple.dashboard mcx-disabled -bool YES
 }
 
-gen_source_script(){
-    # _gen_source_script file lines
-    test $# -eq 2 || return 1
-    head -n $2 $1 | \grep -v '^#!' | sed -e 's/^..//g'
-}
+get_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
 
-install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
+git_config
 
-type git >/dev/null 2>&1 && _my_git_config
+mac_defaults
