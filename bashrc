@@ -217,12 +217,6 @@ tmux(){
     fi
 }
 
-__my_moc_state(){
-    type mocp >/dev/null 2>&1 || return
-    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
-    printf "$1" "`mocp -Q %title 2>/dev/null`"
-}
-
 mcrypt-stream(){
     test $# -eq 2 || return 1
     case $1 in
@@ -347,6 +341,7 @@ open_file(){
         cmd.exe //c start "" "$@"
     elif isdarwin
     then
+        touch "$@"
         open "$@"
     elif islinux
     then
@@ -378,6 +373,12 @@ convmv-sjis2utf8-test(){
 
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
+}
+
+__my_moc_state(){
+    type mocp >/dev/null 2>&1 || return
+    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
+    printf "$1" "`mocp -Q %title 2>/dev/null`"
 }
 
 __my_parse_svn_branch() {
