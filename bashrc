@@ -489,6 +489,7 @@ __my_ps1_moc(){
     __my_moc_state "[MOC:%s]"
     return $last
 }
+test -r /usr/share/git/git-prompt.sh && . /usr/share/git/git-prompt.sh
 __my_ps1_git(){
     local last=$?
     null type __git_ps1 || return $last
