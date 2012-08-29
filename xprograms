@@ -1,6 +1,6 @@
 #!/bin/sh
 # Programs run in background when starting x.
-# Japanese IM settings are not included in this list.
+# Japanese IM settings are not included in this script.
 
 _feh(){
     test -f "$HOME/.fehbg" &&
@@ -64,4 +64,3 @@ for p in $@
 do
     _$p
 done
-

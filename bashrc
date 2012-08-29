@@ -176,9 +176,10 @@ null type pacmatic && {
     export PACMAN="pacmatic"
 }
 
-alias ubuntu-upgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
-alias arch-upgrade="sudo pacman -Syu"
-alias port-upgrade="sudo port selfupdate && sudo port upgrade outdated && sudo port uninstall leaves"
+null type apt-get && \
+    alias aupgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
+null type port && \
+    alias pupgrade="sudo port selfupdate && sudo port upgrade outdated && sudo port uninstall leaves"
 
 if iscygwin; then
     null type windate || alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
@@ -214,12 +215,6 @@ tmux(){
     else
         command tmux "$@"
     fi
-}
-
-__my_moc_state(){
-    type mocp >/dev/null 2>&1 || return
-    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
-    printf "$1" "`mocp -Q %title 2>/dev/null`"
 }
 
 mcrypt-stream(){
@@ -346,6 +341,7 @@ open_file(){
         cmd.exe //c start "" "$@"
     elif isdarwin
     then
+        touch "$@"
         open "$@"
     elif islinux
     then
@@ -377,6 +373,12 @@ convmv-sjis2utf8-test(){
 
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
+}
+
+__my_moc_state(){
+    type mocp >/dev/null 2>&1 || return
+    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
+    printf "$1" "`mocp -Q %title 2>/dev/null`"
 }
 
 __my_parse_svn_branch() {
