@@ -72,6 +72,10 @@ if iswindows; then
     export USER=$USERNAME
 fi
 
+_tmux_prefs(){
+    null type tmux || return 1
+    tmux set -g mode-keys vi
+}
 
 #######################
 
