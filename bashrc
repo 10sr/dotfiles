@@ -117,7 +117,8 @@ alias mv="mv -v"
 alias psaux="ps auxww"
 alias q=exit
 alias e3=e3em
-alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
+#alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
+alias dirs="dirs -v -l"
 alias po=popd
 alias pu=pushd
 alias sudo="sudo "              # use aliases through sudo
@@ -209,12 +210,23 @@ cd(){
     elif test $1 = -
     then
         local pwd="$PWD"
-        popd
+        popd >/dev/null
         pushd -n "$pwd"         # stack last dir
     else
         pushd "$@"
     fi
 }
+
+# pushd(){
+#     local pwd="$PWD"
+#     for l in $(\dirs -v -l | \grep "^ [0-9]\+  ${pwd}$" | cut -d " " -f 2 | tac)
+#     do
+#         echo $l
+#         test $l -eq 0 && continue
+#         popd +$l -n
+#     done
+#     command pushd "$@" >/dev/null
+# }
 
 input(){
     local foo
