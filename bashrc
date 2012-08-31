@@ -202,6 +202,20 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
+cd(){
+    if test $# -eq 0
+    then
+        pushd ~/
+    elif test $1 = -
+    then
+        local pwd="$PWD"
+        popd
+        pushd -n "$pwd"         # stack last dir
+    else
+        pushd "$@"
+    fi
+}
+
 input(){
     local foo
     stty -echo
