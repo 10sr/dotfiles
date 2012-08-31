@@ -82,8 +82,15 @@ mac_defaults(){
     #defaults write com.apple.dashboard mcx-disabled -bool YES
 }
 
+mac_start_daemon(){
+    test "`uname`" = Darwin || return 1
+
+    sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+}
+
 get_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
 
 git_config
 
 mac_defaults
+mac_start_daemon
