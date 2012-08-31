@@ -559,6 +559,7 @@ drill-instructor.el"
 (and (not window-system)
      (not (eq window-system 'mac))
      (getenv "DISPLAY")
+     (not (equal (getenv "DISPLAY") ""))
      (executable-find "xclip")
      ;; (< emacs-major-version 24)
      (dllib-if-unfound "http://www.emacswiki.org/emacs/download/xclip.el" t)
