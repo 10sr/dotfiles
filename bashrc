@@ -72,6 +72,10 @@ if iswindows; then
     export USER=$USERNAME
 fi
 
+_tmux_prefs(){
+    null type tmux || return 1
+    tmux set -g mode-keys vi
+}
 
 #######################
 
@@ -93,6 +97,9 @@ echo
 ( ! with_coreutils && isdarwin ) || test "$TERM" == dumb || _coloroption=" --color=auto"
 ( ! with_coreutils && isdarwin ) || iswindows || _timeoption=" --time-style=long-iso"
 ( ! with_coreutils && isdarwin ) || _hideoption=" --hide=[A-Z]*" # do not use
+
+_timeformat_iso="%Y-%m-%dT%H:%M:%S%z"
+_timeformat_rfc2822="%a, %d %b %Y %T %z"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
