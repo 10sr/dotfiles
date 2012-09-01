@@ -76,7 +76,7 @@ mac_defaults(){
     # do not show desktop icons
     defaults write com.apple.finder CreateDesktop -boolean false
 
-    killall finder
+    killall Finder
 
     # disable dashboard
     #defaults write com.apple.dashboard mcx-disabled -bool YES
