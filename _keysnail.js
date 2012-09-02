@@ -516,6 +516,8 @@ ext.add("keysnail-z-menu",function(){
 // search web
 ext.add("query-then-engine", function () {
     prompt.reader({message : "Search Word?:",
+                   group : "query_word",
+                   completer : completer.matcher.header(share.friendsCache || []),
                    callback : function (q) {
                        if (q) {
                            prompt.selector({ message : "search \"" + q + "\" with?",
@@ -615,6 +617,7 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
+
 hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
@@ -640,7 +643,6 @@ hook.setHook('Unload', function () {
         return true;
     });
 });
-
 
 
 // ============================= Key bindings ============================== //
@@ -690,11 +692,11 @@ key.setGlobalKey('<f11>', function (ev, arg) {
     ext.exec("strong-fullscreen", arg, ev);
 }, 'go fullscreen with hiding toolbar and tabbar', true);
 
-key.setViewKey('J', function (ev) {
+key.setViewKey('N', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(1, true);
 }, 'ひとつ右のタブへ');
 
-key.setViewKey('K', function (ev) {
+key.setViewKey('P', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(-1, true);
 }, 'ひとつ左のタブへ');
 
@@ -747,12 +749,6 @@ key.setViewKey('r', function (aEvent) {
 key.setViewKey('m', function (ev, arg) {
     _fi.toogle();
 }, 'fetchimiをトグル');
-
-key.setViewKey('p', function (ev, arg) {
-    if (window.loadURI) {
-        loadURI("javascript:var%20b=document.body;var%20POSTEROUS___bookmarklet_domain='http://posterous.com';var%20d=new%20Date();var%20e=(new%20Date(d.getFullYear(),d.getMonth(),d.getDate())).getTime();if(b&&!document.xmlVersion){void(z=document.createElement('script'));void(z.type='text/javascript');void(z.src='http://posterous.com/javascripts/bookmarklet2.js?'+e);void(b.appendChild(z));}else{}");
-    }
-}, 'posterousに投稿');
 
 key.setViewKey('SPC', function (ev, arg) {
     MultipleTabService.toggleSelection(gBrowser.mCurrentTab);
@@ -827,7 +823,7 @@ key.setViewKey(':', function (ev, arg) {
         document.getElementById("keysnail-prompt-textbox").focus();
 }, 'KeySnail のプロンプトへフォーカス', true);
 
-key.setViewKey('H', function (ev) {
+key.setViewKey('B', function (ev) {
     var browser = getBrowser();
     if (browser.mCurrentTab.previousSibling) {
         browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
@@ -856,23 +852,23 @@ key.setViewKey('T', function (ev, arg) {
     ext.exec("mstranslator-open-prompt", arg, ev);
 }, 'MSTranslator - Open prompt', true);
 
-key.setViewKey('j', function (ev) {
+key.setViewKey('n', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_DOWN, true);
 }, '一行スクロールダウン');
 
-key.setViewKey('k', function (ev) {
+key.setViewKey('p', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
 }, '一行スクロールアップ');
 
-key.setViewKey('l', function (ev) {
+key.setViewKey('f', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_RIGHT, true);
 }, '右へスクロール');
 
-key.setViewKey('h', function (ev) {
+key.setViewKey('b', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_LEFT, true);
 }, '左へスクロール');
 
-key.setViewKey('L', function (ev) {
+key.setViewKey('F', function (ev) {
     var browser = getBrowser();
     if (browser.mCurrentTab.nextSibling) {
         browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos + 1);
@@ -881,10 +877,10 @@ key.setViewKey('L', function (ev) {
     }
 }, '選択中のタブを右へ');
 
+key.setViewKey('U', function (ev, arg) {
+    ext.exec("list-closed-tabs", arg, ev);
+}, 'List closed tabs', true);
+
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
-
-key.setViewKey('U', function (ev, arg) {
-    ext.exec('list-closed-tabs', arg, ev);
-}, 'List closed tabs', true);
