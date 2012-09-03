@@ -203,6 +203,14 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
+netwait(){
+    while ! ping example.com -c 1
+    do
+        true
+    done
+    echo network works.
+}
+
 cd(){
     if test $# -eq 0
     then
