@@ -635,26 +635,27 @@ drill-instructor.el"
 (add-hook 'diff-mode-hook
           (lambda ()
             (view-mode 1)
-            (let ((s 'diff-header))
-              (set-face-foreground s nil)
-              (set-face-background s nil)
-              (set-face-bold-p s t))
-            (let ((s 'diff-file-header))
-              (set-face-foreground s nil)
-              (set-face-background s nil)
-              (set-face-bold-p s t))
+            (set-face-attribute 'diff-header nil
+                                :foreground nil
+                                :background nil
+                                :weight 'bold)
+            (set-face-attribute 'diff-file-header nil
+                                :foreground nil
+                                :background nil
+                                :weight 'bold)
             (set-face-foreground 'diff-index-face "blue")
-            (let ((s 'diff-hunk-header))
-              (set-face-foreground s "cyan")
-              (set-face-bold-p s nil))
-            (let ((s 'diff-context))
-              ;; (set-face-foreground s "white")
-              (set-face-bold-p s nil)
-              (set-face-foreground s nil))
+            (set-face-attribute 'diff-hunk-header nil
+                                :foreground "cyan"
+                                :weight 'normal)
+            (set-face-attribute 'diff-context nil
+                                ;; :foreground "white"
+                                :foreground nil
+                                :weight 'normal)
             (set-face-foreground 'diff-removed-face "red")
             (set-face-foreground 'diff-added-face "green")
-            (set-face-foreground 'diff-changed-face "magenda")
-            (set-face-bold-p 'diff-changed nil)
+            (set-face-attribute 'diff-changed nil
+                                :foreground "magenta"
+                                :weight 'normal)
             ))
 
 ;; (ffap-bindings)
