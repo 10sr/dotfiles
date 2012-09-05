@@ -61,7 +61,7 @@ plugins.options["my-keysnail-bookmarks"] = [
 util.setIntPref("extensions.chaika.server_port.firefox",
                 8800 + Math.floor(Math.random() * 30));
 
-local["^http://127.0.0.1:..../thread/"] = [
+local["^http://127.0.0.1:88"] = [
     ['k', function (ev, arg) {
         curl = window.content.location.href;
         kurl = curl.replace(/http:.*thread\/(.*\/).*/, "chaika://post/$1");
