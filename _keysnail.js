@@ -125,7 +125,7 @@ local["^http://www.tumblr.com/dashboard"] = [
     //        ["C-<left>", function (ev, arg) {gBrowser.mTabContainer.advanceSelectedTab(-1, true); }],
     //        ["C-<right>", function (ev, arg) {gBrowser.mTabContainer.advanceSelectedTab(1, true); }],
     ["<left>", function (ev, arg) { window.content.location.href = "http://www.tumblr.com/dashboard"; }],
-    //        ["<right>", null],
+    ["<right>", null],
     ["J", function (ev, arg) {
         if (window.loadURI) {
             loadURI("javascript:(function(){b=20;s=100;t=document.getElementById('next_page_link').href.split('/')[5];max=t.substr(0,t.length-5);min=max-s;i=Math.floor(Math.random()*(max-min)+min);u=(i<b)?'http://www.tumblr.com/dashboard':'http://www.tumblr.com/dashboard/2/'+i+'00000';window.content.location.href=u;}())");
