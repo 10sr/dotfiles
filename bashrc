@@ -187,7 +187,7 @@ null type pacmatic && {
 null type apt-get && \
     alias aupgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
 null type port && \
-    alias pupgrade="sudo port selfupdate && sudo port upgrade outdated && sudo port uninstall leaves"
+    alias pupgrade="sudo port -v selfupdate && sudo port -v upgrade outdated && sudo port -v uninstall leaves"
 
 if iscygwin; then
     null type windate || alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
