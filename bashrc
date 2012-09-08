@@ -386,6 +386,7 @@ open_file(){
         open "$@"
     elif islinux
     then
+        touch "$@"
         if null type pcmanfm; then
             LC_MESSAGES= pcmanfm "$@"
         else
