@@ -61,6 +61,7 @@ git_config(){
     # git config --global alias.my-ls "ls-files | xargs ls"
     # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
+    git config --global alias.clean-p "!test -z \"\$(git status -s -uno)\""
     if false iswindows; then
         git config --global core.fileMode false
     fi
