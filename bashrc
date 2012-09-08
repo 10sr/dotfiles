@@ -216,25 +216,29 @@ cd(){
     if test $# -eq 0
     then
         pushd ~/ >/dev/null
+    elif ! test -d "$1"
+    then
+        echo `basename ${SHELL}`: cd: "$1": No such file or directory  2>&1
+        return 1
     elif test $1 = -
     then
         local pwd="$PWD"
         popd >/dev/null
         pushd -n "$pwd" >/dev/null        # stack last dir
     else
-        pushd "$@" >/dev/null
+        pushd "$1" >/dev/null
     fi
 }
 
 pushd(){
-    local pwd="$PWD"
-    for l in $(\dirs -v -l | \grep "^ [0-9]\+ *${pwd}$" | cut -d " " -f 2 | tac)
+    local next="$(realpath "$1")"
+    for l in $(\dirs -v -l | \grep "^ [0-9]\+ *${next}$" | cut -d " " -f 2 | tac)
     do
         echo $l
         test $l -eq 0 && continue
         popd +$l -n
     done
-    command pushd "$@" >/dev/null
+    command pushd "$1" >/dev/null
 }
 
 input(){
