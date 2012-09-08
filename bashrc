@@ -386,6 +386,7 @@ open_file(){
         open "$@"
     elif islinux
     then
+        touch "$@"
         if null type pcmanfm; then
             LC_MESSAGES= pcmanfm "$@"
         else
@@ -499,7 +500,7 @@ winln(){
 
 __my_battery_status(){
     local dir=/sys/class/power_supply/BAT0
-    if test -d $dir
+    if test -d $dir && test -r $dir/status && test -r $dir/charge_full && test -r $dir/charge_now
     then
         local st=$(cat $dir/status)
         local full=$(cat $dir/charge_full)
