@@ -218,9 +218,9 @@ cd(){
         pushd ~/ >/dev/null
     elif ! test -d "$1"
     then
-        echo `basename ${SHELL}`: cd: "$1": No such file or directory  2>&1
+        echo `basename ${SHELL}`: cd: "$1": No such file or directory  1>&2
         return 1
-    elif test $1 = -
+    elif test "$1" = -
     then
         local pwd="$PWD"
         popd >/dev/null
