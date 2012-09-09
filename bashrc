@@ -231,8 +231,8 @@ cd(){
 }
 
 pushd(){
-    local next="$(realpath "$1")"
-    for l in $(\dirs -v -l | \grep "^ [0-9]\+ *${next}$" | cut -d " " -f 2 | tac)
+    local next="$(realpath --no-symlinks "$1")"
+    for l in $(\dirs -v -l | \grep "^ *[0-9]\+ \+${next}$" | \grep -o "^ *[0-9]\+ " | tac)
     do
         echo $l
         test $l -eq 0 && continue
