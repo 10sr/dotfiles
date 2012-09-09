@@ -1,16 +1,16 @@
 " load external file
 " if filereadable(expand('~/.dotfiles/vimrc'))
-" source ~/.dotfiles/vimrc
+"     source ~/.dotfiles/vimrc
 " endif
 if !isdirectory(expand('~/.vim'))
-   call mkdir(expand('~/.vim'))
+    call mkdir(expand('~/.vim'))
 endif
 
 """""""""""""""""""""""""""""""""""
 set compatible " vi compatible
 " directory to put backup file
 if !isdirectory(expand('~/.vim/backup'))
-   call mkdir(expand('~/.vim/backup'))
+    call mkdir(expand('~/.vim/backup'))
 endif
 set backup " enable backup
 set backupdir=$HOME/.vim/backup
@@ -66,16 +66,16 @@ let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
 " i dont use gvimrc
 if has('gui_running')
-  " hide toolbar and scroll bar
-  set guioptions-=T
-  set guioptions-=r
-  set lines=45
-  set columns=110
-  set guifont=DejaVu\ Sans\ Mono\ 9
+    " hide toolbar and scroll bar
+    set guioptions-=T
+    set guioptions-=r
+    set lines=45
+    set columns=110
+    set guifont=DejaVu\ Sans\ Mono\ 9
 endif
 
 if has('win32')
-" prefs for Windows
+    " prefs for Windows
 endif
 
 """""""""""""""""""""""""""""""""""""""
@@ -97,9 +97,9 @@ noremap <C-c> <ESC>:<C-u>w<CR>
 " set cursorline
 " show cursor line only in current window
 augroup cch
-  autocmd! cch
-  autocmd WinLeave * set nocursorline
-  autocmd WinEnter,BufRead * set cursorline
+    autocmd! cch
+    autocmd WinLeave * set nocursorline
+    autocmd WinEnter,BufRead * set cursorline
 augroup END
 
 hi clear CursorLine
@@ -107,28 +107,28 @@ highlight CursorLine term=underline cterm=underline gui=underline
 
 " change status line color when in insert mode
 augroup InsertHook
-autocmd!
-autocmd InsertEnter * highlight StatusLine guifg=#ccdc90 guibg=#2E4340
-autocmd InsertLeave * highlight StatusLine guifg=#2E4340 guibg=#ccdc90
+    autocmd!
+    autocmd InsertEnter * highlight StatusLine guifg=#ccdc90 guibg=#2E4340
+    autocmd InsertLeave * highlight StatusLine guifg=#2E4340 guibg=#ccdc90
 augroup END
 
 " save window position and size
 if has('gui_running')
     let g:save_window_file = expand('~/.vimwinpos')
     augroup SaveWindow
-      autocmd!
-      autocmd VimLeavePre * call s:save_window()
-      function! s:save_window()
-        let options = [
-          \ 'set columns=' . &columns,
-          \ 'set lines=' . &lines,
-          \ 'winpos ' . getwinposx() . ' ' . getwinposy(),
-          \ ]
-        call writefile(options, g:save_window_file)
-      endfunction
+        autocmd!
+        autocmd VimLeavePre * call s:save_window()
+        function! s:save_window()
+            let options = [
+                        \ 'set columns=' . &columns,
+                        \ 'set lines=' . &lines,
+                        \ 'winpos ' . getwinposx() . ' ' . getwinposy(),
+                        \ ]
+            call writefile(options, g:save_window_file)
+        endfunction
     augroup END
 
     if filereadable(g:save_window_file)
-      execute 'source' g:save_window_file
+        execute 'source' g:save_window_file
     endif
 endif
