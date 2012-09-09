@@ -852,6 +852,13 @@ drill-instructor.el"
      (require 'git-command nil t)
      (define-key ctl-x-map "g" 'git-command))
 
+(and (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
+      t)
+     (require 'smart-revert nil t)
+     (smart-revert-on)
+     )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
 
@@ -1269,7 +1276,7 @@ drill-instructor.el"
             (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
             (let ((file "._Icon\015"))
               (when  nil (file-readable-p file)
-                (delete-file file)))))
+                     (delete-file file)))))
 
 (and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                        t)
@@ -1782,8 +1789,6 @@ when SEC is nil, stop auto save if enabled."
   ;; (redisplay t)
   (redraw-display)
   ;; (run-hooks 'window-configuration-change-hook)
-  (my-revert-buffer-if-needed)
-  ;; (revert-buffer t t)
   (keyboard-quit)
   (insert "insert me")
   (run-hooks 'after-keyboard-quit-hook))
@@ -1816,23 +1821,6 @@ this is test, does not rename files"
         (progn (kill-new file)
                (message file))
       (message "not visiting file."))))
-
-(defvar my-revert-buffer-if-needed-last-buffer nil)
-
-(defun my-revert-buffer-if-needed ()
-  ""
-  (interactive)
-  (unless (eq my-revert-buffer-if-needed-last-buffer (current-buffer))
-    (setq my-revert-buffer-if-needed-last-buffer (current-buffer))
-    (when (or (and (eq major-mode 'dired-mode)
-                   (dired-directory-changed-p default-directory))
-              (not (verify-visited-file-modtime (current-buffer))))
-      (revert-buffer t t)
-      (message "%s reverted." (buffer-name))
-      )))
-
-(add-hook 'post-command-hook ; 'window-configuration-change-hook
-          'my-revert-buffer-if-needed)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
