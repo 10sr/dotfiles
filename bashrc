@@ -103,7 +103,7 @@ _timeformat_rfc2822="%a, %d %b %Y %T %z"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
-alias grep="grep -n${_coloroption}"
+alias gr="grep -n${_coloroption}"
 iswindows && alias grep="grep -n"
 # alias ll="ls -l"
 # alias la="ls -A"
