@@ -167,7 +167,8 @@ alias aptsearch="apt-cache search"
 alias aptshow="apt-cache show"
 
 for f in /usr/share/vim/vimcurrent/macros/less.sh \
-    /usr/share/vim/vim73/macros/less.sh
+    /usr/share/vim/vim73/macros/less.sh \
+    /usr/share/vim/vim72/macros/less.sh
 do
     test -f $f && alias vl=$f && break
 done
