@@ -220,7 +220,7 @@ cd(){
     then
         local pwd="$PWD"
         popd >/dev/null
-        command pushd -n "$pwd" >/dev/null        # stack last dir
+        pushd "$pwd" -n >/dev/null        # stack last dir
     elif ! test -d "$1"
     then
         echo `basename ${SHELL}`: cd: "$1": No such file or directory  2>&1
