@@ -219,8 +219,9 @@ cd(){
     elif test $1 = -
     then
         local pwd="$PWD"
-        popd >/dev/null
-        pushd "$pwd" -n >/dev/null        # stack last dir
+        echo $OLDPWD
+        command cd $OLDPWD
+        command pushd -n "$pwd" >/dev/null        # stack last dir
     elif ! test -d "$1"
     then
         echo `basename ${SHELL}`: cd: "$1": No such file or directory  2>&1
