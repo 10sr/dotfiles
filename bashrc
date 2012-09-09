@@ -324,11 +324,11 @@ di(){
 }
 
 tb(){
-    local tb=~/.my/tb
-    mkdir -p $tb
+    local tb="$HOME/.my/tb"
+    mkdir -p "$tb"
     for file in "$@"
     do
-        mv $file $tb
+        mv -t "$tb" "$file"
     done
 }
 
