@@ -118,7 +118,7 @@ alias psaux="ps auxww"
 alias q=exit
 alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
-alias dirs="dirs -v -l"
+alias dh="dirs -v -l"
 alias po=popd
 alias pu=pushd
 alias sudo="sudo "              # use aliases through sudo
@@ -219,9 +219,8 @@ cd(){
     elif test $1 = -
     then
         local pwd="$PWD"
-        echo $OLDPWD
         command cd $OLDPWD
-        command pushd -n "$pwd" >/dev/null        # stack last dir
+        pushd -n "$pwd" >/dev/null        # stack last dir
     elif ! test -d "$1"
     then
         echo `basename ${SHELL}`: cd: "$1": No such file or directory  1>&2
@@ -229,17 +228,20 @@ cd(){
     else
         pushd "$1" >/dev/null
     fi
+    __dirs_rm_dup "$PWD"
+    echo "$PWD"
 }
 
-pushd(){
-    local next="$(realpath --no-symlinks "$1")"
-    for l in $(\dirs -v -l | \grep "^ *[0-9]\+ \+${next}$" | \grep -o "^ *[0-9]\+ " | tac)
+__dirs_rm_dup(){
+    for d in "$@"
     do
-        echo $l
-        test $l -eq 0 && continue
-        popd +$l -n
+        local next="$(realpath --no-symlinks "$d")"
+        for l in $(\dirs -v -l | cut -d "
+" -f 2- | \grep "^ *[0-9]\+ \+${next}$" | \grep -o "^ *[0-9]\+ " | tac)
+        do
+            popd +$l -n >/dev/null
+        done
     done
-    command pushd "$@" >/dev/null
 }
 
 input(){
