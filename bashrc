@@ -238,7 +238,7 @@ pushd(){
         test $l -eq 0 && continue
         popd +$l -n
     done
-    command pushd "$1" >/dev/null
+    command pushd "$@" >/dev/null
 }
 
 input(){
