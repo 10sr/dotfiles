@@ -118,7 +118,6 @@ alias psaux="ps auxww"
 alias q=exit
 alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
-alias dh="dirs -v -l"
 alias po=popd
 alias pu=pushd
 alias sudo="sudo "              # use aliases through sudo
@@ -237,13 +236,22 @@ __dirs_rm_dup(){
     do
         local next="$(realpath --no-symlinks "$d")"
         for l in $(\dirs -v -l | cut -d "
-" -f 2- | \grep "^ *[0-9]\+ \+${next}$" | \grep -o "^ *[0-9]\+ " | tac)
+" -f 2- | \grep -x " *[0-9]\+ \+${next}" | \grep -o "^ *[0-9]\+ " | tac)
         do
             popd +$l -n >/dev/null
         done
     done
 }
 
+dh(){
+    if test $# -eq 0
+    then
+        dirs -v -l
+    else
+        local dir="$(dirs -v -l | \grep "^ *$1 \+" | sed "s/^ *[0-9]\+ *//g")"
+        cd "$dir"
+    fi
+}
 input(){
     local foo
     stty -echo
