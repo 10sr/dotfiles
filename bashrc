@@ -103,7 +103,7 @@ _timeformat_rfc2822="%a, %d %b %Y %T %z"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
-alias grep="grep -n${_coloroption}"
+alias gr="grep -n${_coloroption}"
 iswindows && alias grep="grep -n"
 # alias ll="ls -l"
 # alias la="ls -A"
@@ -118,7 +118,6 @@ alias psaux="ps auxww"
 alias q=exit
 alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
-alias dirs="dirs -v -l"
 alias po=popd
 alias pu=pushd
 alias sudo="sudo "              # use aliases through sudo
@@ -187,7 +186,8 @@ null type pacmatic && {
 null type apt-get && \
     alias aupgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
 null type port && \
-    alias pupgrade="sudo port -v selfupdate && sudo port -v upgrade outdated && sudo port -v uninstall leaves"
+    alias port="port -v"
+    alias pupgrade="sudo port -v selfupdate && { sudo port -v upgrade outdated; sudo port -v uninstall leaves; }"
 
 if iscygwin; then
     null type windate || alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
@@ -214,28 +214,44 @@ netwait(){
 cd(){
     if test $# -eq 0
     then
-        pushd ~/
+        pushd ~/ >/dev/null
     elif test $1 = -
     then
         local pwd="$PWD"
-        popd >/dev/null
-        pushd -n "$pwd"         # stack last dir
+        command cd $OLDPWD
+        pushd -n "$pwd" >/dev/null        # stack last dir
+    elif ! test -d "$1"
+    then
+        echo `basename ${SHELL}`: cd: "$1": No such file or directory  1>&2
+        return 1
     else
-        pushd "$@"
+        pushd "$1" >/dev/null
     fi
+    __dirs_rm_dup "$PWD"
+    echo "$PWD"
 }
 
-# pushd(){
-#     local pwd="$PWD"
-#     for l in $(\dirs -v -l | \grep "^ [0-9]\+  ${pwd}$" | cut -d " " -f 2 | tac)
-#     do
-#         echo $l
-#         test $l -eq 0 && continue
-#         popd +$l -n
-#     done
-#     command pushd "$@" >/dev/null
-# }
+__dirs_rm_dup(){
+    for d in "$@"
+    do
+        local next="$(realpath --no-symlinks "$d")"
+        for l in $(\dirs -v -l | cut -d "
+" -f 2- | \grep -x " *[0-9]\+ \+${next}" | \grep -o "^ *[0-9]\+ " | tac)
+        do
+            popd +$l -n >/dev/null
+        done
+    done
+}
 
+dh(){
+    if test $# -eq 0
+    then
+        dirs -v -l
+    else
+        local dir="$(dirs -v -l | \grep "^ *$1 \+" | sed "s/^ *[0-9]\+ *//g")"
+        cd "$dir"
+    fi
+}
 input(){
     local foo
     stty -echo
@@ -324,11 +340,11 @@ di(){
 }
 
 tb(){
-    local tb=~/.my/tb
-    mkdir -p $tb
+    local tb="$HOME/.my/tb"
+    mkdir -p "$tb"
     for file in "$@"
     do
-        mv $file $tb
+        mv -t "$tb" "$file"
     done
 }
 
