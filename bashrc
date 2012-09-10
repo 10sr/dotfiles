@@ -234,13 +234,29 @@ cd(){
 __dirs_rm_dup(){
     for d in "$@"
     do
-        local next="$(realpath --strip "$d")"
+        local next="$(__realpath --strip "$d")"
         for l in $(\dirs -v -l | cut -d "
 " -f 2- | \grep -x " *[0-9]\+ \+${next}" | \grep -o "^ *[0-9]\+ " | tac)
         do
             popd +$l -n >/dev/null
         done
     done
+}
+
+__realpath(){
+    if type realpath >/dev/null 2>&1
+    then
+        command realpath "$@"
+    else
+        while ! test -d $1
+        do
+            shift
+        done
+        local d="$OLDPWD"
+        command cd "$1"
+        echo "$PWD"
+        command cd "$d"
+    fi
 }
 
 dh(){
