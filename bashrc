@@ -234,7 +234,7 @@ cd(){
 __dirs_rm_dup(){
     for d in "$@"
     do
-        local next="$(realpath --no-symlinks "$d")"
+        local next="$(realpath --strip "$d")"
         for l in $(\dirs -v -l | cut -d "
 " -f 2- | \grep -x " *[0-9]\+ \+${next}" | \grep -o "^ *[0-9]\+ " | tac)
         do
