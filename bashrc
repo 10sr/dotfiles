@@ -404,7 +404,7 @@ o(){
     else
         for f in "$@"
         do
-            open_file "$f"
+            open_file "$(realpath "$f")"
         done
     fi
 }
