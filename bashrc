@@ -570,7 +570,9 @@ test -r /usr/share/git/git-prompt.sh && . /usr/share/git/git-prompt.sh
 __my_ps1_git(){
     local last=$?
     null type __git_ps1 || return $last
-    __try_exec __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
+    null git status || return $last
+    test -n "`git status -s -uno`" && local star=\*
+    __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s${star}]"
     return $last
 }
 __my_ps1_ipaddr(){
