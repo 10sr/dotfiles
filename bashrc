@@ -557,7 +557,8 @@ __my_ps1_scale(){
 }
 __my_ps1_tmux(){
     local last=$?
-    local tmuxc="$(__try_exec tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
+    null type tmux || return $last
+    local tmuxc="$(tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
     test -n "$TMUX" && echo "[TMUX:$tmuxc]"
     return $last
 }
