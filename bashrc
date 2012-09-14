@@ -567,11 +567,13 @@ __my_ps1_moc(){
     return $last
 }
 test -r /usr/share/git/git-prompt.sh && . /usr/share/git/git-prompt.sh
+GIT_PS1_SHOWDIRTYSTATE=t
+GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
     local last=$?
     null type __git_ps1 || return $last
-    null git status || return $last
-    test -n "`git status -s -uno`" && local star=\*
+    null git status || return $last # __gitdir seems to be able to be used
+    #test -n "`git status -s -uno`" && local star=\* # done by SHOWDIRTYSTATE
     __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s${star}]"
     return $last
 }
