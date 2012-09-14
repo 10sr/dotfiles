@@ -33,7 +33,8 @@ null ls --version && alias with_coreutils=true
 
 #################################
 
-export PS1                      # PS1 is defined later
+# PS1 is defined later, unexport PS1
+export -n PS1
 # PROMPT_COMMAND=prompt_function
 if false iswindows
 then
