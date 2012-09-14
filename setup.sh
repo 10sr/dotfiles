@@ -56,7 +56,7 @@ git_config(){
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
     git config --global log.date iso
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso"
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso -n 500"
     git config --global alias.st "status -s -b"
     git config --global alias.b "branch"
     git config --global alias.ci "commit --verbose"
