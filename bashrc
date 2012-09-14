@@ -33,9 +33,6 @@ null ls --version && alias with_coreutils=true
 
 #################################
 
-# PS1 is defined later, unexport PS1
-export -n PS1
-# PROMPT_COMMAND=prompt_function
 if false iswindows
 then
     export PAGER='tr -d \\r | less'
