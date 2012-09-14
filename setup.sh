@@ -3,6 +3,14 @@
 mkdir -p ~/.my/log
 mkdir -p ~/.local/bin
 
+_iswindows(){
+    case `uname` in
+        (CYGWIN*) return 0;;
+        (MINGW*) return 0;;
+    esac
+    return 1
+}
+
 gen_source_script(){
     # _gen_source_script file lines
     test $# -eq 2 || return 1
@@ -62,7 +70,7 @@ git_config(){
     # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
     git config --global alias.clean-p "!test -z \"\$(git status -s -uno)\""
-    if false iswindows; then
+    if _iswindows; then
         git config --global core.fileMode false
     fi
 }
