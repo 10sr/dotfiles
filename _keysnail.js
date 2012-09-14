@@ -343,6 +343,7 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://raw.github.com/mooz/keysnail/master/plugins/yet-another-twitter-client-keysnail.ks.js',
         'https://raw.github.com/mooz/keysnail/master/plugins/site-local-keymap.ks.js',
         'https://raw.github.com/mooz/keysnail/master/plugins/hok.ks.js',
+        'https://github.com/mooz/keysnail/raw/master/plugins/builtin-commands-ext.ks.js',
         'https://raw.github.com/azu/KeySnail-Plugins/master/JSReference/js-referrence.ks.js',
         'https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js',
         'https://raw.github.com/tkosaka/keysnail-plugin/master/nicontroller.ks.js',
