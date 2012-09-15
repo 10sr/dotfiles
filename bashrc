@@ -557,7 +557,8 @@ __my_ps1_scale(){
 }
 __my_ps1_tmux(){
     local last=$?
-    local tmuxc="$(__try_exec tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
+    null type tmux || return $last
+    local tmuxc="$(tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
     test -n "$TMUX" && echo "[TMUX:$tmuxc]"
     return $last
 }
@@ -572,9 +573,8 @@ GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
     local last=$?
     null type __git_ps1 || return $last
-    null git status || return $last # __gitdir seems to be able to be used
-    #test -n "`git status -s -uno`" && local star=\* # done by SHOWDIRTYSTATE
-    __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s${star}]"
+    null __gitdir || return $last
+    __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
     return $last
 }
 __my_ps1_ipaddr(){
