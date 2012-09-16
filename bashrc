@@ -204,6 +204,11 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
+scr(){
+    _time="%Y-%m-%dT%H:%M:%S%z"
+    script `date +${_time}`.script "$@"
+}
+
 netwait(){
     while ! ping example.com -c 1
     do
