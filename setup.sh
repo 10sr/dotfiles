@@ -3,6 +3,14 @@
 mkdir -p ~/.my/log
 mkdir -p ~/.local/bin
 
+_iswindows(){
+    case `uname` in
+        (CYGWIN*) return 0;;
+        (MINGW*) return 0;;
+    esac
+    return 1
+}
+
 gen_source_script(){
     # _gen_source_script file lines
     test $# -eq 2 || return 1
@@ -48,9 +56,10 @@ git_config(){
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
     git config --global log.date iso
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso"
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso -n 500"
     git config --global alias.st "status -s -b"
     git config --global alias.b "branch"
+    git config --global alias.sb "show-branch"
     git config --global alias.ci "commit --verbose"
     git config --global alias.co "checkout"
     git config --global alias.cim "commit --verbose -m"
@@ -62,7 +71,7 @@ git_config(){
     # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
     git config --global alias.clean-p "!test -z \"\$(git status -s -uno)\""
-    if false iswindows; then
+    if _iswindows; then
         git config --global core.fileMode false
     fi
 }
@@ -89,7 +98,8 @@ mac_start_daemon(){
     sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
 }
 
-get_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh http://www.frexx.de/xterm-256-notes/data/256colors2.pl
+get_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh \
+    http://www.frexx.de/xterm-256-notes/data/256colors2.pl
 
 git_config
 
