@@ -630,7 +630,7 @@ __my_set_title(){
 		;;
 	esac
 }
-export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD}"
+PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD}"
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){
