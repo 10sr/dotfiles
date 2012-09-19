@@ -208,7 +208,7 @@ scr(){
 }
 
 netwait(){
-    while ! ping example.com -c 1
+    while ! ping -c 1 -t 1 example.com
     do
         true
     done
