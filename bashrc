@@ -33,8 +33,6 @@ null ls --version && alias with_coreutils=true
 
 #################################
 
-export PS1                      # PS1 is defined later
-# PROMPT_COMMAND=prompt_function
 if false iswindows
 then
     export PAGER='tr -d \\r | less'
@@ -210,7 +208,7 @@ scr(){
 }
 
 netwait(){
-    while ! ping example.com -c 1
+    while ! ping -c 1 -t 1 example.com
     do
         true
     done
