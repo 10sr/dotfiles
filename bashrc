@@ -268,7 +268,7 @@ dh(){
     then
         dirs -v -l
     else
-        local dir="$(dirs -v -l | \grep "^ *$1 \+" | sed "s/^ *[0-9]\+ *//g")"
+        local dir="$(dirs -v -l | \grep "^ *$1 \+" | sed "s/^ *[0-9]* *//g")"
         cd "$dir"
     fi
 }
