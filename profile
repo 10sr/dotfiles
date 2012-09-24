@@ -8,6 +8,7 @@ export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
 export ENV=~/.shrc
 export PYTHONDOCS=/usr/share/doc/python/html/
+export PYTHONPATH="${PYTHONPATH}:${HOME}/my/bin/py"
 test -f "${HOME}/.pythonrc" && export PYTHONSTARTUP="${HOME}/.pythonrc"
 #export PYTHONPATH="~/.local/share/lib/python3.2/site-packages"
 
