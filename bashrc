@@ -570,7 +570,11 @@ __my_ps1_moc(){
     __my_moc_state "[MOC:%s]"
     return $last
 }
-test -r /usr/share/git/git-prompt.sh && . /usr/share/git/git-prompt.sh
+for f in /usr/share/git/git-prompt.sh \
+      /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
+do
+    test -r $f && . $f && break
+done
 GIT_PS1_SHOWDIRTYSTATE=t
 GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
