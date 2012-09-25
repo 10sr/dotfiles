@@ -515,7 +515,7 @@ drill-instructor.el"
                 ;;   (newline-and-indent))
                 (kbd "C-e C-m")
                 )
-(global-set-key (kbd "C-k") 'kill-whole-line)
+;(global-set-key (kbd "C-k") 'kill-whole-line)
 (global-set-key (kbd "M-k") 'my-copy-whole-line)
 ;; (global-set-key "\C-z" 'undo) ; undo is M-u
 (global-set-key (kbd "M-u") 'undo)
