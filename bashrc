@@ -202,6 +202,8 @@ then
 	|| complete -o default -o nospace -F _git g
 fi
 
+alias setup.py="sudo python3 setup.py install --record files.txt"
+
 scr(){
     _time="%Y-%m-%dT%H:%M:%S%z"
     script `date +${_time}`.script "$@"
