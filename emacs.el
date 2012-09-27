@@ -859,6 +859,11 @@ drill-instructor.el"
      (smart-revert-on)
      )
 
+(and (dllib-if-unfound
+      "http://www.emacswiki.org/emacs/download/sl.el"
+      t)
+     (require 'sl nil t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
 
