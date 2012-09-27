@@ -139,6 +139,8 @@ alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"
 alias screen="screen -e^z^z"
 alias zcd="cd \`zenity --file-selection --directory\`"
+alias gtags="gtags -v"
+alias htags="htags -ansx"
 
 alias pad=notepad
 null type gedit && alias pad=gedit
