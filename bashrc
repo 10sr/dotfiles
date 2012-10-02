@@ -139,8 +139,9 @@ alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"
 null type screen && alias screen="screen -e^z^z"
 alias zcd="cd \`zenity --file-selection --directory\`"
-null type gtags && alias gtags="gtags -v"
-null type htags && alias htags="htags -ansxF"
+null type gtags && alias gtags="gtags --verbose"
+null type htags && alias htags="htags --xhtml --symbol --line-number \
+--frame --alphabet --verbose"
 
 alias pad=notepad
 null type gedit && alias pad=gedit
