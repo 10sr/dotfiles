@@ -249,20 +249,27 @@ drill-instructor.el"
                                       `(,@args "\007"))))))
 (defun my-set-terminal-title ()
   ""
-  (set-terminal-title (abbreviate-file-name (or buffer-file-name
+  (set-terminal-title "["
+                      user-login-name
+                      "@"
+                      system-name
+                      ":"
+                      (abbreviate-file-name (or buffer-file-name
                                                 default-directory))
-                      " | "
-                      (number-to-string (length
-                                         (buffer-list-not-start-with-space)))
-                      " buffers in "
-                      (frame-parameter nil 'name)
-                      " ["
+                      "]["
                       invocation-name
                       " "
                       emacs-version
                       " "
                       (symbol-name system-type)
-                      "] "))
+                      "]["
+                      "FRAME:"
+                      (frame-parameter nil 'name)
+                      ":"
+                      (number-to-string (length
+                                         (buffer-list-not-start-with-space)))
+                      "]"
+                      ))
 (add-hook 'buffer-file-changed-functions
           (lambda (p c)
             (my-set-terminal-title)))
