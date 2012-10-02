@@ -1279,6 +1279,8 @@ drill-instructor.el"
                                        'my-dired-previous-line dired-mode-map)
             (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
             (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
+            (define-key dired-mode-map (kbd "ESC p") 'my-dired-scroll-up)
+            (define-key dired-mode-map (kbd "ESC n") 'my-dired-scroll-down)
             (let ((file "._Icon\015"))
               (when  nil (file-readable-p file)
                      (delete-file file)))))
