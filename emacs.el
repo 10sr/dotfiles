@@ -233,14 +233,16 @@ drill-instructor.el"
 '(setq-default header-line-format (list " "
                                         'display-time-string))
 
-(setq set-terminal-title-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
+(defvar set-terminal-title-term-regexp ""
+  "Rexexp for `set-terminal-title'.")
+(setq set-terminal-title-term-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
 (defun set-terminal-title (&rest args)
   ""
   (interactive "sString to set as title: ")
   (let ((tty (frame-parameter nil
                               'tty-type)))
     (when (and tty
-               (string-match set-terminal-title-regexp
+               (string-match set-terminal-title-term-regexp
                              tty))
       (send-string-to-terminal (apply 'concat
                                       "\033]0;"
