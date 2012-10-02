@@ -137,14 +137,15 @@ alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
 alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"
-alias screen="screen -e^z^z"
+null type screen && alias screen="screen -e^z^z"
 alias zcd="cd \`zenity --file-selection --directory\`"
-alias gtags="gtags -v"
-alias htags="htags -ansx"
+null type gtags && alias gtags="gtags -v"
+null type htags && alias htags="htags -ansxF"
 
 alias pad=notepad
 null type gedit && alias pad=gedit
 null type leafpad && alias pad=leafpad
+isdarwin && alias pad="open -e"
 
 alias wic=wicd-curses
 alias wil="wicd-cli -y -l | head"
