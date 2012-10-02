@@ -139,6 +139,8 @@ alias mpg123="mpg123 -C -v --title"
 export PLAYER="mpg123 -C -v --title"
 alias screen="screen -e^z^z"
 alias zcd="cd \`zenity --file-selection --directory\`"
+alias gtags="gtags -v"
+alias htags="htags -ansx"
 
 alias pad=notepad
 null type gedit && alias pad=gedit
@@ -268,7 +270,7 @@ dh(){
     then
         dirs -v -l
     else
-        local dir="$(dirs -v -l | \grep "^ *$1 \+" | sed "s/^ *[0-9]\+ *//g")"
+        local dir="$(dirs -v -l | \grep "^ *$1 \+" | sed "s/^ *[0-9]* *//g")"
         cd "$dir"
     fi
 }
@@ -548,8 +550,8 @@ __my_battery_status(){
 alias bat='__my_battery_status %s\\n'
 
 ip-address(){
-    test type ifconfig >/dev/null 2>&1 || return 1
-    local ip=$(LANG=C ifconfig | \grep --color=never "inet " | \grep --color=never -v "127.0.0.1" | awk '{print $2}')
+    type ip >/dev/null 2>&1 || return 1
+    local ip=$(LANG=C ip addr show scope global | \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
     test -n "$ip" && printf $1 $ip
 }
 
@@ -570,7 +572,11 @@ __my_ps1_moc(){
     __my_moc_state "[MOC:%s]"
     return $last
 }
-test -r /usr/share/git/git-prompt.sh && . /usr/share/git/git-prompt.sh
+for f in /usr/share/git/git-prompt.sh \
+      /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
+do
+    test -r $f && . $f && break
+done
 GIT_PS1_SHOWDIRTYSTATE=t
 GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
@@ -630,7 +636,7 @@ __my_set_title(){
 		;;
 	esac
 }
-export PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD}"
+PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD}"
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){
