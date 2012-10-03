@@ -588,7 +588,7 @@ __my_ps1_git(){
 }
 __my_ps1_ipaddr(){
     local last=$?
-    test -z "$DISPLAY" && ! iswindows && ip-address [Addr:%s]
+    ! iswindows && ip-address [Addr:%s]
     return $last
 }
 __my_ps1_bttry(){
