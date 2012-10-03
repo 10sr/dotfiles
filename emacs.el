@@ -233,34 +233,43 @@ drill-instructor.el"
 '(setq-default header-line-format (list " "
                                         'display-time-string))
 
-(setq set-terminal-title-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
+(defvar set-terminal-title-term-regexp ""
+  "Rexexp for `set-terminal-title'.")
+(setq set-terminal-title-term-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
 (defun set-terminal-title (&rest args)
   ""
   (interactive "sString to set as title: ")
   (let ((tty (frame-parameter nil
                               'tty-type)))
     (when (and tty
-               (string-match set-terminal-title-regexp
+               (string-match set-terminal-title-term-regexp
                              tty))
       (send-string-to-terminal (apply 'concat
                                       "\033]0;"
                                       `(,@args "\007"))))))
 (defun my-set-terminal-title ()
   ""
-  (set-terminal-title (abbreviate-file-name (or buffer-file-name
+  (set-terminal-title "["
+                      user-login-name
+                      "@"
+                      system-name
+                      ":"
+                      (abbreviate-file-name (or buffer-file-name
                                                 default-directory))
-                      " | "
-                      (number-to-string (length
-                                         (buffer-list-not-start-with-space)))
-                      " buffers in "
-                      (frame-parameter nil 'name)
-                      " ["
+                      "]["
                       invocation-name
                       " "
                       emacs-version
                       " "
                       (symbol-name system-type)
-                      "] "))
+                      "]["
+                      "FRAME:"
+                      (frame-parameter nil 'name)
+                      ":"
+                      (number-to-string (length
+                                         (buffer-list-not-start-with-space)))
+                      "]"
+                      ))
 (add-hook 'buffer-file-changed-functions
           (lambda (p c)
             (my-set-terminal-title)))
@@ -315,7 +324,7 @@ drill-instructor.el"
 
 (show-paren-mode 1)
 (setq show-paren-delay 0.5
-      show-paren-style 'mixed)
+      show-paren-style 'parenthesis)    ; mixed is hard to read
 (set-face-background 'show-paren-match
                      (face-foreground 'default))
 (set-face-inverse-video-p 'show-paren-match
@@ -515,7 +524,7 @@ drill-instructor.el"
                 ;;   (newline-and-indent))
                 (kbd "C-e C-m")
                 )
-(global-set-key (kbd "C-k") 'kill-whole-line)
+;(global-set-key (kbd "C-k") 'kill-whole-line)
 (global-set-key (kbd "M-k") 'my-copy-whole-line)
 ;; (global-set-key "\C-z" 'undo) ; undo is M-u
 (global-set-key (kbd "M-u") 'undo)
@@ -858,6 +867,11 @@ drill-instructor.el"
      (require 'smart-revert nil t)
      (smart-revert-on)
      )
+
+(and (dllib-if-unfound
+      "http://www.emacswiki.org/emacs/download/sl.el"
+      t)
+     (require 'sl nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
@@ -1274,6 +1288,8 @@ drill-instructor.el"
                                        'my-dired-previous-line dired-mode-map)
             (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
             (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
+            (define-key dired-mode-map (kbd "ESC p") 'my-dired-scroll-up)
+            (define-key dired-mode-map (kbd "ESC n") 'my-dired-scroll-down)
             (let ((file "._Icon\015"))
               (when  nil (file-readable-p file)
                      (delete-file file)))))
