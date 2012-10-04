@@ -289,7 +289,7 @@ input(){
 tmux(){
     if test $# -eq 0
     then
-        command tmux start-server
+        (cd ~; command tmux start;)
         if command tmux has -t main
         then
             command tmux attach -t main
