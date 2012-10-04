@@ -289,6 +289,7 @@ input(){
 tmux(){
     if test $# -eq 0
     then
+        (cd ~; command tmux start;)
         if command tmux has -t main
         then
             command tmux attach -t main
@@ -592,7 +593,7 @@ __my_ps1_git(){
 }
 __my_ps1_ipaddr(){
     local last=$?
-    test -z "$DISPLAY" && ! iswindows && ip-address [Addr:%s]
+    ! iswindows && ip-address [Addr:%s]
     return $last
 }
 __my_ps1_bttry(){
