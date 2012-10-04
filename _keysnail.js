@@ -222,16 +222,8 @@ ext.add("strong-fullscreen", function(){
 
 }, "go fullscreen with hiding toolbar and tabbar");
 
-// ext.add("open-url-from-clipboard", function(){
-//     var list = command.getClipboardText().split("\n");
-//     for(var i = 0; i < list.length; i++){
-//         if(list[i] != ""){
-//             gBrowser.loadOneTab(list[i], null, null, null, false);
-//         }
-//     }
-// }, "open tabs of newline separated url list from clipboard");
-
 ext.add("list-page-url", function(){
+    // window.content.document.links
     var urls = [];
     var aa = window.content.document.getElementsByTagName("a");
     var text = "";
@@ -428,35 +420,6 @@ ext.add("restart-firefox-add-menu", function(){
     // menu.insertBefore(elm, menu.getElementById("menu_FileQuitItem"));
     menu.appendChild(menuelm);
 }, "add restart firefox menu");
-
-//////////////////////////////////////
-// restart firefox
-// http://keysnail.g.hatena.ne.jp/Shinnya/20100723/1279878815
-// ext.add("restart-firefox",function (ev) {
-//     const nsIAppStartup = Components.interfaces.nsIAppStartup;
-//     // Notify all windows that an application quit has been requested.
-//     var os = Components.classes["@mozilla.org/observer-service;1"]
-//         .getService(Components.interfaces.nsIObserverService);
-//     var cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
-//         .createInstance(Components.interfaces.nsISupportsPRBool);
-//     os.notifyObservers(cancelQuit, "quit-application-requested", null);
-//     // Something aborted the quit process. 
-//     if (cancelQuit.data)
-//         return;
-//     // Notify all windows that an application quit has been granted.
-//     os.notifyObservers(null, "quit-application-granted", null);
-//     // Enumerate all windows and call shutdown handlers
-//     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-//         .getService(Components.interfaces.nsIWindowMediator);
-//     var windows = wm.getEnumerator(null);
-//     while (windows.hasMoreElements()) {
-//         var win = windows.getNext();
-//         if (("tryToClose" in win) && !win.tryToClose())
-//             return;
-//     }
-//     Components.classes["@mozilla.org/toolkit/app-startup;1"].getService(nsIAppStartup)
-//         .quit(nsIAppStartup.eRestart | nsIAppStartup.eAttemptQuit);
-// }, "restart firefox");
 
 /////////////////////////////////////////
 // copy feed url
