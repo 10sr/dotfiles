@@ -370,6 +370,13 @@ drill-instructor.el"
                )
   (global-whitespace-mode t))
 
+(and nil
+     (dllib-if-unfound
+      "http://www.emacswiki.org/emacs/download/fill-column-indicator.el"
+      t)
+     (require 'fill-column-indicator nil t)
+     (setq fill-column-indicator))
+
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
 (defface hlline-face
