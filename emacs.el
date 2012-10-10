@@ -140,19 +140,10 @@ otherwise the path where the library installed."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
-(and (dllib-if-unfound
-      "https://raw.github.com/k1LoW/emacs-drill-instructor/master/\
-drill-instructor.el"
-      t)
-     (require 'drill-instructor nil t)
-     (setq drill-instructor-global t)
-     (let ((map drill-instructor-key-map))
-       (define-key map (kbd "RET") nil)
-       (define-key map (kbd "DEL") nil)
-       (define-key map (kbd "C-h") nil)))
-'(mapc (lambda (key)
-         (global-set-key (read-kbd-macro key) 'ignore))
-       '("<up>" "<down>" "<right>" "<left>"))
+(global-set-key (kbd "<up>") (lambda() (interactive) (scroll-down 1)))
+(global-set-key (kbd "<down>") (lambda() (interactive) (scroll-up 1)))
+(global-set-key (kbd "<left>") 'scroll-down)
+(global-set-key (kbd "<right>") 'scroll-up)
 
 (define-key my-prefix-map (kbd "C-o") 'occur)
 
