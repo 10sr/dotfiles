@@ -200,8 +200,9 @@ if iscygwin; then
 fi
 
 alias g=git
-if null type _git    # enable programmable completion for g
+if null type _git
 then
+    # enable programmable completion for g
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
 	|| complete -o default -o nospace -F _git g
 fi
@@ -209,8 +210,9 @@ fi
 alias setup.py="sudo python3 setup.py install --record files.txt"
 
 scr(){
-    _time="%Y-%m-%dT%H:%M:%S%z"
-    script `date +${_time}`.script "$@"
+    _tformat="%Y-%m-%dT%H:%M:%S%z"
+    _file=`date +${_tformat}`.script
+    SCRIPT=${_file} script ${_file} "$@"
 }
 
 netwait(){
@@ -560,6 +562,11 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
+__my_ps1_script(){
+    local last=$?
+    test -n "$SCRIPT" && echo "SCR "
+    return $last
+}
 __my_ps1_scale(){
     local last=$?
     echo "[LC:${LINES}x${COLUMNS}]"
@@ -627,7 +634,7 @@ then
 fi
 _PS1="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_scale)\$(__my_ps1_tmux)\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
-${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? \D{%T} \$ "
+${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? \D{%T} $(__my_ps1_script)\$ "
 PS1=$_PS1
 
 __my_set_title(){
