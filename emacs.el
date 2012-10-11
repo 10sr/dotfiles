@@ -606,33 +606,15 @@ otherwise the path where the library installed."
       t)
      (require 'save-window-size nil t))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; GNU GLOBAL(gtags)
-;; http://uguisu.skr.jp/Windows/gtags.html
-;; http://eigyr.dip.jp/gtags.html
-;; http://cha.la.coocan.jp/doc/gnu_global.html
-
-(autoload 'gtags-mode "gtags" "" t)
-(setq gtags-mode-hook
-      '(lambda ()
-         (setq gtags-select-buffer-single t)
-         ;; (local-set-key "\M-t" 'gtags-find-tag)
-         ;; (local-set-key "\M-r" 'gtags-find-rtag)
-         ;; (local-set-key "\M-s" 'gtags-find-symbol)
-         ;; (local-set-key "\C-t" 'gtags-pop-stack)
-         (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
-         (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
-         (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
-         (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
-         (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
-         (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
-         (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
-         ))
-
 (and (dllib-if-unfound
       "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
       t)
      (require 'read-only-only-mode nil t))
+
+(defun make ()
+  "Run \"make -k \" in current directory."
+  (interactive)
+  (compile "make -k"))
 
 (add-hook 'verilog-mode-hook
           (lambda ()
@@ -870,6 +852,29 @@ otherwise the path where the library installed."
       "http://www.emacswiki.org/emacs/download/sl.el"
       t)
      (require 'sl nil t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GNU GLOBAL(gtags)
+;; http://uguisu.skr.jp/Windows/gtags.html
+;; http://eigyr.dip.jp/gtags.html
+;; http://cha.la.coocan.jp/doc/gnu_global.html
+
+(autoload 'gtags-mode "gtags" "" t)
+(setq gtags-mode-hook
+      '(lambda ()
+         (setq gtags-select-buffer-single t)
+         ;; (local-set-key "\M-t" 'gtags-find-tag)
+         ;; (local-set-key "\M-r" 'gtags-find-rtag)
+         ;; (local-set-key "\M-s" 'gtags-find-symbol)
+         ;; (local-set-key "\C-t" 'gtags-pop-stack)
+         (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
+         (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
+         (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
+         (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
+         (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
+         (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
+         (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
+         ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
