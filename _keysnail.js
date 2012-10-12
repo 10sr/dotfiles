@@ -312,6 +312,7 @@ ext.add('my-setpref', function(){
             "extensions.yass.edgetype":0,
             "extensions.yass.selectedpreset":"red",
             "font.default.x-western":"sans-serif",
+            "gecko.handlerService.schemes.mailto.1.name":"Gmail",
             "general.warnOnAboutConfig":false,
             "keyword.URL":"http://www.bing.com/search?q=",
             "network.dns.disableIPv6":true,
