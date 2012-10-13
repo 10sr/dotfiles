@@ -440,6 +440,8 @@ otherwise the path where the library installed."
                        (if (face-inverse-video-p 'mode-line) fg bg))
   (set-face-foreground 'mode-line-inactive
                        (if (face-inverse-video-p 'mode-line) bg fg)))
+(set-face-underline-p 'mode-line-inactive
+                      t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
