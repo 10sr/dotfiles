@@ -137,6 +137,12 @@ otherwise the path where the library installed."
 (setq ring-bell-function 'ignore)
 (mouse-avoidance-mode 'banish)
 
+(and window-system
+     (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
+      t)
+     (require 'save-window-size nil t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
@@ -292,8 +298,11 @@ otherwise the path where the library installed."
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
 ;; complete symbol when `eval'
+(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
+
+(define-key minibuffer-local-map (kbd "C-u")
+  (lambda () (interactive) (delete-region (point-at-bol) (point))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
@@ -473,6 +482,20 @@ otherwise the path where the library installed."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
+(setq bookmark-default-file "~/.emacs.d/bmk")
+
+(and (dllib-if-unfound
+      "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
+      t)
+     (require 'read-only-only-mode nil t))
+
+(and (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
+      t)
+     (require 'smart-revert nil t)
+     (smart-revert-on)
+     )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editting
 (setq require-final-newline t)
@@ -602,17 +625,6 @@ otherwise the path where the library installed."
 
 (require 'simple nil t)
 
-(and window-system
-     (dllib-if-unfound
-      "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
-      t)
-     (require 'save-window-size nil t))
-
-(and (dllib-if-unfound
-      "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
-      t)
-     (require 'read-only-only-mode nil t))
-
 (defun make ()
   "Run \"make -k \" in current directory."
   (interactive)
@@ -675,50 +687,17 @@ otherwise the path where the library installed."
   (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
                                 auto-mode-alist)))
 
-(setq python-python-command (or (executable-find "python3")
-                                (executable-find "python")))
-(defun my-python-run-as-command ()
-  ""
-  (interactive)
-  (shell-command (concat python-python-command " " buffer-file-name)))
-(defun my-python-display-python-buffer ()
-  ""
-  (interactive)
-  (set-window-text-height (display-buffer python-buffer
-                                          t)
-                          7))
-(add-hook 'python-mode-hook
-          (lambda ()
-            (define-key python-mode-map
-              (kbd "C-c C-e") 'my-python-run-as-command)
-            (define-key python-mode-map
-              (kbd "C-c C-b") 'my-python-display-python-buffer)
-            (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
-
-(add-hook 'inferior-python-mode-hook
-          (lambda ()
-            (my-python-display-python-buffer)
-            (define-key inferior-python-mode-map
-              (kbd "<up>") 'comint-previous-input)
-            (define-key inferior-python-mode-map
-              (kbd "<down>") 'comint-next-input)))
-
 (add-hook 'text-mode-hook
           (lambda ()
             (define-key text-mode-map (kbd "C-m") 'newline)))
 
 (add-to-list 'Info-default-directory-list (expand-file-name "~/.info/emacs-ja"))
 
-(setq bookmark-default-file "~/.emacs.d/bmk")
-
 (add-hook 'apropos-mode-hook
           (lambda ()
             (define-key apropos-mode-map "n" 'next-line)
             (define-key apropos-mode-map "p" 'previous-line)
             ))
-
-(define-key minibuffer-local-map (kbd "C-u")
-  (lambda () (interactive) (delete-region (point-at-bol) (point))))
 
 (add-hook 'isearch-mode-hook
           (lambda ()
@@ -844,16 +823,40 @@ otherwise the path where the library installed."
      (define-key ctl-x-map "g" 'git-command))
 
 (and (dllib-if-unfound
-      "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
-      t)
-     (require 'smart-revert nil t)
-     (smart-revert-on)
-     )
-
-(and (dllib-if-unfound
       "http://www.emacswiki.org/emacs/download/sl.el"
       t)
      (require 'sl nil t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; python
+
+(setq python-python-command (or (executable-find "python3")
+                                (executable-find "python")))
+(defun my-python-run-as-command ()
+  ""
+  (interactive)
+  (shell-command (concat python-python-command " " buffer-file-name)))
+(defun my-python-display-python-buffer ()
+  ""
+  (interactive)
+  (set-window-text-height (display-buffer python-buffer
+                                          t)
+                          7))
+(add-hook 'python-mode-hook
+          (lambda ()
+            (define-key python-mode-map
+              (kbd "C-c C-e") 'my-python-run-as-command)
+            (define-key python-mode-map
+              (kbd "C-c C-b") 'my-python-display-python-buffer)
+            (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
+
+(add-hook 'inferior-python-mode-hook
+          (lambda ()
+            (my-python-display-python-buffer)
+            (define-key inferior-python-mode-map
+              (kbd "<up>") 'comint-previous-input)
+            (define-key inferior-python-mode-map
+              (kbd "<down>") 'comint-next-input)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GNU GLOBAL(gtags)
@@ -1704,7 +1707,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; auto saving
 
-(defun my-save-this-buffer (silent-p)
+(defun my-save-current-buffer (silent-p)
   "save current buffer if can without asking"
   (let ((cm (if (current-message)
                 (format "%s\n" (current-message))
@@ -1742,22 +1745,22 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;          (file-writable-p buffer-file-name))
 ;;     (save-buffer))) ; silent one
 
-(defvar my-auto-save-this-buffer nil "auto save timer object")
+(defvar my-auto-save-current-buffer nil "auto save timer object")
 
-(defun my-auto-save-this-buffer (sec &optional silent-p)
+(defun my-auto-save-current-buffer (sec &optional silent-p)
   "auto save current buffer if idle for SEC.
 when SEC is nil, stop auto save if enabled."
   (if sec
-      (progn (when my-auto-save-this-buffer
-               (cancel-timer my-auto-save-this-buffer)
-               (setq my-auto-save-this-buffer nil))
-             (setq my-auto-save-this-buffer
-                   (run-with-idle-timer sec t 'my-save-this-buffer silent-p)))
-    (when my-auto-save-this-buffer
-      (cancel-timer my-auto-save-this-buffer)
-      (setq my-auto-save-this-buffer nil))))
+      (progn (when my-auto-save-current-buffer
+               (cancel-timer my-auto-save-current-buffer)
+               (setq my-auto-save-current-buffer nil))
+             (setq my-auto-save-current-buffer
+                   (run-with-idle-timer sec t 'my-save-current-buffer silent-p)))
+    (when my-auto-save-current-buffer
+      (cancel-timer my-auto-save-current-buffer)
+      (setq my-auto-save-current-buffer nil))))
 
-(my-auto-save-this-buffer 2 t)
+(my-auto-save-current-buffer 2 t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
