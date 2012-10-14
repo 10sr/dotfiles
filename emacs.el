@@ -1168,10 +1168,11 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (add-hook 'find-file-hook
             'recentf-save-list
             t)   ; save to file immediately after adding file to recentf list
+  (remove-hook 'kill-emacs-hook
+               'recentf-save-list)
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
-  ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (and (dllib-if-unfound
         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
         t)
