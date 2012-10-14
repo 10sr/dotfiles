@@ -608,7 +608,8 @@ otherwise the path where the library installed."
       "https://raw.github.com/10sr/emacs-lisp/master/pasteboard.el"
       t)
      (require 'pasteboard nil t)
-     (turn-on-pasteboard))
+     (turn-on-pasteboard)
+     (pasteboard-enable-rtun))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
