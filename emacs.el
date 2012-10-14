@@ -540,20 +540,15 @@ otherwise the path where the library installed."
 (global-set-key (kbd "C-h") (kbd "DEL"))
 
 (global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
-(global-set-key (kbd "C-o")
-                ;; (lambda ()
-                ;;   (interactive)
-                ;;   (move-end-of-line nil)
-                ;;   (newline-and-indent))
-                (kbd "C-e C-m")
-                )
-;(global-set-key (kbd "C-k") 'kill-whole-line)
-(global-set-key (kbd "M-k") 'my-copy-whole-line)
+(global-set-key (kbd "C-o") (kbd "C-e C-m"))
+
+(define-key esc-map "k" 'my-copy-whole-line)
 ;; (global-set-key "\C-z" 'undo) ; undo is M-u
-(global-set-key (kbd "M-u") 'undo)
-(global-set-key (kbd "C-r") 'query-replace-regexp)
+(define-key esc-map "u" 'undo)
+(define-key esc-map "i" (kbd "ESC TAB"))
+;(global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "M-i") (kbd "ESC TAB"))
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
