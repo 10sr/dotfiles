@@ -112,6 +112,7 @@ null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
 alias cp="cp -v"
 alias mv="mv -v"
+alias rm="rm -v"
 alias psaux="ps auxww"
 alias q=exit
 alias e3=e3em
