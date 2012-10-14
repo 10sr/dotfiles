@@ -151,20 +151,11 @@ otherwise the path where the library installed."
 (global-set-key (kbd "<left>") 'scroll-down)
 (global-set-key (kbd "<right>") 'scroll-up)
 
-(define-key my-prefix-map (kbd "C-o") 'occur)
-
 ;; (define-key my-prefix-map (kbd "C-h") help-map)
 (global-set-key (kbd "C-\\") help-map)
 (define-key ctl-x-map (kbd "DEL") help-map)
 (define-key ctl-x-map (kbd "C-h") help-map)
 (define-key help-map "a" 'apropos)
-
-;; compose window
-(global-set-key [?\C--] 'other-window)
-(global-set-key [?\C-0] 'delete-window)
-(global-set-key [?\C-1] 'delete-other-windows)
-(global-set-key [?\C-2] 'split-window-vertically)
-(global-set-key [?\C-3] 'split-window-horizontally)
 
 ;; disable annoying keys
 (global-set-key [prior] 'ignore)
@@ -500,6 +491,14 @@ otherwise the path where the library installed."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editting
+
+(defun my-copy-whole-line ()
+  ""
+  (interactive)
+  (kill-new (concat (buffer-substring (point-at-bol)
+                                      (point-at-eol))
+                    "\n")))
+
 (setq require-final-newline t)
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
@@ -552,6 +551,8 @@ otherwise the path where the library installed."
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
+(define-key my-prefix-map (kbd "C-o") 'occur)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
 
@@ -578,6 +579,14 @@ otherwise the path where the library installed."
       (kill-buffer (current-buffer))))
 (substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
 ;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
+
+(defun my-kill-buffers ()
+  ""
+  (interactive)
+  (mapcar (lambda (buf)
+            (when (buffer-file-name buf)
+              (kill-buffer buf)))
+          (buffer-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
@@ -616,6 +625,67 @@ otherwise the path where the library installed."
   (package-initialize))
 
 (require 'sudoku nil t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; window
+
+;; compose window
+(global-set-key [?\C--] 'other-window)
+(global-set-key [?\C-0] 'delete-window)
+(global-set-key [?\C-1] 'delete-other-windows)
+(global-set-key [?\C-2] 'split-window-vertically)
+(global-set-key [?\C-3] 'split-window-horizontally)
+
+;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
+(define-key my-prefix-map (kbd "C-w") 'my-window-organizer)
+
+(defun my-window-organizer ()
+  "Control window size and position."
+  (interactive)
+  (save-selected-window
+    (select-window (window-at 0 0))
+    (let ( ;; (window-obj (selected-window))
+          ;; (current-width (window-width))
+          ;; (current-height (window-height))
+          action
+          c)
+      (catch 'end-flag
+        (while t
+          (setq action
+                (read-key-sequence-vector
+                 (format "size[%dx%d] 1: maximize; 2, 3: split; 0: \
+delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
+                         (window-width)
+                         (window-height))))
+          (setq c (aref action 0))
+          (cond ((= c ?l)
+                 (unless (eq (window-width) (frame-width))
+                   (enlarge-window-horizontally 1)))
+                ((= c ?h)
+                 (unless (eq (window-width) (frame-width))
+                   (shrink-window-horizontally 1)))
+                ((= c ?j)
+                 (enlarge-window 1))
+                ((= c ?k)
+                 (shrink-window 1))
+                ((= c ?o)
+                 (other-window 1))
+                ((memq c '(?d ?0))
+                 (unless (eq (selected-window)
+                             (next-window (selected-window) 0 1))
+                   (delete-window (selected-window))))
+                ((= c ?1)
+                 (delete-other-windows))
+                ((= c ?2)
+                 (split-window-vertically))
+                ((= c ?3)
+                 (split-window-horizontally))
+                ((memq c '(?q ?\C-g))
+                 (message "Quit")
+                 (throw 'end-flag t))
+                (t
+                 (beep))))))))
+;; (aref (read-key-sequence-vector "aa") 0)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
@@ -823,6 +893,8 @@ otherwise the path where the library installed."
       "http://www.emacswiki.org/emacs/download/sl.el"
       t)
      (require 'sl nil t))
+
+(defalias 'qcalc 'quick-calc)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
@@ -1745,28 +1817,8 @@ when SEC is nil, stop auto save if enabled."
 
 (my-auto-save-current-buffer 2 t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; misc funcs
-
-(defun dir-show (&optional dir)
-  (interactive)
-  (let ((bf (get-buffer-create "*dir show*"))
-        (list-directory-brief-switches "-C"))
-    (with-current-buffer bf
-      (list-directory (or nil
-                          default-directory)
-                      nil))
-    ))
-
-(defalias 'qcalc 'quick-calc)
-
-(defun my-kill-buffers ()
-  ""
-  (interactive)
-  (mapcar (lambda (buf)
-            (when (buffer-file-name buf)
-              (kill-buffer buf)))
-          (buffer-list)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; x open
 
 (defvar my-filer nil)
 (setq my-filer (or (executable-find "pcmanfm")
@@ -1788,6 +1840,19 @@ when SEC is nil, stop auto save if enabled."
         )
   ;; (recentf-add-file file)
   (message "Opening %s...done" file))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; misc funcs
+
+(defun dir-show (&optional dir)
+  (interactive)
+  (let ((bf (get-buffer-create "*dir show*"))
+        (list-directory-brief-switches "-C"))
+    (with-current-buffer bf
+      (list-directory (or nil
+                          default-directory)
+                      nil))
+    ))
 
 (defun my-keyboard-quit ()
   ""
@@ -1813,13 +1878,6 @@ this is test, does not rename files"
   (interactive)
   (shell-command "convmv -r -f sjis -t utf8 * --notest"))
 
-(defun my-copy-whole-line ()
-  ""
-  (interactive)
-  (kill-new (concat (buffer-substring (point-at-bol)
-                                      (point-at-eol))
-                    "\n")))
-
 (defun kill-ring-save-buffer-file-name ()
   "get current filename"
   (interactive)
@@ -1829,62 +1887,9 @@ this is test, does not rename files"
                (message file))
       (message "not visiting file."))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
-(define-key my-prefix-map (kbd "C-w") 'my-window-organizer)
-
-(defun my-window-organizer ()
-  "Control window size and position."
-  (interactive)
-  (save-selected-window
-    (select-window (window-at 0 0))
-    (let ( ;; (window-obj (selected-window))
-          ;; (current-width (window-width))
-          ;; (current-height (window-height))
-          action
-          c)
-      (catch 'end-flag
-        (while t
-          (setq action
-                (read-key-sequence-vector
-                 (format "size[%dx%d] 1: maximize; 2, 3: split; 0: \
-delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
-                         (window-width)
-                         (window-height))))
-          (setq c (aref action 0))
-          (cond ((= c ?l)
-                 (unless (eq (window-width) (frame-width))
-                   (enlarge-window-horizontally 1)))
-                ((= c ?h)
-                 (unless (eq (window-width) (frame-width))
-                   (shrink-window-horizontally 1)))
-                ((= c ?j)
-                 (enlarge-window 1))
-                ((= c ?k)
-                 (shrink-window 1))
-                ((= c ?o)
-                 (other-window 1))
-                ((memq c '(?d ?0))
-                 (unless (eq (selected-window)
-                             (next-window (selected-window) 0 1))
-                   (delete-window (selected-window))))
-                ((= c ?1)
-                 (delete-other-windows))
-                ((= c ?2)
-                 (split-window-vertically))
-                ((= c ?3)
-                 (split-window-horizontally))
-                ((memq c '(?q ?\C-g))
-                 (message "Quit")
-                 (throw 'end-flag t))
-                (t
-                 (beep))))))))
-;; (aref (read-key-sequence-vector "aa") 0)
-
-
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; emacsを殺伐とさせる
-;; ;; 補完させるとき失敗するからなし
+;; ;; savage emacs
+;; ;; when enabled emacs fails to complete
 ;; ;; http://e-arrows.sakura.ne.jp/2010/05/emacs-should-be-more-savage.html
 ;; (defadvice message (before message-for-stupid (arg &rest arg2) activate)
 ;;   (setq arg
