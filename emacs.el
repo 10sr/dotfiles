@@ -91,10 +91,7 @@ otherwise the path where the library installed."
      (set-scroll-bar-mode nil))
 (add-hook 'kill-emacs-hook
           ;; load when exitting to examine if file is written properly
-          (lambda ()
-            (when (file-readable-p "~/.emacs")
-              (load-file "~/.emacs"))
-            ))
+          'reload-rcfile)
 
 (add-hook 'after-init-hook
           (lambda ()
@@ -112,10 +109,6 @@ otherwise the path where the library installed."
 
 ;; my prefix map
 (define-prefix-command 'my-prefix-map)
-'(add-hook 'after-init-hook
-           (lambda ()
-             (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
-             ))
 (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
 (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
 (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
@@ -142,6 +135,12 @@ otherwise the path where the library installed."
       "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
       t)
      (require 'save-window-size nil t))
+
+(defun reload-rcfile ()
+  "Reload emacs rc file."
+  (interactive)
+  (when (file-readable-p user-init-file)
+    (load-file user-init-file)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
