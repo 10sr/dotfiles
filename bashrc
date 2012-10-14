@@ -381,7 +381,7 @@ mkcd(){
     cd $1
 }
 
-if null type reattach-to-user-namespace
+if test -n "$TMUX" && null type reattach-to-user-namespace
 then
     alias pbpaste="reattach-to-user-namespace pbpaste"
     alias pbcopy="reattach-to-user-namespace pbcopy"

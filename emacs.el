@@ -609,6 +609,7 @@ otherwise the path where the library installed."
       t)
      (require 'pasteboard nil t)
      (turn-on-pasteboard)
+     (getenv "TMUX")
      (pasteboard-enable-rtun))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
