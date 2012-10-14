@@ -1557,7 +1557,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                "(view-buffer (get-buffer \"*eshell output*\"))")
                       ("g" "git $*")
                       ))
-            ))
+            )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; get last modified date
