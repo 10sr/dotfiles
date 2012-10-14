@@ -1547,31 +1547,17 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                         ; ("ll" "ls -l $*")
                                         ; ("la" "ls -a $*")
                                         ; ("lla" "ls -al $*")
-                      ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp $*")
                       ("aptin" "apt-get install $*")
                       ("eless"
-                       "cat >>> (with-current-buffer \
-(get-buffer-create \"*eshell output\") \
-(erase-buffer) \
-(setq buffer-read-only nil) \
-(current-buffer));\
-(view-buffer (get-buffer \"*eshell output*\"))")
+                       (concat "cat >>> (with-current-buffer "
+                               "(get-buffer-create \"*eshell output\") "
+                               "(erase-buffer) "
+                               "(setq buffer-read-only nil) "
+                               "(current-buffer)) "
+                               "(view-buffer (get-buffer \"*eshell output*\"))")
                       ("g" "git $*")
                       ))
             ))
-
-;; (eval-after-load "em-alias"
-;;   '(progn ;; (eshell/alias "ll" "ls -l")
-;;      ;; (eshell/alias "la" "ls -a")
-;;      ;; (eshell/alias "lla" "ls -al")
-;;      (eshell/alias "sgcc" (if (eq system-type 'windows-nt)
-;;                               "gcc -o win.$1.exe $1"
-;;                             "gcc -o ${uname}.$1.out $1"))
-;;      (eshell/alias "slmgcc" (if (eq system-type 'windows-nt)
-;;                                 "gcc -lm -o win.$1.exe $1"
-;;                               "gcc -lm -o ${uname}.$1.out $1"))
-;;      ;; (eshell/alias "ut" "ssh g841105@un001.ecc.u-tokyo.ac.jp")
-;;      (add-to-list 'recentf-exclude (concat eshell-directory-name "alias"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; get last modified date
