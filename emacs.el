@@ -90,8 +90,8 @@ otherwise the path where the library installed."
 (and (fboundp 'set-scroll-bar-mode)
      (set-scroll-bar-mode nil))
 (add-hook 'kill-emacs-hook
-          ;; load when exitting to examine if file is written properly
-          'reload-rcfile)
+          ;; load init file when terminating emacs to ensure file is not broken
+          'reload-init-file)
 
 (add-hook 'after-init-hook
           (lambda ()
@@ -136,8 +136,8 @@ otherwise the path where the library installed."
       t)
      (require 'save-window-size nil t))
 
-(defun reload-rcfile ()
-  "Reload emacs rc file."
+(defun reload-init-file ()
+  "Reload emacs init file."
   (interactive)
   (when (file-readable-p user-init-file)
     (load-file user-init-file)))
