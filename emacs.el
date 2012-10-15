@@ -693,6 +693,10 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 
 (require 'simple nil t)
 
+(add-hook 'makefile-mode-hook
+          (lambda ()
+            (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)))
+
 (defun make ()
   "Run \"make -k \" in current directory."
   (interactive)
