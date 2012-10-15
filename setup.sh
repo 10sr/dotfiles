@@ -95,6 +95,7 @@ mac_defaults(){
 mac_start_daemon(){
     test "`uname`" = Darwin || return 1
 
+    sudo launchctl setenv LC_ALL C
     sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
 }
 
