@@ -79,7 +79,6 @@ _tmux_prefs(){
 
 iswindows && alias tty="echo cmd.exe"
 type fortune >/dev/null 2>&1 && {
-    echo
     fortune
     echo
     fortune -o
