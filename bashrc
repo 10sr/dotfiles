@@ -295,7 +295,7 @@ tmux(){
         then
             command tmux attach -t main
         else
-            command tmux new -s main
+            (cd ~; command tmux new -s main;)
         fi
     else
         command tmux "$@"
