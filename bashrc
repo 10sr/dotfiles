@@ -79,7 +79,6 @@ _tmux_prefs(){
 
 iswindows && alias tty="echo cmd.exe"
 type fortune >/dev/null 2>&1 && {
-    echo
     fortune
     echo
     fortune -o
@@ -112,6 +111,7 @@ null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
 alias cp="cp -v"
 alias mv="mv -v"
+alias rm="rm -v"
 alias psaux="ps auxww"
 alias q=exit
 alias e3=e3em
@@ -380,6 +380,12 @@ mkcd(){
     mkdir -p $1
     cd $1
 }
+
+if test -n "$TMUX" && null type reattach-to-user-namespace
+then
+    alias pbpaste="reattach-to-user-namespace pbpaste"
+    alias pbcopy="reattach-to-user-namespace pbcopy"
+fi
 
 catclip(){
     if iswindows

@@ -90,11 +90,8 @@ otherwise the path where the library installed."
 (and (fboundp 'set-scroll-bar-mode)
      (set-scroll-bar-mode nil))
 (add-hook 'kill-emacs-hook
-          ;; load when exitting to examine if file is written properly
-          (lambda ()
-            (when (file-readable-p "~/.emacs")
-              (load-file "~/.emacs"))
-            ))
+          ;; load init file when terminating emacs to ensure file is not broken
+          'reload-init-file)
 
 (add-hook 'after-init-hook
           (lambda ()
@@ -112,10 +109,6 @@ otherwise the path where the library installed."
 
 ;; my prefix map
 (define-prefix-command 'my-prefix-map)
-'(add-hook 'after-init-hook
-           (lambda ()
-             (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
-             ))
 (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
 (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
 (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
@@ -137,6 +130,18 @@ otherwise the path where the library installed."
 (setq ring-bell-function 'ignore)
 (mouse-avoidance-mode 'banish)
 
+(and window-system
+     (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
+      t)
+     (require 'save-window-size nil t))
+
+(defun reload-init-file ()
+  "Reload emacs init file."
+  (interactive)
+  (when (file-readable-p user-init-file)
+    (load-file user-init-file)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
@@ -145,20 +150,11 @@ otherwise the path where the library installed."
 (global-set-key (kbd "<left>") 'scroll-down)
 (global-set-key (kbd "<right>") 'scroll-up)
 
-(define-key my-prefix-map (kbd "C-o") 'occur)
-
 ;; (define-key my-prefix-map (kbd "C-h") help-map)
 (global-set-key (kbd "C-\\") help-map)
 (define-key ctl-x-map (kbd "DEL") help-map)
 (define-key ctl-x-map (kbd "C-h") help-map)
 (define-key help-map "a" 'apropos)
-
-;; compose window
-(global-set-key [?\C--] 'other-window)
-(global-set-key [?\C-0] 'delete-window)
-(global-set-key [?\C-1] 'delete-other-windows)
-(global-set-key [?\C-2] 'split-window-vertically)
-(global-set-key [?\C-3] 'split-window-horizontally)
 
 ;; disable annoying keys
 (global-set-key [prior] 'ignore)
@@ -292,8 +288,11 @@ otherwise the path where the library installed."
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
 ;; complete symbol when `eval'
+(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
+
+(define-key minibuffer-local-map (kbd "C-u")
+  (lambda () (interactive) (delete-region (point-at-bol) (point))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
@@ -440,6 +439,10 @@ otherwise the path where the library installed."
                        (if (face-inverse-video-p 'mode-line) fg bg))
   (set-face-foreground 'mode-line-inactive
                        (if (face-inverse-video-p 'mode-line) bg fg)))
+(set-face-underline-p 'mode-line-inactive
+                      t)
+(set-face-underline-p 'vertical-border
+                      nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
@@ -471,8 +474,30 @@ otherwise the path where the library installed."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
+(setq bookmark-default-file "~/.emacs.d/bmk")
+
+(and (dllib-if-unfound
+      "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
+      t)
+     (require 'read-only-only-mode nil t))
+
+(and (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
+      t)
+     (require 'smart-revert nil t)
+     (smart-revert-on)
+     )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editting
+
+(defun my-copy-whole-line ()
+  ""
+  (interactive)
+  (kill-new (concat (buffer-substring (point-at-bol)
+                                      (point-at-eol))
+                    "\n")))
+
 (setq require-final-newline t)
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
@@ -515,20 +540,17 @@ otherwise the path where the library installed."
 (global-set-key (kbd "C-h") (kbd "DEL"))
 
 (global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
-(global-set-key (kbd "C-o")
-                ;; (lambda ()
-                ;;   (interactive)
-                ;;   (move-end-of-line nil)
-                ;;   (newline-and-indent))
-                (kbd "C-e C-m")
-                )
-;(global-set-key (kbd "C-k") 'kill-whole-line)
-(global-set-key (kbd "M-k") 'my-copy-whole-line)
+(global-set-key (kbd "C-o") (kbd "C-e C-m"))
+
+(define-key esc-map "k" 'my-copy-whole-line)
 ;; (global-set-key "\C-z" 'undo) ; undo is M-u
-(global-set-key (kbd "M-u") 'undo)
-(global-set-key (kbd "C-r") 'query-replace-regexp)
+(define-key esc-map "u" 'undo)
+(define-key esc-map "i" (kbd "ESC TAB"))
+;(global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "M-i") (kbd "ESC TAB"))
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+
+(define-key my-prefix-map (kbd "C-o") 'occur)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
@@ -557,6 +579,14 @@ otherwise the path where the library installed."
 (substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
 ;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
 
+(defun my-kill-buffers ()
+  ""
+  (interactive)
+  (mapcar (lambda (buf)
+            (when (buffer-file-name buf)
+              (kill-buffer buf)))
+          (buffer-list)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 
@@ -578,7 +608,9 @@ otherwise the path where the library installed."
       "https://raw.github.com/10sr/emacs-lisp/master/pasteboard.el"
       t)
      (require 'pasteboard nil t)
-     (turn-on-pasteboard))
+     (turn-on-pasteboard)
+     (getenv "TMUX")
+     (pasteboard-enable-rtun))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
@@ -595,21 +627,75 @@ otherwise the path where the library installed."
 
 (require 'sudoku nil t)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; window
+
+;; compose window
+(global-set-key [?\C--] 'other-window)
+(global-set-key [?\C-0] 'delete-window)
+(global-set-key [?\C-1] 'delete-other-windows)
+(global-set-key [?\C-2] 'split-window-vertically)
+(global-set-key [?\C-3] 'split-window-horizontally)
+
+;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
+(define-key my-prefix-map (kbd "C-w") 'my-window-organizer)
+
+(defun my-window-organizer ()
+  "Control window size and position."
+  (interactive)
+  (save-selected-window
+    (select-window (window-at 0 0))
+    (let ( ;; (window-obj (selected-window))
+          ;; (current-width (window-width))
+          ;; (current-height (window-height))
+          action
+          c)
+      (catch 'end-flag
+        (while t
+          (setq action
+                (read-key-sequence-vector
+                 (format "size[%dx%d] 1: maximize; 2, 3: split; 0: \
+delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
+                         (window-width)
+                         (window-height))))
+          (setq c (aref action 0))
+          (cond ((= c ?l)
+                 (unless (eq (window-width) (frame-width))
+                   (enlarge-window-horizontally 1)))
+                ((= c ?h)
+                 (unless (eq (window-width) (frame-width))
+                   (shrink-window-horizontally 1)))
+                ((= c ?j)
+                 (enlarge-window 1))
+                ((= c ?k)
+                 (shrink-window 1))
+                ((= c ?o)
+                 (other-window 1))
+                ((memq c '(?d ?0))
+                 (unless (eq (selected-window)
+                             (next-window (selected-window) 0 1))
+                   (delete-window (selected-window))))
+                ((= c ?1)
+                 (delete-other-windows))
+                ((= c ?2)
+                 (split-window-vertically))
+                ((= c ?3)
+                 (split-window-horizontally))
+                ((memq c '(?q ?\C-g))
+                 (message "Quit")
+                 (throw 'end-flag t))
+                (t
+                 (beep))))))))
+;; (aref (read-key-sequence-vector "aa") 0)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
 (require 'simple nil t)
 
-(and window-system
-     (dllib-if-unfound
-      "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
-      t)
-     (require 'save-window-size nil t))
-
-(and (dllib-if-unfound
-      "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
-      t)
-     (require 'read-only-only-mode nil t))
+(add-hook 'makefile-mode-hook
+          (lambda ()
+            (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)))
 
 (defun make ()
   "Run \"make -k\" in current directory."
@@ -673,50 +759,17 @@ otherwise the path where the library installed."
   (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
                                 auto-mode-alist)))
 
-(setq python-python-command (or (executable-find "python3")
-                                (executable-find "python")))
-(defun my-python-run-as-command ()
-  ""
-  (interactive)
-  (shell-command (concat python-python-command " " buffer-file-name)))
-(defun my-python-display-python-buffer ()
-  ""
-  (interactive)
-  (set-window-text-height (display-buffer python-buffer
-                                          t)
-                          7))
-(add-hook 'python-mode-hook
-          (lambda ()
-            (define-key python-mode-map
-              (kbd "C-c C-e") 'my-python-run-as-command)
-            (define-key python-mode-map
-              (kbd "C-c C-b") 'my-python-display-python-buffer)
-            (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
-
-(add-hook 'inferior-python-mode-hook
-          (lambda ()
-            (my-python-display-python-buffer)
-            (define-key inferior-python-mode-map
-              (kbd "<up>") 'comint-previous-input)
-            (define-key inferior-python-mode-map
-              (kbd "<down>") 'comint-next-input)))
-
 (add-hook 'text-mode-hook
           (lambda ()
             (define-key text-mode-map (kbd "C-m") 'newline)))
 
 (add-to-list 'Info-default-directory-list (expand-file-name "~/.info/emacs-ja"))
 
-(setq bookmark-default-file "~/.emacs.d/bmk")
-
 (add-hook 'apropos-mode-hook
           (lambda ()
             (define-key apropos-mode-map "n" 'next-line)
             (define-key apropos-mode-map "p" 'previous-line)
             ))
-
-(define-key minibuffer-local-map (kbd "C-u")
-  (lambda () (interactive) (delete-region (point-at-bol) (point))))
 
 (add-hook 'isearch-mode-hook
           (lambda ()
@@ -842,16 +895,42 @@ otherwise the path where the library installed."
      (define-key ctl-x-map "g" 'git-command))
 
 (and (dllib-if-unfound
-      "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
-      t)
-     (require 'smart-revert nil t)
-     (smart-revert-on)
-     )
-
-(and (dllib-if-unfound
       "http://www.emacswiki.org/emacs/download/sl.el"
       t)
      (require 'sl nil t))
+
+(defalias 'qcalc 'quick-calc)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; python
+
+(setq python-python-command (or (executable-find "python3")
+                                (executable-find "python")))
+(defun my-python-run-as-command ()
+  ""
+  (interactive)
+  (shell-command (concat python-python-command " " buffer-file-name)))
+(defun my-python-display-python-buffer ()
+  ""
+  (interactive)
+  (set-window-text-height (display-buffer python-buffer
+                                          t)
+                          7))
+(add-hook 'python-mode-hook
+          (lambda ()
+            (define-key python-mode-map
+              (kbd "C-c C-e") 'my-python-run-as-command)
+            (define-key python-mode-map
+              (kbd "C-c C-b") 'my-python-display-python-buffer)
+            (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
+
+(add-hook 'inferior-python-mode-hook
+          (lambda ()
+            (my-python-display-python-buffer)
+            (define-key inferior-python-mode-map
+              (kbd "<up>") 'comint-previous-input)
+            (define-key inferior-python-mode-map
+              (kbd "<down>") 'comint-next-input)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GNU GLOBAL(gtags)
@@ -1089,16 +1168,19 @@ otherwise the path where the library installed."
       recentf-show-file-shortcuts-flag nil)
 
 (when (require 'recentf nil t)
+  (add-hook 'recentf-mode-hook
+            'recentf-save-list)
   (recentf-mode 1)
   (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
   (define-key ctl-x-map (kbd "C-r") 'recentf-open-files)
   (add-hook 'find-file-hook
             'recentf-save-list
             t)   ; save to file immediately after adding file to recentf list
+  (add-hook 'kill-emacs-hook
+            'recentf-load-list)
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
-  ;; (add-to-list 'recentf-filename-handlers 'abbreviate-file-name)
   (and (dllib-if-unfound
         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
         t)
@@ -1542,31 +1624,17 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                         ; ("ll" "ls -l $*")
                                         ; ("la" "ls -a $*")
                                         ; ("lla" "ls -al $*")
-                      ("ut" "slogin 03110414@un001.ecc.u-tokyo.ac.jp $*")
                       ("aptin" "apt-get install $*")
                       ("eless"
-                       "cat >>> (with-current-buffer \
-(get-buffer-create \"*eshell output\") \
-(erase-buffer) \
-(setq buffer-read-only nil) \
-(current-buffer));\
-(view-buffer (get-buffer \"*eshell output*\"))")
+                       (concat "cat >>> (with-current-buffer "
+                               "(get-buffer-create \"*eshell output\") "
+                               "(erase-buffer) "
+                               "(setq buffer-read-only nil) "
+                               "(current-buffer)) "
+                               "(view-buffer (get-buffer \"*eshell output*\"))")
                       ("g" "git $*")
                       ))
-            ))
-
-;; (eval-after-load "em-alias"
-;;   '(progn ;; (eshell/alias "ll" "ls -l")
-;;      ;; (eshell/alias "la" "ls -a")
-;;      ;; (eshell/alias "lla" "ls -al")
-;;      (eshell/alias "sgcc" (if (eq system-type 'windows-nt)
-;;                               "gcc -o win.$1.exe $1"
-;;                             "gcc -o ${uname}.$1.out $1"))
-;;      (eshell/alias "slmgcc" (if (eq system-type 'windows-nt)
-;;                                 "gcc -lm -o win.$1.exe $1"
-;;                               "gcc -lm -o ${uname}.$1.out $1"))
-;;      ;; (eshell/alias "ut" "ssh g841105@un001.ecc.u-tokyo.ac.jp")
-;;      (add-to-list 'recentf-exclude (concat eshell-directory-name "alias"))))
+            )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; get last modified date
@@ -1702,7 +1770,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; auto saving
 
-(defun my-save-this-buffer (silent-p)
+(defun my-save-current-buffer (silent-p)
   "save current buffer if can without asking"
   (let ((cm (if (current-message)
                 (format "%s\n" (current-message))
@@ -1740,45 +1808,25 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;          (file-writable-p buffer-file-name))
 ;;     (save-buffer))) ; silent one
 
-(defvar my-auto-save-this-buffer nil "auto save timer object")
+(defvar my-auto-save-current-buffer nil "auto save timer object")
 
-(defun my-auto-save-this-buffer (sec &optional silent-p)
+(defun my-auto-save-current-buffer (sec &optional silent-p)
   "auto save current buffer if idle for SEC.
 when SEC is nil, stop auto save if enabled."
   (if sec
-      (progn (when my-auto-save-this-buffer
-               (cancel-timer my-auto-save-this-buffer)
-               (setq my-auto-save-this-buffer nil))
-             (setq my-auto-save-this-buffer
-                   (run-with-idle-timer sec t 'my-save-this-buffer silent-p)))
-    (when my-auto-save-this-buffer
-      (cancel-timer my-auto-save-this-buffer)
-      (setq my-auto-save-this-buffer nil))))
+      (progn (when my-auto-save-current-buffer
+               (cancel-timer my-auto-save-current-buffer)
+               (setq my-auto-save-current-buffer nil))
+             (setq my-auto-save-current-buffer
+                   (run-with-idle-timer sec t 'my-save-current-buffer silent-p)))
+    (when my-auto-save-current-buffer
+      (cancel-timer my-auto-save-current-buffer)
+      (setq my-auto-save-current-buffer nil))))
 
-(my-auto-save-this-buffer 2 t)
+(my-auto-save-current-buffer 2 t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; misc funcs
-
-(defun dir-show (&optional dir)
-  (interactive)
-  (let ((bf (get-buffer-create "*dir show*"))
-        (list-directory-brief-switches "-C"))
-    (with-current-buffer bf
-      (list-directory (or nil
-                          default-directory)
-                      nil))
-    ))
-
-(defalias 'qcalc 'quick-calc)
-
-(defun my-kill-buffers ()
-  ""
-  (interactive)
-  (mapcar (lambda (buf)
-            (when (buffer-file-name buf)
-              (kill-buffer buf)))
-          (buffer-list)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; x open
 
 (defvar my-filer nil)
 (setq my-filer (or (executable-find "pcmanfm")
@@ -1800,6 +1848,19 @@ when SEC is nil, stop auto save if enabled."
         )
   ;; (recentf-add-file file)
   (message "Opening %s...done" file))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; misc funcs
+
+(defun dir-show (&optional dir)
+  (interactive)
+  (let ((bf (get-buffer-create "*dir show*"))
+        (list-directory-brief-switches "-C"))
+    (with-current-buffer bf
+      (list-directory (or nil
+                          default-directory)
+                      nil))
+    ))
 
 (defun my-keyboard-quit ()
   ""
@@ -1825,13 +1886,6 @@ this is test, does not rename files"
   (interactive)
   (shell-command "convmv -r -f sjis -t utf8 * --notest"))
 
-(defun my-copy-whole-line ()
-  ""
-  (interactive)
-  (kill-new (concat (buffer-substring (point-at-bol)
-                                      (point-at-eol))
-                    "\n")))
-
 (defun kill-ring-save-buffer-file-name ()
   "get current filename"
   (interactive)
@@ -1841,62 +1895,9 @@ this is test, does not rename files"
                (message file))
       (message "not visiting file."))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
-(define-key my-prefix-map (kbd "C-w") 'my-window-organizer)
-
-(defun my-window-organizer ()
-  "Control window size and position."
-  (interactive)
-  (save-selected-window
-    (select-window (window-at 0 0))
-    (let ( ;; (window-obj (selected-window))
-          ;; (current-width (window-width))
-          ;; (current-height (window-height))
-          action
-          c)
-      (catch 'end-flag
-        (while t
-          (setq action
-                (read-key-sequence-vector
-                 (format "size[%dx%d] 1: maximize; 2, 3: split; 0: \
-delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
-                         (window-width)
-                         (window-height))))
-          (setq c (aref action 0))
-          (cond ((= c ?l)
-                 (unless (eq (window-width) (frame-width))
-                   (enlarge-window-horizontally 1)))
-                ((= c ?h)
-                 (unless (eq (window-width) (frame-width))
-                   (shrink-window-horizontally 1)))
-                ((= c ?j)
-                 (enlarge-window 1))
-                ((= c ?k)
-                 (shrink-window 1))
-                ((= c ?o)
-                 (other-window 1))
-                ((memq c '(?d ?0))
-                 (unless (eq (selected-window)
-                             (next-window (selected-window) 0 1))
-                   (delete-window (selected-window))))
-                ((= c ?1)
-                 (delete-other-windows))
-                ((= c ?2)
-                 (split-window-vertically))
-                ((= c ?3)
-                 (split-window-horizontally))
-                ((memq c '(?q ?\C-g))
-                 (message "Quit")
-                 (throw 'end-flag t))
-                (t
-                 (beep))))))))
-;; (aref (read-key-sequence-vector "aa") 0)
-
-
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; emacsを殺伐とさせる
-;; ;; 補完させるとき失敗するからなし
+;; ;; savage emacs
+;; ;; when enabled emacs fails to complete
 ;; ;; http://e-arrows.sakura.ne.jp/2010/05/emacs-should-be-more-savage.html
 ;; (defadvice message (before message-for-stupid (arg &rest arg2) activate)
 ;;   (setq arg
