@@ -612,7 +612,7 @@ otherwise the path where the library installed."
      (require 'read-only-only-mode nil t))
 
 (defun make ()
-  "Run \"make -k \" in current directory."
+  "Run \"make -k\" in current directory."
   (interactive)
   (compile "make -k"))
 
