@@ -56,7 +56,7 @@ git_config(){
     git config --global status.relativePaths false
     git config --global status.showUntrackedFiles normal
     git config --global log.date iso
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=iso -n 500"
+    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"<%C(green)%h%C(reset)> %C(white)%ad%C(reset) [%C(red)%an%C(reset)] %C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
     git config --global alias.st "status -s -b"
     git config --global alias.b "branch"
     git config --global alias.sb "show-branch"
@@ -95,8 +95,11 @@ mac_defaults(){
 mac_start_daemon(){
     test "`uname`" = Darwin || return 1
 
-    sudo launchctl setenv LC_ALL C
-    sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+    test "`launchctl getenv LC_ALL`" = C || sudo launchctl setenv LC_ALL C
+    if ! (launchctl list | grep com.apple.locate)
+    then
+        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+    fi
 }
 
 get_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh \
