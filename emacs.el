@@ -1248,12 +1248,12 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (defun dired-get-file-info ()
   "dired get file info"
   (interactive)
-  (let ((f (dired-get-filename)))
+  (let ((f (shell-quote-argument (dired-get-filename t))))
     (if (file-directory-p f)
         (progn
-          (message "calculating du...")
+          (message "Calculating disk usage...")
           (shell-command (concat "du -hsD "
-                                 (shell-quote-argument f))))
+                                 f)))
       (shell-command (concat "file "
                              f)))))
 
