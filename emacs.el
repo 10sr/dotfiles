@@ -1168,9 +1168,6 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
       recentf-show-file-shortcuts-flag nil)
 
 (when (require 'recentf nil t)
-  (add-hook 'recentf-mode-hook
-            'recentf-save-list)
-  (recentf-mode 1)
   (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
   (define-key ctl-x-map (kbd "C-r") 'recentf-open-files)
   (add-hook 'find-file-hook
@@ -1178,6 +1175,8 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
             t)   ; save to file immediately after adding file to recentf list
   (add-hook 'kill-emacs-hook
             'recentf-load-list)
+  (add-hook 'recentf-mode-hook
+            'recentf-save-list)
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
@@ -1187,7 +1186,9 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
        (require 'recentf-show nil t)
        (define-key ctl-x-map (kbd "C-r") 'recentf-show)
        (add-hook 'recentf-show-before-listing-hook
-                 'recentf-load-list)))
+                 'recentf-load-list))
+  (recentf-mode 1)
+  )
 
 (add-hook 'recentf-dialog-mode-hook
           (lambda ()
