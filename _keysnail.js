@@ -26,6 +26,13 @@ function ignore(k, i) [k, null];
 ///////////////////////////////////////////
 //// firefox
 // style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
+style.register(                 //not work
+        <><![CDATA[
+            input,textarea {
+                font-family: monospace !important;
+            }
+        ]]></>.toString()
+);
 
 ///////////////////////////////////
 //search engine
@@ -224,8 +231,8 @@ ext.add("strong-fullscreen", function(){
 
 ext.add("bookmark-delicious", function(){
     f= 'http://www.delicious.com/save?url=' + encodeURIComponent(window.content.location.href) + 
-        '&title=' + encodeURIComponent(document.title) + 
-        '&notes=' + encodeURIComponent('' + (window.getSelection ? 
+        '&title=' + encodeURIComponent(document.title) +
+        '&notes=' + encodeURIComponent('' + (window.getSelection ?
                                              window.getSelection() : document.getSelection ? 
                                              document.getSelection() : document.selection.createRange().text)) + '&v=6&';
     a = function(){
