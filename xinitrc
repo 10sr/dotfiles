@@ -1,3 +1,6 @@
+test -n "$DISPLAY" || return
+test -z "$ROXTERM_PID" || return
+
 test "`hostname`" == "arch-aspireone" &&
 setxkbmap -model "acer_laptop" -layout "jp" # this line must comes first
 
