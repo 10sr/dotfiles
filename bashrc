@@ -210,7 +210,7 @@ fi
 alias setup.py="sudo python3 setup.py install --record files.txt"
 
 scr(){
-    _tformat="%Y-%m-%dT%H:%M:%S%z"
+    _tformat="%Y%m%d-%H%M%S%z"
     _file=`date +${_tformat}`.script
     SCRIPT=${_file} script ${_file} "$@"
 }
@@ -569,7 +569,7 @@ ip-address(){
 
 __my_ps1_script(){
     local last=$?
-    test -n "$SCRIPT" && echo "SCR "
+    test -n "$SCRIPT" && echo "${__my_c5}SCR${__my_cdef} "
     return $last
 }
 __my_ps1_scale(){
@@ -635,6 +635,7 @@ then
     elif test "`hostname`" = newkiwi; then __my_c4="\[\e[1;35m\]"
     else __my_c4="\[\e[1;32m\]"       # color for ::
     fi
+    __my_c5="\[\e[30;47m\]"        # color for SCR
     __my_cdef="\[\e[0m\]"
 fi
 _PS1="\
