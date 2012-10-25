@@ -26,6 +26,13 @@ function ignore(k, i) [k, null];
 ///////////////////////////////////////////
 //// firefox
 // style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
+style.register(                 //not work
+        <><![CDATA[
+            input,textarea {
+                font-family: monospace !important;
+            }
+        ]]></>.toString()
+);
 
 ///////////////////////////////////
 //search engine
@@ -222,47 +229,10 @@ ext.add("strong-fullscreen", function(){
 
 }, "go fullscreen with hiding toolbar and tabbar");
 
-ext.add("list-page-url", function(){
-    // window.content.document.links
-    var urls = [];
-    var aa = window.content.document.getElementsByTagName("a");
-    var text = "";
-    var alt = "";
-    for (var i = 0; i < aa.length ; i++) {
-        if(aa[i].href == ""){ continue; }
-
-        if (aa[i].text == "" && aa[i].hasChildNodes() && aa[i].childNodes[0].nodeType == Node.ELEMENT_NODE){
-            alt = aa[i].childNodes[0].getAttribute("alt");
-            text = " " + aa[i].childNodes[0].nodeName + (alt ? ": " + alt : "");
-        }else{
-            text = aa[i].text;
-        }
-        urls.push([text, decodeURIComponent(aa[i].href)]);
-    }
-
-    if(urls.length == 0){
-        display.echoStatusBar("No url found.");
-        return;
-    }
-
-    prompt.selector(
-        {
-            message    : "Select URL",
-            collection : urls,
-            width : [35, 65],
-            header : ["text", "url"],
-            callback   : function (i) {
-                if (i >= 0)
-                    openUILinkIn(urls[i][1], "tab"); // or current tabshifted window
-            }
-        }
-    );
-}, "list url");
-
 ext.add("bookmark-delicious", function(){
     f= 'http://www.delicious.com/save?url=' + encodeURIComponent(window.content.location.href) + 
-        '&title=' + encodeURIComponent(document.title) + 
-        '&notes=' + encodeURIComponent('' + (window.getSelection ? 
+        '&title=' + encodeURIComponent(document.title) +
+        '&notes=' + encodeURIComponent('' + (window.getSelection ?
                                              window.getSelection() : document.getSelection ? 
                                              document.getSelection() : document.selection.createRange().text)) + '&v=6&';
     a = function(){
@@ -344,6 +314,7 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/pixiv_autojump.ks.js',
+        'https://raw.github.com/10sr/keysnail-plugin/master/list-current-urls.ks.js',
         'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js',
         'https://raw.github.com/gist/1450594/mstranslator.ks.js'
     ];
