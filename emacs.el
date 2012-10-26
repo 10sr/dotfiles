@@ -691,6 +691,36 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
+;; http://fukuyama.co/foreign-regexp
+'(and (dllib-if-unfound
+       "https://raw.github.com/k-talo/foreign-regexp.el/master/foreign-regexp.el"
+       t)
+      (require 'foreign-regexp nil t)
+      (progn
+        (setq foreign-regexp/regexp-type 'perl)
+        '(setq reb-re-syntax 'foreign-regexp)
+        ))
+
+(require 'session nil t)
+
+(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
+                       t)
+     (require 'gtkbm nil t)
+     (global-set-key (kbd "C-x C-d") 'gtkbm))
+
+(and (dllib-if-unfound
+      "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
+      t)
+     (require 'git-command nil t)
+     (define-key ctl-x-map "g" 'git-command))
+
+(and (dllib-if-unfound
+      "http://www.emacswiki.org/emacs/download/sl.el"
+      t)
+     (require 'sl nil t))
+
+(defalias 'qcalc 'quick-calc)
+
 (require 'simple nil t)
 
 (add-hook 'makefile-mode-hook
@@ -880,26 +910,6 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (setq Man-notify-method (if window-system
                             'newframe
                           'pushy))
-
-(require 'session nil t)
-
-(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
-                       t)
-     (require 'gtkbm nil t)
-     (global-set-key (kbd "C-x C-d") 'gtkbm))
-
-(and (dllib-if-unfound
-      "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
-      t)
-     (require 'git-command nil t)
-     (define-key ctl-x-map "g" 'git-command))
-
-(and (dllib-if-unfound
-      "http://www.emacswiki.org/emacs/download/sl.el"
-      t)
-     (require 'sl nil t))
-
-(defalias 'qcalc 'quick-calc)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
