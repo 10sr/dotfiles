@@ -571,13 +571,13 @@ otherwise the path where the library installed."
 
 (defun my-delete-window-killing-buffer () nil)
 
-(defun my-query-kill-this-buffer ()
+(defun my-query-kill-current-buffer ()
   ""
   (interactive)
-  (if (y-or-n-p (concat "kill this buffer? :"))
+  (if (y-or-n-p (concat "kill current buffer? :"))
       (kill-buffer (current-buffer))))
-(substitute-key-definition 'kill-buffer 'my-query-kill-this-buffer global-map)
-;;(global-set-key "\C-xk" 'my-query-kill-this-buffer)
+(substitute-key-definition 'kill-buffer 'my-query-kill-current-buffer global-map)
+;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
 
 (defun my-kill-buffers ()
   ""
