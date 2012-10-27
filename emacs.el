@@ -630,13 +630,6 @@ otherwise the path where the library installed."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
 
-;; compose window
-(global-set-key [?\C--] 'other-window)
-(global-set-key [?\C-0] 'delete-window)
-(global-set-key [?\C-1] 'delete-other-windows)
-(global-set-key [?\C-2] 'split-window-vertically)
-(global-set-key [?\C-3] 'split-window-horizontally)
-
 ;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
 (define-key my-prefix-map (kbd "C-w") 'my-window-organizer)
 
