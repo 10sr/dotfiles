@@ -41,7 +41,7 @@ changing.")
 
 (require 'url)
 
-(defun dllib-if-unfound (url &optional byte-compile-p force-download-p)
+(defun fetch-library (url &optional byte-compile-p force-download-p)
   "If library does not exist, download it from URL and locate it in
 \"~/emacs.d/lisp/\". Return nil if library unfound and failed to download,
 otherwise the path where the library installed."
@@ -131,7 +131,7 @@ otherwise the path where the library installed."
 (mouse-avoidance-mode 'banish)
 
 (and window-system
-     (dllib-if-unfound
+     (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
       t)
      (require 'save-window-size nil t))
@@ -361,7 +361,7 @@ otherwise the path where the library installed."
   (global-whitespace-mode t))
 
 (and nil
-     (dllib-if-unfound
+     (fetch-library
       "http://www.emacswiki.org/emacs/download/fill-column-indicator.el"
       t)
      (require 'fill-column-indicator nil t)
@@ -427,7 +427,7 @@ otherwise the path where the library installed."
 ;; (my-set-ascii-and-jp-font '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-(and (dllib-if-unfound
+(and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
       t)
      (progn
@@ -476,12 +476,12 @@ otherwise the path where the library installed."
 
 (setq bookmark-default-file "~/.emacs.d/bmk")
 
-(and (dllib-if-unfound
+(and (fetch-library
       "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
       t)
      (require 'read-only-only-mode nil t))
 
-(and (dllib-if-unfound
+(and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
       t)
      (require 'smart-revert nil t)
@@ -599,12 +599,12 @@ otherwise the path where the library installed."
      (not (equal (getenv "DISPLAY") ""))
      (executable-find "xclip")
      ;; (< emacs-major-version 24)
-     (dllib-if-unfound "http://www.emacswiki.org/emacs/download/xclip.el" t)
+     (fetch-library "http://www.emacswiki.org/emacs/download/xclip.el" t)
      (require 'xclip nil t)
      (turn-on-xclip))
 
 (and (eq system-type 'darwin)
-     (dllib-if-unfound
+     (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/pasteboard.el"
       t)
      (require 'pasteboard nil t)
@@ -692,7 +692,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; some modes and hooks
 
 ;; http://fukuyama.co/foreign-regexp
-'(and (dllib-if-unfound
+'(and (fetch-library
        "https://raw.github.com/k-talo/foreign-regexp.el/master/foreign-regexp.el"
        t)
       (require 'foreign-regexp nil t)
@@ -703,18 +703,18 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 
 (require 'session nil t)
 
-(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
+(and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                        t)
      (require 'gtkbm nil t)
      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
-(and (dllib-if-unfound
+(and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
       t)
      (require 'git-command nil t)
      (define-key ctl-x-map "g" 'git-command))
 
-(and (dllib-if-unfound
+(and (fetch-library
       "http://www.emacswiki.org/emacs/download/sl.el"
       t)
      (require 'sl nil t))
@@ -822,7 +822,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (setq markdown-command (or (executable-find "markdown")
                            (executable-find "markdown.pl")))
-(when (dllib-if-unfound
+(when (fetch-library
        "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
        t)
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
@@ -846,7 +846,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
                  (gtags-mode 1))
             ))
 
-(when (dllib-if-unfound
+(when (fetch-library
        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
        t)
   (autoload 'js2-mode "js2-mode" nil t)
@@ -969,7 +969,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; term mode
 
 ;; (setq multi-term-program shell-file-name)
-(and (dllib-if-unfound "http://www.emacswiki.org/emacs/download/multi-term.el"
+(and (fetch-library "http://www.emacswiki.org/emacs/download/multi-term.el"
                        t)
      (require 'multi-term nil t)
      (setq multi-term-switch-after-close nil))
@@ -1150,7 +1150,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
 
-(when (dllib-if-unfound
+(when (fetch-library
        "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
        t)
   (setq auto-mode-alist
@@ -1190,7 +1190,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
-  (and (dllib-if-unfound
+  (and (fetch-library
         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
         t)
        (require 'recentf-show nil t)
@@ -1396,14 +1396,14 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
               (when  nil (file-readable-p file)
                      (delete-file file)))))
 
-(and (dllib-if-unfound "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
+(and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                        t)
      (require 'pack nil t)
      (add-hook 'dired-mode-hook
                (lambda ()
                  (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
 
-(and (dllib-if-unfound
+(and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
       t)
      (require 'dired-list-all-mode nil t)
