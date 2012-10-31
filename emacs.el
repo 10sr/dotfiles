@@ -282,7 +282,7 @@ otherwise the path where the library installed."
 (setq completion-ignore-case t
       read-file-name-completion-ignore-case t
       read-buffer-completion-ignore-case t)
-(setq resize-mini-window t)
+(setq resize-mini-windows t)
 (temp-buffer-resize-mode 1)
 (savehist-mode 1)
 
