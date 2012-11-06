@@ -994,7 +994,16 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
               (define-key term-raw-map
                 "\C-x" (lookup-key (current-global-map) "\C-x"))
               (define-key term-raw-map
-                "\C-z" (lookup-key (current-global-map) "\C-z")))
+                "\C-z" (lookup-key (current-global-map) "\C-z"))
+              )
+            ;; (define-key term-raw-map "\C-xl" 'term-line-mode)
+            ;; (define-key term-mode-map "\C-xc" 'term-char-mode)
+            (define-key term-raw-map (kbd "<up>")
+              (lambda () (interactive) (scroll-down 1)))
+            (define-key term-raw-map (kbd "<down>")
+              (lambda () (interactive) (scroll-up 1)))
+            (define-key term-raw-map (kbd "<right>") 'scroll-up)
+            (define-key term-raw-map (kbd "<left>") 'scroll-down)
             (define-key term-raw-map (kbd "C-p") 'term-send-raw)
             (define-key term-raw-map (kbd "C-n") 'term-send-raw)
             (define-key term-raw-map "q" 'my-term-quit-or-send-raw)
