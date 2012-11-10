@@ -39,7 +39,7 @@ then
 else
     export PAGER="less"
 fi
-export LESS="-iRMXF"
+export LESS="-iRMX"
 
 if null type vim
 then
@@ -51,7 +51,7 @@ export LANG=ja_JP.UTF-8
 export LC_MESSAGES=C
 # export CDPATH=".:~"
 export VISUAL="$EDITOR"
-export GIT_PAGER="$PAGER"
+export GIT_PAGER="less -F"
 export GIT_EDITOR="$EDITOR"
 echo "$TERM" | grep '^screen' >/dev/null 2>&1 || export TERM_ORIG=$TERM
 test "$TERM" = screen && test "$TERM_ORIG" = xterm-256color && TERM=screen-256color
@@ -105,7 +105,7 @@ iswindows && alias grep="grep -n"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
-# alias less=""
+alias less="less -F"
 alias em="emacs -nw"
 null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
