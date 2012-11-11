@@ -64,7 +64,7 @@ filetype plugin indent on
 let g:netrw_liststyle = 1
 let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
-" i dont use gvimrc
+" for gvim
 if has('gui_running')
     " hide toolbar and scroll bar
     set guioptions-=T
