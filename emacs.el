@@ -1289,7 +1289,6 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (interactive "p")
   (if (> arg 0)
       (progn
-        ;; (ignore 'my-dired-print-current-dir-and-file)
         (if (eq (line-number-at-pos)
                   1)
             (goto-char (point-max))
@@ -1305,7 +1304,6 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (interactive "p")
   (if (> arg 0)
       (progn
-        ;; (ignore 'my-dired-print-current-dir-and-file)
         (if (eq (point)
                   (point-max))
             (goto-char (point-min))
