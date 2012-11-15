@@ -1871,6 +1871,17 @@ when SEC is nil, stop auto save if enabled."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(defvar sed-in-place-history nil
+  "History of `sed-in-place'")
+
+(defun sed-in-place (command)
+  "sed in place"a
+  (interactive (list (read-shell-command "sed in place: "
+                                         "sed --in-place=.bak -e "
+                                         'sed-in-place-history)))
+  (shell-command command
+                 "*sed in place*"))
+
 (defun dir-show (&optional dir)
   (interactive)
   (let ((bf (get-buffer-create "*dir show*"))
