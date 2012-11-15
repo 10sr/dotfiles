@@ -1875,7 +1875,7 @@ when SEC is nil, stop auto save if enabled."
   "History of `sed-in-place'")
 
 (defun sed-in-place (command)
-  "sed in place"a
+  "sed in place"
   (interactive (list (read-shell-command "sed in place: "
                                          "sed --in-place=.bak -e "
                                          'sed-in-place-history)))
