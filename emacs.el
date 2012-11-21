@@ -1289,12 +1289,12 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (interactive "p")
   (if (> arg 0)
       (progn
-        ;; (ignore 'my-dired-print-current-dir-and-file)
-        (forward-line -1)
-        (when (eq (line-number-at-pos)
+        (if (eq (line-number-at-pos)
                   1)
-          (goto-char (point-max)))
-        (my-dired-previous-line (if (dired-get-filename nil t)
+            (goto-char (point-max))
+          (forward-line -1))
+        (my-dired-previous-line (if (or (dired-get-filename nil t)
+                                        (dired-get-subdir))
                                     (- arg 1)
                                   arg)))
     (dired-move-to-filename)))
@@ -1304,12 +1304,12 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (interactive "p")
   (if (> arg 0)
       (progn
-        ;; (ignore 'my-dired-print-current-dir-and-file)
-        (forward-line 1)
-        (when (eq (point)
+        (if (eq (point)
                   (point-max))
-          (goto-char (point-min)))
-        (my-dired-next-line (if (dired-get-filename nil t)
+            (goto-char (point-min))
+          (forward-line 1))
+        (my-dired-next-line (if (or (dired-get-filename nil t)
+                                    (dired-get-subdir))
                                     (- arg 1)
                                   arg)))
     (dired-move-to-filename)))
@@ -1870,6 +1870,17 @@ when SEC is nil, stop auto save if enabled."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
+
+(defvar sed-in-place-history nil
+  "History of `sed-in-place'")
+
+(defun sed-in-place (command)
+  "sed in place"
+  (interactive (list (read-shell-command "sed in place: "
+                                         "sed --in-place=.bak -e "
+                                         'sed-in-place-history)))
+  (shell-command command
+                 "*sed in place*"))
 
 (defun dir-show (&optional dir)
   (interactive)
