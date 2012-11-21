@@ -1797,9 +1797,9 @@ current buffer should be saved or not."
 
 (defvar autosave-buffer-functions nil
   "A list of functions be called before autosave current buffer.
-Each function is called with no argument. Target buffer can be accessible by
-using `current-buffer'. If any of these functions return nil, autosaving will
-not happen.")
+Each function is called with no argument. Current buffer is the buffer to save
+while these functions are called. If any of these functions return nil,
+autosaving will not happen.")
 (defvar autosave-buffer nil "Autosave timer object.")
 (defun autosave-buffer (secs)
   "Register timer so that the buffer will be saved automatically each time
