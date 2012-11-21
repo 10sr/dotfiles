@@ -80,6 +80,9 @@ git_config(){
 mac_defaults(){
     test "`uname`" = Darwin || return 1
 
+    # http://appdrill.net/60641/mac-boot-mute.html
+    #sudo nvram SystemAudioVolume=%80
+
     # add quit entry in menu
     defaults write com.apple.finder QuitMenuItem -bool YES
     # show full path on titlebar

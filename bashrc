@@ -468,27 +468,6 @@ convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
 
-__my_moc_state(){
-    type mocp >/dev/null 2>&1 || return
-    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
-    printf "$1" "`mocp -Q %title 2>/dev/null`"
-}
-
-__my_parse_svn_branch() {
-    local LANG=C
-    local svn_url=$(svn info 2>/dev/null | sed -ne 's#^URL: ##p')
-    local svn_repository_root=$(svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p')
-    echo ${svn_url} | sed -e 's#^'"${svn_repository_root}"'##g' | awk '{print $1}'
-}
-
-__my_svn_ps1(){
-    if svn status >/dev/null 2>&1
-    then
-        local svn_branch=$(__my_parse_svn_branch)
-        test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
-    fi
-}
-
 #Change ANSI Colors
 _chengecolors(){
     echo -e \
@@ -546,6 +525,27 @@ winln(){
         return 1
     else
         junction "$2" "$1"
+    fi
+}
+
+__my_moc_state(){
+    type mocp >/dev/null 2>&1 || return
+    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
+    printf "$1" "`mocp -Q %title 2>/dev/null`"
+}
+
+__my_parse_svn_branch() {
+    local LANG=C
+    local svn_url=$(svn info 2>/dev/null | sed -ne 's#^URL: ##p')
+    local svn_repository_root=$(svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p')
+    echo ${svn_url} | sed -e 's#^'"${svn_repository_root}"'##g' | awk '{print $1}'
+}
+
+__my_svn_ps1(){
+    if svn status >/dev/null 2>&1
+    then
+        local svn_branch=$(__my_parse_svn_branch)
+        test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
     fi
 }
 

@@ -96,11 +96,12 @@ noremap <C-c> <ESC>:<C-u>w<CR>
 " highlight current line
 " set cursorline
 " show cursor line only in current window
-augroup cch
-    autocmd! cch
-    autocmd WinLeave * set nocursorline
-    autocmd WinEnter,BufRead * set cursorline
-augroup END
+" not work in term-mode of emacs
+" augroup cch
+"     autocmd! cch
+"     autocmd WinLeave * set nocursorline
+"     autocmd WinEnter,BufRead * set cursorline
+" augroup END
 
 hi clear CursorLine
 highlight CursorLine term=underline cterm=underline gui=underline
