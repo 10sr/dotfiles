@@ -1803,8 +1803,9 @@ not happen.")
 (defvar autosave-buffer nil "Autosave timer object.")
 (defun autosave-buffer (secs)
   "Register timer so that the buffer will be saved automatically each time
-when emacs is idle for SECS. When SECS is 0 or nil, stop the timer and disable
+when Emacs is idle for SECS. When SECS is 0 or nil, stop the timer and disable
 auto-saving."
+  (interactive "nSeconds until autosaving (0 to disable autosaving.): ")
   (if (and secs
            (not (eq secs
                     0)))
