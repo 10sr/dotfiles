@@ -53,8 +53,11 @@ export LC_MESSAGES=C
 export VISUAL="$EDITOR"
 export GIT_PAGER="less -F"
 export GIT_EDITOR="$EDITOR"
-echo "$TERM" | grep '^screen' >/dev/null 2>&1 || export TERM_ORIG=$TERM
-test "$TERM" = screen && test "$TERM_ORIG" = xterm-256color && TERM=screen-256color
+if test -n "$TMUX" && \
+    test -n "tmux display -p '#{client_termname}' | grep -o 256color"
+then
+    TERM=screen-256color
+fi
 
 test -z "$TMP" && export TMP=/tmp/${USER}-tmp
 mkdir -p "$TMP"
@@ -100,7 +103,7 @@ _timeformat_rfc2822="%a, %d %b %Y %T %z"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
-alias gr="grep -n${_coloroption}"
+alias gr="grep -n --color=always"
 iswindows && alias grep="grep -n"
 # alias ll="ls -l"
 # alias la="ls -A"
