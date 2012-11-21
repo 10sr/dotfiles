@@ -1803,9 +1803,11 @@ not happen.")
 (defvar autosave-buffer nil "Autosave timer object.")
 (defun autosave-buffer (secs)
   "Register timer so that the buffer will be saved automatically each time
-when emacs is idle for SECS. When SECS is nil, stop the timer and disable
+when emacs is idle for SECS. When SECS is 0 or nil, stop the timer and disable
 auto-saving."
-  (if sec
+  (if (and secs
+           (not (eq secs
+                    0)))
       (progn (when autosave-buffer
                (cancel-timer autosave-buffer)
                (setq autosave-buffer nil))
