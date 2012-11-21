@@ -53,8 +53,6 @@ export LC_MESSAGES=C
 export VISUAL="$EDITOR"
 export GIT_PAGER="less -F"
 export GIT_EDITOR="$EDITOR"
-echo "$TERM" | grep '^screen' >/dev/null 2>&1 || export TERM_ORIG=$TERM
-test "$TERM" = screen && test "$TERM_ORIG" = xterm-256color && TERM=screen-256color
 if test -n "$TMUX" && \
     test -n "tmux display -p '#{client_termname}' | grep -o 256color"
 then
