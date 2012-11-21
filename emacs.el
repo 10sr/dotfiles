@@ -1787,62 +1787,66 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 (define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; auto saving
+;; autosave
 
-(defun my-save-current-buffer (silent-p)
-  "save current buffer if can without asking"
-  (let ((cm (if (current-message)
-                (format "%s\n" (current-message))
-              ""))
-        (fun (symbol-function (if silent-p
-                                  'ignore
-                                'message))))
-    (cond ((active-minibuffer-window) nil)
-          ((not buffer-file-name)
-           (funcall fun
-                    "%ssaving... this buffer doesn't visit any file." cm)
-           nil)
-          ((not (file-exists-p buffer-file-name))
-           (funcall fun
-                    "%ssaving... file not exist. save manually first." cm)
-           nil)
-          (buffer-read-only
-           (funcall fun
-                    "%ssaving... this buffer is read-only." cm)
-           nil)
-          ((not (buffer-modified-p))
-           (funcal fun
-                   "%ssaving... not modified yet." cm)
-           nil)
-          ((not (file-writable-p buffer-file-name))
-           (funcall fun
-                    "%ssaving... you cannot change this file." cm)
-           nil)
-          (t (funcall fun "%ssaving..." cm)
-             (save-buffer)
-             (funcall fun "%ssaving... done." cm)))))
-;; (if (and buffer-file-name
-;;          (not buffer-read-only)
-;;          (buffer-modified-p)
-;;          (file-writable-p buffer-file-name))
-;;     (save-buffer))) ; silent one
+(defun autosave-buffer-save-current-buffer ()
+  "Save current buffer. The variable `autosave-buffer-functions' decides if
+current buffer should be saved or not."
+  (when (run-hook-with-args-until-failure 'autosave-buffer-functions)
+    (save-buffer)))
 
-(defvar my-auto-save-current-buffer nil "auto save timer object")
-
-(defun my-auto-save-current-buffer (sec &optional silent-p)
-  "auto save current buffer if idle for SEC.
-when SEC is nil, stop auto save if enabled."
+(defvar autosave-buffer-functions nil
+  "A list of functions be called before autosave current buffer.
+Each function is called with no argument. Target buffer can be accessible by
+using `current-buffer'. If any of these functions return nil, autosaving will
+not happen.")
+(defvar autosave-buffer nil "Autosave timer object.")
+(defun autosave-buffer (secs)
+  "Register timer so that the buffer will be saved automatically each time
+when emacs is idle for SECS. When SECS is nil, stop the timer and disable
+auto-saving."
   (if sec
-      (progn (when my-auto-save-current-buffer
-               (cancel-timer my-auto-save-current-buffer)
-               (setq my-auto-save-current-buffer nil))
-             (setq my-auto-save-current-buffer
-                   (run-with-idle-timer sec t 'my-save-current-buffer silent-p)))
-    (when my-auto-save-current-buffer
-      (cancel-timer my-auto-save-current-buffer)
-      (setq my-auto-save-current-buffer nil))))
+      (progn (when autosave-buffer
+               (cancel-timer autosave-buffer)
+               (setq autosave-buffer nil))
+             (setq autosave-buffer
+                   (run-with-idle-timer secs
+                                        t
+                                        'autosave-buffer-save-current-buffer)))
+    (when autosave-buffer
+      (cancel-timer autosave-buffer)
+      (setq autosave-buffer nil))))
 
-(my-auto-save-current-buffer 2 t)
+(defun autosave-buffer-buffer-file-name ()
+  "Return nil if current buffer is not visiting any file."
+  buffer-file-name)
+
+(defun autosave-buffer-file-exists-p ()
+  "Return nil if the file current buffer is visiting is not exist."
+  (file-exists-p buffer-file-name))
+
+(defun autosave-buffer-buffer-writable-p ()
+  "Return nil if current buffer is read only."
+  (not buffer-read-only))
+
+(defun autosave-buffer-buffer-modified-p ()
+  "Return nil if current buffer is not modified yet since last save."
+  (buffer-modified-p))
+
+(defun autosave-buffer-buffer-file-writable-p ()
+  "Return nil if the file current buffer is visiting is not writable."
+  (file-writable-p buffer-file-name))
+
+(mapcar (lambda (f)
+          (add-hook 'autosave-buffer-functions
+                    f))
+        '(autosave-buffer-buffer-file-name
+          autosave-buffer-file-exists-p
+          autosave-buffer-buffer-writable-p
+          autosave-buffer-buffer-modified-p
+          autosave-buffer-buffer-file-writable-p))
+
+(autosave-buffer 2)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; x open
