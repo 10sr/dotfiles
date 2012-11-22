@@ -1805,7 +1805,7 @@ not happen.")
   "Register timer so that the buffer will be saved automatically each time
 when emacs is idle for SECS. When SECS is nil, stop the timer and disable
 auto-saving."
-  (if sec
+  (if secs
       (progn (when autosave-buffer
                (cancel-timer autosave-buffer)
                (setq autosave-buffer nil))
