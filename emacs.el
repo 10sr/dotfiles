@@ -1756,8 +1756,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 (add-hook 'find-file-hook
           'my-frame-buffer-add)
-(add-hook 'term-mode-hook
-          'my-frame-buffer-add)
+;; (add-hook 'term-mode-hook
+;;           'my-frame-buffer-add)
 (add-hook 'eshell-mode-hook
           'my-frame-buffer-add)
 (add-hook 'Man-mode-hook
@@ -1789,7 +1789,9 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (if (eq system-type 'windows-nt)
       (eshell)
     (if (require 'multi-term nil t)
-        (multi-term-dedicated-open)
+        (if (multi-term-dedicated-exist-p)
+            (multi-term-dedicated-select)
+          (multi-term-dedicated-open))
       (ansi-term "/bin/bash"))))
 
 (defun my-delete-frame-or-kill-emacs ()
