@@ -1789,10 +1789,11 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (if (eq system-type 'windows-nt)
       (eshell)
     (if (require 'multi-term nil t)
-        (if (multi-term-dedicated-exist-p)
-            (multi-term-dedicated-select)
-          (multi-term-dedicated-open))
-      (ansi-term "/bin/bash"))))
+        (progn
+          (unless (multi-term-dedicated-exist-p)
+            (multi-term-dedicated-open))
+          (multi-term-dedicated-select))
+      (ansi-term shell-file-name))))
 
 (defun my-delete-frame-or-kill-emacs ()
   "delete frame when opening multiple frame, kill emacs when only one."
