@@ -982,7 +982,9 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (and (fetch-library "http://www.emacswiki.org/emacs/download/multi-term.el"
                        t)
      (require 'multi-term nil t)
-     (setq multi-term-switch-after-close nil))
+     (setq multi-term-switch-after-close nil)
+     (setq multi-term-dedicated-select-after-open-p t)
+     (setq multi-term-dedicated-window-height 20))
 
 (defun my-term-quit-or-send-raw ()
   ""
@@ -1786,8 +1788,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (interactive)
   (if (eq system-type 'windows-nt)
       (eshell t)
-    (if (featurep 'multi-term)
-        (multi-term)
+    (if (require 'multi-term nil t)
+        (multi-term-dedicated-open)
       (ansi-term "/bin/bash"))))
 
 (defun my-delete-frame-or-kill-emacs ()
