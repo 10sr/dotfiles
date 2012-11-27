@@ -1787,7 +1787,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   "open terminal buffer and return that buffer."
   (interactive)
   (if (eq system-type 'windows-nt)
-      (eshell t)
+      (eshell)
     (if (require 'multi-term nil t)
         (multi-term-dedicated-open)
       (ansi-term "/bin/bash"))))
