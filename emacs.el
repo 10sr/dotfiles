@@ -72,7 +72,7 @@ otherwise the path where the library installed."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autoload
 
-(defmacro lazyload-eval (feature functions &rest form)
+(defmacro lazy-load-eval (feature functions &rest form)
   "Define FUNCTIONS to autoload from FEATURE.
 FEATURE is a symbol. FUNCTIONS is a list of symbols. FORM is passed to
 `eval-after-load'.
@@ -95,7 +95,7 @@ found, otherwise returns nil."
        ,libpath)))
 
 ;; (macroexpand '(f-autoload 'autosave '(a-f b-f) (message "1") (message "2")))
-(when (lazyload-eval 'tetris
+(when (lazy-load-eval 'tetris
                      '(tetris)
                      (message "tetris loaded!"))
   (message "tetris found!"))
@@ -510,7 +510,8 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
       t)
-     (require 'read-only-only-mode nil t))
+     (lazy-load-eval 'read-only-only-mode
+                     '(read-only-only-mode)))
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
@@ -664,7 +665,7 @@ found, otherwise returns nil."
                '("ELPA" . "http://tromey.com/elpa/"))
   (package-initialize))
 
-(require 'sudoku nil t)
+(lazy-load-eval 'sudoku '(sudoku))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
@@ -737,19 +738,19 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                        t)
-     (require 'gtkbm nil t)
+     (lazy-load-eval 'gtkbm '(gtkbm))
      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
       t)
-     (require 'git-command nil t)
+     (lazy-load-eval 'git-command '(git-command))
      (define-key ctl-x-map "g" 'git-command))
 
 (and (fetch-library
       "http://www.emacswiki.org/emacs/download/sl.el"
       t)
-     (require 'sl nil t))
+     (lazy-load-eval 'sl '(sl)))
 
 (defalias 'qcalc 'quick-calc)
 
@@ -1003,10 +1004,11 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; (setq multi-term-program shell-file-name)
 (and (fetch-library "http://www.emacswiki.org/emacs/download/multi-term.el"
                        t)
-     (require 'multi-term nil t)
-     (setq multi-term-switch-after-close nil)
-     (setq multi-term-dedicated-select-after-open-p t)
-     (setq multi-term-dedicated-window-height 20))
+     (lazy-load-eval 'multi-term '(mult-term))
+     (progn
+       (setq multi-term-switch-after-close nil)
+       (setq multi-term-dedicated-select-after-open-p t)
+       (setq multi-term-dedicated-window-height 20)))
 
 (defun my-term-quit-or-send-raw ()
   ""
@@ -1074,22 +1076,24 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer switching
 
-(when (require 'bs nil t)
+(when (lazy-load-eval 'bs '(bs-show)
+                      ;; (add-to-list 'bs-configurations
+                      ;; '("processes" nil get-buffer-process ".*" nil nil))
+                      (add-to-list 'bs-configurations
+                                   '("same-dir" nil buffer-same-dir-p ".*" nil nil))
+                      (add-to-list 'bs-configurations
+                                   '("this-frame" nil (lambda (buf)
+                                                        (memq buf (my-frame-buffer-get)))
+                                     ".*" nil nil))
+                      ;; (setq bs-configurations (list
+                      ;; '("processes" nil get-buffer-process ".*" nil nil)
+                      ;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
+                      ;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
+                      )
   ;; (global-set-key "\C-x\C-b" 'bs-show)
-  (defalias 'list-buffers 'bs-show))
+  (defalias 'list-buffers 'bs-show)
+  )
 
-;; (add-to-list 'bs-configurations
-;; '("processes" nil get-buffer-process ".*" nil nil))
-(add-to-list 'bs-configurations
-             '("same-dir" nil buffer-same-dir-p ".*" nil nil))
-(add-to-list 'bs-configurations
-             '("this-frame" nil (lambda (buf)
-                                  (memq buf (my-frame-buffer-get)))
-               ".*" nil nil))
-;; (setq bs-configurations (list
-;; '("processes" nil get-buffer-process ".*" nil nil)
-;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
-;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
 (setq bs-default-configuration "this-frame")
 (setq bs-default-sort-name "by name")
 (add-hook 'bs-mode-hook
@@ -1139,7 +1143,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
       '((sdicf-client "/usr/share/dict/jedict.sdic" (add-keys-to-headword t))))
 (setq sdic-disable-select-window t)
 (setq sdic-window-height 7)
-(when (require 'sdic nil t)
+(when (lazy-load-eval 'sdic '(sdic-describe-word-at-point))
   ;; (define-key my-prefix-map "\C-w" 'sdic-describe-word)
   (define-key my-prefix-map "\C-t" 'sdic-describe-word-at-point-echo))
 
@@ -1236,7 +1240,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (and (fetch-library
         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
         t)
-       (require 'recentf-show nil t)
+       (lazy-load-eval 'recentf-show '(recentf-show))
        (define-key ctl-x-map (kbd "C-r") 'recentf-show)
        (add-hook 'recentf-show-before-listing-hook
                  'recentf-load-list))
@@ -1441,7 +1445,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                        t)
-     (require 'pack nil t)
+     (lazy-load-eval 'pack '(dired-do-pack-or-unpack pack))
      (add-hook 'dired-mode-hook
                (lambda ()
                  (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
@@ -1449,7 +1453,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
       t)
-     (require 'dired-list-all-mode nil t)
+     (lazy-load-eval 'dired-list-all-mode '(dired-list-all-mode))
      (setq dired-listing-switches "-lhFG")
      (add-hook 'dired-mode-hook
                (lambda ()
