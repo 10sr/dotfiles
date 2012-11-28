@@ -1783,17 +1783,19 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                        my-desktop-terminal))
     (my-term)))
 
+(defvar my-term nil "my terminal buffer")
 (defun my-term ()
   "open terminal buffer and return that buffer."
   (interactive)
-  (if (eq system-type 'windows-nt)
-      (eshell)
-    (if (require 'multi-term nil t)
-        (progn
-          (unless (multi-term-dedicated-exist-p)
-            (multi-term-dedicated-open))
-          (multi-term-dedicated-select))
-      (ansi-term shell-file-name))))
+  (if (and my-term
+           (buffer-name my-term))
+      (pop-to-buffer my-term)
+    (setq my-term
+          (if (eq system-type 'windows-nt)
+              (eshell)
+            (if (require 'multi-term nil t)
+                (multi-term)
+              (ansi-term shell-file-name))))))
 
 (defun my-delete-frame-or-kill-emacs ()
   "delete frame when opening multiple frame, kill emacs when only one."
