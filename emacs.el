@@ -99,10 +99,9 @@ found, otherwise returns nil."
             ,libpath))))
 (put 'lazy-load-eval 'lisp-indent-function 2)
 
-;; (macroexpand '(f-autoload 'autosave '(a-f b-f) (message "1") (message "2")))
 (when (lazy-load-eval 'tetris nil
-        (message "tetris loaded!"))
-  (message "tetris found!"))
+        (message "Tetris loaded!"))
+  (message "Tetris found!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; start and quit
