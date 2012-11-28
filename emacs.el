@@ -104,13 +104,17 @@ found, otherwise returns nil."
     (and libpath
          `(progn
             ,@(mapcar (lambda (f)
-                        (or (fboundp f)
+                        (unless (fboundp f)
+                          (progn
+                            (message "Autoloaded function `%S' defined (%s)"
+                                     f
+                                     libpath)
                             `(autoload (quote ,f)
                                ,libname
                                ,(concat "Autoloaded function defined in \""
                                         libpath
                                         "\".")
-                               t)))
+                               t))))
                       (or (eval functions)
                           `(,(eval feature))))
             (eval-after-load ,feature
