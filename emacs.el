@@ -76,19 +76,21 @@ otherwise the path where the library installed."
                        path
                        ok-if-already-exists)
         path)
-      (ignore-errors
-        (let ((curl (executable-find "curl")))
-          (when curl
-            (if (and (not ok-if-already-exists)
-                     (file-exists-p path))
-                nil
-              (eq 0
-                  (call-process curl
-                                nil
-                                nil
-                                nil
-                                "--output"
-                                path))))))))
+      (let ((curl (executable-find "curl")))
+        (when curl
+          (if (and (not ok-if-already-exists)
+                   (file-exists-p path))
+              nil
+            (and (eq 0
+                     (call-process curl
+                                   nil
+                                   nil
+                                   nil
+                                   "--output"
+                                   path
+                                   url
+                                   ))
+                 path))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autoload
