@@ -39,8 +39,6 @@ changing.")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; download library from web
 
-(require 'url)
-
 (defun fetch-library (url &optional byte-compile-p force-download-p)
   "If library does not exist, download it from URL and locate it in
 \"~/emacs.d/lisp/\". Return nil if library unfound and failed to download,
@@ -52,6 +50,7 @@ otherwise the path where the library installed."
     (if (or force-download-p (not locate-p))
         (progn (condition-case nil
                    (progn (message "downloading %s..." url)
+                          (require 'url)
                           (url-copy-file url
                                          lpath
                                          t)
