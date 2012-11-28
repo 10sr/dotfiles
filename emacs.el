@@ -69,14 +69,32 @@ otherwise the path where the library installed."
                (locate-library lib))
       locate-p)))
 
-;; (defmacro f-autoload (feature functions &rest form)
-;;   `(,@(mapcar (lambda (f)
-;;                 `(autoload ,f ,(symbol-name feature)))
-;;               functions)
-;;     (eval-after-load ,feature
-;;       ,@form)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; autoload
 
-;; (f-autoload autosave (a b) (ddd) (ccc))
+(defmacro lazyload-eval (feature functions &rest form)
+  "Define FUNCTIONS to autoload from FEATURE.
+FEATURE is a symbol. FUNCTIONS is a list of symbols.
+FORM is passed to `eval-after-load'.
+When this macro is evaluated, this returns the path to library if feature
+found, otherwise returns nil."
+  `(progn
+     ,@(mapcar (lambda (f)
+                 `(autoload (quote ,f)
+                    ,(symbol-name (eval feature))
+                    ""
+                    t))
+               (eval functions))
+     (eval-after-load ,feature
+       '(progn
+          ,@form))
+     (locate-library ,(symbol-name (eval feature)))))
+
+;; (macroexpand '(f-autoload 'autosave '(a-f b-f) (message "1") (message "2")))
+(when (lazyload-eval 'tetris
+                     '(tetris)
+                     (message "tetris loaded!"))
+  (message "tetris found!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; start and quit
