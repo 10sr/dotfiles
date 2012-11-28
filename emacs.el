@@ -68,6 +68,27 @@ otherwise the path where the library installed."
                (locate-library lib))
       locate-p)))
 
+(defun download-file (url path &optional ok-if-already-exists)
+  "Download file from URL and output to PATH."
+  (or (ignore-errors
+        (url-copy-file url
+                       path
+                       ok-if-already-exists)
+        path)
+      (ignore-errors
+        (let ((curl (executable-find "curl")))
+          (when curl
+            (if (and (not ok-if-already-exists)
+                     (file-exists-p path))
+                nil
+              (eq 0
+                  (call-process curl
+                                nil
+                                nil
+                                nil
+                                "--output"
+                                path))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autoload
 
