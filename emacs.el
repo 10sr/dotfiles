@@ -93,7 +93,7 @@ found, otherwise returns nil."
                       (or (eval functions)
                           `(,(eval feature))))
             (eval-after-load ,feature
-              '(progn
+              `(progn
                  ,@body))
             ,libpath))))
 (put 'lazy-load-eval 'lisp-indent-function 2)
