@@ -74,9 +74,9 @@ otherwise the path where the library installed."
 
 (defmacro lazyload-eval (feature functions &rest form)
   "Define FUNCTIONS to autoload from FEATURE.
-FEATURE is a symbol. FUNCTIONS is a list of symbols.
-FORM is passed to `eval-after-load'.
-When this macro is evaluated, this returns the path to library if feature
+FEATURE is a symbol. FUNCTIONS is a list of symbols. FORM is passed to
+`eval-after-load'.
+When this macro is evaluated, this returns the path to library if FEATURE
 found, otherwise returns nil."
   (let* ((libname (symbol-name (eval feature)))
          (libpath (locate-library libname)))
