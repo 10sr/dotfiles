@@ -94,10 +94,12 @@ found, otherwise returns nil."
             ,@form))
        ,libpath)))
 
+(put 'lazy-load-eval 'lisp-indent-function 2)
+
 ;; (macroexpand '(f-autoload 'autosave '(a-f b-f) (message "1") (message "2")))
 (when (lazy-load-eval 'tetris
-                     '(tetris)
-                     (message "tetris loaded!"))
+          '(tetris)
+        (message "tetris loaded!"))
   (message "tetris found!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -511,7 +513,7 @@ found, otherwise returns nil."
       "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
       t)
      (lazy-load-eval 'read-only-only-mode
-                     '(read-only-only-mode)))
+         '(read-only-only-mode)))
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
@@ -586,7 +588,7 @@ found, otherwise returns nil."
 ;; (global-set-key "\C-z" 'undo) ; undo is M-u
 (define-key esc-map "u" 'undo)
 (define-key esc-map "i" (kbd "ESC TAB"))
-;(global-set-key (kbd "C-r") 'query-replace-regexp)
+                                        ;(global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
@@ -737,7 +739,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (require 'session nil t)
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
-                       t)
+                    t)
      (lazy-load-eval 'gtkbm '(gtkbm))
      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
@@ -1003,7 +1005,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 
 ;; (setq multi-term-program shell-file-name)
 (and (fetch-library "http://www.emacswiki.org/emacs/download/multi-term.el"
-                       t)
+                    t)
      (lazy-load-eval 'multi-term '(mult-term))
      (progn
        (setq multi-term-switch-after-close nil)
@@ -1077,19 +1079,19 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; buffer switching
 
 (when (lazy-load-eval 'bs '(bs-show)
-                      ;; (add-to-list 'bs-configurations
-                      ;; '("processes" nil get-buffer-process ".*" nil nil))
-                      (add-to-list 'bs-configurations
-                                   '("same-dir" nil buffer-same-dir-p ".*" nil nil))
-                      (add-to-list 'bs-configurations
-                                   '("this-frame" nil (lambda (buf)
-                                                        (memq buf (my-frame-buffer-get)))
-                                     ".*" nil nil))
-                      ;; (setq bs-configurations (list
-                      ;; '("processes" nil get-buffer-process ".*" nil nil)
-                      ;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
-                      ;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
-                      )
+        ;; (add-to-list 'bs-configurations
+        ;; '("processes" nil get-buffer-process ".*" nil nil))
+        (add-to-list 'bs-configurations
+                     '("same-dir" nil buffer-same-dir-p ".*" nil nil))
+        (add-to-list 'bs-configurations
+                     '("this-frame" nil (lambda (buf)
+                                          (memq buf (my-frame-buffer-get)))
+                       ".*" nil nil))
+        ;; (setq bs-configurations (list
+        ;; '("processes" nil get-buffer-process ".*" nil nil)
+        ;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
+        ;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
+        )
   ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show)
   )
@@ -1335,7 +1337,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (if (> arg 0)
       (progn
         (if (eq (line-number-at-pos)
-                  1)
+                1)
             (goto-char (point-max))
           (forward-line -1))
         (my-dired-previous-line (if (or (dired-get-filename nil t)
@@ -1350,13 +1352,13 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (if (> arg 0)
       (progn
         (if (eq (point)
-                  (point-max))
+                (point-max))
             (goto-char (point-min))
           (forward-line 1))
         (my-dired-next-line (if (or (dired-get-filename nil t)
                                     (dired-get-subdir))
-                                    (- arg 1)
-                                  arg)))
+                                (- arg 1)
+                              arg)))
     (dired-move-to-filename)))
 
 (defun my-dired-print-current-dir-and-file ()
@@ -1444,7 +1446,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
                      (delete-file file)))))
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
-                       t)
+                    t)
      (lazy-load-eval 'pack '(dired-do-pack-or-unpack pack))
      (add-hook 'dired-mode-hook
                (lambda ()
@@ -1696,9 +1698,9 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                "(setq buffer-read-only nil) "
                                "(current-buffer)) "
                                "(view-buffer (get-buffer \"*eshell output*\"))")
-                      ("g" "git $*")
-                      ))
-            )))
+                       ("g" "git $*")
+                       ))
+                    )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; get last modified date
