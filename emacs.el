@@ -72,6 +72,7 @@ otherwise the path where the library installed."
 (defun download-file (url path &optional ok-if-already-exists)
   "Download file from URL and output to PATH."
   (or (ignore-errors
+        (require 'url)
         (url-copy-file url
                        path
                        ok-if-already-exists)
