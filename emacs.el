@@ -72,10 +72,11 @@ otherwise the path where the library installed."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autoload
 
-(defmacro lazy-load-eval (feature functions &rest form)
+(defmacro lazy-load-eval (feature &optional functions &rest form)
   "Define FUNCTIONS to autoload from FEATURE.
-FEATURE is a symbol. FUNCTIONS is a list of symbols. FORM is passed to
-`eval-after-load'.
+FEATURE is a symbol. FUNCTIONS is a list of symbols. If FUNCTIONS is nil,
+the function same as FEATURE is defined as autoloaded function. FORM is passed
+ to `eval-after-load'.
 When this macro is evaluated, this returns the path to library if FEATURE
 found, otherwise returns nil."
   (let* ((libname (symbol-name (eval feature)))
@@ -88,7 +89,8 @@ found, otherwise returns nil."
                                libpath
                                "\".")
                       t))
-                 (eval functions))
+                 (or (eval functions)
+                     `(,(eval feature))))
        (eval-after-load ,feature
          '(progn
             ,@form))
@@ -97,8 +99,7 @@ found, otherwise returns nil."
 (put 'lazy-load-eval 'lisp-indent-function 2)
 
 ;; (macroexpand '(f-autoload 'autosave '(a-f b-f) (message "1") (message "2")))
-(when (lazy-load-eval 'tetris
-          '(tetris)
+(when (lazy-load-eval 'tetris nil
         (message "tetris loaded!"))
   (message "tetris found!"))
 
@@ -512,8 +513,7 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
       t)
-     (lazy-load-eval 'read-only-only-mode
-         '(read-only-only-mode)))
+     (lazy-load-eval 'read-only-only-mode))
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
@@ -667,7 +667,7 @@ found, otherwise returns nil."
                '("ELPA" . "http://tromey.com/elpa/"))
   (package-initialize))
 
-(lazy-load-eval 'sudoku '(sudoku))
+(lazy-load-eval 'sudoku)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
@@ -740,19 +740,19 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                     t)
-     (lazy-load-eval 'gtkbm '(gtkbm))
+     (lazy-load-eval 'gtkbm)
      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
       t)
-     (lazy-load-eval 'git-command '(git-command))
+     (lazy-load-eval 'git-command)
      (define-key ctl-x-map "g" 'git-command))
 
 (and (fetch-library
       "http://www.emacswiki.org/emacs/download/sl.el"
       t)
-     (lazy-load-eval 'sl '(sl)))
+     (lazy-load-eval 'sl))
 
 (defalias 'qcalc 'quick-calc)
 
@@ -1006,7 +1006,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; (setq multi-term-program shell-file-name)
 (and (fetch-library "http://www.emacswiki.org/emacs/download/multi-term.el"
                     t)
-     (lazy-load-eval 'multi-term '(mult-term))
+     (lazy-load-eval 'multi-term)
      (progn
        (setq multi-term-switch-after-close nil)
        (setq multi-term-dedicated-select-after-open-p t)
@@ -1242,7 +1242,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   (and (fetch-library
         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
         t)
-       (lazy-load-eval 'recentf-show '(recentf-show))
+       (lazy-load-eval 'recentf-show)
        (define-key ctl-x-map (kbd "C-r") 'recentf-show)
        (add-hook 'recentf-show-before-listing-hook
                  'recentf-load-list))
@@ -1455,7 +1455,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
       t)
-     (lazy-load-eval 'dired-list-all-mode '(dired-list-all-mode))
+     (lazy-load-eval 'dired-list-all-mode)
      (setq dired-listing-switches "-lhFG")
      (add-hook 'dired-mode-hook
                (lambda ()
