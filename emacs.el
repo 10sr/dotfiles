@@ -819,10 +819,9 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
         ("PKGBUILD\\'" . sh-mode)
         ,@auto-mode-alist))
 
-(when (locate-library "pkgbuild-mode")
-  (autoload 'pkgbuild-mode "pkgbuild-mode.el" "PKGBUILD mode." t)
-  (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
-                                auto-mode-alist)))
+(and (lazy-load-eval 'pkgbuild-mode)
+     (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
+                                   auto-mode-alist)))
 
 (add-hook 'text-mode-hook
           (lambda ()
@@ -860,9 +859,8 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (when (fetch-library
        "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
        t)
+  (lazy-load-eval 'markdown-mode)
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
-  (autoload 'markdown-mode
-    "markdown-mode" "Major mode for editing Markdown files." nil)
   (add-hook 'markdown-mode-hook
             (lambda ()
               (outline-minor-mode 1)
@@ -884,7 +882,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (when (fetch-library
        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
        t)
-  (autoload 'js2-mode "js2-mode" nil t)
+  (lazy-load-eval 'js2-mode)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode)))
 ;; (add-hook 'js2-mode-hook
@@ -983,7 +981,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; http://eigyr.dip.jp/gtags.html
 ;; http://cha.la.coocan.jp/doc/gnu_global.html
 
-(autoload 'gtags-mode "gtags" "" t)
+(lazy-load-eval 'gtags '(gtags-mode))
 (setq gtags-mode-hook
       '(lambda ()
          (setq gtags-select-buffer-single t)
@@ -1206,8 +1204,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
         (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
   (setq auto-mode-alist
         (cons '("\.gaucherc\\'" . gauche-mode) auto-mode-alist))
-  (autoload 'gauche-mode "gauche-mode" "Major mode for Scheme." t)
-  (autoload 'run-scheme "gauche-mode" "Run an inferior Scheme process." t)
+  (lazy-load-eval 'gauche-mode '(gauche-mode run-scheme))
   (add-hook 'gauche-mode-hook
             (lambda ()
               (define-key gauche-mode-map
