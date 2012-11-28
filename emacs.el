@@ -49,11 +49,12 @@ otherwise the path where the library installed."
          (locate-p (locate-library lib)))
     (if (or force-download-p (not locate-p))
         (progn (condition-case nil
-                   (progn (message "downloading %s..." url)
+                   (progn (message "Downloading %s..." url)
                           (require 'url)
                           (url-copy-file url
                                          lpath
                                          t)
+                          (message "Downloading %s...done")
                           (when (and byte-compile-p
                                      (require 'bytecomp nil t))
                             (and (file-exists-p (byte-compile-dest-file lpath))
@@ -62,7 +63,7 @@ otherwise the path where the library installed."
                           )
                  (error (and (file-writable-p lpath)
                              (delete-file lpath))
-                        (message "downloading %s...something wrong happened!"
+                        (message "Downloading %s...failed"
                                  url)
                         nil))
                (locate-library lib))
