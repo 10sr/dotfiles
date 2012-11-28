@@ -73,7 +73,7 @@ otherwise the path where the library installed."
 ;; autoload
 
 (defmacro lazy-load-eval (feature &optional functions &rest body)
-  "Define FUNCTIONS to autoload from FEATURE.
+  "Define each FUNCTIONS to autoload from FEATURE.
 FEATURE is a symbol. FUNCTIONS is a list of symbols. If FUNCTIONS is nil,
 the function same as FEATURE is defined as autoloaded function. BODY is passed
  to `eval-after-load'.
@@ -81,20 +81,21 @@ When this macro is evaluated, this returns the path to library if FEATURE
 found, otherwise returns nil."
   (let* ((libname (symbol-name (eval feature)))
          (libpath (locate-library libname)))
-    `(progn
-       ,@(mapcar (lambda (f)
-                   `(autoload (quote ,f)
-                      ,libname
-                      ,(concat "Autoloaded function defined in \""
-                               libpath
-                               "\".")
-                      t))
-                 (or (eval functions)
-                     `(,(eval feature))))
-       (eval-after-load ,feature
-         '(progn
-            ,@body))
-       ,libpath)))
+    (and libpath
+         `(progn
+            ,@(mapcar (lambda (f)
+                        `(autoload (quote ,f)
+                           ,libname
+                           ,(concat "Autoloaded function defined in \""
+                                    libpath
+                                    "\".")
+                           t))
+                      (or (eval functions)
+                          `(,(eval feature))))
+            (eval-after-load ,feature
+              '(progn
+                 ,@body))
+            ,libpath))))
 (put 'lazy-load-eval 'lisp-indent-function 2)
 
 ;; (macroexpand '(f-autoload 'autosave '(a-f b-f) (message "1") (message "2")))
