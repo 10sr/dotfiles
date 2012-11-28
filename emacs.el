@@ -1110,11 +1110,11 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
         )
   ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show)
-  (setq bs-default-configuration "this-frame")
+  (setq bs-default-configuration "files")
   (setq bs-default-sort-name "by name")
   (add-hook 'bs-mode-hook
             (lambda ()
-              (setq bs-default-configuration "this-frame")
+              (setq bs-default-configuration "files")
               ;; (and bs--show-all
               ;;      (call-interactively 'bs-toggle-show-all))
               (set (make-local-variable 'scroll-margin) 0)))
@@ -1452,8 +1452,8 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
                     (let ((file "._Icon\015"))
                       (when  nil (file-readable-p file)
                              (delete-file file)))))
-
         )                                       ; eval after load dired
+
   (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                       t)
        (lazy-load-eval 'pack '(dired-do-pack-or-unpack pack))
