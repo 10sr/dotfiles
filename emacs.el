@@ -854,12 +854,12 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 (add-to-list 'auto-mode-alist (cons "\\.ol\\'" 'outline-mode))
 
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
-(setq markdown-command (or (executable-find "markdown")
-                           (executable-find "markdown.pl")))
 (when (fetch-library
        "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
        t)
   (lazy-load-eval 'markdown-mode)
+  (setq markdown-command (or (executable-find "markdown")
+                             (executable-find "markdown.pl")))
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
   (add-hook 'markdown-mode-hook
             (lambda ()
@@ -884,30 +884,22 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
        t)
   (lazy-load-eval 'js2-mode)
   (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode)))
-;; (add-hook 'js2-mode-hook
-;;           (lambda ()
-;;             (add-hook 'before-save-hook
-;;                       'my-indent-buffer
-;;                       nil
-;;                       t)))
-(add-hook 'js2-mode-hook
-          (lambda ()
-            (define-key js2-mode-map (kbd "C-m") (lambda ()
-                                                   (interactive)
-                                                   (js2-enter-key)
-                                                   (indent-for-tab-command)))
-            (add-hook (kill-local-variable 'before-save-hook)
-                      'js2-before-save)))
-
-(and nil
-     (require 'zone nil t)
-     (not (eq system-type 'windows-nt))
-     ;; (zone-when-idle 180)
-     (run-with-idle-timer 180 t (lambda ()
-                                  (unless (memq major-mode
-                                                '(term-mode))
-                                    (zone)))))
+  (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
+  ;; (add-hook 'js2-mode-hook
+  ;;           (lambda ()
+  (add-hook 'js2-mode-hook
+            (lambda ()
+              (define-key js2-mode-map (kbd "C-m") (lambda ()
+                                                     (interactive)
+                                                     (js2-enter-key)
+                                                     (indent-for-tab-command)))
+              (add-hook (kill-local-variable 'before-save-hook)
+                        'js2-before-save)
+              ;; (add-hook 'before-save-hook
+              ;;           'my-indent-buffer
+              ;;           nil
+              ;;           t)
+              )))
 
 (when (require 'uniquify nil t)
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
@@ -981,22 +973,22 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; http://eigyr.dip.jp/gtags.html
 ;; http://cha.la.coocan.jp/doc/gnu_global.html
 
-(lazy-load-eval 'gtags '(gtags-mode))
-(setq gtags-mode-hook
-      '(lambda ()
-         (setq gtags-select-buffer-single t)
-         ;; (local-set-key "\M-t" 'gtags-find-tag)
-         ;; (local-set-key "\M-r" 'gtags-find-rtag)
-         ;; (local-set-key "\M-s" 'gtags-find-symbol)
-         ;; (local-set-key "\C-t" 'gtags-pop-stack)
-         (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
-         (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
-         (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
-         (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
-         (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
-         (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
-         (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
-         ))
+(when (lazy-load-eval 'gtags '(gtags-mode))
+  (setq gtags-mode-hook
+        '(lambda ()
+           (setq gtags-select-buffer-single t)
+           ;; (local-set-key "\M-t" 'gtags-find-tag)
+           ;; (local-set-key "\M-r" 'gtags-find-rtag)
+           ;; (local-set-key "\M-s" 'gtags-find-symbol)
+           ;; (local-set-key "\C-t" 'gtags-pop-stack)
+           (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
+           (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
+           (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
+           (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
+           (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
+           (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
+           (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
+           )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
@@ -1010,68 +1002,70 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
        (setq multi-term-dedicated-select-after-open-p t)
        (setq multi-term-dedicated-window-height 20)))
 
-(defun my-term-quit-or-send-raw ()
-  ""
-  (interactive)
-  (if (get-buffer-process (current-buffer))
-      (call-interactively 'term-send-raw)
-    (kill-buffer)))
+(when (lazy-load-eval 'term '(term ansi-term))
+  (defun my-term-quit-or-send-raw ()
+    ""
+    (interactive)
+    (if (get-buffer-process (current-buffer))
+        (call-interactively 'term-send-raw)
+      (kill-buffer)))
 
-;; http://d.hatena.ne.jp/goinger/20100416/1271399150
-;; (setq term-ansi-default-program shell-file-name)
-(add-hook 'term-setup-hook
-          (lambda ()
-            (setq term-display-table (make-display-table))))
-(add-hook 'term-mode-hook
-          (lambda ()
-            (unless (memq (current-buffer)
-                          (and (featurep 'multi-term)
-                               ;; current buffer is not multi-term buffer
-                               (multi-term-list)))
-              ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
-              ;; (define-key term-raw-map "\C-r" 'term-send-raw)
-              ;; (define-key term-raw-map "\C-s" 'term-send-raw)
-              ;; (define-key term-raw-map "\C-f" 'forward-char)
-              ;; (define-key term-raw-map "\C-b" 'backward-char)
-              ;; (define-key term-raw-map "\C-t" 'set-mark-command)
+  ;; http://d.hatena.ne.jp/goinger/20100416/1271399150
+  ;; (setq term-ansi-default-program shell-file-name)
+  (add-hook 'term-setup-hook
+            (lambda ()
+              (setq term-display-table (make-display-table))))
+  (add-hook 'term-mode-hook
+            (lambda ()
+              (unless (memq (current-buffer)
+                            (and (featurep 'multi-term)
+                                 ;; current buffer is not multi-term buffer
+                                 (multi-term-list)))
+                ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
+                ;; (define-key term-raw-map "\C-r" 'term-send-raw)
+                ;; (define-key term-raw-map "\C-s" 'term-send-raw)
+                ;; (define-key term-raw-map "\C-f" 'forward-char)
+                ;; (define-key term-raw-map "\C-b" 'backward-char)
+                ;; (define-key term-raw-map "\C-t" 'set-mark-command)
+                (define-key term-raw-map
+                  "\C-x" (lookup-key (current-global-map) "\C-x"))
+                (define-key term-raw-map
+                  "\C-z" (lookup-key (current-global-map) "\C-z"))
+                )
+              ;; (define-key term-raw-map "\C-xl" 'term-line-mode)
+              ;; (define-key term-mode-map "\C-xc" 'term-char-mode)
+              (define-key term-raw-map (kbd "<up>")
+                (lambda () (interactive) (scroll-down 1)))
+              (define-key term-raw-map (kbd "<down>")
+                (lambda () (interactive) (scroll-up 1)))
+              (define-key term-raw-map (kbd "<right>") 'scroll-up)
+              (define-key term-raw-map (kbd "<left>") 'scroll-down)
+              (define-key term-raw-map (kbd "C-p") 'term-send-raw)
+              (define-key term-raw-map (kbd "C-n") 'term-send-raw)
+              (define-key term-raw-map "q" 'my-term-quit-or-send-raw)
+              ;; (define-key term-raw-map (kbd "ESC") 'term-send-raw)
+              (define-key term-raw-map [delete] 'term-send-raw)
+              (define-key term-raw-map (kbd "DEL") 'term-send-backspace)
+              (define-key term-raw-map "\C-y" 'term-paste)
               (define-key term-raw-map
-                "\C-x" (lookup-key (current-global-map) "\C-x"))
-              (define-key term-raw-map
-                "\C-z" (lookup-key (current-global-map) "\C-z"))
-              )
-            ;; (define-key term-raw-map "\C-xl" 'term-line-mode)
-            ;; (define-key term-mode-map "\C-xc" 'term-char-mode)
-            (define-key term-raw-map (kbd "<up>")
-              (lambda () (interactive) (scroll-down 1)))
-            (define-key term-raw-map (kbd "<down>")
-              (lambda () (interactive) (scroll-up 1)))
-            (define-key term-raw-map (kbd "<right>") 'scroll-up)
-            (define-key term-raw-map (kbd "<left>") 'scroll-down)
-            (define-key term-raw-map (kbd "C-p") 'term-send-raw)
-            (define-key term-raw-map (kbd "C-n") 'term-send-raw)
-            (define-key term-raw-map "q" 'my-term-quit-or-send-raw)
-            ;; (define-key term-raw-map (kbd "ESC") 'term-send-raw)
-            (define-key term-raw-map [delete] 'term-send-raw)
-            (define-key term-raw-map (kbd "DEL") 'term-send-backspace)
-            (define-key term-raw-map "\C-y" 'term-paste)
-            (define-key term-raw-map
-              "\C-c" 'term-send-raw) ;; 'term-interrupt-subjob)
-            '(define-key term-mode-map (kbd "C-x C-q") 'term-pager-toggle)
-            ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
-            ;;   (define-key term-raw-map (read-kbd-macro key) 'term-send-raw))
-            ;; (define-key term-raw-map "\C-d" 'delete-char)
-            (set (make-local-variable 'scroll-margin) 0)
-            ;; (set (make-local-variable 'cua-enable-cua-keys) nil)
-            ;; (cua-mode 0)
-            ;; (and cua-mode
-            ;;      (local-unset-key (kbd "C-c")))
-            ;; (define-key cua--prefix-override-keymap
-            ;;"\C-c" 'term-interrupt-subjob)
-            (set (make-local-variable 'hl-line-range-function)
-                 (lambda ()
-                   '(0 . 0)))
-            ))
-;; (add-hook 'term-exec-hook 'forward-char)
+                "\C-c" 'term-send-raw) ;; 'term-interrupt-subjob)
+              '(define-key term-mode-map (kbd "C-x C-q") 'term-pager-toggle)
+              ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
+              ;;   (define-key term-raw-map (read-kbd-macro key) 'term-send-raw))
+              ;; (define-key term-raw-map "\C-d" 'delete-char)
+              (set (make-local-variable 'scroll-margin) 0)
+              ;; (set (make-local-variable 'cua-enable-cua-keys) nil)
+              ;; (cua-mode 0)
+              ;; (and cua-mode
+              ;;      (local-unset-key (kbd "C-c")))
+              ;; (define-key cua--prefix-override-keymap
+              ;;"\C-c" 'term-interrupt-subjob)
+              (set (make-local-variable 'hl-line-range-function)
+                   (lambda ()
+                     '(0 . 0)))
+              ))
+  ;; (add-hook 'term-exec-hook 'forward-char)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer switching
@@ -1092,23 +1086,19 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
         )
   ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show)
-  )
-
-(setq bs-default-configuration "this-frame")
-(setq bs-default-sort-name "by name")
-(add-hook 'bs-mode-hook
-          (lambda ()
-            (setq bs-default-configuration "this-frame")
-            ;; (and bs--show-all
-            ;;      (call-interactively 'bs-toggle-show-all))
-            (set (make-local-variable 'scroll-margin) 0)
-            ))
-
-(defun buffer-same-dir-p (bf)
-  "return t if BF's dir is same as current dir, otherwise nil."
-  (let ((cdir (expand-file-name default-directory)))
-    (with-current-buffer bf
-      (equal (expand-file-name default-directory) cdir))))
+  (setq bs-default-configuration "this-frame")
+  (setq bs-default-sort-name "by name")
+  (add-hook 'bs-mode-hook
+            (lambda ()
+              (setq bs-default-configuration "this-frame")
+              ;; (and bs--show-all
+              ;;      (call-interactively 'bs-toggle-show-all))
+              (set (make-local-variable 'scroll-margin) 0)))
+  (defun buffer-same-dir-p (bf)
+    "return t if BF's dir is same as current dir, otherwise nil."
+    (let ((cdir (expand-file-name default-directory)))
+      (with-current-buffer bf
+        (equal (expand-file-name default-directory) cdir)))))
 
 (iswitchb-mode 1)
 
@@ -1121,31 +1111,31 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sdic
 
-(defun sdic-describe-word-at-point-echo ()
-  ""
-  (interactive)
-  (save-window-excursion
-    (sdic-describe-word-at-point))
-  (save-excursion
-    (set-buffer sdic-buffer-name)
-    (message (buffer-substring (point-min)
-                               (progn (goto-char (point-min))
-                                      (or (and (re-search-forward "^\\w"
-                                                                  nil
-                                                                  t
-                                                                  4)
-                                               (progn (previous-line) t)
-                                               (point-at-eol))
-                                          (point-max)))))))
-
-(setq sdic-eiwa-dictionary-list '((sdicf-client "/usr/share/dict/gene.sdic")))
-(setq sdic-waei-dictionary-list
-      '((sdicf-client "/usr/share/dict/jedict.sdic" (add-keys-to-headword t))))
-(setq sdic-disable-select-window t)
-(setq sdic-window-height 7)
 (when (lazy-load-eval 'sdic '(sdic-describe-word-at-point))
   ;; (define-key my-prefix-map "\C-w" 'sdic-describe-word)
-  (define-key my-prefix-map "\C-t" 'sdic-describe-word-at-point-echo))
+  (define-key my-prefix-map "\C-t" 'sdic-describe-word-at-point-echo)
+  (defun sdic-describe-word-at-point-echo ()
+    ""
+    (interactive)
+    (save-window-excursion
+      (sdic-describe-word-at-point))
+    (save-excursion
+      (set-buffer sdic-buffer-name)
+      (message (buffer-substring (point-min)
+                                 (progn (goto-char (point-min))
+                                        (or (and (re-search-forward "^\\w"
+                                                                    nil
+                                                                    t
+                                                                    4)
+                                                 (progn (previous-line) t)
+                                                 (point-at-eol))
+                                            (point-max)))))))
+
+  (setq sdic-eiwa-dictionary-list '((sdicf-client "/usr/share/dict/gene.sdic")))
+  (setq sdic-waei-dictionary-list
+        '((sdicf-client "/usr/share/dict/jedict.sdic" (add-keys-to-headword t))))
+  (setq sdic-disable-select-window t)
+  (setq sdic-window-height 7))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vc
@@ -1156,55 +1146,55 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gauche-mode
 
-(let ((s  (executable-find "gosh")))
-  (setq scheme-program-name s
-        gauche-program-name s))
-
-(defun run-gauche-other-window ()
-  "Run gauche on other window"
-  (interactive)
-  (switch-to-buffer-other-window
-   (get-buffer-create "*scheme*"))
-  (run-gauche))
-
-(defun run-gauche ()
-  "run gauche"
-  (run-scheme gauche-program-name)
-  )
-
-(defun scheme-send-buffer ()
-  ""
-  (interactive)
-  (scheme-send-region (point-min) (point-max))
-  (my-scheme-display-scheme-buffer)
-  )
-
-(defun my-scheme-display-scheme-buffer ()
-  ""
-  (interactive)
-  (set-window-text-height (display-buffer scheme-buffer
-                                          t)
-                          7))
-
-(add-hook 'scheme-mode-hook
-          (lambda ()
-            nil))
-
-(add-hook 'inferior-scheme-mode-hook
-          (lambda ()
-            ;; (my-scheme-display-scheme-buffer)
-            ))
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
 
-(when (fetch-library
-       "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
-       t)
+(when (and (fetch-library
+            "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
+            t)
+           (lazy-load-eval 'gauche-mode '(gauche-mode run-scheme)))
+  (let ((s (executable-find "gosh")))
+    (setq scheme-program-name s
+          gauche-program-name s))
+
+  (defun run-gauche-other-window ()
+    "Run gauche on other window"
+    (interactive)
+    (switch-to-buffer-other-window
+     (get-buffer-create "*scheme*"))
+    (run-gauche))
+
+  (defun run-gauche ()
+    "run gauche"
+    (run-scheme gauche-program-name)
+    )
+
+  (defun scheme-send-buffer ()
+    ""
+    (interactive)
+    (scheme-send-region (point-min) (point-max))
+    (my-scheme-display-scheme-buffer)
+    )
+
+  (defun my-scheme-display-scheme-buffer ()
+    ""
+    (interactive)
+    (set-window-text-height (display-buffer scheme-buffer
+                                            t)
+                            7))
+
+  (add-hook 'scheme-mode-hook
+            (lambda ()
+              nil))
+
+  (add-hook 'inferior-scheme-mode-hook
+            (lambda ()
+              ;; (my-scheme-display-scheme-buffer)
+              ))
   (setq auto-mode-alist
         (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
   (setq auto-mode-alist
         (cons '("\.gaucherc\\'" . gauche-mode) auto-mode-alist))
-  (lazy-load-eval 'gauche-mode '(gauche-mode run-scheme))
   (add-hook 'gauche-mode-hook
             (lambda ()
               (define-key gauche-mode-map
@@ -1212,8 +1202,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
               (define-key scheme-mode-map
                 (kbd "C-c C-c") 'scheme-send-buffer)
               (define-key scheme-mode-map
-                (kbd "C-c C-b") 'my-scheme-display-scheme-buffer)
-              )))
+                (kbd "C-c C-b") 'my-scheme-display-scheme-buffer))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
@@ -1244,221 +1233,220 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
        (add-hook 'recentf-show-before-listing-hook
                  'recentf-load-list))
   (recentf-mode 1)
-  )
-
-(add-hook 'recentf-dialog-mode-hook
-          (lambda ()
-            ;; (recentf-save-list)
-            ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f")
-            ;; 'my-recentf-cd-and-find-file)
-            (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
-            (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
-            (define-key recentf-dialog-mode-map "p" 'previous-line)
-            (define-key recentf-dialog-mode-map "n" 'next-line)
-            (cd "~/")))
+  (add-hook 'recentf-dialog-mode-hook
+            (lambda ()
+              ;; (recentf-save-list)
+              ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f")
+              ;; 'my-recentf-cd-and-find-file)
+              (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
+              (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
+              (define-key recentf-dialog-mode-map "p" 'previous-line)
+              (define-key recentf-dialog-mode-map "n" 'next-line)
+              (cd "~/"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
 
-(require 'dired)
+(when (lazy-load-eval 'dired nil
 
-(defun my-dired-echo-file-head (arg)
-  ""
-  (interactive "P")
-  (let ((f (dired-get-filename)))
-    (message "%s"
-             (with-temp-buffer
-               (insert-file-contents f)
-               (buffer-substring-no-properties
-                (point-min)
-                (progn (goto-line (if arg
-                                      (prefix-numeric-value arg)
-                                    10))
-                       (point-at-eol)))))))
+        (defun my-dired-echo-file-head (arg)
+          ""
+          (interactive "P")
+          (let ((f (dired-get-filename)))
+            (message "%s"
+                     (with-temp-buffer
+                       (insert-file-contents f)
+                       (buffer-substring-no-properties
+                        (point-min)
+                        (progn (goto-line (if arg
+                                              (prefix-numeric-value arg)
+                                            10))
+                               (point-at-eol)))))))
 
-(defun my-dired-diff ()
-  ""
-  (interactive)
-  (let ((files (dired-get-marked-files nil nil nil t)))
-    (if (eq (car files)
-            t)
-        (diff (cadr files) (dired-get-filename))
-      (message "One files must be marked!"))))
-
-(defun my-pop-to-buffer-erase-noselect (buffer-or-name)
-  "pop up buffer using `display-buffer' and return that buffer."
-  (let ((bf (get-buffer-create buffer-or-name)))
-    (with-current-buffer bf
-      (cd ".")
-      (erase-buffer))
-    (display-buffer bf)
-    bf))
-
-(defun my-replace-nasi-none ()
-  ""
-  (save-excursion
-    (let ((buffer-read-only nil))
-      (goto-char (point-min))
-      (while (search-forward "なし" nil t)
-        (replace-match "none")))))
-
-(defun dired-get-file-info ()
-  "dired get file info"
-  (interactive)
-  (let ((f (shell-quote-argument (dired-get-filename t))))
-    (if (file-directory-p f)
-        (progn
-          (message "Calculating disk usage...")
-          (shell-command (concat "du -hsD "
-                                 f)))
-      (shell-command (concat "file "
-                             f)))))
-
-(defun my-dired-scroll-up ()
-  ""
-  (interactive)
-  (my-dired-previous-line (- (window-height) 1)))
-
-(defun my-dired-scroll-down ()
-  ""
-  (interactive)
-  (my-dired-next-line (- (window-height) 1)))
-
-;; (defun my-dired-forward-line (arg)
-;;   ""
-;;   (interactive "p"))
-
-(defun my-dired-previous-line (arg)
-  ""
-  (interactive "p")
-  (if (> arg 0)
-      (progn
-        (if (eq (line-number-at-pos)
-                1)
-            (goto-char (point-max))
-          (forward-line -1))
-        (my-dired-previous-line (if (or (dired-get-filename nil t)
-                                        (dired-get-subdir))
-                                    (- arg 1)
-                                  arg)))
-    (dired-move-to-filename)))
-
-(defun my-dired-next-line (arg)
-  ""
-  (interactive "p")
-  (if (> arg 0)
-      (progn
-        (if (eq (point)
-                (point-max))
-            (goto-char (point-min))
-          (forward-line 1))
-        (my-dired-next-line (if (or (dired-get-filename nil t)
-                                    (dired-get-subdir))
-                                (- arg 1)
-                              arg)))
-    (dired-move-to-filename)))
-
-(defun my-dired-print-current-dir-and-file ()
-  (message "%s  %s"
-           default-directory
-           (buffer-substring-no-properties (point-at-bol)
-                                           (point-at-eol))))
-
-(defun dired-do-execute-as-command ()
-  ""
-  (interactive)
-  (let ((file (dired-get-filename t)))
-    (if (file-executable-p file)
-        (start-process file nil file)
-      (when (y-or-n-p
-             "this file cant be executed. mark as executable and go? : ")
-        (set-file-modes file
-                        (file-modes-symbolic-to-number "u+x" (file-modes file)))
-        (start-process file nil file)))))
-
-;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
-
-(defun my-dired-x-open ()
-  ""
-  (interactive)
-  (my-x-open (dired-get-filename t t)))
-
-(if (eq window-system 'mac)
-    (setq dired-listing-switches "-lhFG")
-  (setq dired-listing-switches "-lhFG --time-style=long-iso")
-  )
-(setq dired-listing-switches "-lhFG")
-
-(put 'dired-find-alternate-file 'disabled nil)
-;; when using dired-find-alternate-file
-;; reuse current dired buffer for the file to open
-(setq dired-ls-F-marks-symlinks t)
-
-(require 'ls-lisp)
-(setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
-(setq ls-lisp-dirs-first t)
-(setq ls-lisp-use-localized-time-format t)
-(setq ls-lisp-format-time-list
-      '("%Y-%m-%d %H:%M"
-        "%Y-%m-%d      "))
-
-(setq dired-dwim-target t)
-
-;; (add-hook 'dired-after-readin-hook
-;;           'my-replace-nasi-none)
-
-;; (add-hook 'after-init-hook
-;;           (lambda ()
-;;             (dired ".")))
-
-(add-hook 'dired-mode-hook
-          (lambda ()
-            (define-key dired-mode-map "o" 'my-dired-x-open)
-            (define-key dired-mode-map "i" 'dired-get-file-info)
-            (define-key dired-mode-map "f" 'find-file)
-            (define-key dired-mode-map "!" 'shell-command)
-            (define-key dired-mode-map "&" 'async-shell-command)
-            (define-key dired-mode-map "X" 'dired-do-async-shell-command)
-            (define-key dired-mode-map "=" 'my-dired-diff)
-            (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
-            (define-key dired-mode-map "b" 'gtkbm)
-            (define-key dired-mode-map "h" 'my-dired-echo-file-head)
-            (define-key dired-mode-map "@" (lambda ()
-                                             (interactive) (my-x-open ".")))
-            (define-key dired-mode-map (kbd "TAB") 'other-window)
-            ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
-            (define-key dired-mode-map "/" 'dired-isearch-filenames)
-            (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
-            (define-key dired-mode-map (kbd "C-h") 'dired-up-directory)
-            (substitute-key-definition 'dired-next-line
-                                       'my-dired-next-line dired-mode-map)
-            (substitute-key-definition 'dired-previous-line
-                                       'my-dired-previous-line dired-mode-map)
-            (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
-            (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
-            (define-key dired-mode-map (kbd "ESC p") 'my-dired-scroll-up)
-            (define-key dired-mode-map (kbd "ESC n") 'my-dired-scroll-down)
-            (let ((file "._Icon\015"))
-              (when  nil (file-readable-p file)
-                     (delete-file file)))))
-
-(and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
+        (defun my-dired-diff ()
+          ""
+          (interactive)
+          (let ((files (dired-get-marked-files nil nil nil t)))
+            (if (eq (car files)
                     t)
-     (lazy-load-eval 'pack '(dired-do-pack-or-unpack pack))
-     (add-hook 'dired-mode-hook
-               (lambda ()
-                 (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
+                (diff (cadr files) (dired-get-filename))
+              (message "One files must be marked!"))))
 
-(and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
-      t)
-     (lazy-load-eval 'dired-list-all-mode)
-     (setq dired-listing-switches "-lhFG")
-     (add-hook 'dired-mode-hook
-               (lambda ()
-                 (define-key dired-mode-map "a" 'dired-list-all-mode)
-                 )))
+        (defun my-pop-to-buffer-erase-noselect (buffer-or-name)
+          "pop up buffer using `display-buffer' and return that buffer."
+          (let ((bf (get-buffer-create buffer-or-name)))
+            (with-current-buffer bf
+              (cd ".")
+              (erase-buffer))
+            (display-buffer bf)
+            bf))
 
+        (defun my-replace-nasi-none ()
+          ""
+          (save-excursion
+            (let ((buffer-read-only nil))
+              (goto-char (point-min))
+              (while (search-forward "なし" nil t)
+                (replace-match "none")))))
+
+        (defun dired-get-file-info ()
+          "dired get file info"
+          (interactive)
+          (let ((f (shell-quote-argument (dired-get-filename t))))
+            (if (file-directory-p f)
+                (progn
+                  (message "Calculating disk usage...")
+                  (shell-command (concat "du -hsD "
+                                         f)))
+              (shell-command (concat "file "
+                                     f)))))
+
+        (defun my-dired-scroll-up ()
+          ""
+          (interactive)
+          (my-dired-previous-line (- (window-height) 1)))
+
+        (defun my-dired-scroll-down ()
+          ""
+          (interactive)
+          (my-dired-next-line (- (window-height) 1)))
+
+        ;; (defun my-dired-forward-line (arg)
+        ;;   ""
+        ;;   (interactive "p"))
+
+        (defun my-dired-previous-line (arg)
+          ""
+          (interactive "p")
+          (if (> arg 0)
+              (progn
+                (if (eq (line-number-at-pos)
+                        1)
+                    (goto-char (point-max))
+                  (forward-line -1))
+                (my-dired-previous-line (if (or (dired-get-filename nil t)
+                                                (dired-get-subdir))
+                                            (- arg 1)
+                                          arg)))
+            (dired-move-to-filename)))
+
+        (defun my-dired-next-line (arg)
+          ""
+          (interactive "p")
+          (if (> arg 0)
+              (progn
+                (if (eq (point)
+                        (point-max))
+                    (goto-char (point-min))
+                  (forward-line 1))
+                (my-dired-next-line (if (or (dired-get-filename nil t)
+                                            (dired-get-subdir))
+                                        (- arg 1)
+                                      arg)))
+            (dired-move-to-filename)))
+
+        (defun my-dired-print-current-dir-and-file ()
+          (message "%s  %s"
+                   default-directory
+                   (buffer-substring-no-properties (point-at-bol)
+                                                   (point-at-eol))))
+
+        (defun dired-do-execute-as-command ()
+          ""
+          (interactive)
+          (let ((file (dired-get-filename t)))
+            (if (file-executable-p file)
+                (start-process file nil file)
+              (when (y-or-n-p
+                     "this file cant be executed. mark as executable and go? : ")
+                (set-file-modes file
+                                (file-modes-symbolic-to-number "u+x" (file-modes file)))
+                (start-process file nil file)))))
+
+        ;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
+
+        (defun my-dired-x-open ()
+          ""
+          (interactive)
+          (my-x-open (dired-get-filename t t)))
+
+        (if (eq window-system 'mac)
+            (setq dired-listing-switches "-lhFG")
+          (setq dired-listing-switches "-lhFG --time-style=long-iso")
+          )
+        (setq dired-listing-switches "-lhFG")
+
+        (put 'dired-find-alternate-file 'disabled nil)
+        ;; when using dired-find-alternate-file
+        ;; reuse current dired buffer for the file to open
+        (setq dired-ls-F-marks-symlinks t)
+
+        (require 'ls-lisp)
+        (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
+        (setq ls-lisp-dirs-first t)
+        (setq ls-lisp-use-localized-time-format t)
+        (setq ls-lisp-format-time-list
+              '("%Y-%m-%d %H:%M"
+                "%Y-%m-%d      "))
+
+        (setq dired-dwim-target t)
+
+        ;; (add-hook 'dired-after-readin-hook
+        ;;           'my-replace-nasi-none)
+
+        ;; (add-hook 'after-init-hook
+        ;;           (lambda ()
+        ;;             (dired ".")))
+
+        (add-hook 'dired-mode-hook
+                  (lambda ()
+                    (define-key dired-mode-map "o" 'my-dired-x-open)
+                    (define-key dired-mode-map "i" 'dired-get-file-info)
+                    (define-key dired-mode-map "f" 'find-file)
+                    (define-key dired-mode-map "!" 'shell-command)
+                    (define-key dired-mode-map "&" 'async-shell-command)
+                    (define-key dired-mode-map "X" 'dired-do-async-shell-command)
+                    (define-key dired-mode-map "=" 'my-dired-diff)
+                    (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
+                    (define-key dired-mode-map "b" 'gtkbm)
+                    (define-key dired-mode-map "h" 'my-dired-echo-file-head)
+                    (define-key dired-mode-map "@" (lambda ()
+                                                     (interactive) (my-x-open ".")))
+                    (define-key dired-mode-map (kbd "TAB") 'other-window)
+                    ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
+                    (define-key dired-mode-map "/" 'dired-isearch-filenames)
+                    (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
+                    (define-key dired-mode-map (kbd "C-h") 'dired-up-directory)
+                    (substitute-key-definition 'dired-next-line
+                                               'my-dired-next-line dired-mode-map)
+                    (substitute-key-definition 'dired-previous-line
+                                               'my-dired-previous-line dired-mode-map)
+                    (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
+                    (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
+                    (define-key dired-mode-map (kbd "ESC p") 'my-dired-scroll-up)
+                    (define-key dired-mode-map (kbd "ESC n") 'my-dired-scroll-down)
+                    (let ((file "._Icon\015"))
+                      (when  nil (file-readable-p file)
+                             (delete-file file)))))
+
+        )                                       ; eval after load dired
+  (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
+                      t)
+       (lazy-load-eval 'pack '(dired-do-pack-or-unpack pack))
+       (add-hook 'dired-mode-hook
+                 (lambda ()
+                   (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
+
+  (and (fetch-library
+        "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
+        t)
+       (lazy-load-eval 'dired-list-all-mode)
+       (setq dired-listing-switches "-lhFG")
+       (add-hook 'dired-mode-hook
+                 (lambda ()
+                   (define-key dired-mode-map "a" 'dired-list-all-mode)
+                   )))
+  )                                       ; when dired locate
 
 ;; http://blog.livedoor.jp/tek_nishi/archives/4693204.html
 
@@ -1499,205 +1487,208 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; eshell
 
-(defun my-eshell-backward-delete-char ()
-  (interactive)
-  (when (< (save-excursion
-             (eshell-bol)
+(lazy-load-eval 'eshell nil
+
+  (defun my-eshell-backward-delete-char ()
+    (interactive)
+    (when (< (save-excursion
+               (eshell-bol)
+               (point))
              (point))
-           (point))
-    (backward-delete-char 1)))
+      (backward-delete-char 1)))
 
-(defun my-file-owner-p (file)
-  "t if FILE is owned by me."
-  (eq (user-uid) (nth 2 (file-attributes file))))
+  (defun my-file-owner-p (file)
+    "t if FILE is owned by me."
+    (eq (user-uid) (nth 2 (file-attributes file))))
 
-"http://www.bookshelf.jp/pukiwiki/pukiwiki.php\
+  "http://www.bookshelf.jp/pukiwiki/pukiwiki.php\
 ?Eshell%A4%F2%BB%C8%A4%A4%A4%B3%A4%CA%A4%B9"
-;; ;; written by Stefan Reichoer <reichoer@web.de>
-;; (defun eshell/less (&rest args)
-;;   "Invoke `view-file' on the file.
-;; \"less +42 foo\" also goes to line 42 in the buffer."
-;;   (if args
-;;       (while args
-;;         (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
-;;             (let* ((line (string-to-number (match-string 1 (pop args))))
-;;                    (file (pop args)))
-;;               (view-file file)
-;;               (goto-line line))
-;;           (view-file (pop args))))))
+  ;; ;; written by Stefan Reichoer <reichoer@web.de>
+  ;; (defun eshell/less (&rest args)
+  ;;   "Invoke `view-file' on the file.
+  ;; \"less +42 foo\" also goes to line 42 in the buffer."
+  ;;   (if args
+  ;;       (while args
+  ;;         (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
+  ;;             (let* ((line (string-to-number (match-string 1 (pop args))))
+  ;;                    (file (pop args)))
+  ;;               (view-file file)
+  ;;               (goto-line line))
+  ;;           (view-file (pop args))))))
 
-(defun eshell/o (&optional file)
-  (my-x-open (or file ".")))
+  (defun eshell/o (&optional file)
+    (my-x-open (or file ".")))
 
-;; (defun eshell/vi (&rest args)
-;;   "Invoke `find-file' on the file.
-;; \"vi +42 foo\" also goes to line 42 in the buffer."
-;;   (while args
-;;     (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
-;;         (let* ((line (string-to-number (match-string 1 (pop args))))
-;;                (file (pop args)))
-;;           (find-file file)
-;;           (goto-line line))
-;;       (find-file (pop args)))))
+  ;; (defun eshell/vi (&rest args)
+  ;;   "Invoke `find-file' on the file.
+  ;; \"vi +42 foo\" also goes to line 42 in the buffer."
+  ;;   (while args
+  ;;     (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
+  ;;         (let* ((line (string-to-number (match-string 1 (pop args))))
+  ;;                (file (pop args)))
+  ;;           (find-file file)
+  ;;           (goto-line line))
+  ;;       (find-file (pop args)))))
 
-(defun eshell/clear ()
-  "Clear the current buffer, leaving one prompt at the top."
-  (let ((inhibit-read-only t))
-    (erase-buffer)))
+  (defun eshell/clear ()
+    "Clear the current buffer, leaving one prompt at the top."
+    (let ((inhibit-read-only t))
+      (erase-buffer)))
 
-(defun eshell/d (&optional dirname switches)
-  "if first arg is omitted open current directory."
-  (dired (or dirname ".") switches))
+  (defun eshell/d (&optional dirname switches)
+    "if first arg is omitted open current directory."
+    (dired (or dirname ".") switches))
 
-(defun eshell/v ()
-  (view-mode 1))
+  (defun eshell/v ()
+    (view-mode 1))
 
-(defun eshell/git (&rest args)
-  ""
-  (if (member (car args)
-              '("di" "diff" "log" "show"))
-      (apply 'eshell-exec-visual "git" args)
-    (shell-command (mapconcat 'shell-quote-argument
-                              `("git" ,@args)
-                              " ")
-                   t)
-    ;; (eshell-external-command "git" args)
-    ))
+  (defun eshell/git (&rest args)
+    ""
+    (if (member (car args)
+                '("di" "diff" "log" "show"))
+        (apply 'eshell-exec-visual "git" args)
+      (shell-command (mapconcat 'shell-quote-argument
+                                `("git" ,@args)
+                                " ")
+                     t)
+      ;; (eshell-external-command "git" args)
+      ))
 
-(defalias 'eshell/: 'ignore)
-(defalias 'eshell/type 'eshell/which)
-;; (defalias 'eshell/vim 'eshell/vi)
-(defalias 'eshell/ff 'find-file)
-(defalias 'eshell/q 'eshell/exit)
+  (defalias 'eshell/: 'ignore)
+  (defalias 'eshell/type 'eshell/which)
+  ;; (defalias 'eshell/vim 'eshell/vi)
+  (defalias 'eshell/ff 'find-file)
+  (defalias 'eshell/q 'eshell/exit)
 
-(defun eshell-goto-prompt ()
-  ""
-  (interactive)
-  (goto-char (point-max)))
+  (defun eshell-goto-prompt ()
+    ""
+    (interactive)
+    (goto-char (point-max)))
 
-(defun eshell-cd-default-directory (&optional eshell-buffer-or-name)
-  "open eshell and change wd
+  (defun eshell-cd-default-directory (&optional eshell-buffer-or-name)
+    "open eshell and change wd
 if arg given, use that eshell buffer, otherwise make new eshell buffer."
-  (interactive)
-  (let ((dir (expand-file-name default-directory)))
-    (switch-to-buffer (or eshell-buffer-or-name
-                          (eshell t)))
-    (unless (equal dir (expand-file-name default-directory))
-      ;; (cd dir)
-      ;; (eshell-interactive-print (concat "cd " dir "\n"))
-      ;; (eshell-emit-prompt)
-      (goto-char (point-max))
-      (eshell-kill-input)
-      (insert "cd " dir)
-      (eshell-send-input))))
+    (interactive)
+    (let ((dir (expand-file-name default-directory)))
+      (switch-to-buffer (or eshell-buffer-or-name
+                            (eshell t)))
+      (unless (equal dir (expand-file-name default-directory))
+        ;; (cd dir)
+        ;; (eshell-interactive-print (concat "cd " dir "\n"))
+        ;; (eshell-emit-prompt)
+        (goto-char (point-max))
+        (eshell-kill-input)
+        (insert "cd " dir)
+        (eshell-send-input))))
 
-(setq eshell-directory-name "~/.emacs.d/eshell/")
-(setq eshell-term-name "eterm-color")
-(setq eshell-scroll-to-bottom-on-input t)
-(setq eshell-cmpl-ignore-case t)
-(setq eshell-cmpl-cycle-completions nil)
-(setq eshell-highlight-prompt nil)
-(setq eshell-ls-initial-args '("-hCFG"
-                               "--color=auto"
-                               "--time-style=long-iso"))     ; "-hF")
-(setq eshell-prompt-function
-      (lambda ()
-        (with-temp-buffer
-          (let (p1 p2 p3 p4)
-            (insert " [")
-            (setq p1 (point))
-            (insert (abbreviate-file-name default-directory))
-            (setq p2 (point))
-            (insert "]"
-                    "\n")
-            (setq p3 (point))
-            (insert user-login-name
-                    "@"
-                    (or (getenv "HOSTNAME")
-                        (substring (shell-command-to-string
-                                    (or (executable-find "hostname")
-                                        "echo ''"))
-                                   0
-                                   -1)))
-            (setq p4 (point))
-            (insert " "
-                    (format-time-string "%a, %d %b %Y %T %z")
-                    " eshell\n"
-                    "last:"
-                    (number-to-string eshell-last-command-status)
-                    (if (= (user-uid)
-                           0)
-                        " # "
-                      " $ "))
-            (add-text-properties p1
-                                 p2
-                                 '(face ((foreground-color . "yellow"))))
-            (add-text-properties p3
-                                 p4
-                                 '(face ((foreground-color . "cyan"))))
-            (buffer-substring (point-min)
-                              (point-max))))))
+  (setq eshell-directory-name "~/.emacs.d/eshell/")
+  (setq eshell-term-name "eterm-color")
+  (setq eshell-scroll-to-bottom-on-input t)
+  (setq eshell-cmpl-ignore-case t)
+  (setq eshell-cmpl-cycle-completions nil)
+  (setq eshell-highlight-prompt nil)
+  (setq eshell-ls-initial-args '("-hCFG"
+                                 "--color=auto"
+                                 "--time-style=long-iso"))     ; "-hF")
+  (setq eshell-prompt-function
+        (lambda ()
+          (with-temp-buffer
+            (let (p1 p2 p3 p4)
+              (insert " [")
+              (setq p1 (point))
+              (insert (abbreviate-file-name default-directory))
+              (setq p2 (point))
+              (insert "]"
+                      "\n")
+              (setq p3 (point))
+              (insert user-login-name
+                      "@"
+                      (or (getenv "HOSTNAME")
+                          (substring (shell-command-to-string
+                                      (or (executable-find "hostname")
+                                          "echo ''"))
+                                     0
+                                     -1)))
+              (setq p4 (point))
+              (insert " "
+                      (format-time-string "%a, %d %b %Y %T %z")
+                      " eshell\n"
+                      "last:"
+                      (number-to-string eshell-last-command-status)
+                      (if (= (user-uid)
+                             0)
+                          " # "
+                        " $ "))
+              (add-text-properties p1
+                                   p2
+                                   '(face ((foreground-color . "yellow"))))
+              (add-text-properties p3
+                                   p4
+                                   '(face ((foreground-color . "cyan"))))
+              (buffer-substring (point-min)
+                                (point-max))))))
 
-(add-hook 'eshell-mode-hook
-          (lambda ()
-            ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
-            ;;                                               (interactive)
-            ;;                             (switch-to-buffer (other-buffer))))
-            (define-key eshell-mode-map (kbd "C-u") (lambda ()
-                                                      (interactive)
-                                                      (eshell-goto-prompt)
-                                                      (eshell-kill-input)))
-            (define-key eshell-mode-map (kbd "C-g") (lambda ()
-                                                      (interactive)
-                                                      (eshell-goto-prompt)
-                                                      (my-keyboard-quit)))
-            (define-key eshell-mode-map
-              (kbd "DEL") 'my-eshell-backward-delete-char)
-            (define-key eshell-mode-map
-              (kbd "C-p") 'eshell-previous-matching-input-from-input)
-            (define-key eshell-mode-map
-              (kbd "C-n") 'eshell-next-matching-input-from-input)
-            (apply 'eshell/addpath exec-path)
-            (set (make-local-variable 'scroll-margin) 0)
-            ;; (eshell/export "GIT_PAGER=")
-            ;; (eshell/export "GIT_EDITOR=")
-            (eshell/export "LC_MESSAGES=C")
-            (switch-to-buffer (current-buffer)) ; move buffer top of list
-            (set (make-local-variable 'hl-line-range-function)
-                 (lambda ()
-                   '(0 . 0)))
-            (add-to-list 'eshell-virtual-targets
-                         '("/dev/less"
-                           (lambda (str)
-                             (if str
-                                 (with-current-buffer nil)))
-                           nil))
-            ))
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
+              ;;                                               (interactive)
+              ;;                             (switch-to-buffer (other-buffer))))
+              (define-key eshell-mode-map (kbd "C-u") (lambda ()
+                                                        (interactive)
+                                                        (eshell-goto-prompt)
+                                                        (eshell-kill-input)))
+              (define-key eshell-mode-map (kbd "C-g") (lambda ()
+                                                        (interactive)
+                                                        (eshell-goto-prompt)
+                                                        (my-keyboard-quit)))
+              (define-key eshell-mode-map
+                (kbd "DEL") 'my-eshell-backward-delete-char)
+              (define-key eshell-mode-map
+                (kbd "C-p") 'eshell-previous-matching-input-from-input)
+              (define-key eshell-mode-map
+                (kbd "C-n") 'eshell-next-matching-input-from-input)
+              (apply 'eshell/addpath exec-path)
+              (set (make-local-variable 'scroll-margin) 0)
+              ;; (eshell/export "GIT_PAGER=")
+              ;; (eshell/export "GIT_EDITOR=")
+              (eshell/export "LC_MESSAGES=C")
+              (switch-to-buffer (current-buffer)) ; move buffer top of list
+              (set (make-local-variable 'hl-line-range-function)
+                   (lambda ()
+                     '(0 . 0)))
+              (add-to-list 'eshell-virtual-targets
+                           '("/dev/less"
+                             (lambda (str)
+                               (if str
+                                   (with-current-buffer nil)))
+                             nil))
+              ))
 
-(add-hook 'eshell-mode-hook
-          (lambda ()
-            (add-to-list 'eshell-visual-commands "vim")
-            ;; (add-to-list 'eshell-visual-commands "git")
-            (add-to-list 'eshell-output-filter-functions
-                         'eshell-truncate-buffer)
-            (mapcar (lambda (alias)
-                      (add-to-list 'eshell-command-aliases-list
-                                   alias))
-                    '(
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (add-to-list 'eshell-visual-commands "vim")
+              ;; (add-to-list 'eshell-visual-commands "git")
+              (add-to-list 'eshell-output-filter-functions
+                           'eshell-truncate-buffer)
+              (mapcar (lambda (alias)
+                        (add-to-list 'eshell-command-aliases-list
+                                     alias))
+                      '(
                                         ; ("ll" "ls -l $*")
                                         ; ("la" "ls -a $*")
                                         ; ("lla" "ls -al $*")
-                      ("aptin" "apt-get install $*")
-                      ("eless"
-                       (concat "cat >>> (with-current-buffer "
-                               "(get-buffer-create \"*eshell output\") "
-                               "(erase-buffer) "
-                               "(setq buffer-read-only nil) "
-                               "(current-buffer)) "
-                               "(view-buffer (get-buffer \"*eshell output*\"))")
-                       ("g" "git $*")
-                       ))
-                    )))
+                        ("aptin" "apt-get install $*")
+                        ("eless"
+                         (concat "cat >>> (with-current-buffer "
+                                 "(get-buffer-create \"*eshell output\") "
+                                 "(erase-buffer) "
+                                 "(setq buffer-read-only nil) "
+                                 "(current-buffer)) "
+                                 "(view-buffer (get-buffer \"*eshell output*\"))")
+                         ("g" "git $*")
+                         ))
+                      )))
+  )                          ; eval after load eshell
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; get last modified date
