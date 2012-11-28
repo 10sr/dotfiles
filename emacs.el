@@ -1880,13 +1880,35 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 (defvar sed-in-place-history nil
   "History of `sed-in-place'")
 
+(defvar sed-in-place-command "sed --in-place=.bak -e")
 (defun sed-in-place (command)
   "sed in place"
   (interactive (list (read-shell-command "sed in place: "
-                                         "sed --in-place=.bak -e "
+                                         (concat sed-in-place-command " ")
                                          'sed-in-place-history)))
   (shell-command command
                  "*sed in place*"))
+(defun dired-do-sed-in-place (&optional arg)
+  "sed in place dired"
+  (interactive "P")
+  (require 'dired-aux)
+  (let* ((files (dired-get-marked-files t arg))
+         (expr (dired-mark-read-string "Run sed-in-place for %s: "
+                                       nil
+                                       'sed-in-place
+                                       arg
+                                       files)))
+    (if (equal expr
+               "")
+        (error "No expression specified")
+      (shell-command (concat sed-in-place-command
+                             " '"
+                             expr
+                             "' "
+                             (mapconcat 'shell-quote-argument
+                                        files
+                                        " "))
+                     "*sed in place*"))))
 
 (defun dir-show (&optional dir)
   (interactive)
