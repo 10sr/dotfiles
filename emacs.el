@@ -50,10 +50,10 @@ otherwise the path where the library installed."
     (if (or force-download-p (not locate-p))
         (progn (condition-case nil
                    (progn (message "Downloading %s..." url)
-                          (require 'url)
-                          (url-copy-file url
-                                         lpath
-                                         t)
+                          (or (download-file url
+                                             lpath
+                                             t)
+                              (error "Download failed"))
                           (message "Downloading %s...done")
                           (when (and byte-compile-p
                                      (require 'bytecomp nil t))
