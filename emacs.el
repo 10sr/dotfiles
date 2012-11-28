@@ -78,17 +78,21 @@ FEATURE is a symbol. FUNCTIONS is a list of symbols.
 FORM is passed to `eval-after-load'.
 When this macro is evaluated, this returns the path to library if feature
 found, otherwise returns nil."
-  `(progn
-     ,@(mapcar (lambda (f)
-                 `(autoload (quote ,f)
-                    ,(symbol-name (eval feature))
-                    ""
-                    t))
-               (eval functions))
-     (eval-after-load ,feature
-       '(progn
-          ,@form))
-     (locate-library ,(symbol-name (eval feature)))))
+  (let* ((libname (symbol-name (eval feature)))
+         (libpath (locate-library libname)))
+    `(progn
+       ,@(mapcar (lambda (f)
+                   `(autoload (quote ,f)
+                      ,libname
+                      ,(concat "Autoloaded function defined in \""
+                               libpath
+                               "\".")
+                      t))
+                 (eval functions))
+       (eval-after-load ,feature
+         '(progn
+            ,@form))
+       ,libpath)))
 
 ;; (macroexpand '(f-autoload 'autosave '(a-f b-f) (message "1") (message "2")))
 (when (lazyload-eval 'tetris
