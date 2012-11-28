@@ -84,17 +84,18 @@ found, otherwise returns nil."
     (and libpath
          `(progn
             ,@(mapcar (lambda (f)
-                        `(autoload (quote ,f)
-                           ,libname
-                           ,(concat "Autoloaded function defined in \""
-                                    libpath
-                                    "\".")
-                           t))
+                        (or (fboundp f)
+                            `(autoload (quote ,f)
+                               ,libname
+                               ,(concat "Autoloaded function defined in \""
+                                        libpath
+                                        "\".")
+                               t)))
                       (or (eval functions)
                           `(,(eval feature))))
             (eval-after-load ,feature
-              `(progn
-                 ,@body))
+              (quote (progn
+                       ,@body)))
             ,libpath))))
 (put 'lazy-load-eval 'lisp-indent-function 2)
 
