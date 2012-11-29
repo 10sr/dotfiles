@@ -999,21 +999,21 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; http://cha.la.coocan.jp/doc/gnu_global.html
 
 (when (lazy-load-eval 'gtags '(gtags-mode))
-  (setq gtags-mode-hook
-        '(lambda ()
-           (setq gtags-select-buffer-single t)
-           ;; (local-set-key "\M-t" 'gtags-find-tag)
-           ;; (local-set-key "\M-r" 'gtags-find-rtag)
-           ;; (local-set-key "\M-s" 'gtags-find-symbol)
-           ;; (local-set-key "\C-t" 'gtags-pop-stack)
-           (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
-           (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
-           (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
-           (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
-           (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
-           (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
-           (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
-           )))
+  (add-hook 'gtags-mode-hook
+            (lambda ()
+              (setq gtags-select-buffer-single t)
+              ;; (local-set-key "\M-t" 'gtags-find-tag)
+              ;; (local-set-key "\M-r" 'gtags-find-rtag)
+              ;; (local-set-key "\M-s" 'gtags-find-symbol)
+              ;; (local-set-key "\C-t" 'gtags-pop-stack)
+              (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
+              (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
+              (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
+              (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
+              (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
+              (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
+              (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
+              )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
