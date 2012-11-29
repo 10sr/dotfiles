@@ -48,26 +48,23 @@ otherwise the path where the library installed."
          (lpath (concat dir lib ".el"))
          (locate-p (locate-library lib)))
     (if (or force-download-p (not locate-p))
-        (progn (condition-case nil
-                   (progn (message "Downloading %s..." url)
-                          (or (download-file url
-                                             lpath
-                                             t)
-                              (error "Download failed"))
-                          (message "Downloading %s...done")
-                          (when (and byte-compile-p
-                                     (require 'bytecomp nil t))
-                            (and (file-exists-p (byte-compile-dest-file lpath))
-                                 (delete-file (byte-compile-dest-file lpath)))
-                            (byte-compile-file lpath))
-                          )
-                 (error (and (file-writable-p lpath)
-                             (delete-file lpath))
-                        (message "Downloading %s...failed"
-                                 url)
-                        nil))
-               (locate-library lib))
-      locate-p)))
+        (if (progn (message "Downloading %s..."
+                            url)
+                   (download-file url
+                                  lpath
+                                  t))
+            (progn (message "Downloading %s...done"
+                            url)
+                   (when (and byte-compile-p
+                              (require 'bytecomp nil t))
+                     (and (file-exists-p (byte-compile-dest-file lpath))
+                          (delete-file (byte-compile-dest-file lpath)))
+                     (byte-compile-file lpath)))
+          (progn (and (file-writable-p lpath)
+                      (delete-file lpath))
+                 (message "Downloading %s...failed"
+                          url))))
+    (locate-library lib)))
 
 (defun download-file (url path &optional ok-if-already-exists)
   "Download file from URL and output to PATH."
