@@ -48,26 +48,23 @@ otherwise the path where the library installed."
          (lpath (concat dir lib ".el"))
          (locate-p (locate-library lib)))
     (if (or force-download-p (not locate-p))
-        (progn (condition-case nil
-                   (progn (message "Downloading %s..." url)
-                          (or (download-file url
-                                             lpath
-                                             t)
-                              (error "Download failed"))
-                          (message "Downloading %s...done")
-                          (when (and byte-compile-p
-                                     (require 'bytecomp nil t))
-                            (and (file-exists-p (byte-compile-dest-file lpath))
-                                 (delete-file (byte-compile-dest-file lpath)))
-                            (byte-compile-file lpath))
-                          )
-                 (error (and (file-writable-p lpath)
-                             (delete-file lpath))
-                        (message "Downloading %s...failed"
-                                 url)
-                        nil))
-               (locate-library lib))
-      locate-p)))
+        (if (progn (message "Downloading %s..."
+                            url)
+                   (download-file url
+                                  lpath
+                                  t))
+            (progn (message "Downloading %s...done"
+                            url)
+                   (when (and byte-compile-p
+                              (require 'bytecomp nil t))
+                     (and (file-exists-p (byte-compile-dest-file lpath))
+                          (delete-file (byte-compile-dest-file lpath)))
+                     (byte-compile-file lpath)))
+          (progn (and (file-writable-p lpath)
+                      (delete-file lpath))
+                 (message "Downloading %s...failed"
+                          url))))
+    (locate-library lib)))
 
 (defun download-file (url path &optional ok-if-already-exists)
   "Download file from URL and output to PATH."
@@ -968,33 +965,34 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
 
-(setq python-python-command (or (executable-find "python3")
-                                (executable-find "python")))
-(defun my-python-run-as-command ()
-  ""
-  (interactive)
-  (shell-command (concat python-python-command " " buffer-file-name)))
-(defun my-python-display-python-buffer ()
-  ""
-  (interactive)
-  (set-window-text-height (display-buffer python-buffer
-                                          t)
-                          7))
-(add-hook 'python-mode-hook
-          (lambda ()
-            (define-key python-mode-map
-              (kbd "C-c C-e") 'my-python-run-as-command)
-            (define-key python-mode-map
-              (kbd "C-c C-b") 'my-python-display-python-buffer)
-            (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
+(when (lazy-load-eval 'python '(python-mode))
+  (setq python-python-command (or (executable-find "python3")
+                                  (executable-find "python")))
+  (defun my-python-run-as-command ()
+    ""
+    (interactive)
+    (shell-command (concat python-python-command " " buffer-file-name)))
+  (defun my-python-display-python-buffer ()
+    ""
+    (interactive)
+    (set-window-text-height (display-buffer python-buffer
+                                            t)
+                            7))
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (define-key python-mode-map
+                (kbd "C-c C-e") 'my-python-run-as-command)
+              (define-key python-mode-map
+                (kbd "C-c C-b") 'my-python-display-python-buffer)
+              (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
 
-(add-hook 'inferior-python-mode-hook
-          (lambda ()
-            (my-python-display-python-buffer)
-            (define-key inferior-python-mode-map
-              (kbd "<up>") 'comint-previous-input)
-            (define-key inferior-python-mode-map
-              (kbd "<down>") 'comint-next-input)))
+  (add-hook 'inferior-python-mode-hook
+            (lambda ()
+              (my-python-display-python-buffer)
+              (define-key inferior-python-mode-map
+                (kbd "<up>") 'comint-previous-input)
+              (define-key inferior-python-mode-map
+                (kbd "<down>") 'comint-next-input))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GNU GLOBAL(gtags)
@@ -1003,21 +1001,21 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;; http://cha.la.coocan.jp/doc/gnu_global.html
 
 (when (lazy-load-eval 'gtags '(gtags-mode))
-  (setq gtags-mode-hook
-        '(lambda ()
-           (setq gtags-select-buffer-single t)
-           ;; (local-set-key "\M-t" 'gtags-find-tag)
-           ;; (local-set-key "\M-r" 'gtags-find-rtag)
-           ;; (local-set-key "\M-s" 'gtags-find-symbol)
-           ;; (local-set-key "\C-t" 'gtags-pop-stack)
-           (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
-           (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
-           (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
-           (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
-           (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
-           (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
-           (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
-           )))
+  (add-hook 'gtags-mode-hook
+            (lambda ()
+              (setq gtags-select-buffer-single t)
+              ;; (local-set-key "\M-t" 'gtags-find-tag)
+              ;; (local-set-key "\M-r" 'gtags-find-rtag)
+              ;; (local-set-key "\M-s" 'gtags-find-symbol)
+              ;; (local-set-key "\C-t" 'gtags-pop-stack)
+              (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
+              (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
+              (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
+              (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
+              (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
+              (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
+              (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
+              )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
@@ -1103,8 +1101,6 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
         ;; (add-to-list 'bs-configurations
         ;; '("processes" nil get-buffer-process ".*" nil nil))
         (add-to-list 'bs-configurations
-                     '("same-dir" nil buffer-same-dir-p ".*" nil nil))
-        (add-to-list 'bs-configurations
                      '("this-frame" nil (lambda (buf)
                                           (memq buf (my-frame-buffer-get)))
                        ".*" nil nil))
@@ -1122,12 +1118,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
               (setq bs-default-configuration "files")
               ;; (and bs--show-all
               ;;      (call-interactively 'bs-toggle-show-all))
-              (set (make-local-variable 'scroll-margin) 0)))
-  (defun buffer-same-dir-p (bf)
-    "return t if BF's dir is same as current dir, otherwise nil."
-    (let ((cdir (expand-file-name default-directory)))
-      (with-current-buffer bf
-        (equal (expand-file-name default-directory) cdir)))))
+              (set (make-local-variable 'scroll-margin) 0))))
 
 (iswitchb-mode 1)
 

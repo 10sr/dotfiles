@@ -122,6 +122,7 @@ alias e3=e3em
 alias po=popd
 alias pu=pushd
 alias sudo="sudo "              # use aliases through sudo
+alias sudoe="sudoedit"
 alias halt="sudo halt"
 alias reboot="sudo reboot"
 alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
@@ -222,7 +223,7 @@ man() {
 		LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
 		LESS_TERMCAP_ue=$(printf "\e[0m") \
 		LESS_TERMCAP_us=$(printf "\e[1;32m") \
-		command man "$@"
+		man "$@"
 }
 
 scr(){
