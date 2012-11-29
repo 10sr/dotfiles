@@ -1099,8 +1099,6 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
         ;; (add-to-list 'bs-configurations
         ;; '("processes" nil get-buffer-process ".*" nil nil))
         (add-to-list 'bs-configurations
-                     '("same-dir" nil buffer-same-dir-p ".*" nil nil))
-        (add-to-list 'bs-configurations
                      '("this-frame" nil (lambda (buf)
                                           (memq buf (my-frame-buffer-get)))
                        ".*" nil nil))
@@ -1118,12 +1116,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
               (setq bs-default-configuration "files")
               ;; (and bs--show-all
               ;;      (call-interactively 'bs-toggle-show-all))
-              (set (make-local-variable 'scroll-margin) 0)))
-  (defun buffer-same-dir-p (bf)
-    "return t if BF's dir is same as current dir, otherwise nil."
-    (let ((cdir (expand-file-name default-directory)))
-      (with-current-buffer bf
-        (equal (expand-file-name default-directory) cdir)))))
+              (set (make-local-variable 'scroll-margin) 0))))
 
 (iswitchb-mode 1)
 
