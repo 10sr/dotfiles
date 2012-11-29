@@ -964,33 +964,34 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
 
-(setq python-python-command (or (executable-find "python3")
-                                (executable-find "python")))
-(defun my-python-run-as-command ()
-  ""
-  (interactive)
-  (shell-command (concat python-python-command " " buffer-file-name)))
-(defun my-python-display-python-buffer ()
-  ""
-  (interactive)
-  (set-window-text-height (display-buffer python-buffer
-                                          t)
-                          7))
-(add-hook 'python-mode-hook
-          (lambda ()
-            (define-key python-mode-map
-              (kbd "C-c C-e") 'my-python-run-as-command)
-            (define-key python-mode-map
-              (kbd "C-c C-b") 'my-python-display-python-buffer)
-            (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
+(when (lazy-load-eval 'python '(python-mode))
+  (setq python-python-command (or (executable-find "python3")
+                                  (executable-find "python")))
+  (defun my-python-run-as-command ()
+    ""
+    (interactive)
+    (shell-command (concat python-python-command " " buffer-file-name)))
+  (defun my-python-display-python-buffer ()
+    ""
+    (interactive)
+    (set-window-text-height (display-buffer python-buffer
+                                            t)
+                            7))
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (define-key python-mode-map
+                (kbd "C-c C-e") 'my-python-run-as-command)
+              (define-key python-mode-map
+                (kbd "C-c C-b") 'my-python-display-python-buffer)
+              (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
 
-(add-hook 'inferior-python-mode-hook
-          (lambda ()
-            (my-python-display-python-buffer)
-            (define-key inferior-python-mode-map
-              (kbd "<up>") 'comint-previous-input)
-            (define-key inferior-python-mode-map
-              (kbd "<down>") 'comint-next-input)))
+  (add-hook 'inferior-python-mode-hook
+            (lambda ()
+              (my-python-display-python-buffer)
+              (define-key inferior-python-mode-map
+                (kbd "<up>") 'comint-previous-input)
+              (define-key inferior-python-mode-map
+                (kbd "<down>") 'comint-next-input))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GNU GLOBAL(gtags)
