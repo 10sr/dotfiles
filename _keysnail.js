@@ -559,7 +559,6 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-
 hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
@@ -585,6 +584,7 @@ hook.setHook('Unload', function () {
         return true;
     });
 });
+
 
 
 // ============================= Key bindings ============================== //
@@ -615,20 +615,11 @@ key.setGlobalKey('C-<down>', function () {
     }
 }, '選択中のタブを左へ');
 
-key.setGlobalKey('C-h', function (ev, arg) {
-    return;
-}, 'ignore');
-
 key.setGlobalKey('<delete>', function (ev, arg) {
     let (elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
     content.focus();
 }, 'コンテンツへフォーカス', true);
-
-key.setGlobalKey('C-p', function (ev, arg) {
-    return !document.getElementById("keysnail-prompt").hidden &&
-        document.getElementById("keysnail-prompt-textbox").focus();
-}, 'KeySnail のプロンプトへフォーカス', true);
 
 key.setGlobalKey('<f11>', function (ev, arg) {
     ext.exec("strong-fullscreen", arg, ev);
@@ -826,3 +817,47 @@ key.setViewKey('U', function (ev, arg) {
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
+
+key.setEditKey('C-a', function (ev) {
+    command.beginLine(ev);
+}, '行頭へ移動');
+
+key.setEditKey('C-e', function (ev) {
+    command.endLine(ev);
+}, '行末へ');
+
+key.setEditKey('C-d', function (ev) {
+    goDoCommand("cmd_deleteCharForward");
+}, '次の一文字削除');
+
+key.setEditKey('C-b', function (ev) {
+    command.previousChar(ev);
+}, '一文字左へ移動');
+
+key.setEditKey('C-f', function (ev) {
+    command.nextChar(ev);
+}, '一文字右へ移動');
+
+key.setEditKey('C-h', function (ev) {
+    goDoCommand("cmd_deleteCharBackward");
+}, '前の一文字を削除');
+
+key.setEditKey('C-k', function (ev) {
+    command.killLine(ev);
+}, 'カーソルから先を一行カット (Kill line)');
+
+key.setEditKey('C-l', function (ev) {
+    command.recenter(ev);
+}, 'カーソル位置が画面の中央へ来るようスクロール', true);
+
+key.setEditKey('C-n', function (ev) {
+    command.nextLine(ev);
+}, '一行下へ');
+
+key.setEditKey('C-p', function (ev) {
+    command.previousLine(ev);
+}, '一行上へ');
+
+key.setEditKey('C-o', function (ev) {
+    command.openLine(ev);
+}, '行を開く (Open line)');
