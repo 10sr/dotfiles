@@ -338,6 +338,39 @@ gpg-stream(){
             base64 -d|gpg --passphrase $2 -d --batch ;;
     esac
 }
+dgpg(){
+    if test "$1" = help || test -z "$2"
+    then
+        echo "dgpg: dgpg <en|de> <src-suffix> [<dst-suffix>]"
+        return
+    fi
+    local srcs="$2"
+    local dsts="$3"
+    test -z "$dsts" && dsts="${srcs}.out"
+    local pw
+    echo -n "dgpg pw: "
+    read -s pw
+    echo ""
+    test -z "$pw" && return 1
+    for f in *${srcs}
+    do
+        local d="$(basename "$f" "${srcs}")${dsts}"
+        echo -n "Processing $f to $d..."
+        if test -d "$f"
+        then
+            echo "`printf 'failed (%s is directory)' $f`"
+        elif test -f "$d"
+        then
+            echo "`printf 'failed (%s is already exists)' $d`"
+        elif <"$f" gpg-stream $1 $pw >"$d" 2>/dev/null
+        then
+            echo "done"
+        else
+            echo "failed"
+            test -f "$d" && rm "$d"
+        fi
+    done
+}
 
 alias enst="gpg-stream en"
 alias dest="gpg-stream de"
