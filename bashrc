@@ -450,30 +450,25 @@ catclip(){
 }
 
 setclip(){
+    if test $# -eq 0
+    then
+        exec 3<&0
+    else
+        exec 3<<__EOF__
+`cat "$@"`
+__EOF__
+    fi
     if iswindows
     then
-        if test $# -eq 0
-        then
-            sed -e 's/$/\r/' | tee /dev/clipboard
-        else
-            cat "$@" | sed -e 's/$/\r/' | tee /dev/clipboard
-        fi
+        0<&3 sed -e 's/$/\r/' | tee /dev/clipboard
     elif isdarwin
     then
-        if test $# -eq 0
-        then
-            pbcopy
-        else
-            cat "$@" | pbcopy
-        fi
+        pbcopy 0<&3
     else
-        if test $# -eq 0
-        then
-            xclip -i -f -selection "primary" | xclip -i -f -selection "clipboard"
-        else
-            cat "$@" | xclip -i -f -selection "primary" | xclip -i -f -selection "clipboard"
-        fi
+        0<&3 xclip -i -f -selection "primary" | \
+            xclip -i -f -selection "clipboard"
     fi
+    exec 3<&-
 }
 
 open_file(){
