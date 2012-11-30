@@ -1112,7 +1112,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
   ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show)
   (setq bs-default-configuration "files")
-  (setq bs-default-sort-name "by name")
+  (setq bs-default-sort-name "by nothing")
   (add-hook 'bs-mode-hook
             (lambda ()
               (setq bs-default-configuration "files")
