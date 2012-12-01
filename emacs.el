@@ -831,6 +831,7 @@ delete; o: select other; j, l: enlarge; h, k: shrink; q: quit."
             (define-key sh-mode-map
               (kbd "C-x C-e")
               'my-execute-shell-command-current-line)))
+(setq sh-here-document-word "__EOC__")
 
 (defun my-execute-shell-command-current-line ()
   ""
