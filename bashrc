@@ -148,6 +148,8 @@ null type gtags && alias gtags="gtags --verbose"
 null type htags && alias htags="htags --xhtml --symbol --line-number \
 --frame --alphabet --verbose"
 
+null type aunpack && alias aunp=aunpack
+
 alias pad=notepad
 null type gedit && alias pad=gedit
 null type leafpad && alias pad=leafpad
@@ -341,7 +343,7 @@ gpg-stream(){
 dgpg(){
     if test "$1" = help || test -z "$2"
     then
-        echo "dgpg: dgpg <en|de> <src-suffix> [<dst-suffix>]"
+        echo "dgpg: dgpg <en|de> <src-suffix> [<dst-suffix>]" 1>&2
         return
     fi
     local srcs="$2"
