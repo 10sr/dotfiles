@@ -419,7 +419,9 @@ found, otherwise returns nil."
                `(newline-mark ?\n ,(vconcat "$\n"))
                )
   (global-whitespace-mode t)
-  (set-face-foreground 'whitespace-newline "brightblack"))
+  (when (eq (display-color-cells)
+            256)
+    (set-face-foreground 'whitespace-newline "brightblack")))
 
 (and nil
      (fetch-library
@@ -430,22 +432,17 @@ found, otherwise returns nil."
 
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
-(defface hlline-face
-  '((((type x w32)
-      (class color)
+(defface my-hl-line
+  '((((min-colors 256)
       (background dark))
      (:background "midnightblue"))
-    (((type x w32)
-      (class color)
+    (((min-colors 256)
       (background light))
      (:background "gainsboro"))
     (t
      (:underline "black")))
   "*Face used by hl-line.")
-;; (defface hlline-ul-face
-;;   '((t (:underline "yellow")))
-;;   "underline yellow")
-(setq hl-line-face 'hlline-face) ;; (setq hl-line-face nil)
+(setq hl-line-face 'my-hl-line) ;; (setq hl-line-face nil)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
 (setq hl-line-global-modes
       '(not
