@@ -276,10 +276,6 @@ found, otherwise returns nil."
 ;;                                 my-buffer-file-last-modified-time))
 ;;                 (cdr ls))))
 
-'(setq header-line-format (list '(:eval default-directory)
-                                       " "
-                                       'display-time-string))
-
 (defvar set-terminal-title-term-regexp ""
   "Rexexp for `set-terminal-title'.")
 (setq set-terminal-title-term-regexp "^\\(rxvt\\|xterm\\|aterm$\\|screen\\)")
