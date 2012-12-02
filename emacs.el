@@ -450,29 +450,23 @@ found, otherwise returns nil."
 ;; fonts
 
 (defun my-set-ascii-and-jp-font (list)
-  ""
-  (if (> emacs-major-version 22) ;; font spec is available in emacs23 and later
-      (progn                            ; 23 or later
-        (set-face-attribute 'default nil
-                            :family (nth 0 list)
-                            :height (nth 1 list))
-        (set-fontset-font "fontset-default"
-                          'japanese-jisx0208
-                          (font-spec :family (nth 2 list) :size (nth 3 list)))
-        (set-fontset-font "fontset-default"
-                          'katakana-jisx0201
-                          (font-spec :family (nth 2 list) :size (nth 3 list))))
-    (progn                              ; 22
-      (set-face-attribute 'default nil
-                          :family (nth 0 list)
-                          :height (nth 1 list))
-      (set-fontset-font "fontset-default"
-                        'japanese-jisx0208
-                        (cons (nth 2 list) "jisx0208.*"))
-      (set-fontset-font "fontset-default"
-                        'katakana-jisx0201
-                        (cons (nth 2 list) "jisx0201.*"))
-      )))
+  "font configuration"
+  (let ((fspec1 (if (> emacs-major-version 22)
+                   ;; font spec is available in emacs23 and later
+                   (font-spec :family (nth 2 list) :size (nth 3 list))
+                  (cons (nth 2 list) "jisx0208.*")))
+        (fspec2 (if (> emacs-major-version 22)
+                    (font-spec :family (nth 2 list) :size (nth 3 list))
+                  (cons (nth 2 list) "jisx0201.*"))))
+    (set-face-attribute 'default nil
+                        :family (nth 0 list)
+                        :height (nth 1 list))
+    (set-fontset-font "fontset-default"
+                      'japanese-jisx0208
+                      fspec1)
+    (set-fontset-font "fontset-default"
+                      'katakana-jisx0201
+                      fspec2)))
 ;; (my-set-ascii-and-jp-font '("dejavu sans mono" 90 "takaogothic" 13))
 ;; (my-set-ascii-and-jp-font '("dejavu sans mono" 100 "takaogothic" 14))
 ;; (my-set-ascii-and-jp-font '("dejavu sans mono" 100 "ms gothic" 14))
