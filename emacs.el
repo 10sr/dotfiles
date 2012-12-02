@@ -106,16 +106,16 @@ found, otherwise returns nil."
          `(progn
             ,@(mapcar (lambda (f)
                         (unless (fboundp f)
-                          (progn
+                          `(progn
                             (message "Autoloaded function `%S' defined (%s)"
-                                     f
-                                     libpath)
-                            `(autoload (quote ,f)
-                               ,libname
-                               ,(concat "Autoloaded function defined in \""
-                                        libpath
-                                        "\".")
-                               t))))
+                                     (quote ,f)
+                                     ,libpath)
+                            (autoload (quote ,f)
+                              ,libname
+                              ,(concat "Autoloaded function defined in \""
+                                       libpath
+                                       "\".")
+                              t))))
                       (or (eval functions)
                           `(,(eval feature))))
             (eval-after-load ,feature
