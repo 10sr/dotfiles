@@ -418,7 +418,8 @@ found, otherwise returns nil."
   (add-to-list 'whitespace-display-mappings
                `(newline-mark ?\n ,(vconcat "$\n"))
                )
-  (global-whitespace-mode t))
+  (global-whitespace-mode t)
+  (set-face-foreground 'whitespace-newline "brightblack"))
 
 (and nil
      (fetch-library
