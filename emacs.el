@@ -523,6 +523,10 @@ found, otherwise returns nil."
           'executable-make-buffer-file-executable-if-script-p)
 
 (setq bookmark-default-file "~/.emacs.d/bmk")
+(add-hook 'recentf-load-hook
+          (lambda ()
+            (add-to-list 'recentf-exclude
+                         (regexp-quote bookmark-default-file))))
 
 (and (fetch-library
       "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
@@ -533,8 +537,7 @@ found, otherwise returns nil."
       "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
       t)
      (require 'smart-revert nil t)
-     (smart-revert-on)
-     )
+     (smart-revert-on))
 
 ;; autosave
 
@@ -687,7 +690,7 @@ found, otherwise returns nil."
 ;; window
 
 ;; forked from http://d.hatena.ne.jp/khiker/20100119/window_resize
-(define-key my-prefix-map (kbd "C-w") 'my-window-organizer)
+(define-key ctl-x-map (kbd "w") 'my-window-organizer)
 
 (defun my-window-organizer ()
   "Control window size and position."
@@ -1875,19 +1878,6 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                           default-directory)
                       nil))
     ))
-
-(defun my-keyboard-quit ()
-  ""
-  (interactive)
-  (run-hooks 'before-keyboard-quit-hook)
-  ;; (redisplay t)
-  (redraw-display)
-  ;; (run-hooks 'window-configuration-change-hook)
-  (keyboard-quit)
-  (insert "insert me")
-  (run-hooks 'after-keyboard-quit-hook))
-(substitute-key-definition 'keyboard-quit 'my-keyboard-quit global-map)
-;; (global-set-key (kbd "C-g") 'my-keyboard-quit)
 
 (defun my-convmv-sjis2utf8-test ()
   "run `convmv -r -f sjis -t utf8 *'
