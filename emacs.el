@@ -365,7 +365,7 @@ found, otherwise returns nil."
 (defface my-hl-line
   '((((min-colors 256)
       (background dark))
-     (:background "midnightblue"))
+     (:background "color-234"))
     (((min-colors 256)
       (background light))
      (:background "gainsboro"))
