@@ -88,14 +88,22 @@ type fortune >/dev/null 2>&1 && {
     echo
 }
 uname -a
-echo TERM $TERM $(tput colors) colors connected to $(tty), running $BASH $BASH_VERSION
-echo
+echo TERM $TERM $(tput colors) colors connected to $(tty), \
+    running $BASH $BASH_VERSION
+if test -n "$TMUX"
+then
+    tmux display -p 'Using tmux #S:#I:#W.#P, client is #{client_termname}' \
+        2>/dev/null
+    echo
+fi
 
 ###################################
 # some aliases and functions
 
-( ! with_coreutils && isdarwin ) || test "$TERM" == dumb || _coloroption=" --color=auto"
-( ! with_coreutils && isdarwin ) || iswindows || _timeoption=" --time-style=long-iso"
+( ! with_coreutils && isdarwin ) || test "$TERM" == dumb || \
+    _coloroption=" --color=auto"
+( ! with_coreutils && isdarwin ) || iswindows || \
+    _timeoption=" --time-style=long-iso"
 ( ! with_coreutils && isdarwin ) || _hideoption=" --hide=[A-Z]*" # do not use
 
 _timeformat_iso="%Y-%m-%dT%H:%M:%S%z"
@@ -194,16 +202,19 @@ null type pacmatic && {
 }
 
 null type apt-get && \
-    alias aupgrade="sudo apt-get autoremove --yes && sudo apt-get update --yes && sudo apt-get upgrade --yes"
+    alias aupgrade="sudo apt-get autoremove --yes && \
+sudo apt-get update --yes && sudo apt-get upgrade --yes"
 null type port && \
     alias port="port -v"
-    alias pupgrade="sudo port -v selfupdate && { sudo port -v upgrade outdated; }"
+alias pupgrade="sudo port -v selfupdate && \
+{ sudo port -v upgrade outdated; }"
 
 if iscygwin; then
-    null type windate || alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
+    null type windate || \
+        alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
     alias cygsu="cygstart /cygwinsetup.exe"
     alias emacs="CYGWIN=tty emacs -nw"
-    alias ls="ls -CFG $(iswindows || test "$TERM" == dumb || echo --color=auto)"
+    alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
 fi
 
 alias g=git
@@ -266,7 +277,8 @@ __dirs_rm_dup(){
     for d in "$@"
     do
         local next="$(__realpath --strip "$d")"
-        for l in $(\dirs -v -l | cut -d $'\n' -f 2- | \grep -x " *[0-9]\+ \+${next}" | \grep -o "^ *[0-9]\+ " | tac)
+        for l in $(\dirs -v -l | cut -d $'\n' -f 2- | \
+            \grep -x " *[0-9]\+ \+${next}" | \grep -o "^ *[0-9]\+ " | tac)
         do
             popd +$l -n >/dev/null
         done
@@ -398,7 +410,7 @@ x(){
         # exit
         exec startx
     else
-        echo "X cant be started! Maybe another X is already running or something." 1>&2
+        echo "X cant be started! Another X is already running?" 1>&2
     fi
 }
 
@@ -565,7 +577,8 @@ winln(){
     then
         {
             echo "usage: winln TARGET LINK_NAME"
-            echo "Create a link to TARGET with the name LINK_NAME (that is, TARGET must already exist)."
+            echo "Create a link to TARGET with the name LINK_NAME \
+(that is, TARGET must already exist)."
             echo "About other features run 'junction'."
         } 1>&2
         return 1
@@ -583,8 +596,10 @@ __my_moc_state(){
 __my_parse_svn_branch() {
     local LANG=C
     local svn_url=$(svn info 2>/dev/null | sed -ne 's#^URL: ##p')
-    local svn_repository_root=$(svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p')
-    echo ${svn_url} | sed -e 's#^'"${svn_repository_root}"'##g' | awk '{print $1}'
+    local svn_repository_root=$(svn info 2>/dev/null | \
+        sed -ne 's#^Repository Root: ##p')
+    echo ${svn_url} | sed -e 's#^'"${svn_repository_root}"'##g' | \
+        awk '{print $1}'
 }
 
 __my_svn_ps1(){
@@ -597,7 +612,8 @@ __my_svn_ps1(){
 
 __my_battery_status(){
     local dir=/sys/class/power_supply/BAT0
-    if test -d $dir && test -r $dir/status && test -r $dir/charge_full && test -r $dir/charge_now
+    if test -d $dir && test -r $dir/status && test -r $dir/charge_full && \
+        test -r $dir/charge_now
     then
         local st=$(cat $dir/status)
         local full=$(cat $dir/charge_full)
@@ -610,7 +626,8 @@ alias bat='__my_battery_status %s\\n'
 
 ip-address(){
     type ip >/dev/null 2>&1 || return 1
-    local ip=$(LANG=C ip addr show scope global | \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
+    local ip=$(LANG=C ip addr show scope global | \
+        \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
     test -n "$ip" && printf $1 $ip
 }
 
@@ -686,7 +703,7 @@ then
     __my_cdef="\[\e[0m\]"
 fi
 _PS1="\
-${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_scale)\$(__my_ps1_tmux)\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
+${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_scale)\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
 ${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? \D{%T} $(__my_ps1_script)\$ "
 PS1=$_PS1
 
