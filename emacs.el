@@ -644,6 +644,9 @@ found, otherwise returns nil."
 
 (require 'session nil t)
 
+(lazy-load-eval 'sql '(sql-mode)
+    (require 'sql-indent nil t))
+
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                     t)
      (lazy-load-eval 'gtkbm)
