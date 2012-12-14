@@ -176,6 +176,15 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+ext.add("my-index-html", function(ev, arg){
+    homepath = util.getEnv("HOME");
+    file = ".index.html";
+    if (homepath) {
+        path = "file://" + homepath + "/" + file;
+        openUILinkIn(path, "tab");
+    }
+}, "open my index.html");
+
 ext.add('post-to-posterous', function (ev, arg) {
     if (window.loadURI) {
         loadURI("javascript:var%20b=document.body;var%20POSTEROUS___bookmarklet_domain='http://posterous.com';var%20d=new%20Date();var%20e=(new%20Date(d.getFullYear(),d.getMonth(),d.getDate())).getTime();if(b&&!document.xmlVersion){void(z=document.createElement('script'));void(z.type='text/javascript');void(z.src='http://posterous.com/javascripts/bookmarklet2.js?'+e);void(b.appendChild(z));}else{}");
