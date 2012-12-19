@@ -54,7 +54,8 @@ export VISUAL="$EDITOR"
 export GIT_PAGER="less -F"
 export GIT_EDITOR="$EDITOR"
 if test -n "$TMUX" && \
-    test -n "tmux display -p '#{client_termname}' | grep -o 256color"
+    echo $TERM | grep screen >/dev/null 2>&1 && \
+    tmux display -p '#{client_termname}' | grep 256color >/dev/null 2>&1
 then
     TERM=screen-256color
 fi
