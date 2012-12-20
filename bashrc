@@ -217,7 +217,14 @@ if iscygwin; then
     alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
 fi
 
-alias g=git
+g(){
+    if test $# -eq 0 && null type git-info
+    then
+        git info
+    else
+        git "$@"
+    fi
+}
 if null type _git
 then
     # enable programmable completion for g
