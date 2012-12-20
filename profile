@@ -17,7 +17,8 @@ test -f "${HOME}/.dotfiles/rc.py" && \
 __add_to_path(){
     for p in "$@"
     do
-        echo $PATH | grep -E "^$p:|:$p:|:$p$" >/dev/null 2>&1 || PATH="${PATH}:$p"
+        echo $PATH | grep -E "^$p:|:$p:|:$p$" >/dev/null 2>&1 || \
+            PATH="${PATH}:$p"
     done
 }
 # export PATH="${PATH}:${HOME}/bin"
@@ -30,6 +31,11 @@ export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
 
-export TMP="/tmp/${USER}-tmp"
+if test -n $TMPDIR
+then
+    export TMP=$TMPDIR
+else
+    export TMP=/tmp/
+export TMP="${TMP}${USER}-tmp"
 export TEMP="$TMP"
 mkdir -p "$TMP"
