@@ -678,7 +678,8 @@ __my_ps1_bttry(){
     if test -z "$DISPLAY" && ! iswindows
     then
         test -f $bst && local bstr="$(cat $bst)"
-        test -n "$bstr" && echo "[Battery:$bstr]"
+        test -n "$bstr" && ! echo $bstr | grep 100 >/dev/null 2>&1 && \
+            echo "[Battery:$bstr]"
         __my_battery_status %s >$bst &
     fi
     return $last
