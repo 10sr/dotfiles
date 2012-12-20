@@ -368,7 +368,7 @@ found, otherwise returns nil."
      (:background "color-234"))
     (((min-colors 256)
       (background light))
-     (:background "gainsboro"))
+     (:background "color-234"))
     (t
      (:underline "black")))
   "*Face used by hl-line.")
