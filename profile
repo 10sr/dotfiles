@@ -7,6 +7,8 @@ export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
 export HOSTNAME
 export ENV=~/.shrc
+
+mkdir -p $HOME/.local/lib/python/site-packages
 export PYTHONDOCS=/usr/share/doc/python/html/
 export PYTHONPATH="${PYTHONPATH}:\
 ${HOME}/my/bin/py:${HOME}/.local/lib/python/site-packages"
