@@ -368,7 +368,7 @@ found, otherwise returns nil."
      (:background "color-234"))
     (((min-colors 256)
       (background light))
-     (:background "gainsboro"))
+     (:background "color-234"))
     (t
      (:underline "black")))
   "*Face used by hl-line.")
@@ -643,6 +643,9 @@ found, otherwise returns nil."
         ))
 
 (require 'session nil t)
+
+(lazy-load-eval 'sql '(sql-mode)
+    (require 'sql-indent nil t))
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                     t)

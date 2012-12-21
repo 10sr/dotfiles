@@ -54,7 +54,8 @@ export VISUAL="$EDITOR"
 export GIT_PAGER="less -F"
 export GIT_EDITOR="$EDITOR"
 if test -n "$TMUX" && \
-    test -n "tmux display -p '#{client_termname}' | grep -o 256color"
+    echo $TERM | grep screen >/dev/null 2>&1 && \
+    tmux display -p '#{client_termname}' | grep 256color >/dev/null 2>&1
 then
     TERM=screen-256color
 fi
@@ -217,7 +218,14 @@ if iscygwin; then
     alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
 fi
 
-alias g=git
+g(){
+    if test $# -eq 0 && null type git-info
+    then
+        git info
+    else
+        git "$@"
+    fi
+}
 if null type _git
 then
     # enable programmable completion for g
@@ -678,7 +686,8 @@ __my_ps1_bttry(){
     if test -z "$DISPLAY" && ! iswindows
     then
         test -f $bst && local bstr="$(cat $bst)"
-        test -n "$bstr" && echo "[Battery:$bstr]"
+        test -n "$bstr" && ! echo $bstr | grep 100 >/dev/null 2>&1 && \
+            echo "[Battery:$bstr]"
         __my_battery_status %s >$bst &
     fi
     return $last
