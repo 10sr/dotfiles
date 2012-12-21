@@ -151,14 +151,16 @@ alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 alias mpg123="mpg123 -C -v --title"
 alias xm="xmms2"
 #export PLAYER="mpg123 -C -v --title"
+
 null type screen && alias screen="screen -e^z^z"
-alias zcd="cd \`zenity --file-selection --directory\`"
+#alias zcd="cd \`zenity --file-selection --directory\`"
 null type gtags && alias gtags="gtags --verbose"
 null type htags && alias htags="htags --xhtml --symbol --line-number \
 --frame --alphabet --verbose"
-
 null type aunpack && alias aunp=aunpack
+null type lv && alias lv="lv|less"
 
+# pad
 alias pad=notepad
 null type gedit && alias pad=gedit
 null type leafpad && alias pad=leafpad
