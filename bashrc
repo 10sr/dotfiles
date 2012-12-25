@@ -79,6 +79,11 @@ _tmux_prefs(){
     tmux set -g mode-keys vi
 }
 
+if test -d ~/dbx
+then
+    export CHIT_PATH="$HOME/dbx/.chit"
+fi
+
 #######################
 
 iswindows && alias tty="echo cmd.exe"
