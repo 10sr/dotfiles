@@ -123,7 +123,7 @@ iswindows && alias grep="grep -n"
 # alias la="ls -A"
 # alias lla="ls -Al"
 alias less="less -F"
-alias em="emacs -nw"
+null type emacs && alias em="emacs -nw"
 null type vim && alias vi=vim
 alias pstree="LANG=C pstree"
 alias cp="cp -v"
@@ -131,7 +131,7 @@ alias mv="mv -v"
 alias rm="rm -v"
 alias psaux="ps auxww"
 alias q=exit
-alias e3=e3em
+null type e3em && alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
 alias po=popd
 alias pu=pushd
@@ -139,22 +139,24 @@ alias sudo="sudo "              # use aliases through sudo
 alias sudoe="sudoedit"
 alias halt="sudo halt"
 alias reboot="sudo reboot"
-alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
+null type dbus-send && {
+    alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
     /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
-alias hibernate="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
+    alias hibernate="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
     /org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
+}
 alias rand="echo \$RANDOM"
-alias xunp="file-roller -h"
-alias pc="sudo \paco -D"
+null type file-roller && alias xunp="file-roller -h"
+null type paco && alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
-alias py3=python3
-alias py2=python2
+null type python3 && alias py3=python3
+null type python2 && alias py2=python2
 alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
-alias mpg123="mpg123 -C -v --title"
-alias xm="xmms2"
+null type mpg123 && alias mpg123="mpg123 -C -v --title"
+null type xmms2 && alias xm="xmms2"
 #export PLAYER="mpg123 -C -v --title"
 
 null type screen && alias screen="screen -e^z^z"
@@ -173,8 +175,8 @@ null type gedit && alias pad=gedit
 null type leafpad && alias pad=leafpad
 isdarwin && alias pad="open -e"
 
-alias wic=wicd-curses
-alias wil="wicd-cli -y -l | head"
+null type wicd-curses && alias wic=wicd-curses
+null type wicd-cli && alias wil="wicd-cli -y -l | head"
 #alias wicn="wicd-cli -y -c -n"
 wicn(){
     if test $# -eq 0
@@ -189,10 +191,6 @@ wicn(){
     fi
 }
 
-alias aptin="apt-get install"
-alias aptsearch="apt-cache search"
-alias aptshow="apt-cache show"
-
 for f in /usr/share/vim/vimcurrent/macros/less.sh \
     /usr/share/vim/vim73/macros/less.sh \
     /usr/share/vim/vim72/macros/less.sh
@@ -200,7 +198,7 @@ do
     test -f $f && alias vl=$f && break
 done
 
-alias yt=yaourt
+null type yaourt && alias yt=yaourt
 null type pacman-color && {
     alias pacman=pacman-color
     export pacman_program=pacman-color # used by pacmatic
@@ -211,13 +209,19 @@ null type pacmatic && {
     export PACMAN="pacmatic"
 }
 
-null type apt-get && \
+null type apt-get && {
     alias aupgrade="sudo apt-get autoremove --yes && \
 sudo apt-get update --yes && sudo apt-get upgrade --yes"
-null type port && \
+    alias aptin="apt-get install"
+    alias aptsearch="apt-cache search"
+    alias aptshow="apt-cache show"
+}
+
+null type port && {
     alias port="port -v"
-alias pupgrade="sudo port -v selfupdate && \
+    alias pupgrade="sudo port -v selfupdate && \
 { sudo port -v upgrade outdated; }"
+}
 
 if iscygwin; then
     null type windate || \
