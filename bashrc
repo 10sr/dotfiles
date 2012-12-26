@@ -165,6 +165,8 @@ null type htags && alias htags="htags --xhtml --symbol --line-number \
 null type aunpack && alias aunp=aunpack
 null type lv && alias lv="lv|less"
 
+isdarwin && alias updatedb="LC_ALL=C updatedb"
+
 # pad
 alias pad=notepad
 null type gedit && alias pad=gedit
