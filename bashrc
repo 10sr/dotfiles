@@ -250,12 +250,10 @@ alias setup.py="sudo python3 setup.py install --record files.txt"
 
 clock(){
     local tformat="%Y/%m/%d %H:%M:%S %z"
-    local t=
     cal
     while true
     do
-        t="`date "+${tformat}"`"
-        printf "\\r$t"
+        printf "\\r`date "+${tformat}"`"
         sleep 1
     done
 }
