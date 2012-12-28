@@ -252,6 +252,7 @@ clock(){
     (
         local tformat="%Y/%m/%d %H:%M:%S %z"
         local t=
+        cal
         while true
         do
             t="`date "+${tformat}"`"
