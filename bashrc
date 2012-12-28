@@ -248,7 +248,20 @@ fi
 
 alias setup.py="sudo python3 setup.py install --record files.txt"
 
-man() {
+clock(){
+    (
+        local tformat="%Y/%m/%d %H:%M:%S %z"
+        local t=
+        while true
+        do
+            t="`date "+${tformat}"`"
+            printf "\\r$t"
+            sleep 1
+        done
+    )
+}
+
+man(){
 	env \
 		LESS_TERMCAP_mb=$(printf "\e[1;35m") \
 		LESS_TERMCAP_md=$(printf "\e[1;31m") \
@@ -261,8 +274,8 @@ man() {
 }
 
 scr(){
-    _tformat="%Y%m%d-%H%M%S%z"
-    _file=`date +${_tformat}`.script
+    local _tformat="%Y%m%d-%H%M%S%z"
+    local _file=`date +${_tformat}`.script
     SCRIPT=${_file} script ${_file} "$@"
 }
 
