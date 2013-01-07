@@ -168,6 +168,8 @@ null type aunpack && alias aunp=aunpack
 null type lv && alias lv="lv|less"
 
 isdarwin && alias updatedb="LC_ALL=C updatedb"
+# do not use locate installed by macports
+isdarwin && test -x /usr/bin/locate && alias locate="/usr/bin/locate"
 
 # pad
 alias pad=notepad
