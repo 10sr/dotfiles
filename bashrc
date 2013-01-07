@@ -803,3 +803,5 @@ invader(){
 EOF
 }
 #/etc/lsb-release
+
+echo .dotfiles/bashrc processed.
