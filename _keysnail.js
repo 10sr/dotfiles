@@ -176,6 +176,36 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+(function(){
+    function getOrganizer(){
+        // [How to call for Firefox bookmark dialog? - Stack Overflow]
+        // (http://stackoverflow.com/questions/9158187/how-to-call-for-firefox-bookmark-dialog)
+        Components.utils.import("resource://gre/modules/Services.jsm");
+
+        var organizer = Services.wm.getMostRecentWindow("Places:Organizer");
+        if (!organizer) {
+            // No currently open places window, so open one with the specified mode.
+            openDialog("chrome://browser/content/places/places.xul",
+                       "", "chrome,toolbar=yes,dialog=no,resizable", "AllBookmarks");
+            return null;
+        } else {
+            return organizer;
+        }
+    }
+    ext.add("export-bookmarks", function(ev, arg){
+        var organizer = getOrganizer();
+        if (organizer) {
+            organizer.PlacesOrganizer.exportBookmarks();
+        }
+    }, "export bookmarks");
+    ext.add("import-bookmarks", function(ev, arg){
+        var organizer = getOrganizer();
+        if (organizer) {
+            organizer.PlacesOrganizer.importBookmarks();
+        }
+    }, "import bookmarks");
+})();
+
 ext.add("my-index-html", function(ev, arg){
     homepath = util.getEnv("HOME");
     file = ".index.html";
