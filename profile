@@ -2,6 +2,9 @@
 
 # ~/.dotfiles/profile
 
+test -n "$DOTFILES_PROFILE" && return
+export DOTFILES_PROFILE=t
+
 # export PS1="\$ "
 export LC_TIME=C
 export TERMCAP="${TERMCAP}:vb="
@@ -42,3 +45,5 @@ fi
 export TMP="${TMP}${USER}-tmp"
 export TEMP="$TMP"
 mkdir -p "$TMP"
+
+echo .dotfiles/profile processed.

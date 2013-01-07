@@ -168,6 +168,8 @@ null type aunpack && alias aunp=aunpack
 null type lv && alias lv="lv|less"
 
 isdarwin && alias updatedb="LC_ALL=C updatedb"
+# do not use locate installed by macports
+isdarwin && test -x /usr/bin/locate && alias locate="/usr/bin/locate"
 
 # pad
 alias pad=notepad
@@ -669,7 +671,7 @@ __my_ps1_script(){
 }
 __my_ps1_scale(){
     local last=$?
-    echo "[LC:${LINES}x${COLUMNS}]"
+    printf "${LINES}x${COLUMNS}"
     return $last
 }
 __my_ps1_tmux(){
@@ -734,9 +736,17 @@ then
     __my_c5="\[\e[30;47m\]"        # color for SCR
     __my_cdef="\[\e[0m\]"
 fi
+
+export _LAST_STATUS=$?
+__my_export_last_status(){
+    export _LAST_STATUS=$?
+    echo $_LAST_STATUS
+    return $_LAST_STATUS
+}
+
 _PS1="\
-${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_scale)\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
-${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? \D{%T} $(__my_ps1_script)\$ "
+${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
+${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} $(__my_ps1_script)\$ "
 PS1=$_PS1
 
 __my_set_title(){
@@ -793,3 +803,5 @@ invader(){
 EOF
 }
 #/etc/lsb-release
+
+echo .dotfiles/bashrc processed.
