@@ -42,6 +42,8 @@ sub set_key {
 }
 
 sub set_prefs {
+    set("base-index", "1");
+    set("pane-base-index", "1");
     setw("mode-keys", "vi");
     set("default-command", "/bin/bash");
     set("default-path", $ENV{"HOME"});
