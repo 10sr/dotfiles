@@ -2,8 +2,10 @@
 
 # ~/.dotfiles/profile
 
-test -n "$DOTFILES_PROFILE" && return
-export DOTFILES_PROFILE=t
+# This not works when, for example, inherit parent ENV and load /etc/profile
+# again.
+#test -n "$DOTFILES_PROFILE" && return
+#export DOTFILES_PROFILE=t
 
 # export PS1="\$ "
 export LC_TIME=C
