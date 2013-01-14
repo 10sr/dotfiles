@@ -42,6 +42,8 @@ sub set_key {
 }
 
 sub set_prefs {
+    set("base-index", "1");
+    set("pane-base-index", "1");
     setw("mode-keys", "vi");
     set("default-command", "/bin/bash");
     set("default-path", $ENV{"HOME"});
@@ -49,16 +51,25 @@ sub set_prefs {
     set("display-panes-time", "5000");
 }
 
+sub get_hostname {
+    my $hostname = $ENV{"HOSTNAME"};
+    if (! $hostname) {
+        $hostname = `hostname`;
+        $hostname =~ s/\n//;
+    }
+    return $hostname;
+}
+
 sub set_status_line {
     my $user = $ENV{"USER"};
-    my $hostname = $ENV{"HOSTNAME"};
+    my $hostname = get_hostname();
     my $tmux_v = `tmux -V`;
     $tmux_v =~ s/\n//;
     set("status-right", "${user}\@${hostname} | ${tmux_v} ");
 }
 
 sub set_colors {
-    my $hostname = $ENV{"HOSTNAME"};
+    my $hostname = get_hostname();
     my $color = $color_prefs{$hostname};
     if (! $color) {
         $color = $color_def;
