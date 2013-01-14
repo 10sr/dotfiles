@@ -65,6 +65,7 @@ git_config(){
     git config --global alias.cim "commit --verbose -m"
     git config --global alias.di "diff --color"
     git config --global alias.me "merge --no-ff --stat -v"
+    git config --global alias.gr "grep -n"
     # git config --global alias.ls "ls-files -v --full-name"
     git config --global alias.ls "status -u -s ."
     git config --global alias.sl "!sl"
