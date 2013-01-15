@@ -42,6 +42,7 @@ sub set_key {
 }
 
 sub set_prefs {
+    # this does not workd because `run' do script asyncly
     set("base-index", "1");
     set("pane-base-index", "1");
     setw("mode-keys", "vi");
