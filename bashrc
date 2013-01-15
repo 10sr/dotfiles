@@ -33,6 +33,11 @@ null ls --version && alias with_coreutils=true
 
 #################################
 
+if echo $PATH | grep "$HOME" >/dev/null 2&>1
+then
+    PATH="${PATH}:${HOME}/.local/bin"
+fi
+
 if false iswindows
 then
     export PAGER='tr -d \\r | less'
