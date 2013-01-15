@@ -65,6 +65,7 @@ git_config(){
     git config --global alias.cim "commit --verbose -m"
     git config --global alias.di "diff --color"
     git config --global alias.me "merge --no-ff --stat -v"
+    git config --global alias.gr "grep -n"
     # git config --global alias.ls "ls-files -v --full-name"
     git config --global alias.ls "status -u -s ."
     git config --global alias.sl "!sl"
@@ -72,7 +73,7 @@ git_config(){
     # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     git config --global alias.addi "add -i"
     git config --global alias.clean-p "!test -z \"\$(git status -s -uno)\""
-    git config --global alias.wc "!git ls-files -z | xargs -0 wc"
+    #git config --global alias.wc "!git ls-files -z | xargs -0 wc"
     # git config --global push.default "simple"
     if _iswindows; then
         git config --global core.fileMode false

@@ -1593,8 +1593,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; frame buffer
-;; todo:
-;;    work well when opening the file that was already opened on another window
+;; todo: work well when opening files already opened on another window
 
 (add-hook 'after-make-frame-functions
           (lambda (f)
