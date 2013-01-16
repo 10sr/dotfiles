@@ -46,6 +46,12 @@ else
 fi
 export LESS="-iRMX"
 
+_src_hilite_lp_path="`which src-hilite-lesspipe.sh 2>/dev/null`"
+if test -n "$_src_hilite_lp_path"
+then
+    export LESSOPEN="| $_src_hilite_lp_path %s"
+fi
+
 if null type vim
 then
     export EDITOR=vim
