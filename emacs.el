@@ -265,6 +265,20 @@ found, otherwise returns nil."
         (add-to-list 'nbl b)))
     nbl))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; show current info
+(defun my-message-current-info ()
+  ""
+  (interactive)
+  (message "%s@%s:%s"
+           user-login-name
+           system-name
+           (abbreviate-file-name default-directory)))
+
+(run-with-idle-timer 3
+                     t
+                     'my-message-current-info)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; minibuffer
 
@@ -539,7 +553,7 @@ found, otherwise returns nil."
 ;; (global-set-key "\C-z" 'undo) ; undo is M-u
 (define-key esc-map "u" 'undo)
 (define-key esc-map "i" (kbd "ESC TAB"))
-                                        ;(global-set-key (kbd "C-r") 'query-replace-regexp)
+;; (global-set-key (kbd "C-r") 'query-replace-regexp)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
@@ -569,7 +583,9 @@ found, otherwise returns nil."
   (interactive)
   (if (y-or-n-p (concat "kill current buffer? :"))
       (kill-buffer (current-buffer))))
-(substitute-key-definition 'kill-buffer 'my-query-kill-current-buffer global-map)
+(substitute-key-definition 'kill-buffer
+                           'my-query-kill-current-buffer
+                           global-map)
 ;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
 
 (defun my-kill-buffers ()
@@ -737,7 +753,8 @@ found, otherwise returns nil."
           (lambda ()
             (define-key text-mode-map (kbd "C-m") 'newline)))
 
-(add-to-list 'Info-default-directory-list (expand-file-name "~/.info/emacs-ja"))
+(add-to-list 'Info-default-directory-list
+             (expand-file-name "~/.info/emacs-ja"))
 
 (add-hook 'apropos-mode-hook
           (lambda ()
