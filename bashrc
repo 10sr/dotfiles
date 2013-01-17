@@ -261,7 +261,12 @@ fi
 
 alias setup.py="sudo python3 setup.py install --record files.txt"
 
-clock(){
+ssh(){
+    __my_set_screen_title ssh
+    command ssh "$@"
+}
+
+clk(){
     local tformat="%Y/%m/%d %H:%M:%S %z"
     cal
     while true
@@ -760,7 +765,7 @@ ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]
 ${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} $(__my_ps1_script)\$ "
 PS1=$_PS1
 
-__my_set_tmux_title(){
+__my_set_screen_title(){
     if test -n "$TMUX"
     then
         echo -ne "\033k$1\033\\"
@@ -779,7 +784,7 @@ __my_set_title(){
     esac
 }
 PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
-__my_set_tmux_title \"\$(basename \$PWD)/\""
+__my_set_screen_title \"\$(basename \$PWD)/\""
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){
