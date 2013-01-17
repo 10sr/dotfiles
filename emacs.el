@@ -208,6 +208,11 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
+(when (fetch-library
+  "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
+  t)
+ (require 'terminal-title nil t))
+
 (setq eol-mnemonic-dos "crlf")
 (setq eol-mnemonic-mac "cr")
 (setq eol-mnemonic-unix "lf")
