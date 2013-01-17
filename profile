@@ -34,6 +34,8 @@ __add_to_path ${HOME}/.local/bin /c/mingw/bin /c/mingw/msys/1.0/bin
 # it is not so good
 # http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
 export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
+# or LDFLAGS
+export CPPFLAGS="$CFLAGS -I$HOME/.local/include"
 
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
