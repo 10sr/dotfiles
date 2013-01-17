@@ -766,7 +766,7 @@ ${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} $(__my_ps1
 PS1=$_PS1
 
 __my_set_screen_title(){
-    if test -n "$TMUX"
+    if test -n "$TMUX" && test -z "$INSIDE_EMACS"
     then
         echo -ne "\033k$1\033\\"
     fi
