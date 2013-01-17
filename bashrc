@@ -760,18 +760,26 @@ ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]
 ${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} $(__my_ps1_script)\$ "
 PS1=$_PS1
 
+__my_set_tmux_title(){
+    if test -n "$TMUX"
+    then
+        echo -ne "\033k$1\033\\"
+    fi
+}
+
 __my_set_title(){
-    title="$(echo $@)"
     case $TERM in
         (rxvt*|xterm*|aterm|screen*)
+        title="$(echo $@)"
         test -t 1 &&
         test -n "$DISPLAY" &&
         test -z "$EMACS" &&
         echo -n -e "\033]0;${title}\007"
-		;;
-	esac
+        ;;
+    esac
 }
-PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\ \${PWD}"
+PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
+__my_set_tmux_title \"\$(basename \$PWD)/\""
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){
