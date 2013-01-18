@@ -146,10 +146,10 @@ null type e3em && alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
 alias po=popd
 alias pu=pushd
-alias sudo="sudo "              # use aliases through sudo
-alias sudoe="sudoedit"
-alias halt="sudo halt"
-alias reboot="sudo reboot"
+null type sudo && alias sudo="sudo "              # use aliases through sudo
+null type sudoedit && alias sudoe="sudoedit"
+null type halt && alias halt="sudo halt"
+null type reboot && alias reboot="sudo reboot"
 null type dbus-send && {
     alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
     /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
@@ -261,7 +261,12 @@ fi
 
 alias setup.py="sudo python3 setup.py install --record files.txt"
 
-clock(){
+ssh(){
+    __my_set_screen_title ssh
+    command ssh "$@"
+}
+
+clk(){
     local tformat="%Y/%m/%d %H:%M:%S %z"
     cal
     while true
@@ -760,8 +765,8 @@ ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]
 ${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} $(__my_ps1_script)\$ "
 PS1=$_PS1
 
-__my_set_tmux_title(){
-    if test -n "$TMUX"
+__my_set_screen_title(){
+    if test -n "$TMUX" && test -z "$INSIDE_EMACS"
     then
         echo -ne "\033k$1\033\\"
     fi
@@ -779,7 +784,7 @@ __my_set_title(){
     esac
 }
 PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
-__my_set_tmux_title \"\$(basename \$PWD)/\""
+__my_set_screen_title \"\$(basename \$PWD)/\""
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){

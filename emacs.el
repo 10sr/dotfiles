@@ -280,9 +280,9 @@ found, otherwise returns nil."
            system-name
            (abbreviate-file-name default-directory)))
 
-(run-with-idle-timer 3
-                     t
-                     'my-message-current-info)
+;; (run-with-idle-timer 3
+;;                      t
+;;                      'my-message-current-info)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; minibuffer
@@ -360,13 +360,15 @@ found, otherwise returns nil."
                            trailing     ; trailing blanks
                            newline      ; newlines
                            newline-mark ; use display table for newline
+                           tab-mark
                            empty        ; empty lines at beg or end of buffer
                            lines-tail  ; lines over 80
                            ))
   ;; (setq whitespace-newline 'font-lock-comment-face)
   (add-to-list 'whitespace-display-mappings
-               `(newline-mark ?\n ,(vconcat "$\n"))
-               )
+               `(newline-mark ?\n ,(vconcat "$\n")))
+  (add-to-list 'whitespace-display-mappings ; not work
+               `(tab-mark ?\t ,(vconcat "^I\t")))
   (global-whitespace-mode t)
   (when (eq (display-color-cells)
             256)
@@ -652,6 +654,17 @@ found, otherwise returns nil."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
+
+;; todo: reg major mode when set explicitly
+
+;; Detect file type from shebang and set major-mode.
+(add-to-list 'interpreter-mode-alist
+             '("python3" . python-mode))
+(add-to-list 'interpreter-mode-alist
+             '("python2" . python-mode))
+
+;; (add-hook default-majorg-mode
+;;           'my-detect-major-mode-from-shebang)
 
 ;; http://fukuyama.co/foreign-regexp
 '(and (fetch-library
