@@ -146,10 +146,10 @@ null type e3em && alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
 alias po=popd
 alias pu=pushd
-alias sudo="sudo "              # use aliases through sudo
-alias sudoe="sudoedit"
-alias halt="sudo halt"
-alias reboot="sudo reboot"
+null type sudo && alias sudo="sudo "              # use aliases through sudo
+null type sudoedit && alias sudoe="sudoedit"
+null type halt && alias halt="sudo halt"
+null type reboot && alias reboot="sudo reboot"
 null type dbus-send && {
     alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
     /org/freedesktop/UPower org.freedesktop.UPower.Suspend"

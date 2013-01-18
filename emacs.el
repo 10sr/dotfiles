@@ -360,13 +360,15 @@ found, otherwise returns nil."
                            trailing     ; trailing blanks
                            newline      ; newlines
                            newline-mark ; use display table for newline
+                           tab-mark
                            empty        ; empty lines at beg or end of buffer
                            lines-tail  ; lines over 80
                            ))
   ;; (setq whitespace-newline 'font-lock-comment-face)
   (add-to-list 'whitespace-display-mappings
-               `(newline-mark ?\n ,(vconcat "$\n"))
-               )
+               `(newline-mark ?\n ,(vconcat "$\n")))
+  (add-to-list 'whitespace-display-mappings ; not work
+               `(tab-mark ?\t ,(vconcat "^I\t")))
   (global-whitespace-mode t)
   (when (eq (display-color-cells)
             256)
