@@ -19,7 +19,7 @@ sub tmux {
     push(@command, @_);
     # print "@command, \n";
     system(@command) == 0
-        or die "system @command failed: $?";
+        or warn "system @command failed: $?";
 }
 
 sub set {
