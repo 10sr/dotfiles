@@ -21,11 +21,15 @@ test -f "${HOME}/.dotfiles/rc.py" && \
     export PYTHONSTARTUP="${HOME}/.dotfiles/rc.py"
 #export PYTHONPATH="~/.local/share/lib/python3.2/site-packages"
 
+export GEM_HOME="$HOME/.local/lib/gems"
+export PATH="$PATH:$HOME/.local/lib/gems/bin"
+export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
+
 __add_to_path(){
     for p in "$@"
     do
         echo $PATH | grep -E "^$p:|:$p:|:$p$" >/dev/null 2>&1 || \
-            PATH="${PATH}:$p"
+            PATH="$p:${PATH}"
     done
 }
 # export PATH="${PATH}:${HOME}/bin"
