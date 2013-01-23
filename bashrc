@@ -309,7 +309,7 @@ cd(){
     elif test $1 = -
     then
         local pwd="$PWD"
-        command cd $OLDPWD
+        command cd "$OLDPWD"
         pushd -n "$pwd" >/dev/null        # stack last dir
     elif ! test -d "$1"
     then
