@@ -175,7 +175,7 @@ null type screen && alias screen="screen -e^z^z"
 null type gtags && alias gtags="gtags --verbose"
 null type htags && alias htags="htags --xhtml --symbol --line-number \
 --frame --alphabet --verbose"
-null type aunpack && alias aunp=aunpack
+null type aunpack && alias aun=aunpack
 null type lv && alias lv="lv|less"
 
 isdarwin && alias updatedb="LC_ALL=C updatedb"
