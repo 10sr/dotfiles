@@ -213,9 +213,9 @@ found, otherwise returns nil."
   t)
  (require 'terminal-title nil t))
 
-(setq eol-mnemonic-dos "crlf")
-(setq eol-mnemonic-mac "cr")
-(setq eol-mnemonic-unix "lf")
+(setq eol-mnemonic-dos "\\r\\n")
+(setq eol-mnemonic-mac "\\r")
+(setq eol-mnemonic-unix "\\n")
 
 (which-function-mode 0)
 
