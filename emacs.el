@@ -1716,11 +1716,13 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
            (buffer-name my-term))
       (pop-to-buffer my-term)
     (setq my-term
-          (if (eq system-type 'windows-nt)
-              (eshell)
-            (if (require 'multi-term nil t)
-                (multi-term)
-              (ansi-term shell-file-name))))))
+          (save-window-excursion
+            (if (eq system-type 'windows-nt)
+                (eshell)
+              (if (require 'multi-term nil t)
+                  (multi-term)
+                (ansi-term shell-file-name)))))
+    (my-term)))
 
 (defun my-delete-frame-or-kill-emacs ()
   "delete frame when opening multiple frame, kill emacs when only one."
