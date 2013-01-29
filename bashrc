@@ -127,6 +127,11 @@ _timeformat_iso="%Y-%m-%dT%H:%M:%S%z"
 _timeformat_rfc2822="%a, %d %b %Y %T %z"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
+if ! with_coreutils
+then
+    export LSCOLORS=gxfxcxdxbxegedabagacad
+    alias ls="ls -G"
+fi
 # export GREP_OPTIONS=""
 alias gr="grep -n --color=always"
 iswindows && alias grep="grep -n"
