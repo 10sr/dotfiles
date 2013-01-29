@@ -703,7 +703,11 @@ found, otherwise returns nil."
 
 (add-hook 'makefile-mode-hook
           (lambda ()
-            (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)))
+            (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)
+            ;; this functions is set in write-file-functions, i cannot find any
+            ;; good way to remove this.
+            (fset 'makefile-warn-suspicious-lines 'ignore)
+            ))
 
 (defun make ()
   "Run \"make -k\" in current directory."
