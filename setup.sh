@@ -58,7 +58,8 @@ git_config(){
     $_gitconfig status.relativePaths false
     $_gitconfig status.showUntrackedFiles normal
     $_gitconfig log.date iso
-    $_gitconfig tar.txz.command "xz -c"
+    type xz && \
+        $_gitconfig tar.txz.command "xz -c"
 
     $_gitconfig alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
     $_gitconfig alias.st "status -s -b"
