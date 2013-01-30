@@ -685,16 +685,19 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
+
 __my_ps1_script(){
     local last=$?
     test -n "$SCRIPT" && echo "${__my_c5}SCR${__my_cdef} "
     return $last
 }
+
 __my_ps1_scale(){
     local last=$?
     printf "${LINES}x${COLUMNS}"
     return $last
 }
+
 __my_ps1_tmux(){
     local last=$?
     null type tmux || return $last
@@ -702,11 +705,13 @@ __my_ps1_tmux(){
     test -n "$TMUX" && echo "[TMUX:$tmuxc]"
     return $last
 }
+
 __my_ps1_moc(){
     local last=$?
     __my_moc_state "[MOC:%s]"
     return $last
 }
+
 for f in /usr/share/git/git-prompt.sh \
       /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
@@ -721,11 +726,13 @@ __my_ps1_git(){
     __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
     return $last
 }
+
 __my_ps1_ipaddr(){
     local last=$?
     ! iswindows && ip-address [Addr:%s]
     return $last
 }
+
 __my_ps1_bttry(){
     local last=$?
     local bst="${TMP}/batterystatus"
@@ -738,19 +745,22 @@ __my_ps1_bttry(){
     fi
     return $last
 }
+
 __my_ps1_dirs(){
     dirs | wc -l
 }
+
 __my_ps1_jobs(){
     jobs | wc -l
 }
+
 if test "$TERM" != dumb
 then
-    __my_c1="\[\e[1;31m\]"       # color for PWD
+    __my_c1="\[\e[0;33m\]"       # color for PWD
     __my_c2="\[\e[0;36m\]"         # color for user
     __my_c3="\[\e[1;30m\]"       # color for OLDPWD
     if test "`hostname`" = arch-aspireone; then __my_c4="\[\e[1;34m\]"
-    elif test "`hostname`" = darwin-mba.local; then __my_c4="\[\e[1;33m\]"
+    elif test "`hostname`" = darwin-mba.local; then __my_c4="\[\e[1;31m\]"
     elif test "`hostname`" = newkiwi; then __my_c4="\[\e[1;35m\]"
     else __my_c4="\[\e[1;32m\]"       # color for ::
     fi
