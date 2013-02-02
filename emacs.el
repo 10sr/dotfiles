@@ -270,6 +270,10 @@ found, otherwise returns nil."
         (add-to-list 'nbl b)))
     nbl))
 
+;; http://www.masteringemacs.org/articles/2012/09/10/hiding-replacing-modeline-strings/
+;; (add-to-list 'minor-mode-alist
+;;              '(global-whitespace-mode ""))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; show current info
 (defun my-message-current-info ()
