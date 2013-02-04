@@ -213,9 +213,9 @@ found, otherwise returns nil."
   t)
  (require 'terminal-title nil t))
 
-(setq eol-mnemonic-dos "crlf")
-(setq eol-mnemonic-mac "cr")
-(setq eol-mnemonic-unix "lf")
+(setq eol-mnemonic-dos "\\r\\n")
+(setq eol-mnemonic-mac "\\r")
+(setq eol-mnemonic-unix "\\n")
 
 (which-function-mode 0)
 
@@ -269,6 +269,10 @@ found, otherwise returns nil."
                                        1))
         (add-to-list 'nbl b)))
     nbl))
+
+;; http://www.masteringemacs.org/articles/2012/09/10/hiding-replacing-modeline-strings/
+;; (add-to-list 'minor-mode-alist
+;;              '(global-whitespace-mode ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; show current info
@@ -703,7 +707,11 @@ found, otherwise returns nil."
 
 (add-hook 'makefile-mode-hook
           (lambda ()
-            (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)))
+            (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)
+            ;; this functions is set in write-file-functions, i cannot find any
+            ;; good way to remove this.
+            (fset 'makefile-warn-suspicious-lines 'ignore)
+            ))
 
 (defun make ()
   "Run \"make -k\" in current directory."
@@ -1716,11 +1724,13 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
            (buffer-name my-term))
       (pop-to-buffer my-term)
     (setq my-term
-          (if (eq system-type 'windows-nt)
-              (eshell)
-            (if (require 'multi-term nil t)
-                (multi-term)
-              (ansi-term shell-file-name))))))
+          (save-window-excursion
+            (if (eq system-type 'windows-nt)
+                (eshell)
+              (if (require 'multi-term nil t)
+                  (multi-term)
+                (ansi-term shell-file-name)))))
+    (my-term)))
 
 (defun my-delete-frame-or-kill-emacs ()
   "delete frame when opening multiple frame, kill emacs when only one."

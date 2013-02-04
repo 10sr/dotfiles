@@ -48,36 +48,41 @@ install_symlink_script(){
 git_config(){
     type git >/dev/null 2>&1 || return 1
 
-    git config --global user.name '10sr'
-    git config --global user.email '8slashes+git@gmail.com'
-    git config --global core.autocrlf false
-    git config --global core.excludesfile '~/.gitignore'
-    git config --global color.ui auto
-    git config --global status.relativePaths false
-    git config --global status.showUntrackedFiles normal
-    git config --global log.date iso
-    git config --global alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
-    git config --global alias.st "status -s -b"
-    git config --global alias.b "branch"
-    git config --global alias.sb "show-branch"
-    git config --global alias.ci "commit --verbose"
-    git config --global alias.co "checkout"
-    git config --global alias.cim "commit --verbose -m"
-    git config --global alias.di "diff --color"
-    git config --global alias.me "merge --no-ff --stat -v"
-    git config --global alias.gr "grep -n"
-    git config --global alias.ls "ls-files"
-    # git config --global alias.ls "ls-files -v --full-name"
-    # git config --global alias.ls "status -u -s ."
-    git config --global alias.sl "!sl"
-    # git config --global alias.my-ls "ls-files | xargs ls"
-    # git config --global alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
-    git config --global alias.addi "add -i"
-    git config --global alias.clean-p "!test -z \"\$(git status -s -uno)\""
-    #git config --global alias.wc "!git ls-files -z | xargs -0 wc"
-    # git config --global push.default "simple"
+    _gitconfig="git config --global"
+
+    $_gitconfig user.name '10sr'
+    $_gitconfig user.email '8slashes+git@gmail.com'
+    $_gitconfig core.autocrlf false
+    $_gitconfig core.excludesfile '~/.gitignore'
+    $_gitconfig color.ui auto
+    $_gitconfig status.relativePaths false
+    $_gitconfig status.showUntrackedFiles normal
+    $_gitconfig log.date iso
+    type xz && \
+        $_gitconfig tar.txz.command "xz -c"
+
+    $_gitconfig alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
+    $_gitconfig alias.st "status -s -b"
+    $_gitconfig alias.b "branch"
+    $_gitconfig alias.sb "show-branch"
+    $_gitconfig alias.ci "commit --verbose"
+    $_gitconfig alias.co "checkout"
+    $_gitconfig alias.cim "commit --verbose -m"
+    $_gitconfig alias.di "diff --color"
+    $_gitconfig alias.me "merge --no-ff --stat -v"
+    $_gitconfig alias.gr "grep -n"
+    $_gitconfig alias.ls "ls-files"
+    # $_gitconfig alias.ls "ls-files -v --full-name"
+    # $_gitconfig alias.ls "status -u -s ."
+    $_gitconfig alias.sl "!sl"
+    # $_gitconfig alias.my-ls "ls-files | xargs ls"
+    # $_gitconfig alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
+    $_gitconfig alias.addi "add -i"
+    $_gitconfig alias.clean-p "!test -z \"\$(git status -s -uno)\""
+    #$_gitconfig alias.wc "!git ls-files -z | xargs -0 wc"
+    # $_gitconfig push.default "simple"
     if _iswindows; then
-        git config --global core.fileMode false
+        $_gitconfig core.fileMode false
     fi
 }
 

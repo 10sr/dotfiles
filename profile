@@ -31,6 +31,10 @@ test -f "${HOME}/.dotfiles/rc.py" && \
     export PYTHONSTARTUP="${HOME}/.dotfiles/rc.py"
 #export PYTHONPATH="~/.local/share/lib/python3.2/site-packages"
 
+export GEM_HOME="$HOME/.local/lib/gems"
+export PATH="$PATH:$HOME/.local/lib/gems/bin"
+export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
+
 __add_to_path(){
     for p in "$@"
     do
