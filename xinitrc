@@ -1,5 +1,6 @@
 test -n "$DISPLAY" || return
 test -z "$ROXTERM_PID" || return
+test -z "$SSH_CONNECTION" || return
 
 test "`hostname`" == "arch-aspireone" &&
 setxkbmap -model "acer_laptop" -layout "jp" # this line must comes first
