@@ -294,8 +294,9 @@ man(){
 }
 
 scr(){
+    test -n "$1" && pf="${1}-"
     local _tformat="%Y%m%d-%H%M%S%z"
-    local _file="${HOME}/`date +${_tformat}`.script"
+    local _file="${HOME}/${pf}`date +${_tformat}`.script"
     SCRIPT=${_file} script ${_file} "$@"
 }
 
