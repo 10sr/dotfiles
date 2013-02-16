@@ -311,7 +311,7 @@ cd(){
     if test $# -eq 0
     then
         pushd ~/ >/dev/null
-    elif test $1 = -
+    elif test "$1" = -
     then
         local pwd="$PWD"
         command cd "$OLDPWD"
@@ -799,7 +799,7 @@ __my_set_title(){
     esac
 }
 PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
-__my_set_screen_title \"\$(basename \$PWD)/\""
+__my_set_screen_title \$(basename \"\$PWD\")/"
 
 # copied from https://wiki.archlinux.org/index.php/X_resources
 invader(){
