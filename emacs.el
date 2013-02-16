@@ -45,27 +45,28 @@ otherwise the path where the library installed."
 
 (defun download-file (url path &optional ok-if-already-exists)
   "Download file from URL and output to PATH."
-  (or (ignore-errors
+  (or
+   (let ((curl (executable-find "curl")))
+     (when curl
+       (if (and (not ok-if-already-exists)
+                (file-exists-p path))
+           nil
+         (and (eq 0
+                  (call-process curl
+                                nil
+                                nil
+                                nil
+                                "--output"
+                                path
+                                url
+                                ))
+              path))))
+   (ignore-errors
         (require 'url)
         (url-copy-file url
                        path
                        ok-if-already-exists)
-        path)
-      (let ((curl (executable-find "curl")))
-        (when curl
-          (if (and (not ok-if-already-exists)
-                   (file-exists-p path))
-              nil
-            (and (eq 0
-                     (call-process curl
-                                   nil
-                                   nil
-                                   nil
-                                   "--output"
-                                   path
-                                   url
-                                   ))
-                 path))))))
+        path)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autoload
