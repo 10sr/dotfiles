@@ -452,6 +452,13 @@ found, otherwise returns nil."
 (set-face-underline-p 'vertical-border
                       nil)
 
+(and (fetch-library
+      "https://raw.github.com/tarao/elisp/master/end-mark.el"
+      t)
+     (require 'end-mark nil t)
+     (global-end-mark-mode))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
