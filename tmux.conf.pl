@@ -12,7 +12,7 @@ my %color_prefs = (
     "darwin-mba.local" => "red,white",
     "newkiwi" => "magenta,white"
     );
-my $color_def = "green,white";
+my $color_def = "green,black";
 
 sub tmux {
     my @command = ($tmux_command, );
@@ -57,7 +57,7 @@ sub get_hostname {
     my $hostname = $ENV{"HOSTNAME"};
     if (! $hostname) {
         $hostname = `hostname`;
-        $hostname =~ s/\n//;
+        chomp($hostname)
     }
     return $hostname;
 }
