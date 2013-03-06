@@ -675,9 +675,6 @@ found, otherwise returns nil."
 (add-to-list 'interpreter-mode-alist
              '("python2" . python-mode))
 
-;; (add-hook default-majorg-mode
-;;           'my-detect-major-mode-from-shebang)
-
 ;; http://fukuyama.co/foreign-regexp
 '(and (fetch-library
        "https://raw.github.com/k-talo/foreign-regexp.el/master/foreign-regexp.el"
@@ -782,6 +779,11 @@ found, otherwise returns nil."
 (and (lazy-load-eval 'pkgbuild-mode)
      (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
                                    auto-mode-alist)))
+
+(add-hook 'html-mode-hook
+          (lambda ()
+            (define-key html-mode-map (kbd "C-m")
+              'reindent-then-newline-and-indent)))
 
 (add-hook 'text-mode-hook
           (lambda ()
