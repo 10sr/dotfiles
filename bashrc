@@ -496,8 +496,14 @@ tb(){
 }
 
 mkcd(){
-    mkdir -p $1
-    cd $1
+    if test -d "$1"
+    then
+        echo "Dir \"$1\" already exists."
+    else
+        mkdir -p "$1"
+        echo "Dir \"$1\" created."
+    fi
+    cd "$1"
 }
 
 if test -n "$TMUX" && null type reattach-to-user-namespace
