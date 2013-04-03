@@ -720,6 +720,7 @@ __my_ps1_moc(){
 }
 
 for f in /usr/share/git/git-prompt.sh \
+    /opt/local/share/git-core/git-prompt.sh \
     /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
     test -r $f && . $f && break
