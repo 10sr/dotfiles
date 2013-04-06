@@ -256,7 +256,7 @@ if null type _git
 then
     # enable programmable completion for g
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
-	|| complete -o default -o nospace -F _git g
+        || complete -o default -o nospace -F _git g
 fi
 
 alias setup.py="sudo python3 setup.py install --record files.txt"
@@ -277,15 +277,15 @@ clk(){
 }
 
 man(){
-	env \
-		LESS_TERMCAP_mb=$(printf "\e[1;35m") \
-		LESS_TERMCAP_md=$(printf "\e[1;31m") \
-		LESS_TERMCAP_me=$(printf "\e[0m") \
-		LESS_TERMCAP_se=$(printf "\e[0m") \
-		LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
-		LESS_TERMCAP_ue=$(printf "\e[0m") \
-		LESS_TERMCAP_us=$(printf "\e[1;32m") \
-		man "$@"
+    env \
+        LESS_TERMCAP_mb=$(printf "\e[1;35m") \
+        LESS_TERMCAP_md=$(printf "\e[1;31m") \
+        LESS_TERMCAP_me=$(printf "\e[0m") \
+        LESS_TERMCAP_se=$(printf "\e[0m") \
+        LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+        LESS_TERMCAP_ue=$(printf "\e[0m") \
+        LESS_TERMCAP_us=$(printf "\e[1;32m") \
+        man "$@"
 }
 
 scr(){
@@ -491,8 +491,14 @@ tb(){
 }
 
 mkcd(){
-    mkdir -p $1
-    cd $1
+    if test -d "$1"
+    then
+        echo "Dir \"$1\" already exists."
+    else
+        mkdir -p "$1"
+        echo "Dir \"$1\" created."
+    fi
+    cd "$1"
 }
 
 if test -n "$TMUX" && null type reattach-to-user-namespace
@@ -709,7 +715,7 @@ __my_ps1_moc(){
 }
 
 for f in /usr/share/git/git-prompt.sh \
-      /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
+    /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
     test -r $f && . $f && break
 done
@@ -786,55 +792,14 @@ __my_set_screen_title(){
 __my_set_title(){
     case $TERM in
         (rxvt*|xterm*|aterm|screen*)
-        title="$(echo $@)"
-        test -t 1 &&
-        test -n "$DISPLAY" &&
-        test -z "$EMACS" &&
-        echo -n -e "\033]0;${title}\007"
-        ;;
+            title="$(echo $@)"
+            test -t 1 &&
+            test -n "$DISPLAY" &&
+            test -z "$EMACS" &&
+            echo -n -e "\033]0;${title}\007"
+            ;;
     esac
-}
-PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
+        }
+        PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
 __my_set_screen_title \$(basename \"\$PWD\")/"
 
-# copied from https://wiki.archlinux.org/index.php/X_resources
-invader(){
-    # ANSI color scheme script featuring Space Invaders
-    #
-    # Original: http://crunchbanglinux.org/forums/post/126921/#p126921
-    # Modified by lolilolicon
-    #
-
-    f=3 b=4
-    for j in f b; do
-        for i in {0..7}; do
-            printf -v $j$i %b "\e[${!j}${i}m"
-        done
-    done
-    bld=$'\e[1m'
-    rst=$'\e[0m'
-
-    cat << EOF
-
- $f1  ▀▄   ▄▀     $f2 ▄▄▄████▄▄▄    $f3  ▄██▄     $f4  ▀▄   ▄▀     $f5 ▄▄▄████▄▄▄    $f6  ▄██▄  $rst
- $f1 ▄█▀███▀█▄    $f2███▀▀██▀▀███   $f3▄█▀██▀█▄   $f4 ▄█▀███▀█▄    $f5███▀▀██▀▀███   $f6▄█▀██▀█▄$rst
- $f1█▀███████▀█   $f2▀▀███▀▀███▀▀   $f3▀█▀██▀█▀   $f4█▀███████▀█   $f5▀▀███▀▀███▀▀   $f6▀█▀██▀█▀$rst
- $f1▀ ▀▄▄ ▄▄▀ ▀   $f2 ▀█▄ ▀▀ ▄█▀    $f3▀▄    ▄▀   $f4▀ ▀▄▄ ▄▄▀ ▀   $f5 ▀█▄ ▀▀ ▄█▀    $f6▀▄    ▄▀$rst
-
- $bld$f1▄ ▀▄   ▄▀ ▄   $f2 ▄▄▄████▄▄▄    $f3  ▄██▄     $f4▄ ▀▄   ▄▀ ▄   $f5 ▄▄▄████▄▄▄    $f6  ▄██▄  $rst
- $bld$f1█▄█▀███▀█▄█   $f2███▀▀██▀▀███   $f3▄█▀██▀█▄   $f4█▄█▀███▀█▄█   $f5███▀▀██▀▀███   $f6▄█▀██▀█▄$rst
- $bld$f1▀█████████▀   $f2▀▀▀██▀▀██▀▀▀   $f3▀▀█▀▀█▀▀   $f4▀█████████▀   $f5▀▀▀██▀▀██▀▀▀   $f6▀▀█▀▀█▀▀$rst
- $bld$f1 ▄▀     ▀▄    $f2▄▄▀▀ ▀▀ ▀▀▄▄   $f3▄▀▄▀▀▄▀▄   $f4 ▄▀     ▀▄    $f5▄▄▀▀ ▀▀ ▀▀▄▄   $f6▄▀▄▀▀▄▀▄$rst
-
-
-                                     $f7▌$rst
-
-                                   $f7▌$rst
-
-                              $f7    ▄█▄    $rst
-                              $f7▄█████████▄$rst
-                              $f7▀▀▀▀▀▀▀▀▀▀▀$rst
-
-EOF
-}
-#/etc/lsb-release
