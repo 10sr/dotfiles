@@ -217,11 +217,6 @@ do
 done
 
 null type yaourt && alias yt=yaourt
-null type pacman-color && {
-    alias pacman=pacman-color
-    export pacman_program=pacman-color # used by pacmatic
-    export PACMAN=pacman-color         # used by yaourt
-}
 null type pacmatic && {
     alias pacman="pacmatic"
     export PACMAN="pacmatic"
