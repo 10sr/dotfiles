@@ -217,6 +217,7 @@ do
 done
 
 null type yaourt && alias yt=yaourt
+null type cower && alias cower="cower --color=auto"
 null type pacmatic && {
     alias pacman="pacmatic"
     export PACMAN="pacmatic"
