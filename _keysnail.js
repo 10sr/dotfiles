@@ -26,13 +26,13 @@ function ignore(k, i) [k, null];
 ///////////////////////////////////////////
 //// firefox
 // style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
-style.register(                 //not work
-        <><![CDATA[
-            input,textarea {
-                font-family: monospace !important;
-            }
-        ]]></>.toString()
-);
+// style.register(                 //not work
+//         <><![CDATA[
+//             input,textarea {
+//                 font-family: monospace !important;
+//             }
+//         ]]></>.toString()
+// );
 
 ///////////////////////////////////
 //search engine
