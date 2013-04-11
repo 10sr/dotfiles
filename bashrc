@@ -217,6 +217,7 @@ do
 done
 
 null type yaourt && alias yt=yaourt
+null type cower && alias cower="cower --color=auto"
 null type pacmatic && {
     alias pacman="pacmatic"
     export PACMAN="pacmatic"
@@ -258,6 +259,7 @@ then
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
         || complete -o default -o nospace -F _git g
 fi
+null type gitmemo && alias m=gitmemo
 
 null type gitmemo && alias m=gitmemo
 

@@ -66,5 +66,3 @@ fi
 export TMP="${TMP}${USER}-tmp"
 export TEMP="$TMP"
 mkdir -p "$TMP"
-
-echo .dotfiles/profile processed.
