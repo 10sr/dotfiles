@@ -259,6 +259,8 @@ then
         || complete -o default -o nospace -F _git g
 fi
 
+null type gitmemo && alias m=gitmemo
+
 alias setup.py="sudo python3 setup.py install --record files.txt"
 
 ssh(){
