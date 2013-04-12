@@ -117,7 +117,7 @@ fi
 ###################################
 # some aliases and functions
 
-( ! with_coreutils && isdarwin ) || test "$TERM" == dumb || \
+( ! with_coreutils && isdarwin ) || test "$TERM" = dumb || \
     _coloroption=" --color=auto"
 ( ! with_coreutils && isdarwin ) || iswindows || \
     _timeoption=" --time-style=long-iso"
@@ -649,7 +649,7 @@ winln(){
 
 __my_moc_state(){
     type mocp >/dev/null 2>&1 || return
-    test "`mocp -Q %state 2>/dev/null`" == PLAY || return
+    test "`mocp -Q %state 2>/dev/null`" = PLAY || return
     printf "$1" "`mocp -Q %title 2>/dev/null`"
 }
 
