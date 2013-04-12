@@ -31,6 +31,10 @@ null ls --version && alias with_coreutils=true
 
 ( ismsys || iscygwin ) && alias iswindows=true
 
+alias inbash=false
+
+test -n "$BASH_VERSION" && alias inbash=true
+
 #################################
 
 if echo $PATH | grep "$HOME" >/dev/null 2>&1
@@ -80,8 +84,6 @@ mkdir -p "$TMP"
 }
 
 if iswindows; then
-    # export PS1=" \[\e[32m\]\u@\H \[\e[33m\]\w\[\e[0m\] \d \t\n\s \# \j \$ "
-    # export PS1=" [\[\e[33m\]\w\[\e[0m\]]\n\[\e[32m\]\u@\H\[\e[0m\] \d \t \s.\v\nhist:\# jobs:\j \$ "
     export USER=$USERNAME
 fi
 
@@ -253,7 +255,7 @@ g(){
         git "$@"
     fi
 }
-if null type _git
+if null type _git && inbash
 then
     # enable programmable completion for g
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
@@ -807,4 +809,3 @@ __my_set_title(){
         }
         PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
 __my_set_screen_title \$(basename \"\$PWD\")/"
-
