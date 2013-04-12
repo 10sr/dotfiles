@@ -32,8 +32,15 @@ null ls --version && alias with_coreutils=true
 ( ismsys || iscygwin ) && alias iswindows=true
 
 alias inbash=false
+alias inzsh=false
 
-test -n "$BASH_VERSION" && alias inbash=true
+if test -n "$BASH_VERSION"
+then
+    alias inbash=true
+elif test -n "$ZSH_VERSION"
+then
+    alias inzsh=true
+fi
 
 #################################
 
@@ -588,29 +595,6 @@ convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
 
-#Change ANSI Colors
-_chengecolors(){
-    echo -e \
-        "\e]P0000000" \
-        "\e]P1cd0000" \
-        "\e]P200cd00" \
-        "\e]P3cdcd00" \
-        "\e]P41e90ff" \
-        "\e]P5cd00cd" \
-        "\e]P600cdcd" \
-        "\e]P7353535" \
-        "\e]P8666666" \
-        "\e]P9ff9999" \
-        "\e]Pa99ff99" \
-        "\e]Pbffff99" \
-        "\e]Pc9999ff" \
-        "\e]Pdff99ff" \
-        "\e]Pe99ffff" \
-        "\e]Pfffffff"
-}
-
-# printf "\e]P7353535" \
-
 _colors(){
     echo -e \
         "\e[30mBlack" \
@@ -784,10 +768,10 @@ __my_export_last_status(){
     return $_LAST_STATUS
 }
 
-_PS1="\
+_ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
 ${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} $(__my_ps1_script)\$ "
-PS1=$_PS1
+inbash && PS1=$_ps1_bash
 
 __my_set_screen_title(){
     if test -n "$TMUX" && test -z "$INSIDE_EMACS"
