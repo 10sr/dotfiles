@@ -86,9 +86,9 @@ sub set_colors {
     set("message-bg", "white");
     set("message-fg", "black");
 
-    setw("window-status-current-bg", "white");
-    setw("window-status-current-fg", "black");
-    setw("window-status-current-attr", "bold");
+    setw("window-status-current-bg", "default");
+    setw("window-status-current-fg", "default");
+    setw("window-status-current-attr", "reverse");
 }
 
 sub main {
