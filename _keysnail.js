@@ -11,6 +11,24 @@
 // command.kill.killRingMax   = 15;
 // command.kill.textLengthMax = 8192;
 
+// Original is at https://gist.github.com/Griever/62715
+(function(){
+    // this makes all clicks open in new tab.
+    return;
+    // test if firefox 12
+    if (12 > parseFloat(Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULAppInfo).version))
+    {
+        return;
+    }
+    whereToOpenLink_org = whereToOpenLink;
+    eval('whereToOpenLink = ' + whereToOpenLink_org.toString()
+         .replace('if (ctrl', 'if (true')
+         // .replace('if (ctrl', 'if (ctrl && !shift|| !ctrl && shift')
+         // .replace('if (shift ||', 'if (shift && ctrl ||')
+         // .replace('middle && middleUsesTabs', 'middle && middleUsesTabs && !alt')
+        );
+})();
+
 //////////////////////////////////////
 //// sitelocalkeymap
 var local = {};
@@ -560,8 +578,8 @@ ext.add("list-tab-history", function () {
             continue;
         try {
             var iconURL = Cc["@mozilla.org/browser/favicon-service;1"]
-                .getService(Ci.nsIFaviconService)
-                .getFaviconForPage(entry.URI).spec;
+                    .getService(Ci.nsIFaviconService)
+                    .getFaviconForPage(entry.URI).spec;
         } catch (ex) {}
         tabHistory.push([iconURL || fav, entry.title, entry.URI.spec, i]);
     }
