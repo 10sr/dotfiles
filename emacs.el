@@ -655,6 +655,10 @@ found, otherwise returns nil."
 
 (lazy-load-eval 'sudoku)
 
+;; https://github.com/lunaryorn/flycheck
+(when (require 'flycheck nil t)
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
 
