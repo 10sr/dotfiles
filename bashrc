@@ -282,10 +282,13 @@ ssh(){
 clk(){
     local tformat="%Y/%m/%d %H:%M:%S %z"
     cal
-    while true
+    REPLY=
+    printf "\\r`date "+${tformat}"`"
+    read -t 1
+    while test $? -ne 0
     do
         printf "\\r`date "+${tformat}"`"
-        sleep 1
+        read -t 1
     done
 }
 
