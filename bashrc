@@ -595,28 +595,6 @@ convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
 
-_colors(){
-    echo -e \
-        "\e[30mBlack" \
-        "\e[31mRed" \
-        "\e[32mGreen" \
-        "\e[33mYellow" \
-        "\e[34mBlue" \
-        "\e[35mMagenta" \
-        "\e[36mCyan" \
-        "\e[37mWhite"
-    echo -e \
-        "\e[30;1mBright Black" \
-        "\e[31;1mBright Red" \
-        "\e[32;1mBright Green" \
-        "\e[33;1mBright Yellow" \
-        "\e[34;1mBright Blue" \
-        "\e[35;1mBright Magenta" \
-        "\e[36;1mBright Cyan" \
-        "\e[37;1mBright White\n" \
-        "\e[0m"
-}
-
 winln(){
     # for windose make link (actually junction)
     if test $# -eq 0
