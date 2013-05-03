@@ -659,6 +659,9 @@ found, otherwise returns nil."
 (when (require 'flycheck nil t)
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
+(defun my-install-packages ()
+  nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
 
@@ -721,11 +724,6 @@ found, otherwise returns nil."
             ;; good way to remove this.
             (fset 'makefile-warn-suspicious-lines 'ignore)
             ))
-
-(defun make ()
-  "Run \"make -k\" in current directory."
-  (interactive)
-  (compile "make -k"))
 
 (add-hook 'verilog-mode-hook
           (lambda ()
@@ -1785,6 +1783,34 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
+
+(defun my-grep ()
+  "Use git-grep if avaliable.."
+  (interactive)
+  (require 'grep)
+  (let ((--grep-command-bak grep-command)
+        (--grep-use-null-device-bak grep-use-null-device)
+        (grep-command (if (eq 0
+                              (shell-command "git rev-parse --git-dir"))
+                          "git --no-pager grep -nH -e "
+                        grep-command
+                        )))
+    (grep-apply-setting 'grep-command
+                        grep-command)
+    (grep-apply-setting 'grep-use-null-device
+                        nil)
+    (if (called-interactively-p 'any)
+        (call-interactively 'grep)
+      (message "my-grep only allow interactive call."))
+    (grep-apply-setting 'grep-command
+                        --grep-command-bak)
+    (grep-apply-setting 'grep-use-null-device
+                        --grep-use-null-device-bak)))
+
+(defun make ()
+  "Run \"make -k\" in current directory."
+  (interactive)
+  (compile "make -k"))
 
 (defvar sed-in-place-history nil
   "History of `sed-in-place'")
