@@ -655,6 +655,13 @@ found, otherwise returns nil."
 
 (lazy-load-eval 'sudoku)
 
+;; https://github.com/lunaryorn/flycheck
+(when (require 'flycheck nil t)
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
+(defun my-install-packages ()
+  nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
 
@@ -717,11 +724,6 @@ found, otherwise returns nil."
             ;; good way to remove this.
             (fset 'makefile-warn-suspicious-lines 'ignore)
             ))
-
-(defun make ()
-  "Run \"make -k\" in current directory."
-  (interactive)
-  (compile "make -k"))
 
 (add-hook 'verilog-mode-hook
           (lambda ()
@@ -1781,6 +1783,32 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
+
+(defun my-grep ()
+  "Use git-grep if avaliable.."
+  (interactive)
+  (require 'grep)
+  (let ((--grep-command-bak grep-command)
+        (--grep-use-null-device-bak grep-use-null-device))
+    (if (called-interactively-p 'any)
+        (progn
+          (when (eq 0
+                    (shell-command "git rev-parse --git-dir"))
+            (grep-apply-setting 'grep-command
+                                "git --no-pager grep -nH -e ")
+            (grep-apply-setting 'grep-use-null-device
+                                nil))
+          (call-interactively 'grep)
+          (grep-apply-setting 'grep-command
+                              --grep-command-bak)
+          (grep-apply-setting 'grep-use-null-device
+                              --grep-use-null-device-bak))
+      (message "my-grep only allow interactive call."))))
+
+(defun make ()
+  "Run \"make -k\" in current directory."
+  (interactive)
+  (compile "make -k"))
 
 (defvar sed-in-place-history nil
   "History of `sed-in-place'")

@@ -282,10 +282,13 @@ ssh(){
 clk(){
     local tformat="%Y/%m/%d %H:%M:%S %z"
     cal
-    while true
+    REPLY=
+    printf "\\r`date "+${tformat}"`"
+    read -t 1
+    while test $? -ne 0
     do
         printf "\\r`date "+${tformat}"`"
-        sleep 1
+        read -t 1
     done
 }
 
@@ -593,28 +596,6 @@ convmv-sjis2utf8-test(){
 
 convmv-sjis2utf8-notest(){
     convmv -r -f sjis -t utf8 * --notest
-}
-
-_colors(){
-    echo -e \
-        "\e[30mBlack" \
-        "\e[31mRed" \
-        "\e[32mGreen" \
-        "\e[33mYellow" \
-        "\e[34mBlue" \
-        "\e[35mMagenta" \
-        "\e[36mCyan" \
-        "\e[37mWhite"
-    echo -e \
-        "\e[30;1mBright Black" \
-        "\e[31;1mBright Red" \
-        "\e[32;1mBright Green" \
-        "\e[33;1mBright Yellow" \
-        "\e[34;1mBright Blue" \
-        "\e[35;1mBright Magenta" \
-        "\e[36;1mBright Cyan" \
-        "\e[37;1mBright White\n" \
-        "\e[0m"
 }
 
 winln(){
