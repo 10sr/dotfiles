@@ -834,7 +834,7 @@ found, otherwise returns nil."
 ;; (setq c-default-style "bsd")
 (add-hook 'c-mode-common-hook
           (lambda ()
-            (setq c-basic-offset 2
+            (setq c-basic-offset 4
                   indent-tabs-mode nil)
             ;; (set-face-foreground 'font-lock-keyword-face "blue")
             (c-toggle-hungry-state -1)
