@@ -292,7 +292,7 @@ clk(){
     done
 }
 
-rs(){
+s(){
     if test $# -eq 0
     then
         echo "No search word given." 1>&2
