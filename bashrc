@@ -292,6 +292,28 @@ clk(){
     done
 }
 
+s(){
+    if test $# -eq 0
+    then
+        echo "No search word given." 1>&2
+        return 1
+    fi
+
+    if git rev-parse --git-dir >/dev/null 2>&1
+    then
+        git grep -n "$1"
+    elif which ag >/dev/null
+    then
+        ag --pager="$PAGER" "$1"
+    elif which ack >/dev/null
+    then
+        ack --pager="$PAGER" "$1"
+    else
+        echo "No search command found. Use grep." 2>&1
+        return 127
+    fi
+}
+
 man(){
     env \
         LESS_TERMCAP_mb=$(printf "\e[1;35m") \
