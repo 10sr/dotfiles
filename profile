@@ -54,6 +54,9 @@ export LD_LIBRARY_PATH="$HOME/.local/lib:$LD_LIBRARY_PATH"
 # this should be used when ./configure
 #export CFLAGS="$CFLAGS -I$HOME/.local/include"
 
+#_python_pkg_conf="/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/pkgconfig"
+PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$_python_pkg_conf"
+
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
 # in my environment powerdown does not work
 
