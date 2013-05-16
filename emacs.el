@@ -1737,12 +1737,23 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
       (pop-to-buffer my-term)
     (setq my-term
           (save-window-excursion
-            (if (eq system-type 'windows-nt)
-                (eshell)
-              (if (require 'multi-term nil t)
-                  (multi-term)
-                (ansi-term shell-file-name)))))
-    (my-term)))
+            (funcall my-term-function)
+            ))
+    (and my-term
+         (my-term))))
+
+(defvar my-term-function nil
+  "Function to create terminal buffer.")
+
+;; (setq my-term-function
+;;       (lambda ()
+;;         (if (eq system-type 'windows-nt)
+;;             (eshell)
+;;           (if (require 'multi-term nil t)
+;;               (multi-term)
+;;             (ansi-term shell-file-name)))))
+
+(setq my-term-function 'eshell)
 
 (defun my-delete-frame-or-kill-emacs ()
   "delete frame when opening multiple frame, kill emacs when only one."
