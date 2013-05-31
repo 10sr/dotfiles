@@ -134,6 +134,8 @@ fi
 
 _timeformat_iso="%Y-%m-%dT%H:%M:%S%z"
 _timeformat_rfc2822="%a, %d %b %Y %T %z"
+_timeformat_num="%Y%m%d%H%M%S"
+alias datenum="date +$_timeformat_num"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 if ! with_coreutils
