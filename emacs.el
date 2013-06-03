@@ -68,6 +68,27 @@ otherwise the path where the library installed."
                        ok-if-already-exists)
         path)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; package
+
+(when (require 'package nil t)
+  (add-to-list 'package-archives
+               '("ELPA" . "http://tromey.com/elpa/"))
+  (add-to-list 'package-archives
+               '("melpa" . "http://melpa.milkbox.net/packages/")
+               t)
+  (add-to-list 'package-archives
+               '("marmalade" . "http://marmalade-repo.org/packages/"))
+  ;; (package-initialize)
+  ;; (package-refresh-contents)
+  )
+
+;; http://qiita.com/items/5f1cd86e2522fd3384a0
+;; http://blog.64p.org/entry/2013/05/01/233306
+
+
+;; (lazy-load-eval 'sudoku)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autoload
 
@@ -312,6 +333,8 @@ found, otherwise returns nil."
 ;; letters, font-lock mode and fonts
 
 ;; (set-face-background 'vertical-border (face-foreground 'mode-line))
+
+;; (set-window-margins (selected-window) 1 1)
 
 (and (or (eq system-type 'Darwin)
          (eq system-type 'darwin))
@@ -640,24 +663,10 @@ found, otherwise returns nil."
      (getenv "TMUX")
      (pasteboard-enable-rtun))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; package
-
-(when (require 'package nil t)
-  (add-to-list 'package-archives
-               '("melpa" . "http://melpa.milkbox.net/packages/")
-               t)
-  (add-to-list 'package-archives
-               '("marmalade" . "http://marmalade-repo.org/packages/"))
-  (add-to-list 'package-archives
-               '("ELPA" . "http://tromey.com/elpa/"))
-  (package-initialize))
-
-(lazy-load-eval 'sudoku)
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; https://github.com/lunaryorn/flycheck
 (when (require 'flycheck nil t)
-  (add-hook 'after-init-hook #'global-flycheck-mode))
+  (add-hook 'after-init-hook 'global-flycheck-mode))
 
 (defun my-install-packages ()
   nil)

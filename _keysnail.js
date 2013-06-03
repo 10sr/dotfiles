@@ -616,6 +616,7 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
+
 hook.setHook('KeyBoardQuit', function (aEvent) {
     ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
@@ -641,7 +642,6 @@ hook.setHook('Unload', function () {
         return true;
     });
 });
-
 
 
 // ============================= Key bindings ============================== //
@@ -681,6 +681,10 @@ key.setGlobalKey('<delete>', function (ev, arg) {
 key.setGlobalKey('<f11>', function (ev, arg) {
     ext.exec("strong-fullscreen", arg, ev);
 }, 'go fullscreen with hiding toolbar and tabbar', true);
+
+key.setViewKey('0', function (ev) {
+    BrowserCloseTabOrWindow();
+}, 'タブ / ウィンドウを閉じる');
 
 key.setViewKey('N', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(1, true);
@@ -822,10 +826,6 @@ key.setViewKey('B', function (ev) {
     }
 }, '選択中のタブを左へ');
 
-key.setViewKey('0', function (ev) {
-    BrowserCloseTabOrWindow();
-}, 'タブ / ウィンドウを閉じる');
-
 key.setViewKey('C', function (ev, arg) {
     ext.exec("linksnail", arg, ev);
 }, 'LinkSnail', true);
@@ -918,3 +918,7 @@ key.setEditKey('C-p', function (ev) {
 key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
+
+key.setViewKey('f', function (ev, arg) {
+    ext.exec('strong-fullscreen', arg, ev);
+}, 'go fullscreen with hiding toolbar and tabbar', true);
