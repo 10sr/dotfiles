@@ -902,14 +902,14 @@ If called intearctively, find word at point."
       (if (and (require 'gtags nil t)
                (gtags-get-rootpath))
           (gtags-goto-tag word "s")
+        (require 'grep)
         (if (eq 0
                 (shell-command "git rev-parse --git-dir"))
             (compilation-start (format "git --no-pager grep -nH -e '%s'"
                                        word)
                                'grep-mode)
           ;; TODO: handle ack
-          (grep (format "%s '%s' -r ."
-                        grep-command
+          (grep (format "grep -nH -e '%s' -r ."
                         word))))
     (message "No word at point.")
     nil))
