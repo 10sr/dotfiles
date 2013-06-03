@@ -134,6 +134,8 @@ fi
 
 _timeformat_iso="%Y-%m-%dT%H:%M:%S%z"
 _timeformat_rfc2822="%a, %d %b %Y %T %z"
+_timeformat_num="%Y%m%d%H%M%S"
+alias datenum="date +$_timeformat_num"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 if ! with_coreutils
@@ -231,6 +233,18 @@ null type pacmatic && {
     alias pacman="pacmatic"
     export PACMAN="pacmatic"
 }
+
+_pacman_update_mirrorlist_with_reflector(){
+    ml=/etc/pacman.d/mirrorlist
+    cmd="$(expr "$(grep reflector $ml)" : '# With: *\(.*\)')"
+    if test -z "$cmd"
+    then
+        cmd="reflector --verbose -l 5 --sort rate --save /etc/pacman.d/mirrorlist"
+    fi
+    sudo $cmd
+}
+null type reflector && test -f /etc/pacman.d/mirrorlist && \
+    alias reflect_mirrorlist=_pacman_update_mirrorlist_with_reflector
 
 null type apt-get && {
     alias aupgrade="sudo apt-get autoremove --yes && \

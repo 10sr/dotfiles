@@ -898,9 +898,30 @@ found, otherwise returns nil."
             (define-key view-mode-map "?" 'isearch-backward-regexp)
             (define-key view-mode-map "n" 'isearch-repeat-forward)
             (define-key view-mode-map "N" 'isearch-repeat-backward)
+            (define-key view-mode-map (kbd "C-m") 'my-view-mode-search-word)
             ))
 (global-set-key "\M-r" 'view-mode)
 (setq view-read-only t)
+
+(defun my-view-mode-search-word (word)
+  "Search for word current directory and subdirectories.
+If called intearctively, find word at point."
+  (interactive (list (thing-at-point 'symbol)))
+  (if word
+      (if (and (require 'gtags nil t)
+               (gtags-get-rootpath))
+          (gtags-goto-tag word "s")
+        (require 'grep)
+        (if (eq 0
+                (shell-command "git rev-parse --git-dir"))
+            (compilation-start (format "git --no-pager grep -nH -e '%s'"
+                                       word)
+                               'grep-mode)
+          ;; TODO: handle ack
+          (grep (format "grep -nH -e '%s' -r ."
+                        word))))
+    (message "No word at point.")
+    nil))
 
 (add-hook 'Man-mode-hook
           (lambda ()
@@ -1805,7 +1826,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;; misc funcs
 
 (defun my-grep ()
-  "Use git-grep if avaliable.."
+  "Use git-grep if avaliable. Only called interactively."
   (interactive)
   (require 'grep)
   (let ((--grep-command-bak grep-command)
