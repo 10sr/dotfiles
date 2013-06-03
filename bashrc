@@ -234,6 +234,18 @@ null type pacmatic && {
     export PACMAN="pacmatic"
 }
 
+_pacman_update_mirrorlist_with_reflector(){
+    ml=/etc/pacman.d/mirrorlist
+    cmd="$(expr "$(grep reflector $ml)" : '# With: *\(.*\)')"
+    if test -z "$cmd"
+    then
+        cmd="reflector --verbose -l 5 --sort rate --save /etc/pacman.d/mirrorlist"
+    fi
+    sudo $cmd
+}
+null type reflector && test -f /etc/pacman.d/mirrorlist && \
+    alias reflect_mirrorlist=_pacman_update_mirrorlist_with_reflector
+
 null type apt-get && {
     alias aupgrade="sudo apt-get autoremove --yes && \
 sudo apt-get update --yes && sudo apt-get upgrade --yes"
