@@ -315,16 +315,17 @@ s(){
 
     if git rev-parse --git-dir >/dev/null 2>&1
     then
-        git grep -n "$1"
+        git grep -n "$@"
     elif which ag >/dev/null
     then
-        ag --pager="$PAGER" "$1"
+        ag --pager="$PAGER" "$@"
     elif which ack >/dev/null
     then
-        ack --pager="$PAGER" "$1"
+        ack --pager="$PAGER" "$@"
     else
-        echo "No search command found. Use grep." 2>&1
-        return 127
+        grep -nH --exclude='.svn/*' --exclude='.git/*' "$@" -r . | $PAGER
+        # echo "No search command found. Use grep." 2>&1
+        # return 127
     fi
 }
 
