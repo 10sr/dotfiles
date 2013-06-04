@@ -86,6 +86,12 @@ git_config(){
     fi
 }
 
+install_files(){
+	src_hilite_src="`pwd`/conf/src-hilite.style"
+	src_hilite_dst="$HOME/.local/share/source-highlight/src_hilite.style"
+	install -D --backup "$src_hilite_src" "$src_hilite_dst"
+}
+
 mac_defaults(){
     test "`uname`" = Darwin || return 1
 
@@ -115,10 +121,22 @@ mac_start_daemon(){
     fi
 }
 
-get_install_script http://www.frexx.de/xterm-256-notes/data/colortable16.sh \
-    http://www.frexx.de/xterm-256-notes/data/256colors2.pl
+default(){
+    get_install_script \
+        http://www.frexx.de/xterm-256-notes/data/colortable16.sh \
+        http://www.frexx.de/xterm-256-notes/data/256colors2.pl
 
-git_config
+    git_config
 
-mac_defaults
-mac_start_daemon
+    mac_defaults
+    mac_start_daemon
+
+    install_files
+}
+
+if test $# -eq 0
+then
+    default
+else
+    "$@"
+fi
