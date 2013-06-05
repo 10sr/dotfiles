@@ -695,12 +695,9 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
+test -n "$SCRIPT" && __my_ps1_script_str="${__my_c5}SCR${__my_cdef} "
 
-__my_ps1_script(){
-    local last=$?
-    test -n "$SCRIPT" && echo "${__my_c5}SCR${__my_cdef} "
-    return $last
-}
+test -n "$SSH_CONNECTION" && __my_ps1_ssh_str="${__my_c5}SSH${__my_cdef} "
 
 __my_ps1_scale(){
     local last=$?
@@ -788,7 +785,7 @@ __my_export_last_status(){
 
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
-${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} $(__my_ps1_script)\$ "
+${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} ${__my_ps1_script_str}${__my_ps1_ssh_str}\$ "
 inbash && PS1=$_ps1_bash
 
 __my_set_screen_title(){
