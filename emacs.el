@@ -969,6 +969,11 @@ If called intearctively, find word at point."
 ;; http://eigyr.dip.jp/gtags.html
 ;; http://cha.la.coocan.jp/doc/gnu_global.html
 
+(let ((d "/opt/local/share/gtags/"))
+  (and (file-directory-p d)
+       (add-to-list 'load-path
+                    d)))
+
 (when (lazy-load-eval 'gtags '(gtags-mode))
   (add-hook 'gtags-mode-hook
             (lambda ()
