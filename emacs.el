@@ -929,7 +929,7 @@ If called intearctively, find word at point."
             (setq truncate-lines nil)))
 (setq Man-notify-method (if window-system
                             'newframe
-                          'pushy))
+                          'aggressive))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
