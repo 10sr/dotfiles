@@ -1830,26 +1830,25 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
-(defun my-grep ()
-  "Use git-grep if avaliable. Only called interactively."
-  (interactive)
+(defun my-rgrep (word)
+  "My recursive grep."
+  (interactive "sWord to search: ")
   (require 'grep)
-  (let ((--grep-command-bak grep-command)
-        (--grep-use-null-device-bak grep-use-null-device))
-    (if (called-interactively-p 'any)
-        (progn
-          (when (eq 0
-                    (shell-command "git rev-parse --git-dir"))
-            (grep-apply-setting 'grep-command
-                                "git --no-pager grep -nH -e ")
-            (grep-apply-setting 'grep-use-null-device
-                                nil))
-          (call-interactively 'grep)
-          (grep-apply-setting 'grep-command
-                              --grep-command-bak)
-          (grep-apply-setting 'grep-use-null-device
-                              --grep-use-null-device-bak))
-      (message "my-grep only allow interactive call."))))
+  (compilation-start (if (eq 0
+                             (shell-command "git rev-parse --git-dir"))
+                         (format "git --no-pager grep -nH -e '%s'"
+                                 word)
+                       (if (executable-find "ag")
+                           (format "ag --nocolor --nogroup --nopager '%s'"
+                                   word)
+                         (if (executable-find "ack")
+                             (format "ack --nocolor --nogroup --nopager '%s'"
+                                     word)
+                           (format "find . -type f -exec grep '%s' {} +"
+                                   word))))
+                     'grep-mode))
+
+(define-key ctl-x-map "s" 'my-rgrep)
 
 (defun make ()
   "Run \"make -k\" in current directory."
