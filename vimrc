@@ -1,4 +1,4 @@
-" load external file
+" "load external file
 " if filereadable(expand('~/.dotfiles/vimrc'))
 "     source ~/.dotfiles/vimrc
 " endif
