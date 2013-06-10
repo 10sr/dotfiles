@@ -405,9 +405,8 @@ ext.add('send-escape', function (ev, arg) {
 }, 'escape');
 
 ext.add("open-hatebu-comment", function (ev, arg) {
-    if (window.loadURI) {
-        loadURI("javascript:location.href='http://b.hatena.ne.jp/entry?mode=more&url='+encodeURIComponent(location.href);");
-    }
+    var url = window.content.location.href.replace(/^[^/]*\/\//, "");
+    window.content.location.href = "http://b.hatena.ne.jp/entry/" + url;
 }, 'hatebu');
 
 // ext.add("focus-on-content", function(){
