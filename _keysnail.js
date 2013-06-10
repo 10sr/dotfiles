@@ -16,8 +16,8 @@
     // this makes all clicks open in new tab.
     return;
     // test if firefox 12
-    if (12 > parseFloat(Cc['@mozilla.org/xre/app-info;1'].getService(Ci.nsIXULAppInfo).version))
-    {
+    if (12 > parseFloat(Cc['@mozilla.org/xre/app-info;1'].
+                        getService(Ci.nsIXULAppInfo).version)) {
         return;
     }
     whereToOpenLink_org = whereToOpenLink;
@@ -25,7 +25,8 @@
          .replace('if (ctrl', 'if (true')
          // .replace('if (ctrl', 'if (ctrl && !shift|| !ctrl && shift')
          // .replace('if (shift ||', 'if (shift && ctrl ||')
-         // .replace('middle && middleUsesTabs', 'middle && middleUsesTabs && !alt')
+         // .replace('middle && middleUsesTabs',
+         //          'middle && middleUsesTabs && !alt')
         );
 })();
 
@@ -33,7 +34,7 @@
 //// sitelocalkeymap
 var local = {};
 plugins.options["site_local_keymap.local_keymap"] = local;
-function fake(k, i) function () { key.feed(k, i); };
+function fake(k, i) function(){ key.feed(k, i); };
 function pass(k, i) [k, fake(k, i)];
 function ignore(k, i) [k, null];
 
@@ -43,7 +44,9 @@ function ignore(k, i) [k, null];
 
 ///////////////////////////////////////////
 //// firefox
-// style.register("#bookmarksPanel > hbox,#history-panel > hbox {display: none !important;} //#urlbar-container{max-width: 500px !important;}");
+// style.register("#bookmarksPanel > hbox,#history-panel > hbox {" +
+//                "display: none !important;}" +
+//                " //#urlbar-container{max-width: 500px !important;}");
 // style.register(                 //not work
 //         <><![CDATA[
 //             input,textarea {
@@ -65,11 +68,12 @@ plugins.options["search-url-list"] = [
     ["wikipedia","http://ja.wikipedia.org/wiki/%q"],
     ["nicovideo.jp","http://www.nicovideo.jp/search/%q"],
     ["alc","http://eow.alc.co.jp/%q/UTF-8/"],
-    ["google map","http://maps.google.co.jp/maps?hl=ja&q=%q&um=1&ie=UTF-8&sa=N&tab=wl"],
+    ["google map",
+     "http://maps.google.co.jp/maps?hl=ja&q=%q&um=1&ie=UTF-8&sa=N&tab=wl"],
     ["weblio","http://www.weblio.jp/content_find?query=%q"],
     ["shoutcast","http://www.shoutcast.com/Internet-Radio/%q"],
-    ["10sr.posterous.com","http://www.google.com/search?q=%q&ie=UTF-8&oe=UTF-8&hl=ja&domains=10sr.posterous.com&sitesearch=10sr.posterous.com"],
-    ["delicious 10sr","http://delicious.com/10sr?addtag=%q&setcount=50&opennew=1"],
+    ["delicious 10sr",
+     "http://delicious.com/10sr?addtag=%q&setcount=50&opennew=1"],
     ["open raw","%r"],
 ];
 
@@ -87,7 +91,7 @@ util.setIntPref("extensions.chaika.server_port.firefox",
                 8800 + Math.floor(Math.random() * 30));
 
 local["^http://127.0.0.1:88"] = [
-    ['k', function (ev, arg) {
+    ['k', function(ev, arg){
         curl = window.content.location.href;
         kurl = curl.replace(/http:.*thread\/(.*\/).*/, "chaika://post/$1");
         window.content.location.href = kurl;
@@ -96,11 +100,12 @@ local["^http://127.0.0.1:88"] = [
 ];
 
 local["^http://w2.p2.2ch.net/p2/read.php"] = [
-    ['k', function (ev, arg) {
+    ['k', function(ev, arg){
         var url = window.content.location.href;
         var pt = /host=(.*?)&bbs=(.*?)&key=(.*?)&ls=/ ;
         var result = url.match(pt);
-        var k = format("chaika://post/http://%s/test/read.cgi/%s/%s/", result[1], result[2], result[3]);
+        var k = format("chaika://post/http://%s/test/read.cgi/%s/%s/",
+                       result[1], result[2], result[3]);
         window.content.location.href = k;
     }
     ]
@@ -121,22 +126,30 @@ local["^http://www.feedly.com/"] = [
     ['?', null],
     ['r', null],
     ['g', null],
-    // ['x', function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("g", true));}],
-    ['l', function (ev, arg) {window.content.location.href = "http://www.feedly.com/home#latest";}],
-    [['t', 'p'], function (ev, arg) {ev.target.dispatchEvent(key.stringToKeyEvent("t", true));}],
-    [['t', 'w'], function (ev, arg) {ext.exec("twitter-client-tweet", arg, ev);}]
+    // ['x', function(ev, arg){
+    //     ev.target.dispatchEvent(key.stringToKeyEvent("g", true));
+    // }],
+    ['l', function(ev, arg){
+        window.content.location.href = "http://www.feedly.com/home#latest";
+    }],
+    [['t', 'p'], function(ev, arg){
+        ev.target.dispatchEvent(key.stringToKeyEvent("t", true));
+    }],
+    [['t', 'w'], function(ev, arg){
+        ext.exec("twitter-client-tweet", arg, ev);
+    }]
 ];
 
 /////////////////////////////////////////
 //nicovideo
 local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
-    ["i", function (ev, arg) { ext.exec("nicoinfo", arg); }],
-    ["p", function (ev, arg) { ext.exec("nicopause", arg); }],
-    // ["o", function (ev, arg) { ext.exec("nicommentvisible", arg); }],
-    ["m", function (ev, arg) { ext.exec("nicomute", arg); }],
-    [".", function (ev, arg) { ext.exec("nicovolumeIncrement", arg); }],
-    [",", function (ev, arg) { ext.exec("nicovolumeDecrement", arg); }],
-    ['f', function (ev, arg) {
+    ["i", function(ev, arg){ ext.exec("nicoinfo", arg); }],
+    ["p", function(ev, arg){ ext.exec("nicopause", arg); }],
+    // ["o", function(ev, arg){ ext.exec("nicommentvisible", arg); }],
+    ["m", function(ev, arg){ ext.exec("nicomute", arg); }],
+    [".", function(ev, arg){ ext.exec("nicovolumeIncrement", arg); }],
+    [",", function(ev, arg){ ext.exec("nicovolumeDecrement", arg); }],
+    ['f', function(ev, arg){
         curl = window.content.location.href;
         kurl = curl.replace(/nicovideo.jp/, "nicovideofire.jp");
         window.content.location.href = kurl;
@@ -147,11 +160,17 @@ local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
 /////////////////////////////////////////
 // tumblr/dashboard
 local["^http://www.tumblr.com/dashboard"] = [
-    //        ["C-<left>", function (ev, arg) {gBrowser.mTabContainer.advanceSelectedTab(-1, true); }],
-    //        ["C-<right>", function (ev, arg) {gBrowser.mTabContainer.advanceSelectedTab(1, true); }],
-    ["<left>", function (ev, arg) { window.content.location.href = "http://www.tumblr.com/dashboard"; }],
+           // ["C-<left>", function(ev, arg){
+           //     gBrowser.mTabContainer.advanceSelectedTab(-1, true);
+           // }],
+           // ["C-<right>", function(ev, arg){
+           //     gBrowser.mTabContainer.advanceSelectedTab(1, true);
+           // }],
+    ["<left>", function(ev, arg){
+        window.content.location.href = "http://www.tumblr.com/dashboard";
+    }],
     ["<right>", null],
-    ["J", function (ev, arg) {
+    ["J", function(ev, arg){
         if (window.loadURI) {
             loadURI("javascript:(function(){b=20;s=100;t=document.getElementById('next_page_link').href.split('/')[5];max=t.substr(0,t.length-5);min=max-s;i=Math.floor(Math.random()*(max-min)+min);u=(i<b)?'http://www.tumblr.com/dashboard':'http://www.tumblr.com/dashboard/2/'+i+'00000';window.content.location.href=u;}())");
         }
@@ -188,7 +207,8 @@ plugins.options["twitter_client.tweet_keymap"] = {
 };
 
 plugins.options["twitter_client.jmp_id"] = "10sr";
-plugins.options["twitter_client.jmp_key"] = "R_c51f889a77cb4b4e993ed868f65083f5";
+plugins.options["twitter_client.jmp_key"] =
+    "R_c51f889a77cb4b4e993ed868f65083f5";
 plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
@@ -202,9 +222,12 @@ plugins.options["twitter_client.use_jmp"] = true;
 
         var organizer = Services.wm.getMostRecentWindow("Places:Organizer");
         if (!organizer) {
-            // No currently open places window, so open one with the specified mode.
+            // No currently open places window,
+            // so open one with the specified mode.
             openDialog("chrome://browser/content/places/places.xul",
-                       "", "chrome,toolbar=yes,dialog=no,resizable", "AllBookmarks");
+                       "",
+                       "chrome,toolbar=yes,dialog=no,resizable",
+                       "AllBookmarks");
             return null;
         } else {
             return organizer;
@@ -232,12 +255,6 @@ ext.add("my-index-html", function(ev, arg){
         openUILinkIn(path, "tab");
     }
 }, "open my index.html");
-
-ext.add('post-to-posterous', function (ev, arg) {
-    if (window.loadURI) {
-        loadURI("javascript:var%20b=document.body;var%20POSTEROUS___bookmarklet_domain='http://posterous.com';var%20d=new%20Date();var%20e=(new%20Date(d.getFullYear(),d.getMonth(),d.getDate())).getTime();if(b&&!document.xmlVersion){void(z=document.createElement('script'));void(z.type='text/javascript');void(z.src='http://posterous.com/javascripts/bookmarklet2.js?'+e);void(b.appendChild(z));}else{}");
-    }
-}, 'post to posterous');
 
 ext.add("echo-tab-info", function(){
     var all = gBrowser.tabs.length;
@@ -271,7 +288,7 @@ ext.add("strong-fullscreen", function(){
     var tabs = document.getElementById("verticaltabs-box");
     if(tabs){
         var pref_key = "extensions.verticaltabs.width";
-        var pref_key_bak = pref_key + "_bak"
+        var pref_key_bak = pref_key + "_bak";
         if(isfullscreen){
             var width_orig = util.getIntPref(pref_key);
             util.setIntPref(pref_key_bak, width_orig);
@@ -287,13 +304,20 @@ ext.add("strong-fullscreen", function(){
 }, "go fullscreen with hiding toolbar and tabbar");
 
 ext.add("bookmark-delicious", function(){
-    f= 'http://www.delicious.com/save?url=' + encodeURIComponent(window.content.location.href) + 
+    f= 'http://www.delicious.com/save?url=' +
+        encodeURIComponent(window.content.location.href) +
         '&title=' + encodeURIComponent(document.title) +
-        '&notes=' + encodeURIComponent('' + (window.getSelection ?
-                                             window.getSelection() : document.getSelection ? 
-                                             document.getSelection() : document.selection.createRange().text)) + '&v=6&';
+        '&notes=' + encodeURIComponent(
+            '' + (window.getSelection ?
+                  window.getSelection() : (
+                      document.getSelection ?
+                          document.getSelection() :
+                          document.selection.createRange().text))) + '&v=6&';
     a = function(){
-        if(! window.open(f + 'noui=1&jump=doclose', 'deliciousuiv6', 'location=1,links=0,scrollbars=0,toolbar=0,width=710,height=660')){
+        if(! window.open(
+            f + 'noui=1&jump=doclose',
+            'deliciousuiv6',
+            'location=1,links=0,scrollbars=0,toolbar=0,width=710,height=660')){
             location.href = f + 'jump=yes';
         }
     };
@@ -305,7 +329,8 @@ ext.add("bookmark-delicious", function(){
 }, "bookmark delicious");
 
 ext.add('view-page-source', function(){
-    window.content.location.href = "view-source:" + window.content.location.href;
+    window.content.location.href = "view-source:" +
+        window.content.location.href;
 }, 'view page source');
 
 ext.add('my-setpref', function(){
@@ -331,11 +356,14 @@ ext.add('my-setpref', function(){
             "extensions.chaika.board.open_single_click":false,
             "extensions.foxage2ch.openThreadInTab":true,
             "extensions.saveimageinfolder.general-duplicatefilenamevalue":1,
-            "extensions.saveimageinfolder.general-fileprefixvalue":"%yyyy%%MM%%dd%-%hh%%mm%%ss%_",
+            "extensions.saveimageinfolder.general-fileprefixvalue":
+            "%yyyy%%MM%%dd%-%hh%%mm%%ss%_",
             "extensions.saveimageinfolder.usecache":true,
             "extensions.tabutils.openTabNext":1,
-            "extensions.tabutils.styles.current":"{\"bold\":true,\"italic\":false,\"underline\":true,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#000000\",\"bgColor\":false,\"bgColorCode\":\"#000000\",\"outline\":false,\"outlineColorCode\":\"#000000\"}",
-            "extensions.tabutils.styles.unread":"{\"bold\":false,\"italic\":false,\"underline\":false,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#CC0000\",\"bgColor\":false,\"bgColorCode\":\"undefined\",\"outline\":false,\"outlineColorCode\":\"undefined\"}",
+            "extensions.tabutils.styles.current":
+            "{\"bold\":true,\"italic\":false,\"underline\":true,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#000000\",\"bgColor\":false,\"bgColorCode\":\"#000000\",\"outline\":false,\"outlineColorCode\":\"#000000\"}",
+            "extensions.tabutils.styles.unread":
+            "{\"bold\":false,\"italic\":false,\"underline\":false,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#CC0000\",\"bgColor\":false,\"bgColorCode\":\"undefined\",\"outline\":false,\"outlineColorCode\":\"undefined\"}",
             "extensions.yass.edgetype":0,
             "extensions.yass.selectedpreset":"red",
             "font.default.x-western":"sans-serif",
@@ -343,7 +371,8 @@ ext.add('my-setpref', function(){
             "general.warnOnAboutConfig":false,
             "keyword.URL":"http://www.bing.com/search?q=",
             "network.dns.disableIPv6":true,
-            "refcontrol.actions":"@DEFAULT=@FORGE www.heartrails.com=@NORMAL www.pixiv.net=@NORMAL",
+            "refcontrol.actions":
+            "@DEFAULT=@FORGE www.heartrails.com=@NORMAL www.pixiv.net=@NORMAL",
             "scrapbook.tabs.open":true
         }
     );
@@ -378,10 +407,12 @@ ext.add('auto-install-plugins', function(ev, arg){
 
     function inst(a){
         if(a.length == 0){
-            display.showPopup("auto-install-plugins", "All installation finished.");
+            display.showPopup("auto-install-plugins",
+                              "All installation finished.");
         }else{
             var url = a.shift();
-            var path = userscript.pluginDir + userscript.directoryDelimiter + url.match(/[^/]+$/)[0];
+            var path = userscript.pluginDir +
+                    userscript.directoryDelimiter + url.match(/[^/]+$/)[0];
             if(plugins.context[path] === undefined){
                 userscript.installPluginFromURL(url, function(){inst(a);});
             }else{
@@ -410,7 +441,7 @@ ext.add("open-hatebu-comment", function (ev, arg) {
 }, 'hatebu');
 
 // ext.add("focus-on-content", function(){
-//     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+//    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
 //     gBrowser.focus();
 //     content.focus();
 // }, "forcus on content");
@@ -431,7 +462,8 @@ ext.add("close-and-next-tab", function (ev, arg) {
 //////////////////////////////////////
 //
 ext.add("restart-firefox-add-menu", function(){
-    const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+    const XUL_NS =
+              "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
     var cmdelm = document.createElementNS(XUL_NS, "command");
     cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs");
@@ -455,8 +487,10 @@ ext.add("copy-url", function () {
     const doc = content.document;
 
     let feeds = [[e.getAttribute("title"), e.getAttribute("href")]
-                 for ([, e] in Iterator(doc.querySelectorAll(['link[type="application/rss+xml"]',
-                                                              'link[type="application/atom+xml"]'])))];
+                 for ([, e] in Iterator(doc.querySelectorAll([
+                     'link[type="application/rss+xml"]',
+                     'link[type="application/atom+xml"]'
+                 ])))];
     var uh = window.content.location.href.replace(/(.*?\/\/[^/]*)(\/.*)?/,"$1");
     for (i = 0; i < feeds.length; i++)
         if ( feeds[i][1].substr(0,1) == "/" ) feeds[i][1] = uh + feeds[i][1];
@@ -513,31 +547,41 @@ ext.add("keysnail-z-menu",function(){
 ///////////////////////////////////
 // search web
 ext.add("query-then-engine", function () {
-    prompt.reader({message : "Search Word?:",
-                   group : "query_word",
-                   completer : completer.matcher.header(share.friendsCache || []),
-                   callback : function (q) {
-                       if (q) {
-                           prompt.selector({ message : "search \"" + q + "\" with?",
-                                             collection : plugins.options["search-url-list"],
-                                             width : [20,80],
-                                             callback : function (i) {
-                                                 getBrowser().selectedTab = getBrowser().addTab(plugins.options["search-url-list"][i][1].replace("%r",q).replace("%q",encodeURIComponent(q)));
-                                             },
-                                           });
-                       };
-                   },
-                   initialInput : content.document.getSelection() || "",
-                  });
+    prompt.reader({
+        message : "Search Word?:",
+        group : "query_word",
+        completer : completer.matcher.header(share.friendsCache || []),
+        callback : function (q) {
+            if (q) {
+                prompt.selector({
+                    message : "search \"" + q + "\" with?",
+                    collection : plugins.options["search-url-list"],
+                    width : [20,80],
+                    callback : function (i) {
+                        getBrowser().selectedTab =
+                            getBrowser().addTab(
+                                plugins.options["search-url-list"][i][1].
+                                    replace("%r",q).replace(
+                                        "%q",encodeURIComponent(q)));
+                    }
+                });
+            };
+        },
+        initialInput : content.document.getSelection() || ""
+    });
 }, "enter search word and then select engine");
 
 /////////////////////////////////////
 // closed tab list
 ext.add("list-closed-tabs", function () {
     const fav = "chrome://mozapps/skin/places/defaultFavicon.png";
-    var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
+    var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(
+        Ci.nsISessionStore
+    );
     var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-    var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
+    var closedTabs = [[tab.image || fav, tab.title, tab.url]
+                      for each (tab in json.decode(ss.getClosedTabData(window)))
+                      ];
 
     if (!closedTabs.length)
         return void display.echoStatusBar("No recently closed tab.", 2000);
@@ -550,17 +594,6 @@ ext.add("list-closed-tabs", function () {
             callback   : function (i) { if (i >= 0) window.undoCloseTab(i); }
         });
 }, "List closed tabs");
-
-// ext.add("echo-closed-tabs", function () {
-//     var ss   = Cc["@mozilla.org/browser/sessionstore;1"].getService(Ci.nsISessionStore);
-//     var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
-//     // var closedTabs = [[tab.image || fav, tab.title, tab.url] for each (tab in json.decode(ss.getClosedTabData(window)))];
-//     var lasttab = json.decode(ss.getClosedTabData(window))[0];
-//     dump = ""
-//     for (var i in lasttab) { dump += lasttab[i] + "\n"; }
-//     confirm(dump);
-
-// }, "List closed tabs");
 
 ///////////////////////////////
 // http://malblue.tumblr.com/post/349001250/tips-japanese-keysnail-github
@@ -593,8 +626,10 @@ ext.add("list-tab-history", function () {
             flags       : [ICON | IGNORE, 0, 0, IGNORE | HIDDEN],
             header      : ["Title", "URL"],
             initialIndex : thIdx,
-            callback    : function(i) { if (i >= 0) gBrowser.webNavigation.gotoIndex(tabHistory[i][3]); }
-        }); 
+            callback    : function(i) {
+                if (i >= 0) gBrowser.webNavigation.gotoIndex(tabHistory[i][3]);
+            }
+        });
 },  'List tab history');
 
 //}}%PRESERVE%
@@ -636,7 +671,9 @@ hook.setHook('Unload', function () {
             return false;
         }
         const ks = win.KeySnail;
-        share.pluginUpdater = ks.getPluginUpdater(share.pluginUpdater.pluginsWithUpdate);
+        share.pluginUpdater = ks.getPluginUpdater(
+            share.pluginUpdater.pluginsWithUpdate
+        );
         ks.setUpPluginUpdaterDelegator();
         return true;
     });
@@ -658,7 +695,8 @@ key.setGlobalKey('C-<up>', function () {
     if (browser.mCurrentTab.previousSibling) {
         browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
     } else {
-        browser.moveTabTo(browser.mCurrentTab, browser.mTabContainer.childNodes.length - 1);
+        browser.moveTabTo(browser.mCurrentTab,
+                          browser.mTabContainer.childNodes.length - 1);
     }
 }, '選択中のタブを右へ');
 
@@ -708,12 +746,6 @@ key.setViewKey('D', function (ev, arg) {
 key.setViewKey('x', function (aEvent, aArg) {
     ext.select(aArg, aEvent);
 }, 'エクステ一覧');
-
-key.setViewKey(['t', 'm'], function (ev, arg) {
-    if (window.loadURI) {
-        loadURI("javascript:window.location='http://api.tweetmeme.com/visit?url='+window.location;");
-    }
-}, 'open with tweetmeme');
 
 key.setViewKey(['t', 'w'], function (ev, arg) {
     ext.exec("twitter-client-tweet", arg, ev);
@@ -821,7 +853,8 @@ key.setViewKey('B', function (ev) {
     if (browser.mCurrentTab.previousSibling) {
         browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
     } else {
-        browser.moveTabTo(browser.mCurrentTab, browser.mTabContainer.childNodes.length - 1);
+        browser.moveTabTo(browser.mCurrentTab,
+                          browser.mTabContainer.childNodes.length - 1);
     }
 }, '選択中のタブを左へ');
 
