@@ -88,7 +88,7 @@ sub set_colors {
 
     setw("window-status-current-bg", "white");
     setw("window-status-current-fg", "black");
-    setw("window-status-current-attr", "bold");
+    #setw("window-status-current-attr", "bold");
 }
 
 sub main {
