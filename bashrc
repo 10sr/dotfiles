@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: use tput
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 

@@ -79,6 +79,7 @@ git_config(){
     # $_gitconfig alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     $_gitconfig alias.addi "add -i"
     $_gitconfig alias.clean-p "!test -z \"\$(git status -s -uno)\""
+    $_gitconfig alias.new "checkout -b"
     #$_gitconfig alias.wc "!git ls-files -z | xargs -0 wc"
     # $_gitconfig push.default "simple"
     if _iswindows; then
@@ -87,9 +88,9 @@ git_config(){
 }
 
 install_files(){
-	src_hilite_src="`pwd`/conf/src-hilite.style"
-	src_hilite_dst="$HOME/.local/share/source-highlight/src_hilite.style"
-	install -D --backup "$src_hilite_src" "$src_hilite_dst"
+    src_hilite_src="`pwd`/conf/src-hilite.style"
+    src_hilite_dst="$HOME/.local/share/source-highlight/src_hilite.style"
+    #install -D --backup "$src_hilite_src" "$src_hilite_dst"
 }
 
 mac_defaults(){
