@@ -1828,7 +1828,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (require 'grep)
   (compilation-start (if (eq 0
                              (shell-command "git rev-parse --git-dir"))
-                         (format "git --no-pager grep -nH -e '%s'"
+                         (format "git --no-pager -c color.grep=false grep -nH -e '%s'"
                                  word)
                        (if (executable-find "ag")
                            (format "ag --nocolor --nogroup --nopager '%s'"

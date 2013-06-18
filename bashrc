@@ -284,6 +284,7 @@ then
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
         || complete -o default -o nospace -F _git g
 fi
+git svn --help >/dev/null 2>&1 && alias gsvn="git svn"
 null type gitmemo && alias m=gitmemo
 
 null type gitmemo && alias m=gitmemo
