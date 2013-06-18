@@ -266,7 +266,6 @@ if iscygwin; then
     null type windate || \
         alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
     alias cygsu="cygstart /cygwinsetup.exe"
-    alias emacs="CYGWIN=tty emacs -nw"
     alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
 fi
 
@@ -318,10 +317,10 @@ s(){
     if git rev-parse --git-dir >/dev/null 2>&1
     then
         git grep -n "$@"
-    elif which ag >/dev/null
+    elif which ag >/dev/null 2>&1
     then
         ag --pager="$PAGER" "$@"
-    elif which ack >/dev/null
+    elif which ack >/dev/null 2>&1
     then
         ack --pager="$PAGER" "$@"
     else
