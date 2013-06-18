@@ -238,11 +238,12 @@ null type pacmatic && {
 
 _pacman_update_mirrorlist_with_reflector(){
     ml=/etc/pacman.d/mirrorlist
-    cmd="$(expr "$(grep reflector $ml)" : '# With: *\(.*\)')"
+    cmd="$(expr "$(grep -m 1 reflector $ml)" : '# With: *\(.*\)')"
     if test -z "$cmd"
     then
-        cmd="reflector --verbose -l 5 --sort rate --save /etc/pacman.d/mirrorlist"
+        cmd="reflector --verbose -l 5 --sort rate --save $ml"
     fi
+    echo "Running $cmd ..." 1>&2
     sudo $cmd
 }
 null type reflector && test -f /etc/pacman.d/mirrorlist && \
