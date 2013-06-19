@@ -715,6 +715,7 @@ found, otherwise returns nil."
       "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
       t)
      (lazy-load-eval 'git-command)
+     (setq git-command-default-options "-c color.ui=always")
      (define-key ctl-x-map "g" 'git-command))
 
 (and (fetch-library
