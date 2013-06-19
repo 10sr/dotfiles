@@ -238,11 +238,12 @@ null type pacmatic && {
 
 _pacman_update_mirrorlist_with_reflector(){
     ml=/etc/pacman.d/mirrorlist
-    cmd="$(expr "$(grep reflector $ml)" : '# With: *\(.*\)')"
+    cmd="$(expr "$(grep -m 1 reflector $ml)" : '# With: *\(.*\)')"
     if test -z "$cmd"
     then
-        cmd="reflector --verbose -l 5 --sort rate --save /etc/pacman.d/mirrorlist"
+        cmd="reflector --verbose -l 5 --sort rate --save $ml"
     fi
+    echo "Running $cmd ..." 1>&2
     sudo $cmd
 }
 null type reflector && test -f /etc/pacman.d/mirrorlist && \
@@ -284,6 +285,7 @@ then
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
         || complete -o default -o nospace -F _git g
 fi
+git svn --help >/dev/null 2>&1 && alias gsvn="git svn"
 null type gitmemo && alias m=gitmemo
 
 null type gitmemo && alias m=gitmemo
