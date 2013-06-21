@@ -715,6 +715,7 @@ found, otherwise returns nil."
       "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
       t)
      (lazy-load-eval 'git-command)
+     (setq git-command-default-options "-c color.ui=always")
      (define-key ctl-x-map "g" 'git-command))
 
 (and (fetch-library
@@ -1828,7 +1829,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (require 'grep)
   (compilation-start (if (eq 0
                              (shell-command "git rev-parse --git-dir"))
-                         (format "git --no-pager grep -nH -e '%s'"
+                         (format "git --no-pager -c color.grep=false grep -nH -e '%s'"
                                  word)
                        (if (executable-find "ag")
                            (format "ag --nocolor --nogroup --nopager '%s'"
