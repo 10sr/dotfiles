@@ -264,9 +264,9 @@ null type port && {
 
 if iscygwin; then
     null type windate || \
-        alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
-    alias cygsu="cygstart /cygwinsetup.exe"
-    alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
+        alias windate="cmd.exe //c 'echo %DATE%-%TIME%'"
+    # alias cygsu="cygstart /cygwinsetup.exe"
+    # alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
 fi
 
 g(){
