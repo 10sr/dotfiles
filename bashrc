@@ -46,13 +46,39 @@ fi
 
 #################################
 
-if echo $PATH | grep "$HOME" >/dev/null 2>&1
+__search_string(){
+    # __search_string str1 str2
+    # return 0 if str2 is found in str1
+    expr "$1" : ".*$2.*" >/dev/null
+}
+
+if ! __search_string "$PATH" "$HOME/.local/bin"
 then
-    PATH="${PATH}:${HOME}/.local/bin"
+    PATH="${PATH}:${HOME}/.local/bin:$HOME/.local/lib/gems/bin"
 fi
 
+if ismsys && ! __search_string "$PATH" /c/mingw/bin
+then
+    PATH="$PATH:/c/mingw/bin:/c/mingw/msys/1.0/bin"
+fi
+
+# # it is not so good
+# # http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
+# # http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
+# without this ENV i cannot run tmux. another way is to use --disable-shared
+# when building tmux
+if ! __search_string "$LD_LIBRARY_PATH" "$HOME/.local/lib"
+then
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
+fi
+
+##################################
 export LANG=ja_JP.UTF-8
 export LC_MESSAGES=C
+
+export TERMCAP="${TERMCAP}:vb="
+ismsys && export HOSTNAME
+export ENV=~/.shrc
 
 if false iswindows
 then
@@ -88,7 +114,20 @@ then
     TERM=screen-256color
 fi
 
-test -z "$TMP" && export TMP=/tmp/${USER}-tmp
+if test -z "$TMP"
+then
+    if test -n "$TMPDIR"
+    then
+        export TMP=$TMPDIR
+    elif test -n "$TEMP"
+    then
+        export TMP="$TEMP"
+    else
+        export TMP=/tmp
+    fi
+fi
+export TMP="${TMP}/${USER}-tmp"
+export TEMP="$TMP"
 mkdir -p "$TMP"
 
 ! iswindows && null type stty && {
@@ -269,10 +308,9 @@ null type port && {
 
 if iscygwin; then
     null type windate || \
-        alias windate="/c/Windows/System32/cmd.exe //c 'echo %DATE%-%TIME%'"
-    alias cygsu="cygstart /cygwinsetup.exe"
-    alias emacs="CYGWIN=tty emacs -nw"
-    alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
+        alias windate="cmd.exe //c 'echo %DATE%-%TIME%'"
+    # alias cygsu="cygstart /cygwinsetup.exe"
+    # alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
 fi
 
 g(){
@@ -324,10 +362,10 @@ s(){
     if git rev-parse --git-dir >/dev/null 2>&1
     then
         git grep -n "$@"
-    elif which ag >/dev/null
+    elif which ag >/dev/null 2>&1
     then
         ag --pager="$PAGER" "$@"
-    elif which ack >/dev/null
+    elif which ack >/dev/null 2>&1
     then
         ack --pager="$PAGER" "$@"
     else
