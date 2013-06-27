@@ -51,6 +51,9 @@ then
     PATH="${PATH}:${HOME}/.local/bin"
 fi
 
+export LANG=ja_JP.UTF-8
+export LC_MESSAGES=C
+
 if false iswindows
 then
     export PAGER='tr -d \\r | less'
@@ -71,12 +74,13 @@ then
 else
     export EDITOR=vi
 fi
-export LANG=ja_JP.UTF-8
-export LC_MESSAGES=C
 # export CDPATH=".:~"
 export VISUAL="$EDITOR"
+
 export GIT_PAGER="less -F"
 export GIT_EDITOR="$EDITOR"
+export GIT_MERGE_AUTOEDIT=no
+
 if test -n "$TMUX" && \
     echo $TERM | grep screen >/dev/null 2>&1 && \
     tmux display -p '#{client_termname}' | grep 256color >/dev/null 2>&1
