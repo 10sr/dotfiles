@@ -547,7 +547,11 @@ tb(){
 }
 
 mkcd(){
-    if test -d "$1"
+    if test -z "$1"
+    then
+        echo "mkcd: usage: mkcd <dir>"
+        return 1
+    elif test -d "$1"
     then
         echo "Dir \"$1\" already exists."
     else
@@ -555,6 +559,12 @@ mkcd(){
         echo "Dir \"$1\" created."
     fi
     cd "$1"
+}
+
+mkcdd(){
+    # make and change date directory
+    _d=`date +%Y%m%d-%H%M%S`
+    mkcd "$_d"
 }
 
 if test -n "$TMUX" && null type reattach-to-user-namespace
