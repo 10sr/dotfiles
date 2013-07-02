@@ -354,23 +354,28 @@ clk(){
 }
 
 s(){
-    if test $# -eq 0
-    then
-        echo "No search word given." 1>&2
-        return 1
-    fi
+    # if test $# -eq 0
+    # then
+    #     echo "No search word given." 1>&2
+    #     return 1
+    # fi
 
     if git rev-parse --git-dir >/dev/null 2>&1
     then
+        echo ">> Using git-grep" 1>&2
         git grep -n "$@"
     elif which ag >/dev/null 2>&1
     then
+        echo ">> Using ag" 1>&2
         ag --pager="$PAGER" "$@"
     elif which ack >/dev/null 2>&1
     then
+        echo ">> Using ack" 1>&2
         ack --pager="$PAGER" "$@"
     else
-        grep -nH --exclude='.svn/*' --exclude='.git/*' "$@" -r . | $PAGER
+        echo ">> Using grep" 1>&2
+        grep -nH --color=always --exclude='.svn/*' --exclude='.git/*' "$@" -r . \
+            | $PAGER
         # echo "No search command found. Use grep." 2>&1
         # return 127
     fi
