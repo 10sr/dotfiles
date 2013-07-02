@@ -238,6 +238,7 @@ null type htags && alias htags="htags --xhtml --symbol --line-number \
 --frame --alphabet --verbose"
 null type aunpack && alias au=aunpack
 null type lv && alias lv="lv|less"
+null type rsync && alias rs="rsync --progress --itemize-changes --compress"
 
 isdarwin && alias updatedb="LC_ALL=C updatedb"
 # do not use locate installed by macports
