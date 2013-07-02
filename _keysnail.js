@@ -113,7 +113,7 @@ local["^http://w2.p2.2ch.net/p2/read.php"] = [
 
 /////////////////////////////////////////
 // feedly
-local["^http://www.feedly.com/"] = [
+local["^http://(www|cloud)\.feedly\.com/"] = [
     ['d', null],
     ['j', null],
     ['k', null],
@@ -130,7 +130,12 @@ local["^http://www.feedly.com/"] = [
     //     ev.target.dispatchEvent(key.stringToKeyEvent("g", true));
     // }],
     ['l', function(ev, arg){
-        window.content.location.href = "http://www.feedly.com/home#latest";
+        var host = window.content.location.host;
+        if (host === "cloud.feedly.com") {
+            window.content.location.href = "http://" + host + "/#latest";
+        } else if (host === "www.feedly.com") {
+            window.content.location.href = "http://" + host + "/home#latest";
+        }
     }],
     [['t', 'p'], function(ev, arg){
         ev.target.dispatchEvent(key.stringToKeyEvent("t", true));
