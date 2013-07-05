@@ -69,7 +69,7 @@ fi
 # when building tmux
 if ! __search_string "$LD_LIBRARY_PATH" "$HOME/.local/lib"
 then
-    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
 fi
 
 ##################################
