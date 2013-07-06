@@ -69,7 +69,7 @@ fi
 # when building tmux
 if ! __search_string "$LD_LIBRARY_PATH" "$HOME/.local/lib"
 then
-    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
 fi
 
 ##################################
@@ -223,7 +223,7 @@ null type paco && alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
 null type python3 && alias py3=python3
 null type python2 && alias py2=python2
-alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
+alias _reloadrc="exec \"$SHELL\""
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
@@ -374,6 +374,11 @@ s(){
         ack --pager="$PAGER" "$@"
     else
         echo ">> Using grep" 1>&2
+        if test $# -eq 0
+        then
+            echo "No search word given." 1>&2
+            return 1
+        fi
         grep -nH --color=always --exclude='.svn/*' --exclude='.git/*' "$@" -r . \
             | $PAGER
         # echo "No search command found. Use grep." 2>&1
