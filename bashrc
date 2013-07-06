@@ -223,7 +223,7 @@ null type paco && alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
 null type python3 && alias py3=python3
 null type python2 && alias py2=python2
-alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
+alias _reloadrc="exec \"$SHELL\""
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
