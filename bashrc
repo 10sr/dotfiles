@@ -69,7 +69,7 @@ fi
 # when building tmux
 if ! __search_string "$LD_LIBRARY_PATH" "$HOME/.local/lib"
 then
-    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
 fi
 
 ##################################
@@ -374,6 +374,11 @@ s(){
         ack --pager="$PAGER" "$@"
     else
         echo ">> Using grep" 1>&2
+        if test $# -eq 0
+        then
+            echo "No search word given." 1>&2
+            return 1
+        fi
         grep -nH --color=always --exclude='.svn/*' --exclude='.git/*' "$@" -r . \
             | $PAGER
         # echo "No search command found. Use grep." 2>&1

@@ -683,7 +683,13 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
-;; todo: reg major mode when set explicitly
+(and (fetch-library
+      "https://raw.github.com/10sr/emacs-lisp/master/remember-major-modes-mode.el")
+     (require 'remember-major-modes-mode nil t)
+     (remember-major-modes-mode 1)
+     (add-hook 'after-change-major-mode-hook
+               'remember-major-modes-remember))
+
 
 ;; Detect file type from shebang and set major-mode.
 (add-to-list 'interpreter-mode-alist
