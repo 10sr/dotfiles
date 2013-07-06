@@ -473,18 +473,30 @@ input(){
     echo $foo
 }
 
-tmux(){
+# tmux(){
+#     if test $# -eq 0
+#     then
+#         (cd ~; command tmux start;)
+#         if command tmux has -t main
+#         then
+#             command tmux attach -t main
+#         else
+#             (cd ~; command tmux new -s main;)
+#         fi
+#     else
+#         command tmux "$@"
+#     fi
+# }
+tx(){
     if test $# -eq 0
     then
-        (cd ~; command tmux start;)
-        if command tmux has -t main
-        then
-            command tmux attach -t main
-        else
-            (cd ~; command tmux new -s main;)
-        fi
+        tmux ls
+        echo "tx <session> to attach."
+    elif tmux has -t "$1"
+    then
+        tmux attach -t "$1"
     else
-        command tmux "$@"
+        tmux new -s "$1"
     fi
 }
 
