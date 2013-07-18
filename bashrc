@@ -223,7 +223,7 @@ null type paco && alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
 null type python3 && alias py3=python3
 null type python2 && alias py2=python2
-alias _reloadrc="test -f ~/.bashrc && source ~/.bashrc"
+alias _reloadrc="exec \"$SHELL\""
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
@@ -478,18 +478,30 @@ input(){
     echo $foo
 }
 
-tmux(){
+# tmux(){
+#     if test $# -eq 0
+#     then
+#         (cd ~; command tmux start;)
+#         if command tmux has -t main
+#         then
+#             command tmux attach -t main
+#         else
+#             (cd ~; command tmux new -s main;)
+#         fi
+#     else
+#         command tmux "$@"
+#     fi
+# }
+tx(){
     if test $# -eq 0
     then
-        (cd ~; command tmux start;)
-        if command tmux has -t main
-        then
-            command tmux attach -t main
-        else
-            (cd ~; command tmux new -s main;)
-        fi
+        tmux ls
+        echo "tx <session> to attach."
+    elif tmux has -t "$1"
+    then
+        tmux attach -t "$1"
     else
-        command tmux "$@"
+        tmux new -s "$1"
     fi
 }
 
