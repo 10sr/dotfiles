@@ -684,7 +684,8 @@ found, otherwise returns nil."
 ;; some modes and hooks
 
 (and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/remember-major-modes-mode.el")
+      "https://raw.github.com/10sr/emacs-lisp/master/remember-major-modes-mode.el"
+      t)
      (require 'remember-major-modes-mode nil t)
      (remember-major-modes-mode 1)
      )
