@@ -1361,10 +1361,10 @@ If called intearctively, find word at point."
     (my-x-open (dired-get-filename t t)))
 
   (if (eq window-system 'mac)
-      (setq dired-listing-switches "-lhFG")
-    (setq dired-listing-switches "-lhFG --time-style=long-iso")
+      (setq dired-listing-switches "-lhF")
+    (setq dired-listing-switches "-lhF --time-style=long-iso")
     )
-  (setq dired-listing-switches "-lhFG")
+  (setq dired-listing-switches "-lhF")
 
   (put 'dired-find-alternate-file 'disabled nil)
   ;; when using dired-find-alternate-file
@@ -1430,7 +1430,7 @@ If called intearctively, find word at point."
         "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
         t)
        (lazy-load-eval 'dired-list-all-mode)
-       (setq dired-listing-switches "-lhFG")
+       (setq dired-listing-switches "-lhF")
        (add-hook 'dired-mode-hook
                  (lambda ()
                    (define-key dired-mode-map "a" 'dired-list-all-mode)
