@@ -46,18 +46,18 @@ fi
 
 #################################
 
-__search_string(){
-    # __search_string str1 str2
+__match(){
+    # __match str1 str2
     # return 0 if str2 is found in str1
     expr "$1" : ".*$2.*" >/dev/null
 }
 
-if ! __search_string "$PATH" "$HOME/.local/bin"
+if ! __match "$PATH" "$HOME/.local/bin"
 then
     PATH="${PATH}:${HOME}/.local/bin:$HOME/.local/lib/gems/bin"
 fi
 
-if ismsys && ! __search_string "$PATH" /c/mingw/bin
+if ismsys && ! __match "$PATH" /c/mingw/bin
 then
     PATH="$PATH:/c/mingw/bin:/c/mingw/msys/1.0/bin"
 fi
@@ -67,7 +67,7 @@ fi
 # # http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
 # without this ENV i cannot run tmux. another way is to use --disable-shared
 # when building tmux
-if ! __search_string "$LD_LIBRARY_PATH" "$HOME/.local/lib"
+if ! __match "$LD_LIBRARY_PATH" "$HOME/.local/lib"
 then
     export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
 fi
@@ -126,7 +126,7 @@ then
         export TMP=/tmp
     fi
 fi
-export TMP="${TMP}/${USER}-tmp"
+__match "$TMP" "${USER}-tmp" >/dev/null || export TMP="${TMP}/${USER}-tmp"
 export TEMP="$TMP"
 mkdir -p "$TMP"
 
