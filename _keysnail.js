@@ -257,7 +257,7 @@ ext.add("my-index-html", function(ev, arg){
     file = ".index.html";
     if (homepath) {
         path = "file://" + homepath + "/" + file;
-        openUILinkIn(path, "tab");
+        window.openUILinkIn(path, "tab");
     }
 }, "open my index.html");
 
@@ -487,30 +487,56 @@ ext.add("restart-firefox-add-menu", function(){
 }, "add restart firefox menu");
 
 /////////////////////////////////////////
-// copy feed url
-ext.add("copy-url", function () {
-    const doc = content.document;
+// feed url
+(function(){
+    function getFeeds(){
+        const doc = content.document;
 
-    let feeds = [[e.getAttribute("title"), e.getAttribute("href")]
-                 for ([, e] in Iterator(doc.querySelectorAll([
-                     'link[type="application/rss+xml"]',
-                     'link[type="application/atom+xml"]'
-                 ])))];
-    var uh = window.content.location.href.replace(/(.*?\/\/[^/]*)(\/.*)?/,"$1");
-    for (i = 0; i < feeds.length; i++)
-        if ( feeds[i][1].substr(0,1) == "/" ) feeds[i][1] = uh + feeds[i][1];
-    feeds.unshift([window.content.document.title,window.content.location.href]);
-    prompt.selector(
-        {
-            message    : "Select Feed",
-            collection : feeds,
-            callback   : function (i) {
-                if (i >= 0)
-                    command.setClipboardText(feeds[i][1]);
+        var feeds = [[e.getAttribute("title"), e.getAttribute("href")]
+                     for ([, e] in Iterator(doc.querySelectorAll([
+                         'link[type="application/rss+xml"]',
+                         'link[type="application/atom+xml"]'
+                     ])))];
+        var uh = window.content.location.href.replace(/(.*?\/\/[^/]*)(\/.*)?/,
+                                                      "$1");
+        for (i = 0; i < feeds.length; i++)
+            if ( feeds[i][1].substr(0,1) == "/" ) feeds[i][1] = uh + feeds[i][1];
+        feeds.unshift([window.content.document.title,
+                       window.content.location.href]);
+
+        return feeds;
+    };
+
+    ext.add("copy-feed-url", function () {
+        var feeds = getFeeds();
+        prompt.selector(
+            {
+                message    : "Select Feed",
+                collection : feeds,
+                callback   : function (i) {
+                    if (i >= 0) {
+                        command.setClipboardText(feeds[i][1]);
+                    }
+                }
             }
-        }
-    );
-}, "Copy url or feed url of current page");
+        );
+    }, "Copy url or feed url of current page");
+
+    ext.add("open-feed", function () {
+        var feeds = getFeeds();
+        prompt.selector(
+            {
+                message    : "Select Feed",
+                collection : feeds,
+                callback   : function (i) {
+                    if (i >= 0) {
+                        window.openUILinkIn(feeds[i][1], "tab");
+                    }
+                }
+            }
+        );
+    }, "Copy url or feed url of current page");
+})();
 
 ///////////////////////////////////////
 // keysnail z menu
