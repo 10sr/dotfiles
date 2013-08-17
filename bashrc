@@ -730,6 +730,37 @@ winln(){
     fi
 }
 
+
+
+#################################################
+## pastebin services
+## https://wiki.archlinux.org/index.php/List_of_Applications/Internet#Pastebin_clients
+
+sprunge(){
+    # http://sprunge.us
+    if test -z "$1"
+    then
+        curl -F 'sprunge=<-' http://sprunge.us
+    else
+        curl http://sprunge.us/$1
+    fi
+}
+
+dpaste(){
+    # http://dpaste.de
+    if test -z "$1"
+    then
+        curl -F 'content=<-' https://dpaste.de/api/
+        echo
+    else
+        curl https://dpaste.de/$1/raw/
+    fi
+}
+
+
+######################################
+## Prompt
+
 __my_moc_state(){
     type mocp >/dev/null 2>&1 || return
     test "`mocp -Q %state 2>/dev/null`" = PLAY || return
