@@ -35,7 +35,7 @@ export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
 #_python_pkg_conf="/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/pkgconfig"
 export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$_python_pkg_conf"
 
-export MANPATH="$MANPATH:$HOME/.local/share/man"
+#export MANPATH="`manpath`:$HOME/.local/share/man"
 
 # in my environment powerdown does not work
 type setterm >/dev/null 2>&1 && setterm -blank 30 -powersave on # -powerdown 10
