@@ -54,6 +54,13 @@ function ignore(k, i) [k, null];
 //             }
 //         ]]></>.toString()
 // );
+style.register(
+    '@-moz-document url-prefix(\"http://www.tumblr.com/\") { #pagination {' +
+        'position: fixed;' +
+        'bottom: 50px;' +
+        'right: 100px;' +
+        'padding-right: 0px !important' +
+        '} }' , style.XHTML);
 
 ///////////////////////////////////
 //search engine
@@ -74,7 +81,7 @@ plugins.options["search-url-list"] = [
     ["shoutcast","http://www.shoutcast.com/Internet-Radio/%q"],
     ["delicious 10sr",
      "http://delicious.com/10sr?addtag=%q&setcount=50&opennew=1"],
-    ["open raw","%r"],
+    ["open raw","%r"]
 ];
 
 plugins.options["my-keysnail-bookmarks"] = [
