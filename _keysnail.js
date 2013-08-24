@@ -26,24 +26,31 @@ ext.add("open-bookmarks-in-new-tab", function(){
     // *after* initialization of firefox finished successfully and I assured
     // that new tabs open as I expect when clicking bookmarks, for example,
     // when I try to tweet using the twitter keysnail plugin, with error
-    // message saying like "whereToOpenLink is not defined.".
+    // message saying "whereToOpenLink is undefined.".
 
     // if no modifier key pressed open in new tab.
-    // var whereToOpenLink_org = window.whereToOpenLink;
-    // eval('window.whereToOpenLink = ' + whereToOpenLink_org.toString()
-    //      .replace('{',
-    //               '{ if(!e || ' +
-    //               '(!e.ctrlKey && !e.shiftKey && !e.metaKey && ' +
-    //               '!(e.altKKey && !ignoreAlt))) ' +
-    //               'return "tab";')
-    //     );
+    try {
+        var whereToOpenLink_org = new String(window.whereToOpenLink.toString());
+        window.whereToOpenLink = eval(
+            "(" +
+                whereToOpenLink_org.replace(
+                    '{',
+                    '{ if(!e || ' +
+                        '(!e.ctrlKey && !e.shiftKey && !e.metaKey && ' +
+                        '!(e.altKKey && !ignoreAlt))) ' +
+                        'return "tab";'
+                ) +
+                ")"
+        );
+    } catch (e if e instanceof TypeError) {
+        return;
+    }
 
-
-    // This is useless because reload opens new tab.
+    // This is useless because this makes reload open new tab.
     // window.whereToOpenLink = function(e, ib, ia){ return "tab"; };
 
 }, "open in new tab");
-ext.exec("open-bookmarks-in-new-tab");
+// ext.exec("open-bookmarks-in-new-tab");
 
 //////////////////////////////////////
 //// sitelocalkeymap
