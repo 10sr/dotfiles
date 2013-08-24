@@ -12,23 +12,58 @@
 // command.kill.textLengthMax = 8192;
 
 // Original is at https://gist.github.com/Griever/62715
-(function(){
+ext.add("open-bookmark-in-new-tab", function(){
     // this makes all clicks open in new tab.
-    return;
+    // return;
     // test if firefox 12
     if (12 > parseFloat(Cc['@mozilla.org/xre/app-info;1'].
                         getService(Ci.nsIXULAppInfo).version)) {
         return;
     }
-    whereToOpenLink_org = whereToOpenLink;
-    eval('whereToOpenLink = ' + whereToOpenLink_org.toString()
-         .replace('if (ctrl', 'if (true')
+    window.whereToOpenLink = function(e, ib, ia){ return "tab"; };
+    // var whereToOpenLink_org = window.whereToOpenLink;
+    // eval('window.whereToOpenLink = ' + whereToOpenLink_org.toString()
+    //      .replace('if (ctrl', 'if (true')
+    //     );
          // .replace('if (ctrl', 'if (ctrl && !shift|| !ctrl && shift')
          // .replace('if (shift ||', 'if (shift && ctrl ||')
          // .replace('middle && middleUsesTabs',
          //          'middle && middleUsesTabs && !alt')
-        );
-})();
+}, "open in new tab");
+ext.exec("open-bookmark-in-new-tab");
+
+// function whereToOpenLink( e, ignoreButton, ignoreAlt )
+// {
+//   // This method must treat a null event like a left click without modifier keys (i.e.
+//   // e = { shiftKey:false, ctrlKey:false, metaKey:false, altKey:false, button:0 })
+//   // for compatibility purposes.
+//   if (!e)
+//     return "current";
+
+//   var shift = e.shiftKey;
+//   var ctrl =  e.ctrlKey;
+//   var meta =  e.metaKey;
+//   var alt  =  e.altKey && !ignoreAlt;
+
+//   // ignoreButton allows "middle-click paste" to use function without always opening in a new window.
+//   var middle = !ignoreButton && e.button == 1;
+//   var middleUsesTabs = getBoolPref("browser.tabs.opentabfor.middleclick", true);
+
+//   // Don't do anything special with right-mouse clicks.  They're probably clicks on context menu items.
+
+// //@line 152 "/builds/slave/rel-m-rel-osx64_bld-0000000000/build/browser/base/content/utilityOverlay.js"
+//   if (meta || (middle && middleUsesTabs))
+// //@line 156 "/builds/slave/rel-m-rel-osx64_bld-0000000000/build/browser/base/content/utilityOverlay.js"
+//     return shift ? "tabshifted" : "tab";
+
+//   if (alt && getBoolPref("browser.altClickSave", false))
+//     return "save";
+
+//   if (shift || (middle && !middleUsesTabs))
+//     return "window";
+
+//   return "current";
+// }
 
 //////////////////////////////////////
 //// sitelocalkeymap
