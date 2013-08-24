@@ -30,6 +30,29 @@
         );
 })();
 
+(function(){
+    function evalCode(s){
+        window.loadURI("javascript:" + s);
+    }
+
+    function find(s){
+        evalCode("Nodes.findBoxText.value='" + encodeURIComponent(s) + "';" +
+                 "FindBox.find();");
+        // evalCode("FindBox.show()");
+    }
+
+    function readFind(){
+        prompt.reader({
+            message : "Search word?",
+            callback : function(s){
+                find(s);
+            }
+        });
+    }
+
+    ext.add("chaika-find", readFind, "chaika find");
+})();
+
 //////////////////////////////////////
 //// sitelocalkeymap
 var local = {};
