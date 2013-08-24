@@ -20,16 +20,24 @@ ext.add("open-bookmarks-in-new-tab", function(){
                         getService(Ci.nsIXULAppInfo).version)) {
         return;
     }
-    // window.whereToOpenLink = function(e, ib, ia){ return "tab"; };
+    window.whereToOpenLink = function(e, ib, ia){ return "tab"; };
+
+
+    // I cannot fully understand what happen but keysnail emit error
+    // *after* initialization of firefox finished successfully and I assured
+    // that new tabs open as I expect when clicking bookmarks, for example,
+    // when I try to tweet using the twitter keysnail plugin, with error
+    // message saying like "whereToOpenLink is not defined.".
+
     // if no modifier key pressed open in new tab.
-    var whereToOpenLink_org = window.whereToOpenLink;
-    eval('window.whereToOpenLink = ' + whereToOpenLink_org.toString()
-         .replace('{',
-                  '{ if(!e || ' +
-                  '(!e.ctrlKey && !e.shiftKey && !e.metaKey && ' +
-                  '!(e.altKKey && !ignoreAlt))) ' +
-                  'return "tab";')
-        );
+    // var whereToOpenLink_org = window.whereToOpenLink;
+    // eval('window.whereToOpenLink = ' + whereToOpenLink_org.toString()
+    //      .replace('{',
+    //               '{ if(!e || ' +
+    //               '(!e.ctrlKey && !e.shiftKey && !e.metaKey && ' +
+    //               '!(e.altKKey && !ignoreAlt))) ' +
+    //               'return "tab";')
+    //     );
 }, "open in new tab");
 ext.exec("open-bookmarks-in-new-tab");
 
