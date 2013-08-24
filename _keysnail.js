@@ -20,7 +20,6 @@ ext.add("open-bookmarks-in-new-tab", function(){
                         getService(Ci.nsIXULAppInfo).version)) {
         return;
     }
-    window.whereToOpenLink = function(e, ib, ia){ return "tab"; };
 
 
     // I cannot fully understand what happen but keysnail emit error
@@ -38,6 +37,11 @@ ext.add("open-bookmarks-in-new-tab", function(){
     //               '!(e.altKKey && !ignoreAlt))) ' +
     //               'return "tab";')
     //     );
+
+
+    // This is useless because reload opens new tab.
+    // window.whereToOpenLink = function(e, ib, ia){ return "tab"; };
+
 }, "open in new tab");
 ext.exec("open-bookmarks-in-new-tab");
 
