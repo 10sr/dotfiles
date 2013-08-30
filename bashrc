@@ -368,15 +368,19 @@ s(){
         ack --pager="$PAGER" "$@"
     else
         echo \
-            ">> grep -nH --color=always" \
-            "--exclude=\'.svn/\*\' --exclude=\'.git/\*\'" \
-            "$@" "-r ." 1>&2
+            ">> find . " \
+            "-path '*/.git' -prune -o" \
+            "-path '*/.svn' -prune -o" \
+            "-type f -exec grep -nH -e --color=always $@ {} +" 1>&2
         if test $# -eq 0
         then
             echo "No search word given." 1>&2
             return 1
         fi
-        grep -nH --color=always --exclude='.svn/*' --exclude='.git/*' "$@" -r . \
+        find . \
+            -path '*/.git' -prune -o \
+            -path '*/.svn' -prune -o \
+            -type -f -exec grep -nH -e --color=always "$@" {} + \
             | $PAGER
     fi
 }
