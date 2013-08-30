@@ -1828,23 +1828,54 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(defun my-rgrep-gitgrep (word)
+  "Recursive grep with git-grep"
+  (interactive "sgit-grep: Word to search: ")
+  (require 'grep)
+  (compilation-start
+   (format "git --no-pager -c color.grep=false grep -nH -e '%s'"
+           word)
+   'grep-mode))
+
+(defun my-rgrep-ag (word)
+  "Recursive grep with ag"
+  (interactive "sag: Word to search: ")
+  (require 'grep)
+  (compilation-start (format "ag --nocolor --nogroup --nopager '%s'"
+                            word)
+                    'grep-mode))
+
+(defun my-rgrep-ack (word)
+  "Recursive grep with ack"
+  (interactive "sack: Word to search: ")
+  (require 'grep)
+  (compilation-start (format "ack --nocolor --nogroup --nopager '%s'"
+                            word)
+                    'grep-mode))
+
+(defun my-rgrep-grep (word)
+  "Recursive grep with grep"
+  (interactive "sgrep: Word to search: ")
+  (require 'grep)
+  (compilation-start
+   (format (concat "find . "
+                   "-path '*/.git' -prune -o "
+                   "-path '*/.svn' -prune -o "
+                   "-type f -exec grep -nH -e '%s' {} +")
+           word)
+   'grep-mode))
+
 (defun my-rgrep (word)
   "My recursive grep."
   (interactive "sWord to search: ")
-  (require 'grep)
-  (compilation-start (if (eq 0
-                             (shell-command "git rev-parse --git-dir"))
-                         (format "git --no-pager -c color.grep=false grep -nH -e '%s'"
-                                 word)
-                       (if (executable-find "ag")
-                           (format "ag --nocolor --nogroup --nopager '%s'"
-                                   word)
-                         (if (executable-find "ack")
-                             (format "ack --nocolor --nogroup --nopager '%s'"
-                                     word)
-                           (format "find . -type f -exec grep '%s' {} +"
-                                   word))))
-                     'grep-mode))
+  (if (eq 0
+          (shell-command "git rev-parse --git-dir"))
+      (my-rgrep-gitgrep word)
+    (if (executable-find "ag")
+        (my-rgrep-ag word)
+      (if (executable-find "ack")
+          (my-rgrep-ack word)
+        (my-rgrep-grep word)))))
 
 (define-key ctl-x-map "s" 'my-rgrep)
 
