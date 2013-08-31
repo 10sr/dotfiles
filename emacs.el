@@ -79,12 +79,21 @@ otherwise the path where the library installed."
                t)
   (add-to-list 'package-archives
                '("marmalade" . "http://marmalade-repo.org/packages/"))
-  ;; (package-initialize)
+  (package-initialize)
   ;; (package-refresh-contents)
   )
 
-;; http://qiita.com/items/5f1cd86e2522fd3384a0
-;; http://blog.64p.org/entry/2013/05/01/233306
+(defun my-auto-install-package ()
+  "Install packages semi-automatically."
+  (interactive)
+  (mapc (lambda (pkg)
+          (or (package-installed-p pkg)
+              (locate-library (symbol-name pkg))
+              (package-install pkg)))
+        '(
+          markdown-mode
+          ;; ack
+          )))
 
 
 ;; (lazy-load-eval 'sudoku)
