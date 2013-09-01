@@ -914,6 +914,6 @@ __my_set_title(){
             echo -n -e "\033]0;${title}\007"
             ;;
     esac
-        }
-        PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
+}
+PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
 __my_set_screen_title \$(basename \"\$PWD\")/"
