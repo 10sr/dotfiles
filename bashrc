@@ -810,7 +810,10 @@ test -n "$SSH_CONNECTION" && __my_ps1_ssh_str="${__my_c5}SSH${__my_cdef} "
 
 __my_ps1_scale(){
     local last=$?
-    printf "${LINES}x${COLUMNS}"
+    if null type stty && ! iswindows
+    then
+        stty size | tr -d $'\n' | tr " " x
+    fi
     return $last
 }
 
