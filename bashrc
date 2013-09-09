@@ -835,14 +835,14 @@ for f in /usr/share/git/git-prompt.sh \
     /opt/local/share/git-core/git-prompt.sh \
     /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
-    test -r $f && . $f && break
+    test -r "$f" && . "$f" && break
 done
 GIT_PS1_SHOWDIRTYSTATE=t
 GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
     local last=$?
     null type __git_ps1 || return $last
-    null __gitdir || return $last
+    null git rev-parse --git-dir >/dev/null 2>&1 || return $last
     __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
     return $last
 }
