@@ -888,12 +888,14 @@ then
     __my_cdef="\[\e[0m\]"
 fi
 
-export _LAST_STATUS=$?
-__my_export_last_status(){
-    export _LAST_STATUS=$?
-    echo $_LAST_STATUS
-    return $_LAST_STATUS
-}
+# export _LAST_STATUS=a
+# __my_export_last_status(){
+#     local last=$?
+#     echo $last
+#     export _LAST_STATUS=$last
+#     echo $_LAST_STATUS
+#     return $last
+# }
 
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
