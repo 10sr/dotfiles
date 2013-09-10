@@ -1,6 +1,14 @@
+#!/bin/sh
+
 test -n "$DISPLAY" || return
 test -z "$ROXTERM_PID" || return
 test -z "$SSH_CONNECTION" || return
+
+case "$TERM" in
+    xterm*) return;;
+esac
+
+unset TMUX
 
 setxkbmap -layout "jp"
 test "`hostname`" == "arch-aspireone" &&
