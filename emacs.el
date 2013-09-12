@@ -92,6 +92,7 @@ otherwise the path where the library installed."
               (package-install pkg)))
         '(
           markdown-mode
+          yaml-mode
           ;; ack
           )))
 
