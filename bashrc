@@ -397,6 +397,31 @@ man(){
         man "$@"
 }
 
+dt(){
+    # dt <name> [<command ...>]
+    if test -z "$1"
+    then
+        echo "dt: usage: dt <name> [<command ...>]" 1>&2
+        return 1
+    fi
+    soc_name="$1"
+    shift
+    if test -S "$soc_name"
+    then
+        dtach -a "$soc_name"
+    elif test -e "$soc_name"
+    then
+        echo "dt: File named $soc_name already exists."
+        return 1
+    elif test -z "$1"
+    then
+        echo "dt: Socket named $soc_name not exists and no command specified."
+        return 1
+    else
+        dtach -c "$soc_name" -e ^^ "$@"
+    fi
+}
+
 scr(){
     test -n "$1" && pf="${1}-"
     local _tformat="%Y%m%d-%H%M%S%z"
