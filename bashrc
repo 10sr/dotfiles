@@ -103,7 +103,7 @@ fi
 # export CDPATH=".:~"
 export VISUAL="$EDITOR"
 
-export GIT_PAGER="less -F"
+export GIT_PAGER="less -FS"
 export GIT_EDITOR="$EDITOR"
 export GIT_MERGE_AUTOEDIT=no
 
