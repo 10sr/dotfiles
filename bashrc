@@ -397,38 +397,6 @@ man(){
         man "$@"
 }
 
-dt(){
-    # dt <name> [<command ...>]
-    if test -z "$1"
-    then
-        echo "dt: usage: dt <name> [<command ...>]" 1>&2
-        return 1
-    fi
-    soc_name="$1"
-    shift
-    if test -S "$soc_name"
-    then
-        dtach -a "$soc_name"
-    elif test -e "$soc_name"
-    then
-        echo "dt: File named $soc_name already exists."
-        return 1
-    elif test -z "$1"
-    then
-        echo "dt: Socket named $soc_name not exists and no command specified."
-        return 1
-    else
-        dtach -c "$soc_name" -e ^^ "$@"
-    fi
-}
-
-scr(){
-    test -n "$1" && pf="${1}-"
-    local _tformat="%Y%m%d-%H%M%S%z"
-    local _file="${HOME}/${pf}`date +${_tformat}`.script"
-    SCRIPT=${_file} script ${_file} "$@"
-}
-
 netwait(){
     while ! ping -c 1 -t 1 example.com
     do
@@ -527,6 +495,58 @@ tx(){
     else
         tmux new -s "$1"
     fi
+}
+
+dt(){
+    # dt [<name>] [<command ...>]
+    __dtach_dir="${TMP}/dtach"
+    install -d "${__dtach_dir}"
+
+    if test -n "${__MY_DTACH}"
+    then
+        echo "Current session: ${__MY_DTACH}"
+    fi
+
+    if test -z "$1"
+    then
+        echo "Sessions:"
+        ls "${__dtach_dir}"
+        return 0
+    elif test "$1" = "-h"
+    then
+        echo "dt: usage: dt <name> [<command ...>]" 1>&2
+        return 1
+    fi
+
+    soc_name="${__dtach_dir}/$1"
+    shift
+
+    if test -n "$__MY_DTACH"
+    then
+        echo "dtach session cannot be nested." 1>&2
+        return 1
+    elif test -S "$soc_name"
+    then
+        dtach -a "$soc_name" -e ^^
+    elif test -e "$soc_name"
+    then
+        echo "dt: File named $soc_name already exists."
+        return 1
+    elif test -z "$1"
+    then
+        __MY_DTACH="$soc_name" dtach -c "$soc_name" -e ^^ sh -c "$SHELL"
+        # echo "dt: Socket named $soc_name not exists and no command specified."
+        # return 1
+    else
+        __MY_DTACH="$soc_name" dtach -c "$soc_name" -e ^^ "$@"
+    fi
+}
+
+scr(){
+    test -n "$1" && pf="${1}-"
+    local _tformat="%Y%m%d-%H%M%S%z"
+    local _file="${HOME}/${pf}`date +${_tformat}`.script"
+    __MY_SCRIPT=${_file} script ${_file} "$@"
 }
 
 mcrypt-stream(){
@@ -829,9 +849,13 @@ ip-address(){
     test -n "$ip" && printf $1 $ip
 }
 
-test -n "$SCRIPT" && __my_ps1_script_str="${__my_c5}SCR${__my_cdef} "
+__my_ps1_str=""
 
-test -n "$SSH_CONNECTION" && __my_ps1_ssh_str="${__my_c5}SSH${__my_cdef} "
+test -n "$__MY_SCRIPT" && __my_ps1_str="${__my_ps1_str}${__my_c5}SCR${__my_cdef} "
+
+test -n "$SSH_CONNECTION" && __my_ps1_str="${__my_ps1_str}${__my_c5}SSH${__my_cdef} "
+
+test -n "$__MY_DTACH" && __my_ps1_str="${__my_ps1_str}${__my_c5}DTACH${__my_cdef} "
 
 __my_ps1_scale(){
     local last=$?
@@ -925,7 +949,7 @@ fi
 
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
-${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} ${__my_ps1_script_str}${__my_ps1_ssh_str}\$ "
+${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} ${__my_ps1_str}\$ "
 inbash && PS1=$_ps1_bash
 
 __my_set_screen_title(){
