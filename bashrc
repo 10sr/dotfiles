@@ -549,6 +549,28 @@ scr(){
     __MY_SCRIPT=${_file} script ${_file} "$@"
 }
 
+dtscr(){
+    # dtscr <command ...>
+    if test -z "$1"
+    then
+        echo "dtscr: usage: dtscr <command ...>"
+        return 1
+    fi
+
+    local _cmdstr="`echo $@ | tr ' ' +`"
+    local _tformat="%Y%m%d-%H%M%S%z"
+    local _name="${pf}`date +${_tformat}`-${_cmdstr}"
+
+    local _scr_file="${HOME}/${_name}.script"
+
+    local _dt_dir="${TMP}/dtscr"
+    install -d "$_dt_dir"
+
+    dtach -n "${_dt_dir}/${_name}" script "${_scr_file_}" "$@"
+    # echo $_name
+    # echo $_file
+}
+
 mcrypt-stream(){
     test $# -eq 2 || return 1
     case $1 in
