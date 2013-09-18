@@ -248,6 +248,11 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+ext.add("open-remote-init-file", function(ev, arg){
+    const URL = "https://raw.github.com/10sr/dotfiles/master/_keysnail.js";
+    window.openUILinkIn(URL, "tab");
+}, "Open remote initialization file");
+
 (function(){
     function getOrganizer(){
         // [How to call for Firefox bookmark dialog? - Stack Overflow]
