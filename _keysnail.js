@@ -248,6 +248,11 @@ plugins.options["twitter_client.use_jmp"] = true;
 ////////////////////////////////////////////
 // my ext
 
+ext.add("open-remote-init-file", function(ev, arg){
+    const URL = "https://raw.github.com/10sr/dotfiles/master/_keysnail.js";
+    window.openUILinkIn(URL, "tab");
+}, "Open remote initialization file");
+
 (function(){
     function getOrganizer(){
         // [How to call for Firefox bookmark dialog? - Stack Overflow]
@@ -518,6 +523,8 @@ ext.add("restart-firefox-add-menu", function(){
 /////////////////////////////////////////
 // feed url
 (function(){
+    var feedhandler = "http://cloud.feedly.com/#subscription%2Ffeed%2F%s";
+
     function getFeeds(){
         const doc = content.document;
 
@@ -530,14 +537,18 @@ ext.add("restart-firefox-add-menu", function(){
                                                       "$1");
         for (i = 0; i < feeds.length; i++)
             if ( feeds[i][1].substr(0,1) == "/" ) feeds[i][1] = uh + feeds[i][1];
-        feeds.unshift([window.content.document.title,
-                       window.content.location.href]);
+        // feeds.unshift([window.content.document.title,
+        //                window.content.location.href]);
 
         return feeds;
     };
 
     ext.add("copy-feed-url", function () {
         var feeds = getFeeds();
+        if (! feeds.length) {
+            display.echoStatusBar("No feed found.");
+            return;
+        }
         prompt.selector(
             {
                 message    : "Select Feed",
@@ -553,17 +564,29 @@ ext.add("restart-firefox-add-menu", function(){
 
     ext.add("open-feed", function () {
         var feeds = getFeeds();
-        prompt.selector(
-            {
-                message    : "Select Feed",
-                collection : feeds,
-                callback   : function (i) {
-                    if (i >= 0) {
-                        window.openUILinkIn(feeds[i][1], "tab");
-                    }
+        if (! feeds.length) {
+            display.echoStatusBar("No feed found.");
+            return;
+        }
+        prompt.selector({
+            message    : "Select Feed",
+            collection : feeds,
+            callback   : function (i) {
+                if (i < 0) {
+                    return;
+                }
+
+                var feedurl = feeds[i][1];
+                if (feedhandler) {
+                    window.openUILinkIn(
+                        feedhandler.replace("%s", feedurl),
+                        "tab"
+                    );
+                } else {
+                    window.openUILinkIn(feedurl, "tab");
                 }
             }
-        );
+        });
     }, "Copy url or feed url of current page");
 })();
 
@@ -712,7 +735,7 @@ key.suspendKey           = "Not defined";
 
 
 hook.setHook('KeyBoardQuit', function (aEvent) {
-    ext.exec("hide-sidebar");
+    // ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
     gBrowser.focus();
     content.focus();
