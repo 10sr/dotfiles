@@ -1889,10 +1889,11 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 (define-key ctl-x-map "s" 'my-rgrep)
 
-(defun make ()
-  "Run \"make -k\" in current directory."
-  (interactive)
-  (compile "make -k"))
+;; (defun make ()
+;;   "Run \"make -k\" in current directory."
+;;   (interactive)
+;;   (compile "make -k"))
+(defalias 'make 'compile)
 
 (defvar sed-in-place-history nil
   "History of `sed-in-place'")
