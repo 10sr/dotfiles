@@ -273,6 +273,8 @@ do
     test -f $f && alias vl=$f && break
 done
 
+alias pa=pacapt
+
 null type yaourt && alias yt=yaourt
 null type cower && alias cower="cower --color=auto"
 null type pacmatic && {
