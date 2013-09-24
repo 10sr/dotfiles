@@ -1911,6 +1911,14 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(defun memo (&optional dir)
+  "Open memo.txt"
+  (interactive)
+  (pop-to-buffer (find-file-noselect (concat (if dir
+                                                 (file-name-as-directory dir)
+                                               "")
+                                             "memo.txt"))))
+(file-name-as-directory "..")
 (defun my-rgrep-gitgrep (word)
   "Recursive grep with git-grep"
   (interactive "sgit-grep: Word to search: ")

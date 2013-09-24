@@ -342,6 +342,15 @@ ssh(){
     command ssh "$@"
 }
 
+memo(){
+    if test -z "$1"
+    then
+        $EDITOR memo.txt
+    else
+        $EDITOR "$1/memo.txt"
+    fi
+}
+
 clk(){
     local tformat="%Y/%m/%d %H:%M:%S %z"
     cal
