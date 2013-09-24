@@ -210,6 +210,45 @@ found, otherwise returns nil."
   (when (file-readable-p user-init-file)
     (load-file user-init-file)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; for windows
+
+(defun start-ckw-bash ()
+  ""
+  (interactive)
+  (start-process
+   "ckw_bash"
+   nil
+   "C:/Documents and Settings/sr/Application Data/dbx/apps/ckw/ckw.exe"))
+;; command seems to have to be in c drive
+
+(defun my-w32-add-export-path (&rest args)
+  ""
+  (mapcar (lambda (path)
+            (add-to-list 'exec-path (expand-file-name path)))
+          (reverse args))
+  (setenv "PATH"
+          (mapconcat 'convert-standard-filename
+                     exec-path
+                     ";")))
+
+(when (eq system-type 'windows-nt)
+  ;; (setq scheme-program-name "\"c:/Program Files/Gauche/bin/gosh.exe\" -i")
+  ;; (setq python-python-command "c:/Python26/python.exe")
+
+  ;; (define-key my-prefix-map (kbd "C-c") 'start-ckw-bash)
+  (my-w32-add-export-path "c:/Windows/system"
+                          "c:/Windows/System32"
+                          "c:/Program Files/Git/bin"
+                          "c:/MinGW/bin"
+                          "c:/MinGW/mingw32/bin"
+                          (expand-file-name "~/.local/bin")
+                          (expand-file-name "~/dbx/apps/bin"))
+
+  (when window-system
+    (setq w32-enable-synthesized-fonts t))
+  (setq file-name-coding-system 'sjis))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
@@ -610,6 +649,40 @@ found, otherwise returns nil."
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
 (define-key my-prefix-map (kbd "C-o") 'occur)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; japanese input method
+
+(defun my-load-scim ()
+  "use scim-bridge.el as japanese im."
+  ;; Load scim-bridge.
+  (when (require 'scim-bridge nil t)
+    ;; Turn on scim-mode automatically after loading .emacs
+    (add-hook 'after-init-hook 'scim-mode-on)
+    (setq scim-cursor-color "red")
+    (scim-define-preedit-key ?\^h t)
+    (scim-define-common-key ?\* nil)
+    (scim-define-common-key ?\^/ nil)))
+
+(defun my-load-anthy ()
+  "use anthy.el as japanese im."
+  ;; anthy
+  (when (require 'anthy nil t)
+    (global-set-key
+     (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
+    (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
+    (when (>= emacs-major-version 23)
+      (setq anthy-accept-timeout 1))))
+
+;; quail
+;; aproposs input-method for some information
+;; (setq default-input-method "japanese")
+(defun my-load-mozc-el ()
+  ""
+  (setq mozc-leim-title "[MZ]")
+  (when (require 'mozc nil t)
+    (setq defauit-input-method "japanese-mozc")
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
@@ -1967,76 +2040,3 @@ this is test, does not rename files"
 ;;         (concat arg
 ;;                 (if (eq nil (string-match "\\. *$" arg)) ".")
 ;;                 " Stupid!")))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; japanese input method
-
-(defun my-load-scim ()
-  "use scim-bridge.el as japanese im."
-  ;; Load scim-bridge.
-  (when (require 'scim-bridge nil t)
-    ;; Turn on scim-mode automatically after loading .emacs
-    (add-hook 'after-init-hook 'scim-mode-on)
-    (setq scim-cursor-color "red")
-    (scim-define-preedit-key ?\^h t)
-    (scim-define-common-key ?\* nil)
-    (scim-define-common-key ?\^/ nil)))
-
-(defun my-load-anthy ()
-  "use anthy.el as japanese im."
-  ;; anthy
-  (when (require 'anthy nil t)
-    (global-set-key
-     (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
-    (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
-    (when (>= emacs-major-version 23)
-      (setq anthy-accept-timeout 1))))
-
-;; quail
-;; aproposs input-method for some information
-;; (setq default-input-method "japanese")
-(defun my-load-mozc-el ()
-  ""
-  (setq mozc-leim-title "[MZ]")
-  (when (require 'mozc nil t)
-    (setq defauit-input-method "japanese-mozc")
-    ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; for windows
-
-(defun start-ckw-bash ()
-  ""
-  (interactive)
-  (start-process
-   "ckw_bash"
-   nil
-   "C:/Documents and Settings/sr/Application Data/dbx/apps/ckw/ckw.exe"))
-;; command seems to have to be in c drive
-
-(defun my-w32-add-export-path (&rest args)
-  ""
-  (mapcar (lambda (path)
-            (add-to-list 'exec-path (expand-file-name path)))
-          (reverse args))
-  (setenv "PATH"
-          (mapconcat 'convert-standard-filename
-                     exec-path
-                     ";")))
-
-(when (eq system-type 'windows-nt)
-  ;; (setq scheme-program-name "\"c:/Program Files/Gauche/bin/gosh.exe\" -i")
-  ;; (setq python-python-command "c:/Python26/python.exe")
-
-  (define-key my-prefix-map (kbd "C-c") 'start-ckw-bash)
-  (my-w32-add-export-path "c:/Windows/system"
-                          "c:/Windows/System32"
-                          "c:/Program Files/Git/bin"
-                          "c:/MinGW/bin"
-                          "c:/MinGW/mingw32/bin"
-                          (expand-file-name "~/.local/bin")
-                          (expand-file-name "~/dbx/apps/bin"))
-
-  (when window-system
-    (setq w32-enable-synthesized-fonts t))
-  (setq file-name-coding-system 'sjis))
