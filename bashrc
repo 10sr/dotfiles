@@ -54,7 +54,14 @@ __match(){
 
 if ! __match "$PATH" "$HOME/.local/bin"
 then
-    PATH="${PATH}:${HOME}/.local/bin:$HOME/.local/lib/gems/bin"
+    if test -d "$HOME/.local/bin"
+    then
+        PATH="${HOME}/.local/bin:${PATH}"
+    fi
+    if test -d "$HOME/.local/lib/gems/bin"
+    then
+        PATH="$HOME/.local/lib/gems/bin:${PATH}"
+    fi
 fi
 
 if ismsys && ! __match "$PATH" /c/mingw/bin
