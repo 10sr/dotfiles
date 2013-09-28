@@ -522,6 +522,14 @@ ext.add("restart-firefox-add-menu", function(){
 
 /////////////////////////////////////////
 // feed url
+
+ext.add("feed-add-to-feedly", function(){
+    var url = window.content.location.href;
+    window.content.location.href =
+        "http://cloud.feedly.com/#subscription%2Ffeed%2F" +
+        encodeURIComponent(url);
+}, "Add current feed to feedly");
+
 (function(){
     var feedhandler = "http://cloud.feedly.com/#subscription%2Ffeed%2F%s";
 
