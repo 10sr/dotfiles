@@ -1159,6 +1159,15 @@ If called intearctively, find word at point."
                      '("this-frame" nil (lambda (buf)
                                           (memq buf (my-frame-buffer-get)))
                        ".*" nil nil))
+        (add-to-list 'bs-configurations
+                     '("files-and-terminals" nil nil nil
+                       (lambda (buf)
+                         (and (bs-visits-non-file buf)
+                              (save-excursion
+                                (set-buffer buf)
+                                (not (memq major-mode
+                                      '(term-mode
+                                        eshell-mode))))))))
         ;; (setq bs-configurations (list
         ;; '("processes" nil get-buffer-process ".*" nil nil)
         ;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
@@ -1166,11 +1175,11 @@ If called intearctively, find word at point."
         )
   ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show)
-  (setq bs-default-configuration "files")
+  (setq bs-default-configuration "files-and-terminals")
   (setq bs-default-sort-name "by nothing")
   (add-hook 'bs-mode-hook
             (lambda ()
-              (setq bs-default-configuration "files")
+              ;; (setq bs-default-configuration "files")
               ;; (and bs--show-all
               ;;      (call-interactively 'bs-toggle-show-all))
               (set (make-local-variable 'scroll-margin) 0))))
@@ -1853,23 +1862,22 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
       (pop-to-buffer my-term)
     (setq my-term
           (save-window-excursion
-            (funcall my-term-function)
-            ))
+            (funcall my-term-function)))
     (and my-term
          (my-term))))
 
 (defvar my-term-function nil
   "Function to create terminal buffer.")
 
-;; (setq my-term-function
-;;       (lambda ()
-;;         (if (eq system-type 'windows-nt)
-;;             (eshell)
-;;           (if (require 'multi-term nil t)
-;;               (multi-term)
-;;             (ansi-term shell-file-name)))))
+(setq my-term-function
+      (lambda ()
+        (if (eq system-type 'windows-nt)
+            (eshell)
+          (if (require 'multi-term nil t)
+              (multi-term)
+            (ansi-term shell-file-name)))))
 
-(setq my-term-function 'eshell)
+;; (setq my-term-function 'eshell)
 
 (defun my-delete-frame-or-kill-emacs ()
   "delete frame when opening multiple frame, kill emacs when only one."
