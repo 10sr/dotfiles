@@ -688,7 +688,8 @@ di(){
 }
 
 tb(){
-    local tb="$HOME/.my/tb"
+    local datenum=`date +%Y%m%d-%H%M%S`
+    local tb="$HOME/.my/tb/$datenum"
     mkdir -p "$tb"
     for file in "$@"
     do
