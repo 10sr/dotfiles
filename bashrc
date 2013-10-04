@@ -338,11 +338,65 @@ then
         || complete -o default -o nospace -F _git g
 fi
 git svn --help >/dev/null 2>&1 && alias gsvn="git svn"
-null type gitmemo && alias m=gitmemo
 
 null type gitmemo && alias m=gitmemo
 
 alias setup.py="sudo python3 setup.py install --record files.txt"
+
+datestr(){
+    # datestr yyyyMMdd-hhmmss
+    if test -z "$1" || test "$1" == "-h"
+    then
+        echo "datestr: usage: datestr <yyyyMMddhhmmss>"
+        return 1
+    fi
+
+    dfmt=                       # actual format for date command
+    while test -n "$1"
+    do
+        fmt="$1"
+        while test -n "$fmt"
+        do
+            case "$fmt" in
+                yyyy*)          # year
+                    dfmt="${dfmt}%Y"
+                    fmt="`echo "$fmt" | cut -c 5-`"
+                    ;;
+                yy*)            # last two digits of year
+                    dfmt="${dfmt}%y"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                MM*)            # month (01..12)
+                    dfmt="${dfmt}%m"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                dd*)            # day of month (01..12)
+                    dfmt="${dfmt}%d"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                HH* | hh*)            # hour (00..23)
+                    dfmt="${dfmt}%H"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                mm*)            # minute (00..59)
+                    dfmt="${dfmt}%M"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                ss*)            # second (00..60)
+                    dfmt="${dfmt}%S"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                *)
+                    char=`echo "$fmt" | cut -c 1`
+                    dfmt="${dfmt}${char}"
+                    fmt="`echo "$fmt" | cut -c 2-`"
+                    ;;
+            esac
+        done
+        shift
+    done
+    date +"$dfmt"
+}
 
 ssh(){
     __my_set_screen_title ssh
