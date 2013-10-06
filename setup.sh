@@ -1,4 +1,4 @@
-#!/usr/bin/w
+#!/bin/sh
 
 mkdir -p ~/.my/log
 mkdir -p ~/.local/bin
