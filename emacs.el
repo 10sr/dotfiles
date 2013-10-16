@@ -849,6 +849,8 @@ found, otherwise returns nil."
                                 :weight 'normal)
             (set-face-foreground 'diff-removed-face "red")
             (set-face-foreground 'diff-added-face "green")
+            (set-face-background 'diff-removed-face nil)
+            (set-face-background 'diff-added-face nil)
             (set-face-attribute 'diff-changed nil
                                 :foreground "magenta"
                                 :weight 'normal)
