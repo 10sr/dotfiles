@@ -2056,5 +2056,15 @@ this is test, does not rename files"
 ;; (defadvice message (before message-for-stupid (arg &rest arg2) activate)
 ;;   (setq arg
 ;;         (concat arg
-;;                 (if (eq nil (string-match "\\. *$" arg)) ".")
+;;                 (if (eq nil
+;;                         (string-match "\\. *$"
+;;                                       arg))
+;;                     ".")
 ;;                 " Stupid!")))
+
+;; show usename and hostname when prompting something in minibuffer
+(defadvice read-from-minibuffer
+  (before message-for-stupid (prompt &rest args) activate)
+  (setq prompt
+        (concat "[" user-login-name "@" system-name "] "
+                prompt)))
