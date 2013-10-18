@@ -2062,12 +2062,23 @@ this is test, does not rename files"
 ;;                     ".")
 ;;                 " Stupid!")))
 
+(defvar my-system-info
+  nil
+  "System info in the form of \"[user@host] \".")
+(setq my-system-info
+      (concat "["
+              user-login-name
+              "@"
+              (car (split-string system-name
+                                 "\\."))
+              "] "))
+
 (defadvice read-from-minibuffer (before info-in-prompt activate)
   (ad-set-arg 0
-              (concat "[" user-login-name "@" system-name "] "
+              (concat my-system-info
                       (ad-get-arg 0))))
 
 (defadvice read-string (before info-in-prompt activate)
   (ad-set-arg 0
-              (concat "[" user-login-name "@" system-name "] "
+              (concat my-system-info
                       (ad-get-arg 0))))
