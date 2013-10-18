@@ -2062,9 +2062,12 @@ this is test, does not rename files"
 ;;                     ".")
 ;;                 " Stupid!")))
 
-;; show usename and hostname when prompting something in minibuffer
-(defadvice read-from-minibuffer
-  (before message-for-stupid (prompt &rest args) activate)
-  (setq prompt
-        (concat "[" user-login-name "@" system-name "] "
-                prompt)))
+(defadvice read-from-minibuffer (before info-in-prompt activate)
+  (ad-set-arg 0
+              (concat "[" user-login-name "@" system-name "] "
+                      (ad-get-arg 0))))
+
+(defadvice read-string (before info-in-prompt activate)
+  (ad-set-arg 0
+              (concat "[" user-login-name "@" system-name "] "
+                      (ad-get-arg 0))))
