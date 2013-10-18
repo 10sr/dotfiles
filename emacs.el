@@ -2082,3 +2082,8 @@ this is test, does not rename files"
   (ad-set-arg 0
               (concat my-system-info
                       (ad-get-arg 0))))
+
+(defadvice completing-read (before info-in-prompt activate)
+  (ad-set-arg 0
+              (concat my-system-info
+                      (ad-get-arg 0))))
