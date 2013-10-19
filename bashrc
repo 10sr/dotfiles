@@ -273,10 +273,20 @@ wicn(){
     fi
 }
 
-for f in /usr/share/vim/vimcurrent/macros/less.sh \
-    /usr/share/vim/vim73/macros/less.sh \
-    /usr/share/vim/vim72/macros/less.sh
+__find_latest_vimdir(){
+    vimdir=/usr/share/vim
+    if test -d "$vimdir"
+    then
+        find "$vimdir" -name 'vim??' -type d | sort | tail -n 1
+    else
+        echo ""
+    fi
+}
+
+for f in /usr/share/vim/vimcurrent "`__find_latest_vimdir`"
 do
+    test -n "$f" || continue
+    f="$f/macros/less.sh"
     test -f $f && alias vl=$f && break
 done
 
