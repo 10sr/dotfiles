@@ -413,6 +413,20 @@ ssh(){
     command ssh "$@"
 }
 
+__ssh_with_cd(){
+    # __ssh_with_cd <host> <directory> [<arg> ...]
+    if test -z "$2"
+    then
+        echo "usage: __ssh_with_cd <host> <directory> [<arg> ...]"
+        return 1
+    fi
+    host="$1"
+    shift
+    dir="$1"
+    shift
+    ssh "$host" "$@" -t "cd \"$dir\"; \$SHELL -l"
+}
+
 memo(){
     if test -z "$1"
     then

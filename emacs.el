@@ -2049,6 +2049,19 @@ this is test, does not rename files"
                (message file))
       (message "not visiting file."))))
 
+(defvar kill-ring-buffer-name "*kill-ring*"
+  "Buffer name for `kill-ring-buffer'.")
+(defun open-kill-ring-buffer ()
+  "Open kill- ring buffer."
+  (interactive)
+  (pop-to-buffer
+   (with-current-buffer (get-buffer-create kill-ring-buffer-name)
+     (erase-buffer)
+     (yank)
+     (text-mode)
+     (current-local-map)
+     (goto-char (point-min)))))
+
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; savage emacs
 ;; ;; when enabled emacs fails to complete
