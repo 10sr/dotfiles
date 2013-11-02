@@ -96,6 +96,7 @@ fi
 export LESS="-iRMX"
 
 # _src_hilite_lp_path="`which src-hilite-lesspipe.sh 2>/dev/null`"
+# Style for lesspipe is defined in esc.style
 for f in /usr/share/source-highlight/src-hilite-lesspipe.sh
 do
     test -z "$_src_hilite_lp_path" && test -e "$f" && _src_hilite_lp_path="$f"
