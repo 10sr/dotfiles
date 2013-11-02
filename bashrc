@@ -95,11 +95,12 @@ else
 fi
 export LESS="-iRMX"
 
-_src_hilite_lp_path="`which src-hilite-lesspipe.sh 2>/dev/null`"
-if test -n "$_src_hilite_lp_path"
-then
-    export LESSOPEN="| $_src_hilite_lp_path %s"
-fi
+# _src_hilite_lp_path="`which src-hilite-lesspipe.sh 2>/dev/null`"
+for f in /usr/share/source-highlight/src-hilite-lesspipe.sh
+do
+    test -z "$_src_hilite_lp_path" && test -e "$f" && _src_hilite_lp_path="$f"
+done
+test -n "$_src_hilite_lp_path" && export LESSOPEN="| $_src_hilite_lp_path %s"
 
 if null type vim
 then
