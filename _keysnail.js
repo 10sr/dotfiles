@@ -763,8 +763,7 @@ hook.setHook('Unload', function () {
         }
         const ks = win.KeySnail;
         share.pluginUpdater = ks.getPluginUpdater(
-            share.pluginUpdater.pluginsWithUpdate
-        );
+        share.pluginUpdater.pluginsWithUpdate);
         ks.setUpPluginUpdaterDelegator();
         return true;
     });
@@ -846,7 +845,7 @@ key.setViewKey(['t', 'p'], function (ev, arg) {
     ext.exec("twitter-client-tweet-this-page", arg, ev);
 }, 'このページのタイトルと URL を使ってつぶやく', true);
 
-key.setViewKey([['u'], ['<left>']], function (ev) {
+key.setViewKey('u', function (ev) {
     goDoCommand("cmd_scrollPageUp");
 }, '一画面分スクロールアップ');
 
@@ -866,23 +865,9 @@ key.setViewKey('m', function (ev, arg) {
     _fi.toogle();
 }, 'fetchimiをトグル');
 
-key.setViewKey('SPC', function (ev, arg) {
-    MultipleTabService.toggleSelection(gBrowser.mCurrentTab);
-    gBrowser.mTabContainer.advanceSelectedTab(1, true);
-}, 'タブの選択をトグルして次のタブ');
-
-key.setViewKey('S-SPC', function (ev, arg) {
-    MultipleTabService.toggleSelection(gBrowser.selectedTab);
-    gBrowser.mTabContainer.advanceSelectedTab(-1, true);
-}, 'タブの選択をトグルして前のタブ');
-
 key.setViewKey('z', function (ev, arg) {
     ext.exec("keysnail-z-menu", arg, ev);
 }, 'open keysnail setting menu', true);
-
-key.setViewKey('C-SPC', function (ev, arg) {
-    MultipleTabService.toggleSelection(gBrowser.selectedTab);
-}, 'タブの選択をトグル');
 
 key.setViewKey('e', function () {
     command.focusElement(command.elementsRetrieverTextarea, 0);
@@ -926,7 +911,7 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
-key.setViewKey([['<right>'], ['d']], function (ev) {
+key.setViewKey('d', function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
@@ -973,9 +958,9 @@ key.setViewKey('p', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
 }, '一行スクロールアップ');
 
-key.setViewKey('f', function (ev) {
-    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_RIGHT, true);
-}, '右へスクロール');
+key.setViewKey('f', function (ev, arg) {
+    ext.exec('strong-fullscreen', arg, ev);
+}, 'go fullscreen with hiding toolbar and tabbar', true);
 
 key.setViewKey('b', function (ev) {
     key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_LEFT, true);
@@ -1042,6 +1027,10 @@ key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
 
-key.setViewKey('f', function (ev, arg) {
-    ext.exec('strong-fullscreen', arg, ev);
-}, 'go fullscreen with hiding toolbar and tabbar', true);
+key.setViewKey('S-SPC', function (ev) {
+    goDoCommand("cmd_scrollPageUp");
+}, '一画面分スクロールアップ');
+
+key.setViewKey('SPC', function (ev) {
+    goDoCommand("cmd_scrollPageDown");
+}, '一画面スクロールダウン');
