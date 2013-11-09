@@ -163,6 +163,7 @@ found, otherwise returns nil."
 
 (add-hook 'after-init-hook
           (lambda ()
+            (message "%s %s" invocation-name emacs-version)
             (message "%s was taken to initialize emacs." (emacs-init-time))
             (switch-to-buffer "*Messages*")
             ))
