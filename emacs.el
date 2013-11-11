@@ -1947,7 +1947,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
           "-path '*/.git' -prune -o "
           "-path '*/.svn' -prune -o "
           "-type f -print0 | "
-          "xargs -0 -e grep -nH -e '%s'")
+          "xargs -0 -e grep -nH -e ")
   "grep command for grep")
 
 (defun my-rgrep-grep-command ()
