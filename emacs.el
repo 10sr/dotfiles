@@ -1929,56 +1929,45 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                                  (file-name-as-directory dir)
                                                "")
                                              "memo.txt"))))
-(file-name-as-directory "..")
-(defun my-rgrep-gitgrep (word)
-  "Recursive grep with git-grep"
-  (interactive "sgit-grep: Word to search: ")
-  (require 'grep)
-  (compilation-start
-   (format "git --no-pager -c color.grep=false grep -nH -e '%s'"
-           word)
-   'grep-mode))
 
-(defun my-rgrep-ag (word)
-  "Recursive grep with ag"
-  (interactive "sag: Word to search: ")
-  (require 'grep)
-  (compilation-start (format "ag --nocolor --nogroup --nopager '%s'"
-                            word)
-                    'grep-mode))
+(defvar my-rgrep-gitgrep
+  "git --no-pager -c color.grep=false grep -nH -e "
+  "grep command for git grep.")
 
-(defun my-rgrep-ack (word)
-  "Recursive grep with ack"
-  (interactive "sack: Word to search: ")
-  (require 'grep)
-  (compilation-start (format "ack --nocolor --nogroup --nopager '%s'"
-                            word)
-                    'grep-mode))
+(defvar my-rgrep-ag
+  "ag --nocolor --nogroup --nopager "
+  "grep command for ag")
 
-(defun my-rgrep-grep (word)
-  "Recursive grep with grep"
-  (interactive "sgrep: Word to search: ")
-  (require 'grep)
-  (compilation-start
-   (format (concat "find . "
-                   "-path '*/.git' -prune -o "
-                   "-path '*/.svn' -prune -o "
-                   "-type f -print0 | "
-                   "xargs -0 -e grep -nH -e '%s'")
-           word)
-   'grep-mode))
+(defvar my-rgrep-ack
+  "ack --nocolor --nogroup --nopager "
+  "grep command for ack")
 
-(defun my-rgrep (word)
-  "My recursive grep."
-  (interactive "sWord to search: ")
+(defvar my-rgrep-grep
+  (concat "find . "
+          "-path '*/.git' -prune -o "
+          "-path '*/.svn' -prune -o "
+          "-type f -print0 | "
+          "xargs -0 -e grep -nH -e '%s'")
+  "grep command for grep")
+
+(defun my-rgrep-grep-command ()
+  "Return recursive grep command for current directory."
   (if (eq 0
           (shell-command "git rev-parse --git-dir"))
-      (my-rgrep-gitgrep word)
+      my-rgrep-gitgrep
     (if (executable-find "ag")
-        (my-rgrep-ag word)
+        my-rgrep-ag
       (if (executable-find "ack")
-          (my-rgrep-ack word)
-        (my-rgrep-grep word)))))
+          my-rgrep-ack
+        my-rgrep-grep))))
+
+(defun my-rgrep (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "sgrep command: "
+                                         (my-rgrep-grep-command)
+                                         'grep-history)))
+  (compilation-start command-args
+                     'grep-mode))
 
 (define-key ctl-x-map "s" 'my-rgrep)
 
