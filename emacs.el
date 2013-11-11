@@ -1965,7 +1965,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   "My recursive grep."
   (interactive (list (read-shell-command "sgrep command: "
                                          (my-rgrep-grep-command)
-                                         'grep-history)))
+                                         'grep-find-history)))
   (compilation-start command-args
                      'grep-mode))
 
