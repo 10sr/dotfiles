@@ -1963,7 +1963,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
    (format (concat "find . "
                    "-path '*/.git' -prune -o "
                    "-path '*/.svn' -prune -o "
-                   "-type f -exec grep -nH -e '%s' {} +")
+                   "-type f -print0 | "
+                   "xargs -0 -e grep -nH -e '%s'")
            word)
    'grep-mode))
 
