@@ -2093,7 +2093,26 @@ this is test, does not rename files"
                 (concat my-system-info
                         (ad-get-arg 0)))))
 
+;; (subrp (symbol-function 'read-from-minibuffer))
+
 ;; (defadvice completing-read (before info-in-prompt activate)
 ;;   (ad-set-arg 0
 ;;               (concat my-system-info
 ;;                       (ad-get-arg 0))))
+
+(defun my-real-function-subr-p (function)
+  "Return t if function is a built-in function even if it is advised."
+  (let* ((advised (and (symbolp function)
+                       (featurep 'advice)
+                       (ad-get-advice-info function)))
+         (real-function
+          (or (and advised (let ((origname (cdr (assq 'origname advised))))
+                             (and (fboundp origname)
+                                  origname)))
+              function))
+         (def (if (symbolp real-function)
+                  (symbol-function real-function)
+                function)))
+    (subrp def)))
+
+;; (my-real-function-subr-p 'my-real-function-subr-p)
