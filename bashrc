@@ -158,6 +158,14 @@ then
     export CHIT_PATH="$HOME/dbx/.chit"
 fi
 
+if inzsh
+then
+    autoload -U compinit; compinit
+    unsetopt auto_menu
+    setopt bash_auto_list
+    bindkey -e
+fi
+
 #######################
 
 iswindows && alias tty="echo cmd.exe"
