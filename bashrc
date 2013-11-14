@@ -160,6 +160,7 @@ fi
 
 if inzsh
 then
+    # http://zsh.sourceforge.net/Guide/zshguide06.html#l147
     autoload -U compinit; compinit
     unsetopt auto_menu
     setopt bash_auto_list
