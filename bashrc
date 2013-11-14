@@ -678,7 +678,7 @@ dtscr(){
     # echo $_file
 }
 
-mcrypt-stream(){
+mcrypt_stream(){
     test $# -eq 2 || return 1
     case $1 in
         en)
@@ -688,7 +688,7 @@ mcrypt-stream(){
     esac
 }
 
-gpg-stream(){
+gpg_stream(){
     test $# -eq 2 || return 1
     case $1 in
         en)
@@ -721,7 +721,7 @@ dgpg(){
         elif test -f "$d"
         then
             echo "`printf 'failed (%s is already exists)' $d`"
-        elif <"$f" gpg-stream $1 $pw >"$d" 2>/dev/null
+        elif <"$f" gpg_stream $1 $pw >"$d" 2>/dev/null
         then
             echo "done"
         else
@@ -731,8 +731,8 @@ dgpg(){
     done
 }
 
-alias enst="gpg-stream en"
-alias dest="gpg-stream de"
+alias enst="gpg_stream en"
+alias dest="gpg_stream de"
 
 showinfo(){
     echo "Japanese letters are 表示可能"
@@ -972,7 +972,7 @@ __my_battery_status(){
 }
 alias bat='__my_battery_status %s\\n'
 
-ip-address(){
+ipaddress(){
     type ip >/dev/null 2>&1 || return 1
     local ip=$(LANG=C ip addr show scope global | \
         \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
@@ -1020,7 +1020,7 @@ __my_ps1_git(){
 }
 
 __my_ps1_ipaddr(){
-    ! iswindows && ip-address [Addr:%s]
+    ! iswindows && ipaddress [Addr:%s]
 }
 
 __my_ps1_bttry(){
