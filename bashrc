@@ -364,6 +364,12 @@ null type gitmemo && alias m=gitmemo
 
 alias setup.py="sudo python3 setup.py install --record files.txt"
 
+randomstr(){
+    len=$1
+    test -z "$len" && len=8
+    uuidgen | tr -d - | cut -c 1-$len
+}
+
 datestr(){
     # datestr yyyyMMdd-hhmmss
     if test -z "$1" || test "$1" == "-h"
