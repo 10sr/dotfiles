@@ -979,27 +979,21 @@ test -n "$SSH_CONNECTION" && __my_ps1_str="${__my_ps1_str}${__my_c5}SSH${__my_cd
 test -n "$__MY_DTACH" && __my_ps1_str="${__my_ps1_str}${__my_c5}DTACH${__my_cdef} "
 
 __my_ps1_scale(){
-    local last=$?
     if null type stty && ! ismsys
     then
         stty size | tr -d $'\n' | tr " " x
         printf " "
     fi
-    return $last
 }
 
 __my_ps1_tmux(){
-    local last=$?
     null type tmux || return $last
     local tmuxc="$(tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
     test -n "$TMUX" && echo "[TMUX:$tmuxc]"
-    return $last
 }
 
 __my_ps1_moc(){
-    local last=$?
     __my_moc_state "[MOC:%s]"
-    return $last
 }
 
 for f in /usr/share/git/git-prompt.sh \
@@ -1011,21 +1005,16 @@ done
 GIT_PS1_SHOWDIRTYSTATE=t
 GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
-    local last=$?
     null type __git_ps1 || return $last
     null git rev-parse --git-dir >/dev/null 2>&1 || return $last
     __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
-    return $last
 }
 
 __my_ps1_ipaddr(){
-    local last=$?
     ! iswindows && ip-address [Addr:%s]
-    return $last
 }
 
 __my_ps1_bttry(){
-    local last=$?
     local bst="${TMP}/batterystatus"
     if test -z "$DISPLAY" && ! iswindows
     then
@@ -1034,7 +1023,6 @@ __my_ps1_bttry(){
             echo "[Battery:$bstr]"
         __my_battery_status %s >$bst &
     fi
-    return $last
 }
 
 __my_ps1_dirs(){
@@ -1070,7 +1058,7 @@ fi
 
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
-${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} ${__my_ps1_str}\$ "
+${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$laststatus $(__my_ps1_scale) \D{%T} ${__my_ps1_str}\$ "
 inbash && PS1=$_ps1_bash
 
 __my_set_screen_title(){
@@ -1093,3 +1081,4 @@ __my_set_title(){
 }
 PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
 __my_set_screen_title \$(basename \"\$PWD\")/"
+PROMPT_COMMAND="laststatus=\$?;$PROMPT_COMMAND"
