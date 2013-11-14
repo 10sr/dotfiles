@@ -892,11 +892,11 @@ o(){
     fi
 }
 
-convmv-sjis2utf8-test(){
+convmv_sjis2utf8_test(){
     convmv -r -f sjis -t utf8 *
 }
 
-convmv-sjis2utf8-notest(){
+convmv_sjis2utf8_notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
 
