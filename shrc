@@ -3,7 +3,10 @@
 # TODO: use tput
 
 # If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+alias isinteractive=false
+expr "$-" : '^.*i' >/dev/null  && alias isinteractive=true
+
+isinteractive || return
 
 ##########################################
 null(){
@@ -11,6 +14,12 @@ null(){
 }
 __try_exec(){
     type $1 >/dev/null 2>&1 && "$@"
+}
+
+__match(){
+    # __match str1 str2
+    # return 0 if str2 is found in str1
+    expr "$1" : ".*$2.*" >/dev/null
 }
 
 ##########################
@@ -46,13 +55,10 @@ fi
 
 #################################
 
-__match(){
-    # __match str1 str2
-    # return 0 if str2 is found in str1
-    expr "$1" : ".*$2.*" >/dev/null
-}
+alias firstload=false
+__match "$PATH" "$HOME/.local/bin" || alias firstload=true
 
-if ! __match "$PATH" "$HOME/.local/bin"
+if firstload
 then
     if test -d "$HOME/.local/bin"
     then
@@ -117,8 +123,8 @@ export GIT_EDITOR="$EDITOR"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \
-    echo $TERM | grep screen >/dev/null 2>&1 && \
-    tmux display -p '#{client_termname}' | grep 256color >/dev/null 2>&1
+    __match $TERM screen && \
+    __match `tmux display -p '#{client_termname}'` 256color
 then
     TERM=screen-256color
 fi
