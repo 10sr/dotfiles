@@ -367,7 +367,7 @@ alias setup.py="sudo python3 setup.py install --record files.txt"
 randomstr(){
     len=$1
     test -z "$len" && len=8
-    uuidgen | tr -d - | cut -c 1-$len
+    uuidgen | tr -d - | cut -c 1-len
 }
 
 datestr(){
@@ -453,7 +453,7 @@ memo(){
     fi
 }
 
-clk(){
+now(){
     local tformat="%Y/%m/%d %H:%M:%S %z"
     cal
     REPLY=
