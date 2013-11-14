@@ -1963,11 +1963,32 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 (defun my-rgrep (command-args)
   "My recursive grep."
-  (interactive (list (read-shell-command "sgrep command: "
+  (interactive (list (read-shell-command "grep command: "
                                          (my-rgrep-grep-command)
                                          'grep-find-history)))
   (compilation-start command-args
                      'grep-mode))
+
+(defun my-rgrep-ack (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         my-rgrep-ack
+                                         'grep-find-history)))
+  (my-rgrep command-args))
+
+(defun my-rgrep-ag (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         my-rgrep-ag
+                                         'grep-find-history)))
+  (my-rgrep command-args))
+
+(defun my-rgrep-grep (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         my-rgrep-grep
+                                         'grep-find-history)))
+  (my-rgrep command-args))
 
 (define-key ctl-x-map "s" 'my-rgrep)
 
