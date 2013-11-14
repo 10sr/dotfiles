@@ -1042,6 +1042,10 @@ __my_ps1_jobs(){
     jobs | wc -l
 }
 
+__my_alert_fail(){
+    test $laststatus -eq 0 || echo '!!! '
+}
+
 if test "$TERM" != dumb
 then
     __my_c1="\[\e[0;33m\]"       # color for PWD
@@ -1067,7 +1071,7 @@ fi
 
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
-${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$laststatus $(__my_ps1_scale) \D{%T} ${__my_ps1_str}\$ "
+${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$laststatus $(__my_ps1_scale)\D{%T} ${__my_ps1_str}\$(__my_alert_fail)\$ "
 inbash && PS1=$_ps1_bash
 
 __my_set_screen_title(){
