@@ -1,12 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 # TODO: use tput
-
-# If not running interactively, don't do anything
-alias isinteractive=false
-expr "$-" : '^.*i' >/dev/null  && alias isinteractive=true
-
-isinteractive || return
 
 ##########################################
 null(){
@@ -17,10 +11,15 @@ __try_exec(){
 }
 
 __match(){
-    # __match str1 str2
-    # return 0 if str2 is found in str1
+    # __match str word
+    # return 0 if word is found in str
     expr "$1" : ".*$2.*" >/dev/null
 }
+
+alias isinteractive=false
+__match "$-" i >/dev/null  && alias isinteractive=true
+alias issourced=true
+expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # invoked as script
 
 ##########################
 # system type
@@ -52,6 +51,18 @@ elif test -n "$ZSH_VERSION"
 then
     alias inzsh=true
 fi
+
+#################################
+
+if inbash
+then
+    shrc="$BASH_SOURCE"
+elif inzsh
+then
+    shrc="$0"
+fi
+
+dotdir="`dirname "$shrc"`"
 
 #################################
 
@@ -174,6 +185,10 @@ then
 fi
 
 #######################
+
+# If not running interactively, don't do anything
+issourced || exit
+isinteractive || return
 
 iswindows && alias tty="echo cmd.exe"
 type fortune >/dev/null 2>&1 && {
