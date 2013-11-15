@@ -94,6 +94,7 @@ otherwise the path where the library installed."
           markdown-mode
           yaml-mode
           ;; ack
+          color-moccur
           )))
 
 

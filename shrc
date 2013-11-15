@@ -6,7 +6,7 @@
 null(){
     "$@" >/dev/null 2>&1
 }
-__try_exec(){
+__safe_run(){
     type $1 >/dev/null 2>&1 && "$@"
 }
 
@@ -764,15 +764,15 @@ alias dest="gpg_stream de"
 showinfo(){
     echo "Japanese letters are 表示可能"
 
-    __try_exec diskinfo
+    __safe_run diskinfo
 
     ! isdarwin && test -n "${DISPLAY}" && {
-        __try_exec xrandr | \grep --color=never ^Screen
+        __safe_run xrandr | \grep --color=never ^Screen
     }
 
-    iswindows || __try_exec finger $USER
-    LANG=C __try_exec id
-    __try_exec xset q
+    iswindows || __safe_run finger $USER
+    LANG=C __safe_runc id
+    __safe_run xset q
 }
 
 x(){
@@ -1043,7 +1043,7 @@ GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
     null type __git_ps1 || return $last
     null git rev-parse --git-dir >/dev/null 2>&1 || return $last
-    __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
+    __git_ps1 "[GIT:$(__safe_run git config --get user.name):%s]"
 }
 
 __my_ps1_ipaddr(){
