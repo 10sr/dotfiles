@@ -1,17 +1,25 @@
-#!/bin/bash
+#!/bin/sh
 
 # TODO: use tput
-
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
 
 ##########################################
 null(){
     "$@" >/dev/null 2>&1
 }
-__try_exec(){
+__safe_run(){
     type $1 >/dev/null 2>&1 && "$@"
 }
+
+__match(){
+    # __match str word
+    # return 0 if word is found in str
+    expr "$1" : ".*$2.*" >/dev/null
+}
+
+alias isinteractive=false
+__match "$-" i >/dev/null  && alias isinteractive=true
+alias issourced=true
+expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # invoked as script
 
 ##########################
 # system type
@@ -46,13 +54,22 @@ fi
 
 #################################
 
-__match(){
-    # __match str1 str2
-    # return 0 if str2 is found in str1
-    expr "$1" : ".*$2.*" >/dev/null
-}
+if inbash
+then
+    shrc="$BASH_SOURCE"
+elif inzsh
+then
+    shrc="$0"
+fi
 
-if ! __match "$PATH" "$HOME/.local/bin"
+dotdir="`dirname "$shrc"`"
+
+#################################
+
+alias firstload=false
+__match "$PATH" "$HOME/.local/bin" || alias firstload=true
+
+if firstload
 then
     if test -d "$HOME/.local/bin"
     then
@@ -117,8 +134,8 @@ export GIT_EDITOR="$EDITOR"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \
-    echo $TERM | grep screen >/dev/null 2>&1 && \
-    tmux display -p '#{client_termname}' | grep 256color >/dev/null 2>&1
+    __match $TERM screen && \
+    __match `tmux display -p '#{client_termname}'` 256color
 then
     TERM=screen-256color
 fi
@@ -168,6 +185,10 @@ then
 fi
 
 #######################
+
+# If not running interactively, don't do anything
+issourced || exit
+isinteractive || return
 
 iswindows && alias tty="echo cmd.exe"
 type fortune >/dev/null 2>&1 && {
@@ -743,15 +764,15 @@ alias dest="gpg_stream de"
 showinfo(){
     echo "Japanese letters are 表示可能"
 
-    __try_exec diskinfo
+    __safe_run diskinfo
 
     ! isdarwin && test -n "${DISPLAY}" && {
-        __try_exec xrandr | \grep --color=never ^Screen
+        __safe_run xrandr | \grep --color=never ^Screen
     }
 
-    iswindows || __try_exec finger $USER
-    LANG=C __try_exec id
-    __try_exec xset q
+    iswindows || __safe_run finger $USER
+    LANG=C __safe_runc id
+    __safe_run xset q
 }
 
 x(){
@@ -886,11 +907,11 @@ o(){
     fi
 }
 
-convmv-sjis2utf8-test(){
+convmv_sjis2utf8_test(){
     convmv -r -f sjis -t utf8 *
 }
 
-convmv-sjis2utf8-notest(){
+convmv_sjis2utf8_notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
 
@@ -1015,14 +1036,14 @@ for f in /usr/share/git/git-prompt.sh \
     /opt/local/share/git-core/git-prompt.sh \
     /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
-    test -r "$f" && . "$f" && break
+    test -r "$f" && inbash && . "$f" && break
 done
 GIT_PS1_SHOWDIRTYSTATE=t
 GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
     null type __git_ps1 || return $last
     null git rev-parse --git-dir >/dev/null 2>&1 || return $last
-    __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
+    __git_ps1 "[GIT:$(__safe_run git config --get user.name):%s]"
 }
 
 __my_ps1_ipaddr(){
