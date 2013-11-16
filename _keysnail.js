@@ -409,6 +409,8 @@ ext.add('my-setpref', function(){
             "gecko.handlerService.schemes.mailto.1.name":"Gmail",
             "general.warnOnAboutConfig":false,
             "keyword.URL":"http://www.bing.com/search?q=",
+            "browser.search.defaultenginename":"Bing",
+            "browser.search.defaulturl":"http://www.bing.com/search?q=",
             "network.dns.disableIPv6":true,
             "refcontrol.actions":
             "@DEFAULT=@FORGE www.heartrails.com=@NORMAL www.pixiv.net=@NORMAL",
