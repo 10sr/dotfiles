@@ -4,6 +4,7 @@ test -n "$DISPLAY" || return
 test -z "$ROXTERM_PID" || return
 test -z "$SSH_CONNECTION" || return
 
+# if already in x return
 case "$TERM" in
     xterm*) return;;
 esac

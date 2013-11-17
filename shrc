@@ -787,8 +787,8 @@ showinfo(){
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        #mkdir -p ~/.my/log
-        # nohup startx >~/.my/log/xorg.log 2>&1 &
+        #mkdir -p ~/.var/log
+        # nohup startx >~/.var/log/xorg.log 2>&1 &
         # exit
         exec startx
     else
@@ -815,7 +815,7 @@ di(){
 
 tb(){
     local datenum=`date +%Y%m%d-%H%M%S`
-    local tb="$HOME/.my/tb/$datenum"
+    local tb="$HOME/.var/tb/$datenum"
     mkdir -p "$tb"
     for file in "$@"
     do
@@ -1109,15 +1109,6 @@ then
     __my_cdef="\[\e[0m\]"
 fi
 
-# export _LAST_STATUS=a
-# __my_export_last_status(){
-#     local last=$?
-#     echo $last
-#     export _LAST_STATUS=$last
-#     echo $_LAST_STATUS
-#     return $last
-# }
-
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
 ${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$laststatus $(__my_ps1_scale)\D{%T} ${__my_ps1_str}\$(__my_alert_fail)\$ "
@@ -1144,3 +1135,4 @@ __my_set_title(){
 PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
 __my_set_screen_title \$(basename \"\$PWD\")/"
 PROMPT_COMMAND="laststatus=\$?;$PROMPT_COMMAND"
+laststatus=0

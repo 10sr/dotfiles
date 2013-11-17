@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mkdir -p ~/.my/log
+mkdir -p ~/.var/log
 mkdir -p ~/.local/bin
 
 _iswindows(){
