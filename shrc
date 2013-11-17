@@ -16,13 +16,11 @@ __match(){
     expr "$1" : ".*$2.*" >/dev/null
 }
 
-alias isinteractive=false
-__match "$-" i >/dev/null  && alias isinteractive=true
-alias issourced=true
-expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # invoked as script
-
 ##########################
 # system type
+# aliases:
+#     ismsys, iscygwin iswindows, isdarwin, islinux,
+#     with_coreutils, inbash, inzsh
 
 alias ismsys=false
 alias iscygwin=false
@@ -53,6 +51,10 @@ then
 fi
 
 #################################
+# file pathes:
+#     shrc: Path to this file
+#     dotdir: Path to .dotfiles directory
+
 
 if inbash
 then
@@ -65,11 +67,21 @@ fi
 dotdir="`dirname "$shrc"`"
 
 #################################
+# aliases:
+#     isinteractive: true if the current session is interactive
+#     issourced: true if this file is sourced from another file (not so assured)
+#     __firstload: true if this file is sourced for the first time (not so
+#                  assured)
 
-alias firstload=false
-__match "$PATH" "$HOME/.local/bin" || alias firstload=true
+alias isinteractive=false
+__match "$-" i >/dev/null  && alias isinteractive=true
+alias issourced=true
+expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # invoked as script
 
-if firstload
+alias __firstload=false
+__match "$PATH" "$HOME/.local/bin" || alias __firstload=true
+
+if __firstload
 then
     if test -d "$HOME/.local/bin"
     then
@@ -97,12 +109,22 @@ then
 fi
 
 ##################################
+# Some EnvVal definitions
+
 export LANG=ja_JP.UTF-8
 export LC_MESSAGES=C
 
 export TERMCAP="${TERMCAP}:vb="
 ismsys && export HOSTNAME
 export ENV=~/.shrc
+
+if ! with_coreutils
+then
+    export LSCOLORS=gxfxcxdxbxegedabagacad
+else
+    # http://qiita.com/yuyuchu3333/items/84fa4e051c3325098be3
+    null type dircolors && eval `dircolors`
+fi
 
 if false iswindows
 then
@@ -165,30 +187,18 @@ if iswindows; then
     export USER=$USERNAME
 fi
 
-_tmux_prefs(){
-    null type tmux || return 1
-    tmux set -g mode-keys vi
-}
-
 if test -d ~/dbx
 then
     export CHIT_PATH="$HOME/dbx/.chit"
 fi
 
-if inzsh
-then
-    # http://zsh.sourceforge.net/Guide/zshguide06.html#l147
-    autoload -U compinit; compinit
-    unsetopt auto_menu
-    setopt bash_auto_list
-    bindkey -e
-fi
-
 #######################
-
 # If not running interactively, don't do anything
 issourced || exit
 isinteractive || return
+
+######################
+# Print welcome messages
 
 iswindows && alias tty="echo cmd.exe"
 type fortune >/dev/null 2>&1 && {
@@ -222,11 +232,6 @@ _timeformat_num="%Y%m%d%H%M%S"
 alias datenum="date +$_timeformat_num"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
-if ! with_coreutils
-then
-    export LSCOLORS=gxfxcxdxbxegedabagacad
-    alias ls="ls -G"
-fi
 # export GREP_OPTIONS=""
 alias gr="grep -n --color=always"
 iswindows && alias grep="grep -n"
@@ -631,6 +636,11 @@ tx(){
     fi
 }
 
+_tmux_prefs(){
+    null type tmux || return 1
+    tmux set -g mode-keys vi
+}
+
 dt(){
     # dt [<name>] [<command ...>]
     __dtach_dir="${TMP}/dtach"
@@ -959,8 +969,20 @@ dpaste(){
 }
 
 
+##########################
+# Zsh specific preferences
+
+if inzsh
+then
+    # http://zsh.sourceforge.net/Guide/zshguide06.html#l147
+    autoload -U compinit; compinit
+    unsetopt auto_menu
+    setopt bash_auto_list
+    bindkey -e
+fi
+
 ######################################
-## Prompt
+## Prompt Settings
 
 __my_moc_state(){
     type mocp >/dev/null 2>&1 || return
