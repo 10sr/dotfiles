@@ -777,8 +777,8 @@ showinfo(){
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        #mkdir -p ~/.my/log
-        # nohup startx >~/.my/log/xorg.log 2>&1 &
+        #mkdir -p ~/.var/log
+        # nohup startx >~/.var/log/xorg.log 2>&1 &
         # exit
         exec startx
     else
@@ -805,7 +805,7 @@ di(){
 
 tb(){
     local datenum=`date +%Y%m%d-%H%M%S`
-    local tb="$HOME/.my/tb/$datenum"
+    local tb="$HOME/.var/tb/$datenum"
     mkdir -p "$tb"
     for file in "$@"
     do
