@@ -58,15 +58,20 @@ fi
 
 if inbash
 then
-    shrc="$BASH_SOURCE"
+    __shrc="$BASH_SOURCE"
 elif inzsh
 then
-    shrc="$0"
+    __shrc="$0"
 fi
 
-dotdir="`dirname "$shrc"`"
+__dotdir="`dirname "$__shrc"`"
+__homelocal="$HOME/.local"
+__homevar="$HOME/.var"
+install -d "$__homelocal"
+install -d "$__homevar"
 
 #################################
+# profile-like setups
 # aliases:
 #     isinteractive: true if the current session is interactive
 #     issourced: true if this file is sourced from another file (not so assured)
@@ -76,43 +81,60 @@ dotdir="`dirname "$shrc"`"
 alias isinteractive=false
 __match "$-" i >/dev/null  && alias isinteractive=true
 alias issourced=true
-expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # invoked as script
+expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
 
+# Basic idea is: if PATH value is destroyed set again.
 alias __firstload=false
 __match "$PATH" "$HOME/.local/bin" || alias __firstload=true
 
+
+__safe_add_path_r(){
+    test -d "$1" && PATH="${PATH}:$1"
+}
+__safe_add_path_l(){
+    test -d "$1" && PATH="$1:${PATH}"
+}
+
 if __firstload
 then
-    if test -d "$HOME/.local/bin"
+    __safe_add_path_l "$HOME/.local/bin"
+    __safe_add_path_l "$HOME/.local/lib/gems/bin"
+    __safe_add_path_r "/c/mingw/bin"
+    __safe_add_path_r "/c/mingw/msys/1.0/bin"
+
+    test -f "${__dotdir}/rc.py" && export PYTHONSTARTUP="${__dotdir}/rc.py"
+
+    install -d "$HOME/.local/lib/python/site-packages"
+    export PYTHONPATH="${PYTHONPATH}:${HOME}/.local/lib/python/site-packages"
+
+    export GEM_HOME="$HOME/.local/lib/gems"
+    export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
+
+
+    # it is not so good
+    # http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
+    # http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
+    # without this ENV i cannot run tmux. another way is to use --disable-shared
+    # when building tmux
+    if ! __match "$LD_LIBRARY_PATH" "$HOME/.local/lib"
     then
-        PATH="${HOME}/.local/bin:${PATH}"
+        export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
     fi
-    if test -d "$HOME/.local/lib/gems/bin"
-    then
-        PATH="$HOME/.local/lib/gems/bin:${PATH}"
-    fi
+
+    # in my environment powerdown does not work
+    test -z "$SSH_CONNECTION" && \
+        type setterm >/dev/null 2>&1 && \
+        setterm -blank 30 -powersave on # -powerdown 10
+
 fi
 
-if ismsys && ! __match "$PATH" /c/mingw/bin
-then
-    PATH="$PATH:/c/mingw/bin:/c/mingw/msys/1.0/bin"
-fi
-
-# # it is not so good
-# # http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
-# # http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
-# without this ENV i cannot run tmux. another way is to use --disable-shared
-# when building tmux
-if ! __match "$LD_LIBRARY_PATH" "$HOME/.local/lib"
-then
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
-fi
 
 ##################################
 # Some EnvVal definitions
 
 export LANG=ja_JP.UTF-8
 export LC_MESSAGES=C
+export LC_TIME=C
 
 export TERMCAP="${TERMCAP}:vb="
 ismsys && export HOSTNAME
