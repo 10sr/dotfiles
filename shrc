@@ -544,38 +544,6 @@ netwait(){
     echo network works.
 }
 
-cd(){
-    if test $# -eq 0
-    then
-        pushd ~/ >/dev/null
-    elif test "$1" = -
-    then
-        local pwd="$PWD"
-        command cd "$OLDPWD"
-        pushd -n "$pwd" >/dev/null        # stack last dir
-    elif ! test -d "$1"
-    then
-        echo `basename ${SHELL}`: cd: "$1": No such file or directory  1>&2
-        return 1
-    else
-        pushd "$1" >/dev/null
-    fi
-    __dirs_rm_dup "$PWD"
-    echo "$PWD"
-}
-
-__dirs_rm_dup(){
-    for d in "$@"
-    do
-        local next="$(__realpath --strip "$d")"
-        for l in $(\dirs -v -l | cut -d $'\n' -f 2- | \
-            \grep -x " *[0-9]\+ \+${next}" | \grep -o "^ *[0-9]\+ " | tac)
-        do
-            popd +$l -n >/dev/null
-        done
-    done
-}
-
 __realpath(){
     if type realpath >/dev/null 2>&1
     then
@@ -585,49 +553,19 @@ __realpath(){
         do
             shift
         done
-        local d="$OLDPWD"
-        command cd "$1"
-        echo "$PWD"
-        command cd "$d"
+        (command cd "$d" && echo "$PWD")
+        # local d="$OLDPWD"
+        # command cd "$1"
+        # echo "$PWD"
+        # command cd "$d"
     fi
 }
 
-dh(){
-    if test $# -eq 0
-    then
-        dirs -v -l
-    else
-        local dir="$(dirs -v -l | \grep "^ *$1 \+" | sed "s/^ *[0-9]* *//g")"
-        cd "$dir"
-    fi
-}
-input(){
-    local foo
-    stty -echo
-    read foo
-    stty echo
-    echo $foo
-}
-
-# tmux(){
-#     if test $# -eq 0
-#     then
-#         (cd ~; command tmux start;)
-#         if command tmux has -t main
-#         then
-#             command tmux attach -t main
-#         else
-#             (cd ~; command tmux new -s main;)
-#         fi
-#     else
-#         command tmux "$@"
-#     fi
-# }
 tx(){
     if test $# -eq 0
     then
+        echo ":: tx <session> to attach."
         tmux ls
-        echo "tx <session> to attach."
     elif tmux has -t "$1"
     then
         tmux attach -t "$1"
@@ -924,23 +862,6 @@ convmv_sjis2utf8_test(){
 convmv_sjis2utf8_notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
-
-winln(){
-    # for windose make link (actually junction)
-    if test $# -eq 0
-    then
-        {
-            echo "usage: winln TARGET LINK_NAME"
-            echo "Create a link to TARGET with the name LINK_NAME \
-(that is, TARGET must already exist)."
-            echo "About other features run 'junction'."
-        } 1>&2
-        return 1
-    else
-        junction "$2" "$1"
-    fi
-}
-
 
 
 #################################################
