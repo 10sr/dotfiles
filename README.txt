@@ -2,6 +2,7 @@ Dotfiles
 ========
 
 
+
 First Principle
 ---------------
 
@@ -23,16 +24,15 @@ rc files. The main changes are related to showing informations, typically in the
 bash prompt.
 
 
+
 Sourcing flow
 -------------
 
-~/.bash_profile           <= console login
+$HOME/.profile           <= console login (maybe sourced from .{ba,z}sh_profile)
 |
-|--~/.dotfiles/profile
-|
-`--~/.bashrc
+`--$HOME/.{ba,z}shrc
    |
-   `--~/.dotfiles/bashrc
+   `--$HOME/.dotfiles/shrc
 
 ~/.xinitrc                <= startx
 |
