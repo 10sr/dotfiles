@@ -140,7 +140,7 @@ export LC_TIME=C
 
 export TERMCAP="${TERMCAP}:vb="
 ismsys && export HOSTNAME
-export ENV=~/.shrc
+# export ENV=~/.shrc
 
 if ! with_coreutils
 then
