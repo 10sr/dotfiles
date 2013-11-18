@@ -80,8 +80,8 @@ install -d "$__homevar"
 
 alias isinteractive=false
 __match "$-" i >/dev/null  && alias isinteractive=true
-alias issourced=true
-expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
+# alias issourced=true
+# expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
 
 # Basic idea is: if PATH value is destroyed set again.
 alias __firstload=false
@@ -101,6 +101,15 @@ then
     __safe_add_path_l "$HOME/.local/lib/gems/bin"
     __safe_add_path_r "/c/mingw/bin"
     __safe_add_path_r "/c/mingw/msys/1.0/bin"
+
+    isdarwin && {
+        # macports coreutils
+        __safe_add_path_l "/opt/local/bin"
+        __safe_add_path_l "/opt/local/sbin"
+        __safe_add_path_l "/opt/local/libexec/gnubin"
+        __safe_add_path_l \
+            "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin"
+    }
 
     test -f "${__dotdir}/rc.py" && export PYTHONSTARTUP="${__dotdir}/rc.py"
 
@@ -216,7 +225,7 @@ fi
 
 #######################
 # If not running interactively, don't do anything
-issourced || exit
+# issourced || exit
 isinteractive || return
 
 ######################
@@ -918,10 +927,12 @@ dpaste(){
 if inzsh
 then
     # http://zsh.sourceforge.net/Guide/zshguide06.html#l147
-    autoload -U compinit; compinit
+    autoload compinit; compinit
     unsetopt auto_menu
     setopt bash_auto_list
     bindkey -e
+    autoload colors; colors
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 fi
 
 ######################################
