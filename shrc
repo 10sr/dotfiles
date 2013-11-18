@@ -16,6 +16,65 @@ __match(){
     expr "$1" : ".*$2.*" >/dev/null
 }
 
+
+#################################
+# profile-like setups
+# aliases:
+#     isinteractive: true if the current session is interactive
+#     issourced: true if this file is sourced from another file (not so assured)
+#     __firstload: true if this file is sourced for the first time (not so
+#                  assured)
+
+alias isinteractive=false
+__match "$-" i >/dev/null  && alias isinteractive=true
+# alias issourced=true
+# expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
+
+__safe_add_path_r(){
+    test -d "$1" && PATH="${PATH}:$1"
+}
+__safe_add_path_l(){
+    test -d "$1" && PATH="$1:${PATH}"
+}
+
+__safe_add_path_l "$HOME/.local/bin"
+__safe_add_path_l "$HOME/.local/lib/gems/bin"
+__safe_add_path_r "/c/mingw/bin"
+__safe_add_path_r "/c/mingw/msys/1.0/bin"
+
+# macports coreutils
+# isdarwin cannot be used it is not defined yet
+__safe_add_path_l "/opt/local/bin"
+__safe_add_path_l "/opt/local/sbin"
+__safe_add_path_l "/opt/local/libexec/gnubin"
+__safe_add_path_l \
+    "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin"
+
+test -f "${__dotdir}/rc.py" && export PYTHONSTARTUP="${__dotdir}/rc.py"
+
+install -d "$HOME/.local/lib/python/site-packages"
+export PYTHONPATH="${PYTHONPATH}:${HOME}/.local/lib/python/site-packages"
+
+export GEM_HOME="$HOME/.local/lib/gems"
+export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
+
+
+# it is not so good
+# http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
+# http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
+# without this ENV i cannot run tmux. another way is to use --disable-shared
+# when building tmux
+if ! __match "$LD_LIBRARY_PATH" "$HOME/.local/lib"
+then
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
+fi
+
+# in my environment powerdown does not work
+test -z "$SSH_CONNECTION" && \
+    type setterm >/dev/null 2>&1 && \
+    setterm -blank 30 -powersave on # -powerdown 10
+
+
 ##########################
 # system type
 # aliases:
@@ -50,6 +109,7 @@ then
     alias inzsh=true
 fi
 
+
 #################################
 # file pathes:
 #     shrc: Path to this file
@@ -70,76 +130,9 @@ __homevar="$HOME/.var"
 install -d "$__homelocal"
 install -d "$__homevar"
 
-#################################
-# profile-like setups
-# aliases:
-#     isinteractive: true if the current session is interactive
-#     issourced: true if this file is sourced from another file (not so assured)
-#     __firstload: true if this file is sourced for the first time (not so
-#                  assured)
-
-alias isinteractive=false
-__match "$-" i >/dev/null  && alias isinteractive=true
-# alias issourced=true
-# expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
-
-# Basic idea is: if PATH value is destroyed set again.
-alias __firstload=false
-__match "$PATH" "$HOME/.local/bin" || alias __firstload=true
-
-
-__safe_add_path_r(){
-    test -d "$1" && PATH="${PATH}:$1"
-}
-__safe_add_path_l(){
-    test -d "$1" && PATH="$1:${PATH}"
-}
-
-if __firstload
-then
-    __safe_add_path_l "$HOME/.local/bin"
-    __safe_add_path_l "$HOME/.local/lib/gems/bin"
-    __safe_add_path_r "/c/mingw/bin"
-    __safe_add_path_r "/c/mingw/msys/1.0/bin"
-
-    isdarwin && {
-        # macports coreutils
-        __safe_add_path_l "/opt/local/bin"
-        __safe_add_path_l "/opt/local/sbin"
-        __safe_add_path_l "/opt/local/libexec/gnubin"
-        __safe_add_path_l \
-            "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin"
-    }
-
-    test -f "${__dotdir}/rc.py" && export PYTHONSTARTUP="${__dotdir}/rc.py"
-
-    install -d "$HOME/.local/lib/python/site-packages"
-    export PYTHONPATH="${PYTHONPATH}:${HOME}/.local/lib/python/site-packages"
-
-    export GEM_HOME="$HOME/.local/lib/gems"
-    export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
-
-
-    # it is not so good
-    # http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
-    # http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
-    # without this ENV i cannot run tmux. another way is to use --disable-shared
-    # when building tmux
-    if ! __match "$LD_LIBRARY_PATH" "$HOME/.local/lib"
-    then
-        export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
-    fi
-
-    # in my environment powerdown does not work
-    test -z "$SSH_CONNECTION" && \
-        type setterm >/dev/null 2>&1 && \
-        setterm -blank 30 -powersave on # -powerdown 10
-
-fi
-
 
 ##################################
-# Some EnvVal definitions
+# EnvVal definitions
 
 export LANG=ja_JP.UTF-8
 export LC_MESSAGES=C
