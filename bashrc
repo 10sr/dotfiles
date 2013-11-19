@@ -759,7 +759,10 @@ __EOF__
 }
 
 open_file(){
-    if iswindows
+    if iscygwin
+    then
+        cygstart "$@"
+    elif ismsys
     then
         cmd.exe //c start "" "$@"
     elif isdarwin
