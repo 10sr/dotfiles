@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mkdir -p ~/.my/log
+mkdir -p ~/.var/log
 mkdir -p ~/.local/bin
 
 _iswindows(){
@@ -60,6 +60,7 @@ git_config(){
     $_gitconfig log.date iso
     type xz && \
         $_gitconfig tar.txz.command "xz -c"
+    $_gitconfig push.default current
 
     $_gitconfig alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
     $_gitconfig alias.st "status -s -b"
@@ -124,8 +125,8 @@ mac_start_daemon(){
 
 default(){
     get_install_script \
-        http://www.frexx.de/xterm-256-notes/data/colortable16.sh \
-        http://www.frexx.de/xterm-256-notes/data/256colors2.pl
+        https://gist.github.com/10sr/6852317/raw/colortable16.sh \
+        https://gist.github.com/10sr/6852331/raw/256colors2.pl
 
     git_config
 

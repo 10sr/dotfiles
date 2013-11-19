@@ -1,20 +1,85 @@
-#!/bin/bash
+#!/bin/sh
 
 # TODO: use tput
-
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
 
 ##########################################
 null(){
     "$@" >/dev/null 2>&1
 }
-__try_exec(){
+__safe_run(){
     type $1 >/dev/null 2>&1 && "$@"
 }
 
+__match(){
+    # __match str word
+    # return 0 if word is found in str
+    expr "$1" : ".*$2.*" >/dev/null
+}
+
+
+#################################
+# profile-like setups
+# aliases:
+#     isinteractive: true if the current session is interactive
+#     issourced: true if this file is sourced from another file (not so assured)
+#     __firstload: true if this file is sourced for the first time (not so
+#                  assured)
+
+alias isinteractive=false
+__match "$-" i >/dev/null  && alias isinteractive=true
+# alias issourced=true
+# expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
+
+__safe_add_path_r(){
+    test -d "$1" && PATH="${PATH}:$1"
+}
+__safe_add_path_l(){
+    test -d "$1" && PATH="$1:${PATH}"
+}
+
+__safe_add_path_l "$HOME/.local/bin"
+__safe_add_path_l "$HOME/.local/lib/gems/bin"
+__safe_add_path_r "/c/mingw/bin"
+__safe_add_path_r "/c/mingw/msys/1.0/bin"
+
+# macports coreutils
+# isdarwin cannot be used it is not defined yet
+__safe_add_path_l "/opt/local/bin"
+__safe_add_path_l "/opt/local/sbin"
+__safe_add_path_l "/opt/local/libexec/gnubin"
+__safe_add_path_l \
+    "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin"
+
+test -f "${__dotdir}/rc.py" && export PYTHONSTARTUP="${__dotdir}/rc.py"
+
+install -d "$HOME/.local/lib/python/site-packages"
+export PYTHONPATH="${PYTHONPATH}:${HOME}/.local/lib/python/site-packages"
+
+export GEM_HOME="$HOME/.local/lib/gems"
+export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
+
+
+# it is not so good
+# http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
+# http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
+# without this ENV i cannot run tmux. another way is to use --disable-shared
+# when building tmux
+if ! __match "$LD_LIBRARY_PATH" "$HOME/.local/lib"
+then
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
+fi
+
+# in my environment powerdown does not work
+test -z "$SSH_CONNECTION" && \
+    type setterm >/dev/null 2>&1 && \
+    setterm -blank 30 -powersave on # -powerdown 10
+
+
 ##########################
 # system type
+# aliases:
+#     ismsys, iscygwin iswindows, isdarwin, islinux,
+#     with_coreutils, inbash, inzsh
 
 alias ismsys=false
 alias iscygwin=false
@@ -44,48 +109,46 @@ then
     alias inzsh=true
 fi
 
+
 #################################
+# file pathes:
+#     shrc: Path to this file
+#     dotdir: Path to .dotfiles directory
 
-__match(){
-    # __match str1 str2
-    # return 0 if str2 is found in str1
-    expr "$1" : ".*$2.*" >/dev/null
-}
 
-if ! __match "$PATH" "$HOME/.local/bin"
+if inbash
 then
-    if test -d "$HOME/.local/bin"
-    then
-        PATH="${HOME}/.local/bin:${PATH}"
-    fi
-    if test -d "$HOME/.local/lib/gems/bin"
-    then
-        PATH="$HOME/.local/lib/gems/bin:${PATH}"
-    fi
+    __shrc="$BASH_SOURCE"
+elif inzsh
+then
+    __shrc="$0"
 fi
 
-if ismsys && ! __match "$PATH" /c/mingw/bin
-then
-    PATH="$PATH:/c/mingw/bin:/c/mingw/msys/1.0/bin"
-fi
+__dotdir="`dirname "$__shrc"`"
+__homelocal="$HOME/.local"
+__homevar="$HOME/.var"
+install -d "$__homelocal"
+install -d "$__homevar"
 
-# # it is not so good
-# # http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
-# # http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
-# without this ENV i cannot run tmux. another way is to use --disable-shared
-# when building tmux
-if ! __match "$LD_LIBRARY_PATH" "$HOME/.local/lib"
-then
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
-fi
 
 ##################################
+# EnvVal definitions
+
 export LANG=ja_JP.UTF-8
 export LC_MESSAGES=C
+export LC_TIME=C
 
 export TERMCAP="${TERMCAP}:vb="
 ismsys && export HOSTNAME
-export ENV=~/.shrc
+# export ENV=~/.shrc
+
+if ! with_coreutils
+then
+    export LSCOLORS=gxfxcxdxbxegedabagacad
+else
+    # http://qiita.com/yuyuchu3333/items/84fa4e051c3325098be3
+    null type dircolors && eval `dircolors`
+fi
 
 if false iswindows
 then
@@ -95,11 +158,13 @@ else
 fi
 export LESS="-iRMX"
 
+# Style for lesspipe is defined in esc.style
 _src_hilite_lp_path="`which src-hilite-lesspipe.sh 2>/dev/null`"
-if test -n "$_src_hilite_lp_path"
-then
-    export LESSOPEN="| $_src_hilite_lp_path %s"
-fi
+for f in /usr/share/source-highlight/src-hilite-lesspipe.sh
+do
+    test -z "$_src_hilite_lp_path" && test -e "$f" && _src_hilite_lp_path="$f"
+done
+test -n "$_src_hilite_lp_path" && export LESSOPEN="| $_src_hilite_lp_path %s"
 
 if null type vim
 then
@@ -115,8 +180,8 @@ export GIT_EDITOR="$EDITOR"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \
-    echo $TERM | grep screen >/dev/null 2>&1 && \
-    tmux display -p '#{client_termname}' | grep 256color >/dev/null 2>&1
+    __match $TERM screen && \
+    __match `tmux display -p '#{client_termname}'` 256color
 then
     TERM=screen-256color
 fi
@@ -146,17 +211,18 @@ if iswindows; then
     export USER=$USERNAME
 fi
 
-_tmux_prefs(){
-    null type tmux || return 1
-    tmux set -g mode-keys vi
-}
-
 if test -d ~/dbx
 then
     export CHIT_PATH="$HOME/dbx/.chit"
 fi
 
 #######################
+# If not running interactively, don't do anything
+# issourced || exit
+isinteractive || return
+
+######################
+# Print welcome messages
 
 iswindows && alias tty="echo cmd.exe"
 type fortune >/dev/null 2>&1 && {
@@ -190,11 +256,6 @@ _timeformat_num="%Y%m%d%H%M%S"
 alias datenum="date +$_timeformat_num"
 
 alias ls="ls -hCF${_coloroption}${_timeoption}"
-if ! with_coreutils
-then
-    export LSCOLORS=gxfxcxdxbxegedabagacad
-    alias ls="ls -G"
-fi
 # export GREP_OPTIONS=""
 alias gr="grep -n --color=always"
 iswindows && alias grep="grep -n"
@@ -273,10 +334,20 @@ wicn(){
     fi
 }
 
-for f in /usr/share/vim/vimcurrent/macros/less.sh \
-    /usr/share/vim/vim73/macros/less.sh \
-    /usr/share/vim/vim72/macros/less.sh
+__find_latest_vimdir(){
+    vimdir=/usr/share/vim
+    if test -d "$vimdir"
+    then
+        find "$vimdir" -name 'vim??' -type d | sort | tail -n 1
+    else
+        echo ""
+    fi
+}
+
+for f in /usr/share/vim/vimcurrent "`__find_latest_vimdir`"
 do
+    test -n "$f" || continue
+    f="$f/macros/less.sh"
     test -f $f && alias vl=$f && break
 done
 
@@ -338,15 +409,89 @@ then
         || complete -o default -o nospace -F _git g
 fi
 git svn --help >/dev/null 2>&1 && alias gsvn="git svn"
-null type gitmemo && alias m=gitmemo
 
 null type gitmemo && alias m=gitmemo
 
 alias setup.py="sudo python3 setup.py install --record files.txt"
 
+randomstr(){
+    len=$1
+    test -z "$len" && len=8
+    uuidgen | tr -d - | cut -c 1-len
+}
+
+datestr(){
+    # datestr yyyyMMdd-hhmmss
+    if test -z "$1" || test "$1" == "-h"
+    then
+        echo "datestr: usage: datestr <yyyyMMddhhmmss>"
+        return 1
+    fi
+
+    dfmt=                       # actual format for date command
+    while test -n "$1"
+    do
+        fmt="$1"
+        while test -n "$fmt"
+        do
+            case "$fmt" in
+                yyyy*)          # year
+                    dfmt="${dfmt}%Y"
+                    fmt="`echo "$fmt" | cut -c 5-`"
+                    ;;
+                yy*)            # last two digits of year
+                    dfmt="${dfmt}%y"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                MM*)            # month (01..12)
+                    dfmt="${dfmt}%m"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                dd*)            # day of month (01..12)
+                    dfmt="${dfmt}%d"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                HH* | hh*)            # hour (00..23)
+                    dfmt="${dfmt}%H"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                mm*)            # minute (00..59)
+                    dfmt="${dfmt}%M"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                ss*)            # second (00..60)
+                    dfmt="${dfmt}%S"
+                    fmt="`echo "$fmt" | cut -c 3-`"
+                    ;;
+                *)
+                    char=`echo "$fmt" | cut -c 1`
+                    dfmt="${dfmt}${char}"
+                    fmt="`echo "$fmt" | cut -c 2-`"
+                    ;;
+            esac
+        done
+        shift
+    done
+    date +"$dfmt"
+}
+
 ssh(){
     __my_set_screen_title ssh
     command ssh "$@"
+}
+
+__ssh_with_cd(){
+    # __ssh_with_cd <host> <directory> [<arg> ...]
+    if test -z "$2"
+    then
+        echo "usage: __ssh_with_cd <host> <directory> [<arg> ...]"
+        return 1
+    fi
+    host="$1"
+    shift
+    dir="$1"
+    shift
+    ssh "$host" "$@" -t "cd \"$dir\"; \$SHELL -l"
 }
 
 memo(){
@@ -358,7 +503,7 @@ memo(){
     fi
 }
 
-clk(){
+now(){
     local tformat="%Y/%m/%d %H:%M:%S %z"
     cal
     REPLY=
@@ -423,38 +568,6 @@ netwait(){
     echo network works.
 }
 
-cd(){
-    if test $# -eq 0
-    then
-        pushd ~/ >/dev/null
-    elif test "$1" = -
-    then
-        local pwd="$PWD"
-        command cd "$OLDPWD"
-        pushd -n "$pwd" >/dev/null        # stack last dir
-    elif ! test -d "$1"
-    then
-        echo `basename ${SHELL}`: cd: "$1": No such file or directory  1>&2
-        return 1
-    else
-        pushd "$1" >/dev/null
-    fi
-    __dirs_rm_dup "$PWD"
-    echo "$PWD"
-}
-
-__dirs_rm_dup(){
-    for d in "$@"
-    do
-        local next="$(__realpath --strip "$d")"
-        for l in $(\dirs -v -l | cut -d $'\n' -f 2- | \
-            \grep -x " *[0-9]\+ \+${next}" | \grep -o "^ *[0-9]\+ " | tac)
-        do
-            popd +$l -n >/dev/null
-        done
-    done
-}
-
 __realpath(){
     if type realpath >/dev/null 2>&1
     then
@@ -464,55 +577,30 @@ __realpath(){
         do
             shift
         done
-        local d="$OLDPWD"
-        command cd "$1"
-        echo "$PWD"
-        command cd "$d"
+        (command cd "$d" && echo "$PWD")
+        # local d="$OLDPWD"
+        # command cd "$1"
+        # echo "$PWD"
+        # command cd "$d"
     fi
 }
 
-dh(){
-    if test $# -eq 0
-    then
-        dirs -v -l
-    else
-        local dir="$(dirs -v -l | \grep "^ *$1 \+" | sed "s/^ *[0-9]* *//g")"
-        cd "$dir"
-    fi
-}
-input(){
-    local foo
-    stty -echo
-    read foo
-    stty echo
-    echo $foo
-}
-
-# tmux(){
-#     if test $# -eq 0
-#     then
-#         (cd ~; command tmux start;)
-#         if command tmux has -t main
-#         then
-#             command tmux attach -t main
-#         else
-#             (cd ~; command tmux new -s main;)
-#         fi
-#     else
-#         command tmux "$@"
-#     fi
-# }
 tx(){
     if test $# -eq 0
     then
+        echo ":: tx <session> to attach."
         tmux ls
-        echo "tx <session> to attach."
     elif tmux has -t "$1"
     then
         tmux attach -t "$1"
     else
         tmux new -s "$1"
     fi
+}
+
+_tmux_prefs(){
+    null type tmux || return 1
+    tmux set -g mode-keys vi
 }
 
 dt(){
@@ -589,7 +677,7 @@ dtscr(){
     # echo $_file
 }
 
-mcrypt-stream(){
+mcrypt_stream(){
     test $# -eq 2 || return 1
     case $1 in
         en)
@@ -599,7 +687,7 @@ mcrypt-stream(){
     esac
 }
 
-gpg-stream(){
+gpg_stream(){
     test $# -eq 2 || return 1
     case $1 in
         en)
@@ -632,7 +720,7 @@ dgpg(){
         elif test -f "$d"
         then
             echo "`printf 'failed (%s is already exists)' $d`"
-        elif <"$f" gpg-stream $1 $pw >"$d" 2>/dev/null
+        elif <"$f" gpg_stream $1 $pw >"$d" 2>/dev/null
         then
             echo "done"
         else
@@ -642,27 +730,27 @@ dgpg(){
     done
 }
 
-alias enst="gpg-stream en"
-alias dest="gpg-stream de"
+alias enst="gpg_stream en"
+alias dest="gpg_stream de"
 
 showinfo(){
     echo "Japanese letters are 表示可能"
 
-    __try_exec diskinfo
+    __safe_run diskinfo
 
     ! isdarwin && test -n "${DISPLAY}" && {
-        __try_exec xrandr | \grep --color=never ^Screen
+        __safe_run xrandr | \grep --color=never ^Screen
     }
 
-    iswindows || __try_exec finger $USER
-    LANG=C __try_exec id
-    __try_exec xset q
+    iswindows || __safe_run finger $USER
+    LANG=C __safe_runc id
+    __safe_run xset q
 }
 
 x(){
     if [[ -z $DISPLAY ]] && ! [[ -e /tmp/.X11-unix/X0 ]] && (( EUID )); then
-        #mkdir -p ~/.my/log
-        # nohup startx >~/.my/log/xorg.log 2>&1 &
+        #mkdir -p ~/.var/log
+        # nohup startx >~/.var/log/xorg.log 2>&1 &
         # exit
         exec startx
     else
@@ -689,7 +777,7 @@ di(){
 
 tb(){
     local datenum=`date +%Y%m%d-%H%M%S`
-    local tb="$HOME/.my/tb/$datenum"
+    local tb="$HOME/.var/tb/$datenum"
     mkdir -p "$tb"
     for file in "$@"
     do
@@ -794,30 +882,13 @@ o(){
     fi
 }
 
-convmv-sjis2utf8-test(){
+convmv_sjis2utf8_test(){
     convmv -r -f sjis -t utf8 *
 }
 
-convmv-sjis2utf8-notest(){
+convmv_sjis2utf8_notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
-
-winln(){
-    # for windose make link (actually junction)
-    if test $# -eq 0
-    then
-        {
-            echo "usage: winln TARGET LINK_NAME"
-            echo "Create a link to TARGET with the name LINK_NAME \
-(that is, TARGET must already exist)."
-            echo "About other features run 'junction'."
-        } 1>&2
-        return 1
-    else
-        junction "$2" "$1"
-    fi
-}
-
 
 
 #################################################
@@ -846,8 +917,28 @@ dpaste(){
 }
 
 
+##########################
+# Zsh specific preferences
+
+if inzsh
+then
+    bindkey -e
+
+    # http://zsh.sourceforge.net/Guide/zshguide06.html#l147
+    autoload compinit; compinit
+    unsetopt auto_menu
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+    setopt bash_auto_list
+
+    autoload colors; colors
+
+    autoload -Uz promptinit
+    promptinit
+    prompt walters
+fi
+
 ######################################
-## Prompt
+## Prompt Settings
 
 __my_moc_state(){
     type mocp >/dev/null 2>&1 || return
@@ -886,7 +977,7 @@ __my_battery_status(){
 }
 alias bat='__my_battery_status %s\\n'
 
-ip-address(){
+ipaddress(){
     type ip >/dev/null 2>&1 || return 1
     local ip=$(LANG=C ip addr show scope global | \
         \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
@@ -902,53 +993,42 @@ test -n "$SSH_CONNECTION" && __my_ps1_str="${__my_ps1_str}${__my_c5}SSH${__my_cd
 test -n "$__MY_DTACH" && __my_ps1_str="${__my_ps1_str}${__my_c5}DTACH${__my_cdef} "
 
 __my_ps1_scale(){
-    local last=$?
     if null type stty && ! ismsys
     then
         stty size | tr -d $'\n' | tr " " x
         printf " "
     fi
-    return $last
 }
 
 __my_ps1_tmux(){
-    local last=$?
     null type tmux || return $last
     local tmuxc="$(tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
     test -n "$TMUX" && echo "[TMUX:$tmuxc]"
-    return $last
 }
 
 __my_ps1_moc(){
-    local last=$?
     __my_moc_state "[MOC:%s]"
-    return $last
 }
 
 for f in /usr/share/git/git-prompt.sh \
     /opt/local/share/git-core/git-prompt.sh \
     /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
-    test -r "$f" && . "$f" && break
+    test -r "$f" && inbash && . "$f" && break
 done
 GIT_PS1_SHOWDIRTYSTATE=t
 GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
-    local last=$?
     null type __git_ps1 || return $last
     null git rev-parse --git-dir >/dev/null 2>&1 || return $last
-    __git_ps1 "[GIT:$(__try_exec git config --get user.name):%s]"
-    return $last
+    __git_ps1 "[GIT:$(__safe_run git config --get user.name):%s]"
 }
 
 __my_ps1_ipaddr(){
-    local last=$?
-    ! iswindows && ip-address [Addr:%s]
-    return $last
+    ! iswindows && ipaddress [Addr:%s]
 }
 
 __my_ps1_bttry(){
-    local last=$?
     local bst="${TMP}/batterystatus"
     if test -z "$DISPLAY" && ! iswindows
     then
@@ -957,7 +1037,6 @@ __my_ps1_bttry(){
             echo "[Battery:$bstr]"
         __my_battery_status %s >$bst &
     fi
-    return $last
 }
 
 __my_ps1_dirs(){
@@ -966,6 +1045,10 @@ __my_ps1_dirs(){
 
 __my_ps1_jobs(){
     jobs | wc -l
+}
+
+__my_alert_fail(){
+    test $laststatus -eq 0 || echo '!!! '
 }
 
 if test "$TERM" != dumb
@@ -982,19 +1065,12 @@ then
     __my_cdef="\[\e[0m\]"
 fi
 
-# export _LAST_STATUS=a
-# __my_export_last_status(){
-#     local last=$?
-#     echo $last
-#     export _LAST_STATUS=$last
-#     echo $_LAST_STATUS
-#     return $last
-# }
-
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
-${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$? $(__my_ps1_scale) \D{%T} ${__my_ps1_str}\$ "
+${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$laststatus $(__my_ps1_scale)\D{%T} ${__my_ps1_str}\$(__my_alert_fail)\$ "
 inbash && PS1=$_ps1_bash
+_ps1_zsh="$_ps1_bash"
+#inzsh && PS1="$_ps1_zsh"
 
 __my_set_screen_title(){
     if test -n "$TMUX" && test -z "$INSIDE_EMACS"
@@ -1016,3 +1092,5 @@ __my_set_title(){
 }
 PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
 __my_set_screen_title \$(basename \"\$PWD\")/"
+PROMPT_COMMAND="laststatus=\$?;$PROMPT_COMMAND"
+laststatus=0

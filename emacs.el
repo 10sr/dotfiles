@@ -94,6 +94,7 @@ otherwise the path where the library installed."
           markdown-mode
           yaml-mode
           ;; ack
+          color-moccur
           )))
 
 
@@ -163,6 +164,7 @@ found, otherwise returns nil."
 
 (add-hook 'after-init-hook
           (lambda ()
+            (message "%s %s" invocation-name emacs-version)
             (message "%s was taken to initialize emacs." (emacs-init-time))
             (switch-to-buffer "*Messages*")
             ))
@@ -849,6 +851,8 @@ found, otherwise returns nil."
                                 :weight 'normal)
             (set-face-foreground 'diff-removed-face "red")
             (set-face-foreground 'diff-added-face "green")
+            (set-face-background 'diff-removed-face nil)
+            (set-face-background 'diff-added-face nil)
             (set-face-attribute 'diff-changed nil
                                 :foreground "magenta"
                                 :weight 'normal)
@@ -1926,55 +1930,66 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                                  (file-name-as-directory dir)
                                                "")
                                              "memo.txt"))))
-(file-name-as-directory "..")
-(defun my-rgrep-gitgrep (word)
-  "Recursive grep with git-grep"
-  (interactive "sgit-grep: Word to search: ")
-  (require 'grep)
-  (compilation-start
-   (format "git --no-pager -c color.grep=false grep -nH -e '%s'"
-           word)
-   'grep-mode))
 
-(defun my-rgrep-ag (word)
-  "Recursive grep with ag"
-  (interactive "sag: Word to search: ")
-  (require 'grep)
-  (compilation-start (format "ag --nocolor --nogroup --nopager '%s'"
-                            word)
-                    'grep-mode))
+(defvar my-rgrep-gitgrep
+  "git --no-pager -c color.grep=false grep -nH -e "
+  "grep command for git grep.")
 
-(defun my-rgrep-ack (word)
-  "Recursive grep with ack"
-  (interactive "sack: Word to search: ")
-  (require 'grep)
-  (compilation-start (format "ack --nocolor --nogroup --nopager '%s'"
-                            word)
-                    'grep-mode))
+(defvar my-rgrep-ag
+  "ag --nocolor --nogroup --nopager "
+  "grep command for ag")
 
-(defun my-rgrep-grep (word)
-  "Recursive grep with grep"
-  (interactive "sgrep: Word to search: ")
-  (require 'grep)
-  (compilation-start
-   (format (concat "find . "
-                   "-path '*/.git' -prune -o "
-                   "-path '*/.svn' -prune -o "
-                   "-type f -exec grep -nH -e '%s' {} +")
-           word)
-   'grep-mode))
+(defvar my-rgrep-ack
+  "ack --nocolor --nogroup --nopager "
+  "grep command for ack")
 
-(defun my-rgrep (word)
-  "My recursive grep."
-  (interactive "sWord to search: ")
+(defvar my-rgrep-grep
+  (concat "find . "
+          "-path '*/.git' -prune -o "
+          "-path '*/.svn' -prune -o "
+          "-type f -print0 | "
+          "xargs -0 -e grep -nH -e ")
+  "grep command for grep")
+
+(defun my-rgrep-grep-command ()
+  "Return recursive grep command for current directory."
   (if (eq 0
           (shell-command "git rev-parse --git-dir"))
-      (my-rgrep-gitgrep word)
+      my-rgrep-gitgrep
     (if (executable-find "ag")
-        (my-rgrep-ag word)
+        my-rgrep-ag
       (if (executable-find "ack")
-          (my-rgrep-ack word)
-        (my-rgrep-grep word)))))
+          my-rgrep-ack
+        my-rgrep-grep))))
+
+(defun my-rgrep (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         (my-rgrep-grep-command)
+                                         'grep-find-history)))
+  (compilation-start command-args
+                     'grep-mode))
+
+(defun my-rgrep-ack (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         my-rgrep-ack
+                                         'grep-find-history)))
+  (my-rgrep command-args))
+
+(defun my-rgrep-ag (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         my-rgrep-ag
+                                         'grep-find-history)))
+  (my-rgrep command-args))
+
+(defun my-rgrep-grep (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         my-rgrep-grep
+                                         'grep-find-history)))
+  (my-rgrep command-args))
 
 (define-key ctl-x-map "s" 'my-rgrep)
 
@@ -2047,6 +2062,19 @@ this is test, does not rename files"
                (message file))
       (message "not visiting file."))))
 
+(defvar kill-ring-buffer-name "*kill-ring*"
+  "Buffer name for `kill-ring-buffer'.")
+(defun open-kill-ring-buffer ()
+  "Open kill- ring buffer."
+  (interactive)
+  (pop-to-buffer
+   (with-current-buffer (get-buffer-create kill-ring-buffer-name)
+     (erase-buffer)
+     (yank)
+     (text-mode)
+     (current-local-map)
+     (goto-char (point-min)))))
+
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; savage emacs
 ;; ;; when enabled emacs fails to complete
@@ -2054,5 +2082,52 @@ this is test, does not rename files"
 ;; (defadvice message (before message-for-stupid (arg &rest arg2) activate)
 ;;   (setq arg
 ;;         (concat arg
-;;                 (if (eq nil (string-match "\\. *$" arg)) ".")
+;;                 (if (eq nil
+;;                         (string-match "\\. *$"
+;;                                       arg))
+;;                     ".")
 ;;                 " Stupid!")))
+
+(defvar my-system-info
+  nil
+  "System info in the form of \"[user@host] \".")
+(setq my-system-info
+      (concat "["
+              user-login-name
+              "@"
+              (car (split-string system-name
+                                 "\\."))
+              "] "))
+
+(defadvice read-from-minibuffer (before info-in-prompt activate)
+  (ad-set-arg 0
+              (concat my-system-info
+                      (ad-get-arg 0))))
+
+(defadvice read-string (before info-in-prompt activate)
+  (ad-set-arg 0
+              (concat my-system-info
+                      (ad-get-arg 0))))
+
+(when (< emacs-major-version 24)
+  (defadvice completing-read (before info-in-prompt activate)
+    (ad-set-arg 0
+                (concat my-system-info
+                        (ad-get-arg 0)))))
+
+(defun my-real-function-subr-p (function)
+  "Return t if function is a built-in function even if it is advised."
+  (let* ((advised (and (symbolp function)
+                       (featurep 'advice)
+                       (ad-get-advice-info function)))
+         (real-function
+          (or (and advised (let ((origname (cdr (assq 'origname advised))))
+                             (and (fboundp origname)
+                                  origname)))
+              function))
+         (def (if (symbolp real-function)
+                  (symbol-function real-function)
+                function)))
+    (subrp def)))
+
+;; (my-real-function-subr-p 'my-real-function-subr-p)
