@@ -80,7 +80,9 @@ git_config(){
     # $_gitconfig alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     $_gitconfig alias.addi "add -i"
     $_gitconfig alias.clean-p "!test -z \"\$(git status -s -uno)\""
-    $_gitconfig alias.new "checkout -b"
+    $_gitconfig alias.newb "checkout -b"
+    $_gitconfig alias.endb \
+        "!sh -c 'git stash && git checkout master && git merge --no-ff -'"
     #$_gitconfig alias.wc "!git ls-files -z | xargs -0 wc"
     # $_gitconfig push.default "simple"
     if _iswindows; then
