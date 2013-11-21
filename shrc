@@ -52,8 +52,8 @@ __safe_add_path_l \
 
 test -f "${__dotdir}/rc.py" && export PYTHONSTARTUP="${__dotdir}/rc.py"
 
-install -d "$HOME/.local/lib/python/site-packages"
-export PYTHONPATH="${PYTHONPATH}:${HOME}/.local/lib/python/site-packages"
+test -d "$HOME/.local/lib/python/site-packages" && \
+    export PYTHONPATH="${PYTHONPATH}:${HOME}/.local/lib/python/site-packages"
 
 export GEM_HOME="$HOME/.local/lib/gems"
 export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
@@ -127,8 +127,8 @@ fi
 __dotdir="`dirname "$__shrc"`"
 __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
-install -d "$__homelocal"
-install -d "$__homevar"
+test -d "$__homelocal" || install -d "$__homelocal"
+test -d "$__homevar" || install -d "$__homevar"
 
 
 ##################################
@@ -200,7 +200,7 @@ then
 fi
 __match "$TMP" "${USER}-tmp" >/dev/null || export TMP="${TMP}/${USER}-tmp"
 export TEMP="$TMP"
-mkdir -p "$TMP"
+test -d "$TMP" || install -d "$TMP"
 
 ! iswindows && null type stty && {
     stty stop undef        # unbind C-s to stop displaying output
@@ -216,10 +216,133 @@ then
     export CHIT_PATH="$HOME/dbx/.chit"
 fi
 
+##########################
+# Setups
+
+__download(){
+    # download <url> <file>
+    if type wget >/dev/null 2>&1
+    then
+        wget "$1" -O "$2"
+    elif  type curl >/dev/null 2>&1
+    then
+        curl --url "$1" --output "$2"
+    fi
+}
+
+__mysetup_fetch_script(){
+    url="$1"
+    name="$2"
+    type "$name" >/dev/null 2>&1 || {
+        __download "$url" "$HOME/.local/bin/$name" &&
+        chmod u+x "$HOME/.local/bin/$name"
+    }
+}
+
+__mysetup_darwin_set_defaults(){
+    isdarwin || return 1
+
+    # http://appdrill.net/60641/mac-boot-mute.html
+    #sudo nvram SystemAudioVolume=%80
+
+    # add quit entry in menu
+    defaults write com.apple.finder QuitMenuItem -bool YES
+    # show full path on titlebar
+    defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES
+    # do not show desktop icons
+    defaults write com.apple.finder CreateDesktop -boolean false
+
+    killall Finder
+
+    # disable dashboard
+    #defaults write com.apple.dashboard mcx-disabled -bool YES
+}
+
+__mysetup_darwin_start_daemon(){
+    isdarwin || return 1
+
+    test "`launchctl getenv LC_ALL`" = C || sudo launchctl setenv LC_ALL C
+    if ! (launchctl list | grep com.apple.locate) >/dev/null
+    then
+        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
+    fi
+}
+
+__mysetup_git_config(){
+    if ! null type git
+    then
+        echo "git not found"
+        return 1
+    fi
+
+    _gitconfig="git config --global"
+
+    $_gitconfig user.name '10sr'
+    $_gitconfig user.email '8slashes+git@gmail.com'
+    $_gitconfig core.autocrlf false
+    $_gitconfig core.excludesfile '~/.gitignore'
+    $_gitconfig color.ui auto
+    $_gitconfig status.relativePaths false
+    $_gitconfig status.showUntrackedFiles normal
+    $_gitconfig log.date iso
+    null type xz && \
+        $_gitconfig tar.txz.command "xz -c"
+    $_gitconfig push.default current
+
+    $_gitconfig alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
+    $_gitconfig alias.st "status -s -b"
+    $_gitconfig alias.b "branch"
+    $_gitconfig alias.sb "show-branch"
+    $_gitconfig alias.ci "commit --verbose"
+    $_gitconfig alias.co "checkout"
+    $_gitconfig alias.cim "commit --verbose -m"
+    $_gitconfig alias.di "diff --color"
+    $_gitconfig alias.me "merge --no-ff --stat -v"
+    $_gitconfig alias.gr "grep -n"
+    $_gitconfig alias.ls "ls-files"
+    # $_gitconfig alias.ls "ls-files -v --full-name"
+    # $_gitconfig alias.ls "status -u -s ."
+    $_gitconfig alias.sl "!sl"
+    # $_gitconfig alias.my-ls "ls-files | xargs ls"
+    # $_gitconfig alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
+    $_gitconfig alias.addi "add -i"
+    $_gitconfig alias.clean-p "!test -z \"\$(git status -s -uno)\""
+    $_gitconfig alias.newb "checkout -b"
+    $_gitconfig alias.endb \
+        "!sh -cx 'git stash && git checkout master && git merge --no-ff -'"
+    #$_gitconfig alias.wc "!git ls-files -z | xargs -0 wc"
+    # $_gitconfig push.default "simple"
+    if iswindows; then
+        $_gitconfig core.fileMode false
+    fi
+}
+
+__mysetup_mkdirs(){
+    install -d "$HOME/.local/bin"
+}
+
+__mysetup(){
+    __mysetup_mkdirs
+    __mysetup_fetch_script \
+        https://gist.github.com/10sr/6852317/raw/colortable16.sh colortable16.sh
+    __mysetup_fetch_script \
+        https://gist.github.com/10sr/6852331/raw/256colors2.pl 256colors2.pl
+    if isdarwin
+    then
+        __mysetup_darwin_set_defaults
+        __mysetup_darwin_start_daemon
+    fi
+}
+
 #######################
-# If not running interactively, don't do anything
-# issourced || exit
-isinteractive || return
+if ! isinteractive
+then
+    if test "$1" = setup
+    then
+        __mysetup
+    fi
+    exit 0
+fi
 
 ######################
 # Print welcome messages
@@ -776,12 +899,12 @@ di(){
 }
 
 tb(){
-    local datenum=`date +%Y%m%d-%H%M%S`
-    local tb="$HOME/.var/tb/$datenum"
-    mkdir -p "$tb"
+    __datenum=`date +%Y%m%d-%H%M%S`
+    __tb="$HOME/.var/tb/$__datenum"
+    install -d "$__tb"
     for file in "$@"
     do
-        mv -t "$tb" "$file"
+        mv -t "$__tb" "$file"
     done
 }
 
@@ -794,7 +917,7 @@ mkcd(){
     then
         echo "Dir \"$1\" already exists."
     else
-        mkdir -p "$1"
+        install -d "$1"
         echo "Dir \"$1\" created."
     fi
     cd "$1"
