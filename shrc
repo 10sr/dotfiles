@@ -340,8 +340,10 @@ then
     if test "$1" = setup
     then
         __mysetup
+        exit 0
     fi
-    exit 0
+    # if this file is sourced return, if executed directly exit
+    return 2>/dev/null || exit
 fi
 
 ######################
