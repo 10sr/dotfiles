@@ -25,11 +25,6 @@ __match(){
 #     __firstload: true if this file is sourced for the first time (not so
 #                  assured)
 
-alias isinteractive=false
-__match "$-" i >/dev/null  && alias isinteractive=true
-# alias issourced=true
-# expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
-
 __safe_add_path_r(){
     test -d "$1" && PATH="${PATH}:$1"
 }
@@ -108,6 +103,11 @@ elif test -n "$ZSH_VERSION"
 then
     alias inzsh=true
 fi
+
+alias isinteractive=false
+__match "$-" i >/dev/null  && alias isinteractive=true
+# alias issourced=true
+# expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
 
 
 #################################
@@ -432,6 +432,7 @@ null type htags && alias htags="htags --xhtml --symbol --line-number \
 null type aunpack && alias au=aunpack
 null type lv && alias lv="lv|less"
 null type rsync && alias rs="rsync --progress --itemize-changes --compress"
+iscygwin && null type wget && alias wget="wget --no-check-certificate"
 
 isdarwin && alias updatedb="LC_ALL=C updatedb"
 # do not use locate installed by macports
