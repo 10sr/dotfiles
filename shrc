@@ -369,6 +369,14 @@ fi
 ###################################
 # some aliases and functions
 
+__safe_alias(){
+    # __safe_alias <name>=<command>
+    _bin=`expr "$1" : '^[^=]*=\([^ ]*\)'`
+    test -n "$_bin" && \
+        null type $_bin && \
+        alias "$1"
+}
+
 ( ! with_coreutils && isdarwin ) || test "$TERM" = dumb || \
     _coloroption=" --color=auto"
 ( ! with_coreutils && isdarwin ) || iswindows || \
@@ -388,22 +396,22 @@ iswindows && alias grep="grep -n"
 # alias la="ls -A"
 # alias lla="ls -Al"
 alias less="less -F"
-null type emacs && alias em="emacs -nw"
-null type vim && alias vi=vim
+__safe_alias em="emacs -nw"
+__safe_alias vi=vim
 alias pstree="LANG=C pstree"
 alias cp="cp -v"
 alias mv="mv -v"
 alias rm="rm -v"
 alias psaux="ps auxww"
 alias q=exit
-null type e3em && alias e3=e3em
+__safe_alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
 alias po=popd
 alias pu=pushd
-null type sudo && alias sudo="sudo "              # use aliases through sudo
-null type sudoedit && alias sudoe="sudoedit"
-null type halt && alias halt="sudo halt"
-null type reboot && alias reboot="sudo reboot"
+__safe_alias sudo="sudo "              # use aliases through sudo
+__safe_alias sudoe="sudoedit"
+# __safe_alias halt="sudo halt"
+# __safe_alias reboot="sudo reboot"
 null type dbus-send && {
     alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
     /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
@@ -411,28 +419,28 @@ null type dbus-send && {
     /org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
 }
 alias rand="echo \$RANDOM"
-null type file-roller && alias xunp="file-roller -h"
-null type paco && alias pc="sudo \paco -D"
+__safe_alias xunp="file-roller -h"
+__safe_alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
-null type python3 && alias py3=python3
-null type python2 && alias py2=python2
+__safe_alias py3=python3
+__safe_alias py2=python2
 alias _reloadrc="exec \"$SHELL\""
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 # type trash >/dev/null 2>&1 && alias rm=trash
-null type mpg123 && alias mpg123="mpg123 -C -v --title"
-null type xmms2 && alias xm="xmms2"
+__safe_alias mpg123="mpg123 -C -v --title"
+__safe_alias xm="xmms2"
 #export PLAYER="mpg123 -C -v --title"
 
-null type screen && alias screen="screen -e^z^z"
+__safe_alias screen="screen -e^z^z"
 #alias zcd="cd \`zenity --file-selection --directory\`"
-null type gtags && alias gtags="gtags --verbose"
-null type htags && alias htags="htags --xhtml --symbol --line-number \
+__safe_alias gtags="gtags --verbose"
+__safe_alias htags="htags --xhtml --symbol --line-number \
 --frame --alphabet --verbose"
-null type aunpack && alias au=aunpack
-null type lv && alias lv="lv|less"
-null type rsync && alias rs="rsync --progress --itemize-changes --compress"
-iscygwin && null type wget && alias wget="wget --no-check-certificate"
+__safe_alias au=aunpack
+__safe_alias lv="lv|less"
+__safe_alias rs="rsync --progress --itemize-changes --compress"
+iscygwin && __safe_alias wget="wget --no-check-certificate"
 
 isdarwin && alias updatedb="LC_ALL=C updatedb"
 # do not use locate installed by macports
@@ -440,12 +448,12 @@ isdarwin && test -x /usr/bin/locate && alias locate="/usr/bin/locate"
 
 # pad
 alias pad=notepad
-null type gedit && alias pad=gedit
-null type leafpad && alias pad=leafpad
+__safe_alias pad=gedit
+__safe_alias pad=leafpad
 isdarwin && alias pad="open -e"
 
-null type wicd-curses && alias wic=wicd-curses
-null type wicd-cli && alias wil="wicd-cli -y -l | head"
+__safe_alias wic=wicd-curses
+__safe_alias wil="wicd-cli -y -l | head"
 #alias wicn="wicd-cli -y -c -n"
 wicn(){
     if test $# -eq 0
@@ -479,8 +487,8 @@ done
 
 alias pa=pacapt
 
-null type yaourt && alias yt=yaourt
-null type cower && alias cower="cower --color=auto"
+__safe_alias yt=yaourt
+__safe_alias cower="cower --color=auto"
 null type pacmatic && {
     alias pacman="pacmatic"
     export PACMAN="pacmatic"
@@ -536,9 +544,9 @@ then
 fi
 git svn --help >/dev/null 2>&1 && alias gsvn="git svn"
 
-null type gitmemo && alias m=gitmemo
+__safe_alias m=gitmemo
 
-alias setup.py="sudo python3 setup.py install --record files.txt"
+alias setup.py3="sudo python3 setup.py install --record files.txt"
 
 randomstr(){
     len=$1
