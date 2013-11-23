@@ -322,6 +322,7 @@ __mysetup_mkdirs(){
 }
 
 __mysetup(){
+    set -x
     __mysetup_mkdirs
     __mysetup_fetch_script \
         https://gist.github.com/10sr/6852317/raw/colortable16.sh colortable16.sh
@@ -332,6 +333,7 @@ __mysetup(){
         __mysetup_darwin_set_defaults
         __mysetup_darwin_start_daemon
     fi
+    set +x
 }
 
 #######################
