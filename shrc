@@ -1188,6 +1188,10 @@ __my_alert_fail(){
     test $laststatus -eq 0 || echo '!!! '
 }
 
+# About ansi escape sequences
+# http://archive.linux.or.jp/JF/JFdocs/Bash-Prompt-HOWTO-5.html
+# http://www.grapecity.com/japan/powernews/column/clang/047/page02.htm
+
 __attr_beg='\[\033['
 __attr_end='m\]'
 
