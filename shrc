@@ -1226,6 +1226,7 @@ __color_bg_light_gray="${__attr_beg}47${__attr_end}"
 
 __attr_underline="${__attr_beg}4${__attr_end}"
 __attr_reverse="${__attr_beg}7${__attr_end}"
+__attr_bold="${__attr_beg}1${__attr_end}"
 
 # NOTE: tput is another easy way to set colors and background
 # For example, "$(tput setab 4)text$(tput sgr0)" print text with background
@@ -1233,14 +1234,23 @@ __attr_reverse="${__attr_beg}7${__attr_end}"
 
 if test "$TERM" != dumb
 then
-    __my_c1="$__color_brown"      # color for PWD
-    __my_c2="$__color_cyan"       # color for user and hostname
+    __my_c1="$__attr_bold$__attr_underline"      # color for PWD
+    __my_c2="$__attr_bold$__attr_underline"       # color for user and hostname
     # color for ::
-    if test "`hostname`" = arch-aspireone; then __my_c4="$__color_light_blue"
-    elif test "`hostname`" = darwin-mba.local; then __my_c4="$__color_light_red"
-    elif test "`hostname`" = newkiwi; then __my_c4="$__color_light_purple"
-    else __my_c4="$__color_light_green"
-    fi
+    case "`hostname`" in
+        arch-aspireone)
+            __my_c4="$__color_light_blue"
+            ;;
+        darwin-mba.local)
+            __my_c4="$__color_light_cyan"
+            ;;
+        newkiwi)
+            __my_c4="$__color_light_purple"
+            ;;
+        *)
+            __my_c4="$__color_light_green"
+            ;;
+    esac
     __my_c5="$__color_black$__color_bg_light_gray"        # color for SCR
     __my_cdef="$__color_default"
 fi

@@ -9,7 +9,7 @@ my @tmux_setw_command  = ("setw", "-g");
 
 my %color_prefs = (
     "arch-aspireone" => "blue,white",
-    "darwin-mba.local" => "red,white",
+    "darwin-mba.local" => "cyan,black",
     "newkiwi" => "magenta,white"
     );
 my $color_def = "green,black";
