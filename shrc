@@ -1187,16 +1187,16 @@ __my_alert_fail(){
 
 if test "$TERM" != dumb
 then
-    __my_c1='\[\e[0;33m\]'       # color for PWD
-    __my_c2='\[\e[0;36m\]'         # color for user
-    __my_c3='\[\e[1;30m\]'       # color for OLDPWD
-    if test "`hostname`" = arch-aspireone; then __my_c4='\[\e[1;34m\]'
-    elif test "`hostname`" = darwin-mba.local; then __my_c4='\[\e[1;31m\]'
-    elif test "`hostname`" = newkiwi; then __my_c4='\[\e[1;35m\]'
-    else __my_c4='\[\e[1;32m\]'       # color for ::
+    __my_c1='\[\033[0;33m\]'       # color for PWD
+    __my_c2='\[\033[0;36m\]'         # color for user
+    __my_c3='\[\033[1;30m\]'       # color for OLDPWD
+    if test "`hostname`" = arch-aspireone; then __my_c4='\[\033[1;34m\]'
+    elif test "`hostname`" = darwin-mba.local; then __my_c4='\[\033[1;31m\]'
+    elif test "`hostname`" = newkiwi; then __my_c4='\[\033[1;35m\]'
+    else __my_c4='\[\033[1;32m\]'       # color for ::
     fi
-    __my_c5='\[\e[30;47m\]'        # color for SCR
-    __my_cdef='\[\e[0m\]'
+    __my_c5='\[\033[30;47m\]'        # color for SCR
+    __my_cdef='\[\033[0m\]'
 fi
 
 _ps1_bash="\
