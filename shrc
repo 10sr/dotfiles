@@ -449,6 +449,11 @@ isdarwin && alias updatedb="LC_ALL=C updatedb"
 # do not use locate installed by macports
 isdarwin && test -x /usr/bin/locate && alias locate="/usr/bin/locate"
 
+cd(){
+    command cd "$@"
+    pwd
+}
+
 # pad
 alias pad=notepad
 __safe_alias pad=gedit
