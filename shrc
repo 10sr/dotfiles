@@ -369,6 +369,9 @@ fi
 ###################################
 # some aliases and functions
 
+# __func_name: never used interactively
+# _func_name: usually not used interactively
+
 __safe_alias(){
     # __safe_alias <name>=<command>
     _bin=`expr "$1" : '^[^=]*=\([^ ]*\)'`
@@ -494,7 +497,7 @@ null type pacmatic && {
     export PACMAN="pacmatic"
 }
 
-_pacman_update_mirrorlist_with_reflector(){
+__my_pacman_update_mirrorlist_with_reflector(){
     ml=/etc/pacman.d/mirrorlist
     cmd="$(expr "$(grep -m 1 reflector $ml)" : '# With: *\(.*\)')"
     if test -z "$cmd"
@@ -505,7 +508,7 @@ _pacman_update_mirrorlist_with_reflector(){
     sudo $cmd
 }
 null type reflector && test -f /etc/pacman.d/mirrorlist && \
-    alias reflect_mirrorlist=_pacman_update_mirrorlist_with_reflector
+    alias reflect_mirrorlist=__my_pacman_update_mirrorlist_with_reflector
 
 null type apt-get && {
     alias aupgrade="sudo apt-get autoremove --yes && \
@@ -1245,6 +1248,18 @@ inbash && PS1=$_ps1_bash
 _ps1_zsh="$_ps1_bash"
 #inzsh && PS1="$_ps1_zsh"
 
+__my_set_header_line(){
+    # save current position
+    printf "\033[s"
+    printf "\033[0;0H"
+    printf "\033[K"
+    printf "\033[7m"
+    printf "$1"
+    printf "\033[0m"
+    # restore saved position
+    printf "\033[u"
+}
+
 __my_set_screen_title(){
     if test -n "$TMUX" && test -z "$INSIDE_EMACS"
     then
@@ -1255,11 +1270,10 @@ __my_set_screen_title(){
 __my_set_title(){
     case $TERM in
         (rxvt*|xterm*|aterm|screen*)
-            title="$(echo $@)"
             test -t 1 &&
             test -n "$DISPLAY" &&
             test -z "$EMACS" &&
-            echo -n -e "\033]0;${title}\007"
+            echo -n -e "\033]0;$1\007"
             ;;
     esac
 }
