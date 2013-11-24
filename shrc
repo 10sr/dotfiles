@@ -1196,6 +1196,8 @@ __my_alert_fail(){
 # About ansi escape sequences
 # http://archive.linux.or.jp/JF/JFdocs/Bash-Prompt-HOWTO-5.html
 # http://www.grapecity.com/japan/powernews/column/clang/047/page02.htm
+# http://www5c.biglobe.ne.jp/~ecb/assembler2/b_2.html
+# http://www.bjorfuan.com/hjp/appendix/esc.xhtml
 
 __attr_beg='\[\033['
 __attr_end='m\]'
@@ -1260,7 +1262,7 @@ then
     __my_cdef="$__color_default"
 fi
 
-_ps1_bash="\
+_ps1_bash="\r\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
 ${__my_c4}:: ${__my_cdef}l${SHLVL}n\#j\js\$laststatus $(__my_ps1_scale)\D{%T} ${__my_ps1_str}\$(__my_alert_fail)\$ "
 inbash && PS1=$_ps1_bash
