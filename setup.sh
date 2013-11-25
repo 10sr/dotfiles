@@ -53,6 +53,45 @@ __homevar="$__homevar"
 __EOC__
 }
 
+#############################
+# gen_tmux_conf_local
+
+gen_tmux_conf_local(){
+    tmux_conf_local="$HOME/.tmux.conf.local"
+
+    case "`hostname`" in
+        arch-aspireone)
+            tmux_bg_color=blue
+            tmux_fg_color=white
+            ;;
+        darwin-mba.local)
+            tmux_bg_color=cyan
+            tmux_fg_color=black
+            ;;
+        newkiwi)
+            tmux_bg_color=magenta
+            tmux_fg_color=white
+            ;;
+        *)
+            tmux_bg_color=green
+            tmux_fg_color=black
+            ;;
+    esac
+
+    cat <<__EOC__ >"$tmux_conf_local"
+# $tmux_conf_local
+# Automatically generated from $0
+
+set -g status-right "${USER}@$(hostname) | $(tmux -V) "
+
+set -g status-bg $tmux_bg_color
+set -g status-fg $tmux_fg_color
+set -g mode-bg $tmux_bg_color
+set -g mode-fg $tmux_fg_color
+set -g pane-active-border-fg $tmux_bg_color
+__EOC__
+}
+
 ##############################
 # install_scripts
 
@@ -196,6 +235,7 @@ main(){
     mkdirs
     install_scripts
     git_configs
+    gen_tmux_conf_local
     if $isdarwin
     then
         darwin_set_defaults
