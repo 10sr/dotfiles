@@ -221,7 +221,7 @@ __download(){
     # download <url> <file>
     if type wget >/dev/null 2>&1
     then
-        wget "$1" -O "$2"
+        wget $__my_wget_options "$1" -O "$2"
     elif  type curl >/dev/null 2>&1
     then
         curl --url "$1" --output "$2"
@@ -231,10 +231,14 @@ __download(){
 __mysetup_fetch_script(){
     url="$1"
     name="$2"
-    type "$name" >/dev/null 2>&1 || {
-        __download "$url" "$HOME/.local/bin/$name" &&
-        chmod u+x "$HOME/.local/bin/$name"
-    }
+    dst="$HOME/.local/bin/$name"
+    type "$name" >/dev/null 2>&1 && return
+    if __download "$url" "$dst"
+    then
+        chmod u+x "$dst"
+    else
+        test -f "$dst" && rm -- "$dst"
+    fi
 }
 
 __mysetup_darwin_set_defaults(){
@@ -443,7 +447,10 @@ __safe_alias htags="htags --xhtml --symbol --line-number \
 __safe_alias au=aunpack
 __safe_alias lv="lv|less"
 __safe_alias rs="rsync --progress --itemize-changes --compress"
-iscygwin && __safe_alias wget="wget --no-check-certificate"
+iscygwin && {
+    __my_wget_options=" --no-check-certificate"
+    __safe_alias wget="wget $__my_wget_options"
+}
 
 isdarwin && alias updatedb="LC_ALL=C updatedb"
 # do not use locate installed by macports
