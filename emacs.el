@@ -146,6 +146,22 @@ found, otherwise returns nil."
   (message "Tetris found!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; my-idle-hook
+
+(defvar my-idle-hook nil
+  "Hook run when idle for several secs.")
+(defvar my-idle-hook-sec 5
+  "Second to run `my-idle-hook'.")
+(run-with-idle-timer my-idle-hook-sec
+                     t
+                     (lambda ()
+                       (run-hooks 'my-idle-hook)))
+
+(add-hook 'my-idle-hook
+          (lambda ()
+            (message "idle hook message")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; start and quit
 
 (setq inhibit-startup-message t)
