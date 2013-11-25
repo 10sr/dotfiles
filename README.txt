@@ -25,6 +25,15 @@ bash prompt.
 
 
 
+shrc.common
+-----------
+
+`setup.sh` will create file "$HOME/.shrc.common". This file define some
+variables that can be used to detect system type. This file is sourced from
+both `setup.sh` and `shrc`.
+
+
+
 Sourcing flow
 -------------
 
