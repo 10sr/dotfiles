@@ -1,5 +1,7 @@
 #!/bin/sh
 
+expr "$-" : '^.*i' >/dev/null || return
+
 ##########################################
 null(){
     "$@" >/dev/null 2>&1
@@ -67,29 +69,27 @@ test -z "$SSH_CONNECTION" && \
     type setterm >/dev/null 2>&1 && \
     setterm -blank 30 -powersave on # -powerdown 10
 
+#########################
+# shrc.common
+# this variable must consistent with setup.sh
+__shrc_common="$HOME/.shrc.common"
+
+if test -f "$__shrc_common"
+then
+    . "$__shrc_common"
+else
+    echo "$__shrc_common not found."
+    echo "Run ./setup.sh first."
+    return
+fi
 
 ##########################
 # system type
 # aliases:
-#     ismsys, iscygwin iswindows, isdarwin, islinux,
 #     with_coreutils, inbash, inzsh
 
-alias ismsys=false
-alias iscygwin=false
-alias iswindows=false
-alias isdarwin=false
-alias islinux=false
 alias with_coreutils=false      # for mac
-
-case `uname` in
-    (MINGW*) alias ismsys=true ;;
-    (CYGWIN*) alias iscygwin=true ;;
-    (Darwin*) alias isdarwin=true ;;
-    (Linux*) alias islinux=true ;;
-esac
 null ls --version && alias with_coreutils=true
-
-( ismsys || iscygwin ) && alias iswindows=true
 
 alias inbash=false
 alias inzsh=false
@@ -102,17 +102,9 @@ then
     alias inzsh=true
 fi
 
-alias isinteractive=false
-__match "$-" i >/dev/null  && alias isinteractive=true
-# alias issourced=true
-# expr "$0" : "^.*shrc$" >/dev/null && alias issourced=false # executed
-
-
 #################################
 # file pathes:
 #     shrc: Path to this file
-#     dotdir: Path to .dotfiles directory
-
 
 if inbash
 then
@@ -121,13 +113,6 @@ elif inzsh
 then
     __shrc="$0"
 fi
-
-__dotdir="`dirname "$__shrc"`"
-__homelocal="$HOME/.local"
-__homevar="$HOME/.var"
-test -d "$__homelocal" || install -d "$__homelocal"
-test -d "$__homevar" || install -d "$__homevar"
-
 
 ##################################
 # EnvVal definitions
@@ -212,142 +197,6 @@ fi
 if test -d ~/dbx
 then
     export CHIT_PATH="$HOME/dbx/.chit"
-fi
-
-##########################
-# Setups
-
-__download(){
-    # download <url> <file>
-    if type wget >/dev/null 2>&1
-    then
-        wget $__my_wget_options "$1" -O "$2"
-    elif  type curl >/dev/null 2>&1
-    then
-        curl --url "$1" --output "$2"
-    fi
-}
-
-__mysetup_fetch_script(){
-    url="$1"
-    name="$2"
-    dst="$HOME/.local/bin/$name"
-    type "$name" >/dev/null 2>&1 && return
-    if __download "$url" "$dst"
-    then
-        chmod u+x "$dst"
-    else
-        test -f "$dst" && rm -- "$dst"
-    fi
-}
-
-__mysetup_darwin_set_defaults(){
-    isdarwin || return 1
-
-    # http://appdrill.net/60641/mac-boot-mute.html
-    #sudo nvram SystemAudioVolume=%80
-
-    # add quit entry in menu
-    defaults write com.apple.finder QuitMenuItem -bool YES
-    # show full path on titlebar
-    defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES
-    # do not show desktop icons
-    defaults write com.apple.finder CreateDesktop -boolean false
-
-    killall Finder
-
-    # disable dashboard
-    #defaults write com.apple.dashboard mcx-disabled -bool YES
-}
-
-__mysetup_darwin_start_daemon(){
-    isdarwin || return 1
-
-    test "`launchctl getenv LC_ALL`" = C || sudo launchctl setenv LC_ALL C
-    if ! (launchctl list | grep com.apple.locate) >/dev/null
-    then
-        sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
-    fi
-}
-
-__mysetup_git_config(){
-    if ! null type git
-    then
-        echo "git not found"
-        return 1
-    fi
-
-    _gitconfig="git config --global"
-
-    $_gitconfig user.name '10sr'
-    $_gitconfig user.email '8slashes+git@gmail.com'
-    $_gitconfig core.autocrlf false
-    $_gitconfig core.excludesfile '~/.gitignore'
-    $_gitconfig color.ui auto
-    $_gitconfig status.relativePaths false
-    $_gitconfig status.showUntrackedFiles normal
-    $_gitconfig log.date iso
-    null type xz && \
-        $_gitconfig tar.txz.command "xz -c"
-    $_gitconfig push.default current
-
-    $_gitconfig alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
-    $_gitconfig alias.st "status -s -b"
-    $_gitconfig alias.b "branch"
-    $_gitconfig alias.sb "show-branch"
-    $_gitconfig alias.ci "commit --verbose"
-    $_gitconfig alias.co "checkout"
-    $_gitconfig alias.cim "commit --verbose -m"
-    $_gitconfig alias.di "diff --color"
-    $_gitconfig alias.me "merge --no-ff --stat -v"
-    $_gitconfig alias.gr "grep -n"
-    $_gitconfig alias.ls "ls-files"
-    # $_gitconfig alias.ls "ls-files -v --full-name"
-    # $_gitconfig alias.ls "status -u -s ."
-    $_gitconfig alias.sl "!sl"
-    # $_gitconfig alias.my-ls "ls-files | xargs ls"
-    # $_gitconfig alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
-    $_gitconfig alias.addi "add -i"
-    $_gitconfig alias.clean-p "!test -z \"\$(git status -s -uno)\""
-    $_gitconfig alias.bopen "checkout -b"
-    $_gitconfig alias.bclose \
-        "!sh -cx 'git stash && git checkout master && git merge --no-ff -'"
-    #$_gitconfig alias.wc "!git ls-files -z | xargs -0 wc"
-    # $_gitconfig push.default "simple"
-    if iswindows; then
-        $_gitconfig core.fileMode false
-    fi
-}
-
-__mysetup_mkdirs(){
-    install -d "$HOME/.local/bin"
-}
-
-__mysetup(){
-    set -x
-    __mysetup_mkdirs
-    __mysetup_fetch_script \
-        https://gist.github.com/10sr/6852317/raw/colortable16.sh colortable16.sh
-    __mysetup_fetch_script \
-        https://gist.github.com/10sr/6852331/raw/256colors2.pl 256colors2.pl
-    if isdarwin
-    then
-        __mysetup_darwin_set_defaults
-        __mysetup_darwin_start_daemon
-    fi
-    set +x
-}
-
-#######################
-if ! isinteractive
-then
-    if test "$1" = setup
-    then
-        __mysetup
-        exit 0
-    fi
-    # if this file is sourced return, if executed directly exit
-    return 2>/dev/null || exit
 fi
 
 ######################
