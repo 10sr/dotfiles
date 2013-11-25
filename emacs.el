@@ -1,3 +1,9 @@
+;;; emacs.el --- 10sr emacs initialization
+
+;;; Commentary:
+
+;;; Code:
+
 ;; (and (file-readable-p "~/.dotfiles/emacs.el")
 ;;      (load-file "~/.dotfiles/emacs.el"))
 
@@ -10,7 +16,8 @@
     (make-directory d))
   (add-to-list 'load-path d))
 
-(require 'cl nil t)
+(eval-when-compile
+  (require 'cl nil t))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -226,7 +233,7 @@ found, otherwise returns nil."
 
 (defun my-w32-add-export-path (&rest args)
   ""
-  (mapcar (lambda (path)
+  (mapc (lambda (path)
             (add-to-list 'exec-path (expand-file-name path)))
           (reverse args))
   (setenv "PATH"
@@ -2043,18 +2050,18 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
     ))
 
 (defun my-convmv-sjis2utf8-test ()
-  "run `convmv -r -f sjis -t utf8 *'
-this is test, does not rename files"
+  "Run `convmv -r -f sjis -t utf8 *'.
+this is test, does not rename files."
   (interactive)
   (shell-command "convmv -r -f sjis -t utf8 *"))
 
 (defun my-convmv-sjis2utf8-notest ()
-  "run `convmv -r -f sjis -t utf8 * --notest'"
+  "Run `convmv -r -f sjis -t utf8 * --notest'."
   (interactive)
   (shell-command "convmv -r -f sjis -t utf8 * --notest"))
 
 (defun kill-ring-save-buffer-file-name ()
-  "get current filename"
+  "Get current filename."
   (interactive)
   (let ((file buffer-file-name))
     (if file
@@ -2116,7 +2123,7 @@ this is test, does not rename files"
                         (ad-get-arg 0)))))
 
 (defun my-real-function-subr-p (function)
-  "Return t if function is a built-in function even if it is advised."
+  "Return t if FUNCTION is a built-in function even if it is advised."
   (let* ((advised (and (symbolp function)
                        (featurep 'advice)
                        (ad-get-advice-info function)))
@@ -2131,3 +2138,5 @@ this is test, does not rename files"
     (subrp def)))
 
 ;; (my-real-function-subr-p 'my-real-function-subr-p)
+
+;;; emacs.el ends here
