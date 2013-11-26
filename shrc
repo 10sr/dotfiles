@@ -38,7 +38,7 @@ __safe_add_path_r "/c/mingw/bin"
 __safe_add_path_r "/c/mingw/msys/1.0/bin"
 
 # macports coreutils
-# isdarwin cannot be used it is not defined yet
+# $isdarwin cannot be used it is not defined yet
 __safe_add_path_l "/opt/local/bin"
 __safe_add_path_l "/opt/local/sbin"
 __safe_add_path_l "/opt/local/libexec/gnubin"
@@ -122,7 +122,7 @@ export LC_MESSAGES=C
 export LC_TIME=C
 
 export TERMCAP="${TERMCAP}:vb="
-ismsys && export HOSTNAME
+$ismsys && export HOSTNAME
 # export ENV=~/.shrc
 
 if ! with_coreutils
@@ -133,7 +133,7 @@ else
     null type dircolors && eval `dircolors`
 fi
 
-if false iswindows
+if false $iswindows
 then
     export PAGER='tr -d \\r | less'
 else
@@ -185,12 +185,14 @@ __match "$TMP" "${USER}-tmp" >/dev/null || export TMP="${TMP}/${USER}-tmp"
 export TEMP="$TMP"
 test -d "$TMP" || install -d "$TMP"
 
-! iswindows && null type stty && {
+if ! $iswindows && null type stty
+then
     stty stop undef        # unbind C-s to stop displaying output
     # stty erase '^h'
-}
+fi
 
-if iswindows; then
+if $iswindows
+then
     export USER=$USERNAME
 fi
 
@@ -202,7 +204,7 @@ fi
 ######################
 # Print welcome messages
 
-iswindows && alias tty="echo cmd.exe"
+$iswindows && alias tty="echo cmd.exe"
 type fortune >/dev/null 2>&1 && {
     fortune
     echo
@@ -233,11 +235,11 @@ __safe_alias(){
         alias "$1"
 }
 
-( ! with_coreutils && isdarwin ) || test "$TERM" = dumb || \
+( ! with_coreutils && $isdarwin ) || test "$TERM" = dumb || \
     _coloroption=" --color=auto"
-( ! with_coreutils && isdarwin ) || iswindows || \
+( ! with_coreutils && $isdarwin ) || $iswindows || \
     _timeoption=" --time-style=long-iso"
-( ! with_coreutils && isdarwin ) || _hideoption=" --hide=[A-Z]*" # do not use
+( ! with_coreutils && $isdarwin ) || _hideoption=" --hide=[A-Z]*" # do not use
 
 _timeformat_iso="%Y-%m-%dT%H:%M:%S%z"
 _timeformat_rfc2822="%a, %d %b %Y %T %z"
@@ -247,7 +249,7 @@ alias datenum="date +$_timeformat_num"
 alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
 alias gr="grep -n --color=always"
-iswindows && alias grep="grep -n"
+$iswindows && alias grep="grep -n"
 # alias ll="ls -l"
 # alias la="ls -A"
 # alias lla="ls -Al"
@@ -296,14 +298,18 @@ __safe_alias htags="htags --xhtml --symbol --line-number \
 __safe_alias au=aunpack
 __safe_alias lv="lv|less"
 __safe_alias rs="rsync --progress --itemize-changes --compress"
-iscygwin && {
+if $iscygwin
+then
     __my_wget_options=" --no-check-certificate"
     __safe_alias wget="wget $__my_wget_options"
-}
+fi
 
-isdarwin && alias updatedb="LC_ALL=C updatedb"
-# do not use locate installed by macports
-isdarwin && test -x /usr/bin/locate && alias locate="/usr/bin/locate"
+if $isdarwin
+then
+    alias updatedb="LC_ALL=C updatedb"
+    # do not use locate installed by macports
+    test -x /usr/bin/locate && alias locate="/usr/bin/locate"
+fi
 
 cd(){
     command cd "$@"
@@ -314,7 +320,7 @@ cd(){
 alias pad=notepad
 __safe_alias pad=gedit
 __safe_alias pad=leafpad
-isdarwin && alias pad="open -e"
+$isdarwin && alias pad="open -e"
 
 __safe_alias wic=wicd-curses
 __safe_alias wil="wicd-cli -y -l | head"
@@ -385,11 +391,11 @@ null type port && {
 { sudo port -v upgrade outdated; }"
 }
 
-if iscygwin; then
+if $iscygwin
+then
     null type windate || \
         alias windate="cmd.exe //c 'echo %DATE%-%TIME%'"
     # alias cygsu="cygstart /cygwinsetup.exe"
-    # alias ls="ls -CFG $(iswindows || test "$TERM" = dumb || echo --color=auto)"
 fi
 
 g(){
@@ -736,11 +742,11 @@ showinfo(){
 
     __safe_run diskinfo
 
-    ! isdarwin && test -n "${DISPLAY}" && {
+    ! $isdarwin && test -n "${DISPLAY}" && {
         __safe_run xrandr | \grep --color=never ^Screen
     }
 
-    iswindows || __safe_run finger $USER
+    $iswindows || __safe_run finger $USER
     LANG=C __safe_runc id
     __safe_run xset q
 }
@@ -811,10 +817,10 @@ then
 fi
 
 catclip(){
-    if iswindows
+    if $iswindows
     then
         cat /dev/clipboard | tr -d \\r
-    elif isdarwin
+    elif $isdarwin
     then
         pbpaste
     else
@@ -831,10 +837,10 @@ setclip(){
 `cat "$@"`
 __EOF__
     fi
-    if iswindows
+    if $iswindows
     then
         0<&3 sed -e 's/$/\r/' | tee /dev/clipboard
-    elif isdarwin
+    elif $isdarwin
     then
         pbcopy 0<&3
     else
@@ -845,17 +851,17 @@ __EOF__
 }
 
 open_file(){
-    if iscygwin
+    if $iscygwin
     then
         cygstart "$@"
-    elif ismsys
+    elif $ismsys
     then
         cmd.exe //c start "" "$@"
-    elif isdarwin
+    elif $isdarwin
     then
         touch "$@"
         open "$@"
-    elif islinux
+    elif $islinux
     then
         touch "$@"
         if null type pcmanfm; then
@@ -991,7 +997,7 @@ test -n "$SSH_CONNECTION" && __my_ps1_str="${__my_ps1_str}${__my_c5}SSH${__my_cd
 test -n "$__MY_DTACH" && __my_ps1_str="${__my_ps1_str}${__my_c5}DTACH${__my_cdef} "
 
 __my_ps1_scale(){
-    if null type stty && ! ismsys
+    if null type stty && ! $ismsys
     then
         echo "[LxC:`stty size | tr -d $'\n' | tr " " x`]"
     fi
@@ -1022,12 +1028,12 @@ __my_ps1_git(){
 }
 
 __my_ps1_ipaddr(){
-    ! iswindows && ipaddress [Addr:%s]
+    ! $iswindows && ipaddress [Addr:%s]
 }
 
 __my_ps1_bttry(){
     local bst="${TMP}/batterystatus"
-    if test -z "$DISPLAY" && ! iswindows
+    if test -z "$DISPLAY" && ! $iswindows
     then
         test -f $bst && local bstr="$(cat $bst)"
         test -n "$bstr" && ! echo $bstr | grep 100 >/dev/null 2>&1 && \
