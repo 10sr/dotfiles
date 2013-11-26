@@ -923,21 +923,32 @@ dpaste(){
 ##########################
 # Zsh specific preferences
 
+# http://www.clear-code.com/blog/2011/9/5.html
+
 if $inzsh
 then
     bindkey -e
 
     # http://zsh.sourceforge.net/Guide/zshguide06.html#l147
     autoload compinit; compinit
+    # supress cycle by tab
     unsetopt auto_menu
-    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
     setopt bash_auto_list
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+    zstyle ':completion:*' format '%B%d%b'
+    zstyle ':completion:*' group-name ''
+    zstyle ':completion:*' use-cache yes
 
     autoload colors; colors
 
-    autoload -Uz promptinit
-    promptinit
-    prompt walters
+    # autoload -Uz promptinit
+    # promptinit
+    # prompt walters
+
+    setopt magic_equal_subst
+    setopt hist_ignore_dups
+    setopt share_history
+    setopt prompt_subst
 fi
 
 ######################################
@@ -1017,7 +1028,7 @@ for f in /usr/share/git/git-prompt.sh \
     /opt/local/share/git-core/git-prompt.sh \
     /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
-    test -r "$f" && $inbash && . "$f" && break
+    test -r "$f" && ($inbash || $inzsh) && . "$f" && break
 done
 GIT_PS1_SHOWDIRTYSTATE=t
 GIT_PS1_SHOWUPSTREAM=t
@@ -1028,7 +1039,7 @@ __my_ps1_git(){
 }
 
 __my_ps1_ipaddr(){
-    ! $iswindows && ipaddress [Addr:%s]
+    ! $iswindows && ipaddress '[Addr:%s]'
 }
 
 __my_ps1_bttry(){
@@ -1047,7 +1058,13 @@ __my_ps1_dirs(){
 }
 
 __my_ps1_jobs(){
-    # __my_ps1_jobs <num>
+    # __my_ps1_jobs [<num>]
+    if test -n "$1"
+    then
+        jobs="$1"
+    else
+        jobs="`jobs | wc -l`"
+    fi
     if test "$1" -ne 0
     then
         echo "[JOBS:$1] "
@@ -1063,8 +1080,14 @@ __my_alert_fail(){
 # http://archive.linux.or.jp/JF/JFdocs/Bash-Prompt-HOWTO-5.html
 # http://www.grapecity.com/japan/powernews/column/clang/047/page02.htm
 
-__attr_beg='\[\033['
-__attr_end='m\]'
+if $inzsh
+then
+    __attr_beg=$'%{\033['
+    __attr_end='m%}'
+else
+    __attr_beg='\[\033['
+    __attr_end='m\]'
+fi
 
 __color_default="${__attr_beg}0${__attr_end}"
 
@@ -1133,8 +1156,12 @@ __my_ps1_info(){
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info)\n\
 ${__my_c4}:: ${__my_cdef}\$(__my_ps1_jobs \j)${__my_ps1_str}\$(__my_alert_fail)\$ "
-$inbash && PS1=$_ps1_bash
-#$inzsh && PS1="$_ps1_zsh"
+$inbash && PS1="$_ps1_bash"
+
+_ps1_zsh="\
+${__my_c4}:: ${__my_cdef}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info)
+${__my_c4}:: ${__my_cdef}\$(__my_ps1_jobs)${__my_ps1_str}\$(__my_alert_fail)%# "
+$inzsh && PROMPT="$_ps1_zsh"
 
 __my_set_header_line(){
     # save current position
