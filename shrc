@@ -1065,9 +1065,9 @@ __my_ps1_jobs(){
     else
         jobs="`jobs | wc -l`"
     fi
-    if test "$1" -ne 0
+    if test "$jobs" -gt 0
     then
-        echo "[JOBS:$1] "
+        echo "[JOBS:$jobs] "
     fi
 }
 
