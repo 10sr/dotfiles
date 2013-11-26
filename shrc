@@ -1194,5 +1194,12 @@ __my_set_title(){
 }
 PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
 __my_set_screen_title \$(basename \"\$PWD\")/"
-PROMPT_COMMAND="laststatus=\$?;$PROMPT_COMMAND"
+if $inzsh
+then
+    precmd(){
+        laststatus=$?
+    }
+else
+    PROMPT_COMMAND="laststatus=\$?;$PROMPT_COMMAND"
+fi
 laststatus=0
