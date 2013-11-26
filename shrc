@@ -85,31 +85,29 @@ fi
 
 ##########################
 # system type
-# aliases:
-#     with_coreutils, inbash, inzsh
 
-alias with_coreutils=false      # for mac
-null ls --version && alias with_coreutils=true
+gnu_coreutils=false      # for mac
+null ls --version && gnu_coreutils=true
 
-alias inbash=false
-alias inzsh=false
+inbash=false
+inzsh=false
 
 if test -n "$BASH_VERSION"
 then
-    alias inbash=true
+    inbash=true
 elif test -n "$ZSH_VERSION"
 then
-    alias inzsh=true
+    inzsh=true
 fi
 
 #################################
 # file pathes:
 #     shrc: Path to this file
 
-if inbash
+if $inbash
 then
     __shrc="$BASH_SOURCE"
-elif inzsh
+elif $inzsh
 then
     __shrc="$0"
 fi
@@ -125,7 +123,7 @@ export TERMCAP="${TERMCAP}:vb="
 $ismsys && export HOSTNAME
 # export ENV=~/.shrc
 
-if ! with_coreutils
+if ! $gnu_coreutils
 then
     export LSCOLORS=gxfxcxdxbxegedabagacad
 else
@@ -235,11 +233,11 @@ __safe_alias(){
         alias "$1"
 }
 
-( ! with_coreutils && $isdarwin ) || test "$TERM" = dumb || \
+( ! $gnu_coreutils && $isdarwin ) || test "$TERM" = dumb || \
     _coloroption=" --color=auto"
-( ! with_coreutils && $isdarwin ) || $iswindows || \
+( ! $gnu_coreutils && $isdarwin ) || $iswindows || \
     _timeoption=" --time-style=long-iso"
-( ! with_coreutils && $isdarwin ) || _hideoption=" --hide=[A-Z]*" # do not use
+( ! $gnu_coreutils && $isdarwin ) || _hideoption=" --hide=[A-Z]*" # do not use
 
 _timeformat_iso="%Y-%m-%dT%H:%M:%S%z"
 _timeformat_rfc2822="%a, %d %b %Y %T %z"
@@ -406,7 +404,7 @@ g(){
         git -c color.ui=always "$@"
     fi
 }
-if null type _git && inbash
+if null type _git && $inbash
 then
     # enable programmable completion for g
     complete -o bashdefault -o default -o nospace -F _git g 2>/dev/null \
@@ -925,7 +923,7 @@ dpaste(){
 ##########################
 # Zsh specific preferences
 
-if inzsh
+if $inzsh
 then
     bindkey -e
 
@@ -1019,7 +1017,7 @@ for f in /usr/share/git/git-prompt.sh \
     /opt/local/share/git-core/git-prompt.sh \
     /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
-    test -r "$f" && inbash && . "$f" && break
+    test -r "$f" && $inbash && . "$f" && break
 done
 GIT_PS1_SHOWDIRTYSTATE=t
 GIT_PS1_SHOWUPSTREAM=t
@@ -1135,8 +1133,8 @@ __my_ps1_info(){
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info)\n\
 ${__my_c4}:: ${__my_cdef}\$(__my_ps1_jobs \j)${__my_ps1_str}\$(__my_alert_fail)\$ "
-inbash && PS1=$_ps1_bash
-#inzsh && PS1="$_ps1_zsh"
+$inbash && PS1=$_ps1_bash
+#$inzsh && PS1="$_ps1_zsh"
 
 __my_set_header_line(){
     # save current position
