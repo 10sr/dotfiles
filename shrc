@@ -79,7 +79,7 @@ then
     . "$__shrc_common"
 else
     echo "$__shrc_common not found."
-    echo "Run ./setup.sh first."
+    echo "Run setup.sh first."
     return
 fi
 
