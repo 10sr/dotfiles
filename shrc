@@ -982,6 +982,7 @@ __my_battery_status(){
 alias bat='__my_battery_status %s\\n'
 
 ipaddress(){
+    # ipaddress <fmt>
     type ip >/dev/null 2>&1 || return 1
     local ip=$(LANG=C ip addr show scope global | \
         \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
@@ -1050,13 +1051,13 @@ __my_ps1_jobs(){
     # __my_ps1_jobs <num>
     if test "$1" -ne 0
     then
-        echo "<JOBS:$1> "
+        echo "[JOBS:$1] "
     fi
 }
 
 __my_alert_fail(){
     test $laststatus -eq 0 || \
-        echo "<STATUS:${laststatus}> "
+        echo "[STATUS:${laststatus}] "
 }
 
 # About ansi escape sequences
@@ -1126,11 +1127,14 @@ then
     __my_cdef="$__color_default"
 fi
 
+__my_ps1_info(){
+    echo "$(__my_ps1_scale)$(__my_ps1_git)$(__my_ps1_bttry)$(__my_ps1_ipaddr)$(__my_ps1_moc)"
+}
+
 _ps1_bash="\
-${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_scale)\$(__my_ps1_git)\$(__my_ps1_bttry)\$(__my_ps1_ipaddr)\$(__my_ps1_moc)\n\
+${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info)\n\
 ${__my_c4}:: ${__my_cdef}\$(__my_ps1_jobs \j)${__my_ps1_str}\$(__my_alert_fail)\$ "
 inbash && PS1=$_ps1_bash
-_ps1_zsh="$_ps1_bash"
 #inzsh && PS1="$_ps1_zsh"
 
 __my_set_header_line(){
