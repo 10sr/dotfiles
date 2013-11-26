@@ -614,7 +614,8 @@ dt(){
 
     if test -n "${__MY_DTACH}"
     then
-        echo "Current session: ${__MY_DTACH}"
+        soc_name="`echo $__MY_DTACH | sed -e "s ^$__dtach_dir/  "`"
+        echo "Current session: ${soc_name}"
     fi
 
     if test -z "$1"
