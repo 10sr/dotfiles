@@ -42,12 +42,6 @@ iswindows=$__iswindows
 isdarwin=$__isdarwin
 islinux=$__islinux
 
-alias ismsys=$__ismsys
-alias iscygwin=$__iscygwin
-alias iswindows=$__iswindows
-alias isdarwin=$__isdarwin
-alias islinux=$__islinux
-
 __homelocal="$__homelocal"
 __homevar="$__homevar"
 __EOC__
