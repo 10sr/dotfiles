@@ -199,6 +199,37 @@ then
     export CHIT_PATH="$HOME/dbx/.chit"
 fi
 
+##########################
+# Zsh specific preferences
+
+# http://www.clear-code.com/blog/2011/9/5.html
+
+if $inzsh
+then
+    bindkey -e
+
+    # http://zsh.sourceforge.net/Guide/zshguide06.html#l147
+    autoload compinit; compinit
+    # supress cycle by tab
+    unsetopt auto_menu
+    setopt bash_auto_list
+    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+    zstyle ':completion:*' format '%B%d%b'
+    zstyle ':completion:*' group-name ''
+    zstyle ':completion:*' use-cache yes
+
+    autoload colors; colors
+
+    # autoload -Uz promptinit
+    # promptinit
+    # prompt walters
+
+    setopt magic_equal_subst
+    setopt hist_ignore_dups
+    setopt share_history
+    setopt prompt_subst
+fi
+
 ######################
 # Print welcome messages
 
@@ -309,10 +340,21 @@ then
     test -x /usr/bin/locate && alias locate="/usr/bin/locate"
 fi
 
-cd(){
-    command cd "$@"
-    pwd
-}
+if $inzsh
+then
+    # somehow not work
+    # typeset -ga chpwd_functions
+    # chpwd_functions+=pwd
+
+    chpwd(){
+        pwd
+    }
+else
+    cd(){
+        command cd "$@"
+        pwd
+    }
+fi
 
 # pad
 alias pad=notepad
@@ -919,37 +961,6 @@ dpaste(){
     fi
 }
 
-
-##########################
-# Zsh specific preferences
-
-# http://www.clear-code.com/blog/2011/9/5.html
-
-if $inzsh
-then
-    bindkey -e
-
-    # http://zsh.sourceforge.net/Guide/zshguide06.html#l147
-    autoload compinit; compinit
-    # supress cycle by tab
-    unsetopt auto_menu
-    setopt bash_auto_list
-    zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-    zstyle ':completion:*' format '%B%d%b'
-    zstyle ':completion:*' group-name ''
-    zstyle ':completion:*' use-cache yes
-
-    autoload colors; colors
-
-    # autoload -Uz promptinit
-    # promptinit
-    # prompt walters
-
-    setopt magic_equal_subst
-    setopt hist_ignore_dups
-    setopt share_history
-    setopt prompt_subst
-fi
 
 ######################################
 ## Prompt Settings
