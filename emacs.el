@@ -157,9 +157,9 @@ found, otherwise returns nil."
                      (lambda ()
                        (run-hooks 'my-idle-hook)))
 
-(add-hook 'my-idle-hook
-          (lambda ()
-            (message "idle hook message")))
+;; (add-hook 'my-idle-hook
+;;           (lambda ()
+;;             (message "idle hook message")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; start and quit

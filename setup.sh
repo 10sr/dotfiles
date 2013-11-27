@@ -76,7 +76,7 @@ gen_tmux_conf_local(){
 # $tmux_conf_local
 # Automatically generated from $0
 
-set -g status-right "${USER}@$(hostname) | $(tmux -V) "
+set -g status-right "${USER}@$(hostname) | #(tmux -V) "
 
 set -g status-bg $tmux_bg_color
 set -g status-fg $tmux_fg_color
