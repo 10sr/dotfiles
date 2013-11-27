@@ -1160,8 +1160,16 @@ then
     __my_cdef="$__color_default"
 fi
 
+if $inbash
+then
+    __my_ps1_sh="[BASH:$BASH_VERSION]"
+elif $inzsh
+then
+    __my_ps1_sh="[ZSH:$ZSH_VERSION]"
+fi
+
 __my_ps1_info(){
-    echo "$(__my_ps1_scale)$(__my_ps1_git)$(__my_ps1_bttry)$(__my_ps1_ipaddr)$(__my_ps1_moc)"
+    echo "${__my_ps1_sh}$(__my_ps1_scale)$(__my_ps1_git)$(__my_ps1_bttry)$(__my_ps1_ipaddr)$(__my_ps1_moc)"
 }
 
 _ps1_bash="\
