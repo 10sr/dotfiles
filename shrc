@@ -213,10 +213,14 @@ then
     # supress cycle by tab
     unsetopt auto_menu
     # unsetopt correct
+    setopt complete_aliases
     setopt auto_list
     setopt bash_auto_list
     setopt magic_equal_subst
     setopt list_types
+    # what is the difference of these two?
+    setopt auto_param_slash
+    setopt mark_dirs
     zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
     zstyle ':completion:*' format '%B%d%b'
     zstyle ':completion:*' group-name ''
@@ -234,9 +238,14 @@ then
     # prompt walters
 
     setopt hist_ignore_dups
+    setopt hist_ignore_all_dups
+    setopt hist_save_no_dups
     setopt share_history
+    setopt append_history
 
     setopt prompt_subst
+
+    setopt interactive_comments
 fi
 
 ######################
