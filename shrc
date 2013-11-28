@@ -355,7 +355,11 @@ then
     # typeset -ga chpwd_functions
     # chpwd_functions+=pwd
 
-    chpwd(){
+    # chpwd(){
+    #     pwd
+    # }
+    cd(){
+        builtin cd "$@"
         pwd
     }
 else
