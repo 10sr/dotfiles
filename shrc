@@ -212,11 +212,20 @@ then
     autoload compinit; compinit
     # supress cycle by tab
     unsetopt auto_menu
+    # unsetopt correct
+    setopt auto_list
     setopt bash_auto_list
+    setopt magic_equal_subst
+    setopt list_types
     zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
     zstyle ':completion:*' format '%B%d%b'
     zstyle ':completion:*' group-name ''
     zstyle ':completion:*' use-cache yes
+    # zstyle ':completion:*:cd:*' tag-order local-directories
+    zstyle ':completion:*' completer _complete _bash_completions \
+        _history
+    # zstyle ':completion:*:*:cd:*' completer
+    zstyle ':completion:*' accept-exact-dirs true
 
     autoload colors; colors
 
@@ -224,9 +233,9 @@ then
     # promptinit
     # prompt walters
 
-    setopt magic_equal_subst
     setopt hist_ignore_dups
     setopt share_history
+
     setopt prompt_subst
 fi
 
