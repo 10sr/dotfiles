@@ -1187,12 +1187,12 @@ __my_ps1_info(){
 
 _ps1_bash="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info)\n\
-${__my_c4}:: ${__my_cdef}\$(__my_ps1_jobs \j)${__my_ps1_str}\$(__my_alert_fail)\$ "
+${__my_c4}:: ${__my_cdef}\D{%Y/%m/%d %H:%M} \$(__my_ps1_jobs \j)${__my_ps1_str}\$(__my_alert_fail)\$ "
 $inbash && PS1="$_ps1_bash"
 
 _ps1_zsh="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info)
-${__my_c4}:: ${__my_cdef}\$(__my_ps1_jobs)${__my_ps1_str}\$(__my_alert_fail)%# "
+${__my_c4}:: ${__my_cdef}%D{%Y/%m/%d %H:%M} \$(__my_ps1_jobs)${__my_ps1_str}\$(__my_alert_fail)%# "
 $inzsh && PROMPT="$_ps1_zsh"
 
 __my_set_header_line(){
