@@ -1195,20 +1195,32 @@ __my_ps1_info(){
     echo "${__my_ps1_sh}$(__my_ps1_scale)$(__my_ps1_git)$(__my_ps1_bttry)$(__my_ps1_ipaddr)$(__my_ps1_moc)"
 }
 
-_ps1_bash="\
-${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info)\n\
-${__my_c4}:: ${__my_cdef}\D{%Y/%m/%d %H:%M} \$(__my_ps1_jobs \j)${__my_ps1_str}\$(__my_alert_fail)\$ "
-$inbash && PS1="$_ps1_bash"
+__my_ps1_save_pos="\[\033[s\]"
+__my_ps1_restore_pos="\[\033[u\]"
+__my_ps1_move_rightmost="\[\033[\$(tput cols)C\]"
+__my_ps1_move_15left="\[\033[15D\]"
+# collapse when command line is too long and try to write over this string
+# __my_ps1_right="${__my_ps1_save_pos}${__my_ps1_move_rightmost}\
+# ${__my_ps1_move_15left}\D{%Y/%m/%d %H:%M}${__my_ps1_restore_pos}"
 
-_ps1_zsh="\
+$inbash && PS1="\
+${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info)\n\
+${__my_c4}:: ${__my_cdef}\D{%Y/%m/%d %H:%M} \$(__my_ps1_jobs \j)${__my_ps1_str}\$(__my_alert_fail)${__my_ps1_right}\$ "
+
+if $inzsh
+then
+    PROMPT="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info)
-${__my_c4}:: ${__my_cdef}%D{%Y/%m/%d %H:%M} \$(__my_ps1_jobs)${__my_ps1_str}\$(__my_alert_fail)%# "
-$inzsh && PROMPT="$_ps1_zsh"
+${__my_c4}:: ${__my_cdef} \$(__my_ps1_jobs)${__my_ps1_str}\$(__my_alert_fail)%# "
+    RPROMPT="%D{%Y/%m/%d %H:%M}"
+fi
 
 __my_set_header_line(){
     # save current position
     printf "\033[s"
+    # move to 0,0
     printf "\033[0;0H"
+    # clear curent to eol
     printf "\033[K"
     printf "\033[7m"
     printf "$1"
