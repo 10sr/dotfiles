@@ -22,6 +22,7 @@ gen_common(){
     __iswindows=false
     __isdarwin=false
     __islinux=false
+    # $OSTYPE is another choice. which is better?
     case `uname` in
         (MINGW*) __ismsys=true ;;
         (CYGWIN*) __iscygwin=true ;;
