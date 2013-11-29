@@ -142,7 +142,7 @@ local["^http://w2.p2.2ch.net/p2/read.php"] = [
 
 /////////////////////////////////////////
 // feedly
-local["^http://(www\.|cloud\.|)feedly\.com/"] = [
+local["^https?://(www\.|cloud\.|)feedly\.com/"] = [
     ['d', null],
     ['j', null],
     ['k', null],
