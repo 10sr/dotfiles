@@ -335,6 +335,7 @@ if $inbash
 then
     alias _reloadrc="exec bash"
 elif $inzsh
+then
     alias _reloadrc="exec zsh"
 fi
 # alias mytime="date +%Y%m%d-%H%M%S"
