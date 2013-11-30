@@ -111,9 +111,9 @@ otherwise the path where the library installed."
 ;; autoload
 
 (defmacro lazy-load-eval (feature &optional functions &rest body)
-  "Define each FUNCTIONS to autoload from FEATURE.
-FEATURE is a symbol. FUNCTIONS is a list of symbols. If FUNCTIONS is nil,
-the function same as FEATURE is defined as autoloaded function. BODY is passed
+  "Define autoloading FEATURE that defines FUNCTIONS.
+FEATURE is a symbol.  FUNCTIONS is a list of symbols.  If FUNCTIONS is nil,
+the function same as FEATURE is defined as autoloaded function.  BODY is passed
  to `eval-after-load'.
 When this macro is evaluated, this returns the path to library if FEATURE
 found, otherwise returns nil."
