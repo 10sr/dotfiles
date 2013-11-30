@@ -318,10 +318,12 @@ __safe_alias sudoe="sudoedit"
 # __safe_alias halt="sudo halt"
 # __safe_alias reboot="sudo reboot"
 null type dbus-send && {
-    alias suspend="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
-    /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
-    alias hibernate="dbus-send --system --print-reply --dest=org.freedesktop.UPower \
-    /org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
+    alias suspend="dbus-send --system --print-reply \
+        --dest=org.freedesktop.UPower \
+        /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
+    alias hibernate="dbus-send --system --print-reply \
+        --dest=org.freedesktop.UPower \
+        /org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
 }
 alias rand="echo \$RANDOM"
 __safe_alias xunp="file-roller -h"
@@ -1042,11 +1044,14 @@ ipaddress(){
 
 __my_ps1_str=""
 
-test -n "$__MY_SCRIPT" && __my_ps1_str="${__my_ps1_str}${__my_c5}SCR${__my_cdef} "
+test -n "$__MY_SCRIPT" && \
+    __my_ps1_str="${__my_ps1_str}${__my_c5}SCR${__my_cdef} "
 
-test -n "$SSH_CONNECTION" && __my_ps1_str="${__my_ps1_str}${__my_c5}SSH${__my_cdef} "
+test -n "$SSH_CONNECTION" && \
+    __my_ps1_str="${__my_ps1_str}${__my_c5}SSH${__my_cdef} "
 
-test -n "$__MY_DTACH" && __my_ps1_str="${__my_ps1_str}${__my_c5}DTACH${__my_cdef} "
+test -n "$__MY_DTACH" && \
+    __my_ps1_str="${__my_ps1_str}${__my_c5}DTACH${__my_cdef} "
 
 __my_ps1_scale(){
     if null type stty && ! $ismsys

@@ -21,7 +21,8 @@ set viminfo+=n~/.vim/viminfo " viminfo
 set wildmode=longest,list,full
 set hidden " can switch to another buffer even when editting a file
 "set backspace=indent,eol,start " backspace can erase these things
-"set autochdir " automatically change current dir according to current file. cant use with mac
+" automatically change current dir according to current file. cant use with mac
+"set autochdir
 set mouse=h " do not use mouse
 set clipboard+=unnamed " use x clipboard, seems not to work
 set browsedir=buffer " default dir for Explorer
@@ -34,7 +35,8 @@ set fileencodings=utf-8,shift-jis,euc-jp,latin1
 set showmode
 set title " display editting file on titlebar
 set list " display spcial letters such as newline or whitespace
-set listchars=tab:>-,extends:<,trail:-,eol:$ " set letters for displaying special letter
+" set letters for displaying special letter
+set listchars=tab:>-,extends:<,trail:-,eol:$
 set ruler " display current line and column
 set nonumber "  do not show line number at left side
 "set laststatus=2 " always show status line

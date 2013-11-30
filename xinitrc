@@ -27,7 +27,8 @@ type synclient >/dev/null 2>&1 && {
 }
 
 xset s 1800 # go blank after 30 min
-xset dpms 1810 1820 1830        # standby, suspend and off seem not to be different for my environment
+# standby, suspend and off seem not to be different for my environment
+xset dpms 1810 1820 1830
 
 unset LC_MESSAGES
 export LANG=ja_JP.utf8
