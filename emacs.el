@@ -1330,8 +1330,7 @@ If called intearctively, find word at point."
             t)   ; save to file immediately after adding file to recentf list
   (add-hook 'kill-emacs-hook
             'recentf-load-list)
-  (add-hook 'recentf-mode-hook
-            'recentf-save-list)
+  (run-with-idle-timer 5 t 'recentf-save-list)
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
