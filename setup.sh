@@ -8,7 +8,7 @@ __homevar="$HOME/.var"
 #############################
 # gen_common
 
-# Generate ~/.shrc.common, which contains system infos and sourced from
+# Generate ~/.shrc.common, which contains system infos and is sourced from
 # setup.sh (this file) and dotfiles/shrc .
 
 # this variable must consistent with shrc
