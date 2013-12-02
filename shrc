@@ -1224,7 +1224,7 @@ if $inzsh
 then
     PROMPT="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info)
-${__my_c4}:: ${__my_cdef} \$(__my_ps1_jobs)${__my_ps1_str}\$(__my_alert_fail)%# "
+${__my_c4}:: ${__my_cdef}\$(__my_ps1_jobs)${__my_ps1_str}\$(__my_alert_fail)%# "
     RPROMPT="%D{%Y/%m/%d %H:%M}"
 fi
 
