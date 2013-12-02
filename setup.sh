@@ -2,6 +2,10 @@
 
 # setup.sh --- 10sr setup script
 
+__setups="gitconf tmux scripts darwin dirs"
+
+__setup_url="https://raw.github.com/10sr/dotfiles/master/setup.sh"
+
 __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
 
@@ -10,6 +14,7 @@ __homevar="$HOME/.var"
 
 # Generate ~/.shrc.common, which contains system infos and is sourced from
 # setup.sh (this file) and dotfiles/shrc .
+# This functions is always called.
 
 # this variable must consistent with shrc
 __shrc_common="$HOME/.shrc.common"
@@ -48,10 +53,62 @@ __homevar="$__homevar"
 __EOC__
 }
 
+################################
+# git_configs
+
+setup_gitconf(){
+    if ! command -v git >/dev/null
+    then
+        echo "git not found"
+        return 1
+    fi
+
+    _gitconfig="git config --global"
+
+    $_gitconfig user.name '10sr'
+    $_gitconfig user.email '8slashes+git@gmail.com'
+    $_gitconfig core.autocrlf false
+    $_gitconfig core.excludesfile '~/.gitignore'
+    $_gitconfig color.ui auto
+    $_gitconfig status.relativePaths false
+    $_gitconfig status.showUntrackedFiles normal
+    $_gitconfig log.date iso
+    command -v xz >/dev/null && \
+        $_gitconfig tar.txz.command "xz -c"
+    $_gitconfig push.default current
+
+    $_gitconfig alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
+    $_gitconfig alias.st "status -s -b"
+    $_gitconfig alias.b "branch"
+    $_gitconfig alias.sb "show-branch"
+    $_gitconfig alias.ci "commit --verbose"
+    $_gitconfig alias.co "checkout"
+    $_gitconfig alias.cim "commit --verbose -m"
+    $_gitconfig alias.di "diff --color"
+    $_gitconfig alias.me "merge --no-ff --stat -v"
+    $_gitconfig alias.gr "grep -n"
+    $_gitconfig alias.ls "ls-files"
+    # $_gitconfig alias.ls "ls-files -v --full-name"
+    # $_gitconfig alias.ls "status -u -s ."
+    $_gitconfig alias.sl "!sl"
+    # $_gitconfig alias.my-ls "ls-files | xargs ls"
+    # $_gitconfig alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
+    $_gitconfig alias.addi "add -i"
+    $_gitconfig alias.clean-p "!test -z \"\$(git status -s -uno)\""
+    $_gitconfig alias.bopen "checkout -b"
+    $_gitconfig alias.bclose \
+        "!sh -cx 'git stash && git checkout master && git merge --no-ff -'"
+    #$_gitconfig alias.wc "!git ls-files -z | xargs -0 wc"
+    # $_gitconfig push.default "simple"
+    if $iswindows; then
+        $_gitconfig core.fileMode false
+    fi
+}
+
 #############################
 # gen_tmux_conf_local
 
-gen_tmux_conf_local(){
+setup_tmux(){
     tmux_conf_local="$HOME/.tmux.conf.local"
 
     case "`hostname`" in
@@ -115,7 +172,7 @@ _fetch_script(){
     fi
 }
 
-install_scripts(){
+setup_scripts(){
     _fetch_script \
         https://gist.github.com/10sr/6852317/raw/colortable16.sh colortable16.sh
     _fetch_script \
@@ -123,9 +180,9 @@ install_scripts(){
 }
 
 ################################
-# darwin_set_defaults
+# darwin
 
-darwin_set_defaults(){
+__darwin_set_defaults(){
     $isdarwin || return 1
 
     # http://appdrill.net/60641/mac-boot-mute.html
@@ -144,10 +201,7 @@ darwin_set_defaults(){
     #defaults write com.apple.dashboard mcx-disabled -bool YES
 }
 
-################################
-# darwin_start_daemon
-
-darwin_start_daemon(){
+__darwin_start_daemon(){
     $isdarwin || return 1
 
     test "`launchctl getenv LC_ALL`" = C || sudo launchctl setenv LC_ALL C
@@ -157,62 +211,15 @@ darwin_start_daemon(){
     fi
 }
 
-################################
-# git_configs
-
-git_configs(){
-    if ! command -v git >/dev/null
-    then
-        echo "git not found"
-        return 1
-    fi
-
-    _gitconfig="git config --global"
-
-    $_gitconfig user.name '10sr'
-    $_gitconfig user.email '8slashes+git@gmail.com'
-    $_gitconfig core.autocrlf false
-    $_gitconfig core.excludesfile '~/.gitignore'
-    $_gitconfig color.ui auto
-    $_gitconfig status.relativePaths false
-    $_gitconfig status.showUntrackedFiles normal
-    $_gitconfig log.date iso
-    command -v xz >/dev/null && \
-        $_gitconfig tar.txz.command "xz -c"
-    $_gitconfig push.default current
-
-    $_gitconfig alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
-    $_gitconfig alias.st "status -s -b"
-    $_gitconfig alias.b "branch"
-    $_gitconfig alias.sb "show-branch"
-    $_gitconfig alias.ci "commit --verbose"
-    $_gitconfig alias.co "checkout"
-    $_gitconfig alias.cim "commit --verbose -m"
-    $_gitconfig alias.di "diff --color"
-    $_gitconfig alias.me "merge --no-ff --stat -v"
-    $_gitconfig alias.gr "grep -n"
-    $_gitconfig alias.ls "ls-files"
-    # $_gitconfig alias.ls "ls-files -v --full-name"
-    # $_gitconfig alias.ls "status -u -s ."
-    $_gitconfig alias.sl "!sl"
-    # $_gitconfig alias.my-ls "ls-files | xargs ls"
-    # $_gitconfig alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
-    $_gitconfig alias.addi "add -i"
-    $_gitconfig alias.clean-p "!test -z \"\$(git status -s -uno)\""
-    $_gitconfig alias.bopen "checkout -b"
-    $_gitconfig alias.bclose \
-        "!sh -cx 'git stash && git checkout master && git merge --no-ff -'"
-    #$_gitconfig alias.wc "!git ls-files -z | xargs -0 wc"
-    # $_gitconfig push.default "simple"
-    if $iswindows; then
-        $_gitconfig core.fileMode false
-    fi
+setup_darwin(){
+    __darwin_set_defaults
+    __darwin_start_daemon
 }
 
 #########################
 # mkdirs
 
-mkdirs(){
+setup_dirs(){
     install -d "$__homelocal"
     install -d "$__homelocal/bin"
     install -d "$__homevar"
@@ -222,22 +229,42 @@ mkdirs(){
 # main
 
 main(){
-    set -x
 
     gen_common
     . "$__shrc_common"
 
-    mkdirs
-    install_scripts
-    git_configs
-    gen_tmux_conf_local
-    if $isdarwin
+    if test -z "$1"
     then
-        darwin_set_defaults
-        darwin_start_daemon
+        echo "usage: ./setup.sh <setups> ..."
+        echo "setups: all $__setups"
+        exit 1
     fi
 
-    set +x
+    while test -n "$1"
+    do
+
+        if test "$1" = all
+        then
+            for c in $__setups
+            do
+                set -x
+                setup_$c
+                set +x
+            done
+        fi
+
+        for c in $__setups
+        do
+            if test "$1" = "$c"
+            then
+                set -x
+                setup_$c
+                set +x
+            fi
+            shift
+        done
+
+    done
 }
 
 main "$@"
