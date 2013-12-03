@@ -7,6 +7,21 @@ __setups="gitconf tmux scripts darwin dirs selfupdate"
 __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
 
+###########################
+# utils
+
+_download(){
+    # download <url> <file>
+    if type wget >/dev/null 2>&1
+    then
+        wget $__my_wget_options "$1" -O "$2"
+    elif  type curl >/dev/null 2>&1
+    then
+        curl --url "$1" --output "$2"
+    fi
+}
+
+
 #############################
 # gen_common
 
@@ -57,7 +72,13 @@ __EOC__
 __setup_url="https://raw.github.com/10sr/dotfiles/master/setup.sh"
 
 setup_selfupdate(){
-    curl $__setup_url
+    if test -z "$SETUP_OUTPUT"
+    then
+        echo SETUP_OUTPUT is not set.
+        echo Ignore selfupdate.
+        return
+    fi
+    _download $__setup_url "$SETUP_OUTPUT"
 }
 
 ################################
@@ -153,17 +174,6 @@ __EOC__
 
 ##############################
 # install_scripts
-
-_download(){
-    # download <url> <file>
-    if type wget >/dev/null 2>&1
-    then
-        wget $__my_wget_options "$1" -O "$2"
-    elif  type curl >/dev/null 2>&1
-    then
-        curl --url "$1" --output "$2"
-    fi
-}
 
 _fetch_script(){
     # _fetch_script <url> <binname>
