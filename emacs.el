@@ -827,8 +827,15 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
       t)
-     (lazy-load-eval 'git-command)
-     (setq git-command-default-options "-c color.ui=always")
+     (lazy-load-eval 'git-command
+         nil
+       (add-to-list 'git-command-major-mode-alist
+                    '("di" . diff-mode))
+       (add-to-list 'git-command-major-mode-alist
+                    '("graph" . fundamental-mode))
+       (add-to-list 'git-command-major-mode-alist
+                    '("log" . fundamental-mode)))
+       ;; (setq git-command-default-options "-c color.ui=always")
      (define-key ctl-x-map "g" 'git-command))
 
 (and (fetch-library
