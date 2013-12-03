@@ -2,9 +2,7 @@
 
 # setup.sh --- 10sr setup script
 
-__setups="gitconf tmux scripts darwin dirs"
-
-__setup_url="https://raw.github.com/10sr/dotfiles/master/setup.sh"
+__setups="gitconf tmux scripts darwin dirs selfupdate"
 
 __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
@@ -51,6 +49,15 @@ islinux=$__islinux
 __homelocal="$__homelocal"
 __homevar="$__homevar"
 __EOC__
+}
+
+###############################
+# selfupdate
+
+__setup_url="https://raw.github.com/10sr/dotfiles/master/setup.sh"
+
+setup_selfupdate(){
+    curl $__setup_url
 }
 
 ################################
@@ -261,9 +268,9 @@ main(){
                 setup_$c
                 set +x
             fi
-            shift
         done
 
+        shift
     done
 }
 
