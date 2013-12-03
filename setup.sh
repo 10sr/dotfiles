@@ -91,45 +91,45 @@ setup_gitconf(){
         return 1
     fi
 
-    _gitconfig="git config --global"
+    _gc="git config --global"
 
-    $_gitconfig user.name '10sr'
-    $_gitconfig user.email '8slashes+git@gmail.com'
-    $_gitconfig core.autocrlf false
-    $_gitconfig core.excludesfile '~/.gitignore'
-    $_gitconfig color.ui auto
-    $_gitconfig status.relativePaths false
-    $_gitconfig status.showUntrackedFiles normal
-    $_gitconfig log.date iso
+    $_gc user.name '10sr'
+    $_gc user.email '8slashes+git@gmail.com'
+    $_gc core.autocrlf false
+    $_gc core.excludesfile '~/.gitignore'
+    $_gc color.ui auto
+    $_gc status.relativePaths false
+    $_gc status.showUntrackedFiles normal
+    $_gc log.date iso
     command -v xz >/dev/null && \
-        $_gitconfig tar.txz.command "xz -c"
-    $_gitconfig push.default current
+        $_gc tar.txz.command "xz -c"
+    $_gc push.default current
 
-    $_gitconfig alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
-    $_gitconfig alias.st "status -s -b"
-    $_gitconfig alias.b "branch"
-    $_gitconfig alias.sb "show-branch"
-    $_gitconfig alias.ci "commit --verbose"
-    $_gitconfig alias.co "checkout"
-    $_gitconfig alias.cim "commit --verbose -m"
-    $_gitconfig alias.di "diff --color"
-    $_gitconfig alias.me "merge --no-ff --stat -v"
-    $_gitconfig alias.gr "grep -n"
-    $_gitconfig alias.ls "ls-files"
-    # $_gitconfig alias.ls "ls-files -v --full-name"
-    # $_gitconfig alias.ls "status -u -s ."
-    $_gitconfig alias.sl "!sl"
-    # $_gitconfig alias.my-ls "ls-files | xargs ls"
-    # $_gitconfig alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
-    $_gitconfig alias.addi "add -i"
-    $_gitconfig alias.clean-p "!test -z \"\$(git status -s -uno)\""
-    $_gitconfig alias.bopen "checkout -b"
-    $_gitconfig alias.bclose \
+    $_gc alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
+    $_gc alias.st "status -s -b"
+    $_gc alias.b "branch"
+    $_gc alias.sb "show-branch"
+    $_gc alias.ci "commit --verbose"
+    $_gc alias.co "checkout"
+    $_gc alias.cim "commit --verbose -m"
+    $_gc alias.di "diff --color"
+    $_gc alias.me "merge --no-ff --stat -v"
+    $_gc alias.gr "grep -n"
+    $_gc alias.ls "ls-files"
+    # $_gc alias.ls "ls-files -v --full-name"
+    # $_gc alias.ls "status -u -s ."
+    $_gc alias.sl "!sl"
+    # $_gc alias.my-ls "ls-files | xargs ls"
+    # $_gc alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
+    $_gc alias.addi "add -i"
+    $_gc alias.clean-p "!test -z \"\$(git status -s -uno)\""
+    $_gc alias.bopen "checkout -b"
+    $_gc alias.bclose \
         "!sh -cx 'git stash && git checkout master && git merge --no-ff -'"
-    #$_gitconfig alias.wc "!git ls-files -z | xargs -0 wc"
-    # $_gitconfig push.default "simple"
+    #$_gc alias.wc "!git ls-files -z | xargs -0 wc"
+    # $_gc push.default "simple"
     if $iswindows; then
-        $_gitconfig core.fileMode false
+        $_gc core.fileMode false
     fi
 }
 
