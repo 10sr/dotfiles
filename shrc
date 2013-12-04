@@ -1264,13 +1264,13 @@ case "$TERM" in
     screen*)
         if test -n "$SSH_CONNECTION"
         then
-            __terminal_title="\${USER}@\${HOSTNAME}:\$(basename \${PWD})"
+            __terminal_title="`whoami`@`hostname`:\$(basename \${PWD})"
         else
             __terminal_title="\$(basename \${PWD})"
         fi
         ;;
     *)
-        __terminal_title="\${USER}@\${HOSTNAME}:\${PWD}"
+        __terminal_title="`whoami`@`hostname`:\${PWD}"
         ;;
 esac
 
