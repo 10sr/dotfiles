@@ -1260,12 +1260,20 @@ __my_set_title(){
     esac
 }
 
-if test -n "$TMUX"
-then
-    __terminal_title="\$(basename \${PWD})"
-else
-    __terminal_title="\${USER}@\${HOSTNAME}:\${PWD}"
-fi
+case "$TERM" in
+    screen*)
+        if test -n "$SSH_CONNECTION"
+        then
+            __terminal_title="\${USER}@\${HOSTNAME}:\$(basename \${PWD})"
+        else
+            __terminal_title="\$(basename \${PWD})"
+        fi
+        ;;
+    *)
+        __terminal_title="\${USER}@\${HOSTNAME}:\${PWD}"
+        ;;
+esac
+
 if $inzsh
 then
     precmd(){
