@@ -1254,7 +1254,6 @@ __my_set_title(){
     case $TERM in
         (rxvt*|xterm*|aterm|screen*)
             test -t 1 &&
-            test -n "$DISPLAY" &&
             test -z "$EMACS" &&
             echo -n -e "\033]0;$1\007"
             ;;
@@ -1265,7 +1264,7 @@ if test -n "$TMUX"
 then
     __terminal_title="\$(basename \${PWD})"
 else
-    __terminal_title"\${USER}@\${HOSTNAME}\:\${PWD}"
+    __terminal_title="\${USER}@\${HOSTNAME}:\${PWD}"
 fi
 if $inzsh
 then
