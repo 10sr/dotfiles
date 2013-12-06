@@ -304,10 +304,27 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-;; (when (fetch-library
-;;   "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
-;;   t)
-;;  (require 'terminal-title nil t))
+(when (fetch-library
+  "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
+  t)
+  (require 'terminal-title nil t)
+  ;; if TERM is not screen use default value
+  (when (equal (car (split-string (frame-parameter nil
+                                                   'tty-type)
+                                  "-"))
+               "screen")
+    (setq terminal-title-format
+          (if (getenv "SSH_CONNECTION")
+              '("em:"
+                user-login-name
+                "@"
+                system-name
+                ":"
+                (file-name-nondirectory (directory-file-name
+                                         default-directory)))
+            '((file-name-nondirectory (directory-file-name
+                                       default-directory))))))
+  (terminal-title-mode))
 
 (setq eol-mnemonic-dos "\\r\\n")
 (setq eol-mnemonic-mac "\\r")

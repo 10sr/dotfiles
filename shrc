@@ -551,10 +551,10 @@ datestr(){
     date +"$dfmt"
 }
 
-ssh(){
-    __my_set_screen_title ssh
-    command ssh "$@"
-}
+# ssh(){
+#     # __my_terminal_title ssh
+#     command ssh "$@"
+# }
 
 __ssh_with_cd(){
     # __ssh_with_cd <host> <directory> [<arg> ...]
