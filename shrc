@@ -1242,7 +1242,8 @@ __my_set_header_line(){
     printf "\033[u"
 }
 
-__my_set_screen_title(){
+__my_set_screen_name(){
+    # set window name
     if test -n "$TMUX" && test -z "$INSIDE_EMACS"
     then
         echo -ne "\033k$1\033\\"
@@ -1259,14 +1260,20 @@ __my_set_title(){
             ;;
     esac
 }
-PROMPT_COMMAND="__my_set_title \${USER}@\${HOSTNAME}\:\${PWD};
-__my_set_screen_title \$(basename \"\$PWD\")/"
+
+if test -n "$TMUX"
+then
+    __terminal_title="\$(basename \${PWD})"
+else
+    __terminal_title"\${USER}@\${HOSTNAME}\:\${PWD}"
+fi
 if $inzsh
 then
     precmd(){
         laststatus=$?
+        eval __my_set_title ${__terminal_title}
     }
 else
-    PROMPT_COMMAND="laststatus=\$?;$PROMPT_COMMAND"
+    PROMPT_COMMAND="laststatus=\$?;__my_set_title \"${__terminal_title}\";$PROMPT_COMMAND"
 fi
 laststatus=0

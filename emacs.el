@@ -304,10 +304,10 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-(when (fetch-library
-  "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
-  t)
- (require 'terminal-title nil t))
+;; (when (fetch-library
+;;   "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
+;;   t)
+;;  (require 'terminal-title nil t))
 
 (setq eol-mnemonic-dos "\\r\\n")
 (setq eol-mnemonic-mac "\\r")
