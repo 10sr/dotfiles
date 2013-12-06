@@ -315,10 +315,11 @@ found, otherwise returns nil."
                "screen")
     (setq terminal-title-format
           (if (getenv "SSH_CONNECTION")
-              '("em:"
-                user-login-name
+              `("em:"
+                ,user-login-name
                 "@"
-                system-name
+                ,(car (split-string system-name
+                                    "\\."))
                 ":"
                 (file-name-nondirectory (directory-file-name
                                          default-directory)))
