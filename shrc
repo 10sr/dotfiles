@@ -181,7 +181,7 @@ then
 fi
 __match "$TMP" "${USER}-tmp" >/dev/null || export TMP="${TMP}/${USER}-tmp"
 export TEMP="$TMP"
-test -d "$TMP" || install -d "$TMP"
+test -d "$TMP" || mkdir -p "$TMP"
 
 if ! $iswindows && null type stty
 then
@@ -682,7 +682,7 @@ _tmux_prefs(){
 dt(){
     # dt [<name>] [<command ...>]
     __dtach_dir="${TMP}/dtach"
-    install -d "${__dtach_dir}"
+    mkdir -p "${__dtach_dir}"
 
     if test -n "${__MY_DTACH}"
     then
@@ -747,7 +747,7 @@ dtscr(){
     local _scr_file="${HOME}/${_name}.script"
 
     local _dt_dir="${TMP}/dtscr"
-    install -d "$_dt_dir"
+    mkdir -p "$_dt_dir"
 
     dtach -n "${_dt_dir}/${_name}" script "${_scr_file_}" "$@"
     # echo $_name
@@ -855,7 +855,7 @@ di(){
 tb(){
     __datenum=`date +%Y%m%d-%H%M%S`
     __tb="$HOME/.var/tb/$__datenum"
-    install -d "$__tb"
+    mkdir -p "$__tb"
     for file in "$@"
     do
         mv -t "$__tb" "$file"
@@ -871,7 +871,7 @@ mkcd(){
     then
         echo "Dir \"$1\" already exists."
     else
-        install -d "$1"
+        mkdir -p "$1"
         echo "Dir \"$1\" created."
     fi
     cd "$1"

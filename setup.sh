@@ -237,9 +237,9 @@ setup_darwin(){
 # mkdirs
 
 setup_dirs(){
-    install -d "$__homelocal"
-    install -d "$__homelocal/bin"
-    install -d "$__homevar"
+    mkdir -p "$__homelocal"
+    mkdir -p "$__homelocal/bin"
+    mkdir -p "$__homevar"
 }
 
 #########################
