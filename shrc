@@ -1213,8 +1213,8 @@ __my_ps1_restore_pos="\[\033[u\]"
 __my_ps1_move_rightmost="\[\033[\$(tput cols)C\]"
 __my_ps1_move_15left="\[\033[15D\]"
 # collapse when command line is too long and try to write over this string
-# __my_ps1_right="${__my_ps1_save_pos}${__my_ps1_move_rightmost}\
-# ${__my_ps1_move_15left}\D{%Y/%m/%d %H:%M}${__my_ps1_restore_pos}"
+# __my_ps1_right="${__my_ps1_save_pos}${__my_ps1_move_rightmost}"
+# ${__my_ps1_move_15left}\D{%Y/%m/%d %H:%M}${__my_ps1_restore_pos}
 
 $inbash && PS1="\
 ${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info)\n\
@@ -1260,19 +1260,17 @@ __my_set_title(){
     esac
 }
 
-case "$TERM" in
-    screen*)
-        if test -n "$SSH_CONNECTION"
-        then
-            __terminal_title="`whoami`@`hostname`:\$(basename \${PWD})"
-        else
-            __terminal_title="\$(basename \${PWD})"
-        fi
-        ;;
-    *)
+if test -n "$TMUX"
+then
+    __terminal_title="\$(basename \${PWD})"
+else
+    if test -n "$SSH_CONNECTION" && expr "$TERM" : '^screen'
+    then
+        __terminal_title="`whoami`@`hostname`:\$(basename \${PWD})"
+    else
         __terminal_title="`whoami`@`hostname`:\${PWD}"
-        ;;
-esac
+    fi
+fi
 
 if $inzsh
 then
