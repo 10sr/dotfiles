@@ -331,14 +331,16 @@ __safe_alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
 __safe_alias py3=python3
 __safe_alias py2=python2
-# SHELL cannot be used. for example, run bash inside zsh, SHELL is set to be
-# /bin/zsh
+# Sometimes SHELL cannot be used. For example, when running bash inside zsh
+# SHELL is set to be /bin/zsh
 if $inbash
 then
     alias _reloadrc="exec bash"
 elif $inzsh
 then
     alias _reloadrc="exec zsh"
+else
+    alias _reloadrc="exec $SHELL"
 fi
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
