@@ -620,7 +620,7 @@ found, otherwise returns nil."
                          (regexp-quote bookmark-default-file))))
 
 (and (fetch-library
-      "https://github.com/10sr/emacs-lisp/raw/master/read-only-only-mode.el"
+      "https://raw.github.com/10sr/emacs-lisp/master/read-only-only-mode.el"
       t)
      (lazy-load-eval 'read-only-only-mode))
 
