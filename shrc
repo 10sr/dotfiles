@@ -123,14 +123,6 @@ export TERMCAP="${TERMCAP}:vb="
 $ismsys && export HOSTNAME
 # export ENV=~/.shrc
 
-if ! $gnu_coreutils
-then
-    export LSCOLORS=gxfxcxdxbxegedabagacad
-else
-    # http://qiita.com/yuyuchu3333/items/84fa4e051c3325098be3
-    null type dircolors && eval `dircolors`
-fi
-
 if false $iswindows
 then
     export PAGER='tr -d \\r | less'
@@ -282,24 +274,29 @@ __safe_alias(){
         alias "$1"
 }
 
-( ! $gnu_coreutils && $isdarwin ) || test "$TERM" = dumb || \
+$gnu_coreutils && _timeoption=" --time-style=long-iso"
+# color prefs
+if $gnu_coreutils
+then
+    # http://qiita.com/yuyuchu3333/items/84fa4e051c3325098be3
+    # gnu coreutils LS_COLORS is used
+    null type dircolors && eval `dircolors`
     _coloroption=" --color=auto"
-( ! $gnu_coreutils && $isdarwin ) || $iswindows || \
-    _timeoption=" --time-style=long-iso"
-( ! $gnu_coreutils && $isdarwin ) || _hideoption=" --hide=[A-Z]*" # do not use
+else
+    # export LSCOLORS=gxfxcxdxbxegedabagacad
+    export LSCOLORS=DxGxcxdxCxegedabagacad
+    export CLICOLOR=1
+fi
+alias ls="ls -hCF${_coloroption}${_timeoption}"
 
 _timeformat_iso="%Y-%m-%dT%H:%M:%S%z"
 _timeformat_rfc2822="%a, %d %b %Y %T %z"
 _timeformat_num="%Y%m%d%H%M%S"
 alias datenum="date +$_timeformat_num"
 
-alias ls="ls -hCF${_coloroption}${_timeoption}"
 # export GREP_OPTIONS=""
 alias gr="grep -n --color=always"
-$iswindows && alias grep="grep -n"
-# alias ll="ls -l"
-# alias la="ls -A"
-# alias lla="ls -Al"
+$iswindows && alias gr="grep -n"
 alias less="less -F"
 __safe_alias em="emacs -nw"
 __safe_alias vi=vim
@@ -624,17 +621,20 @@ s(){
     fi
 }
 
-man(){
-    env \
-        LESS_TERMCAP_mb=$(printf "\e[1;35m") \
-        LESS_TERMCAP_md=$(printf "\e[1;31m") \
-        LESS_TERMCAP_me=$(printf "\e[0m") \
-        LESS_TERMCAP_se=$(printf "\e[0m") \
-        LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
-        LESS_TERMCAP_ue=$(printf "\e[0m") \
-        LESS_TERMCAP_us=$(printf "\e[1;32m") \
-        man "$@"
-}
+if $inbash || $inzsh
+then
+    man(){
+        env \
+            LESS_TERMCAP_mb=$(printf "\e[1;35m") \
+            LESS_TERMCAP_md=$(printf "\e[1;31m") \
+            LESS_TERMCAP_me=$(printf "\e[0m") \
+            LESS_TERMCAP_se=$(printf "\e[0m") \
+            LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+            LESS_TERMCAP_ue=$(printf "\e[0m") \
+            LESS_TERMCAP_us=$(printf "\e[1;32m") \
+            man "$@"
+    }
+fi
 
 netwait(){
     while ! ping -c 1 -t 1 example.com
