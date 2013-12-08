@@ -367,25 +367,17 @@ then
     test -x /usr/bin/locate && alias locate="/usr/bin/locate"
 fi
 
-if $inzsh
-then
-    # somehow not work
-    # typeset -ga chpwd_functions
-    # chpwd_functions+=pwd
+# somehow not work
+# typeset -ga chpwd_functions
+# chpwd_functions+=pwd
 
-    # chpwd(){
-    #     pwd
-    # }
-    cd(){
-        builtin cd "$@"
-        pwd
-    }
-else
-    cd(){
-        command cd "$@"
-        pwd
-    }
-fi
+# chpwd(){
+#     pwd
+# }
+cd(){
+    builtin cd "$@"
+    pwd
+}
 
 # pad
 alias pad=notepad
