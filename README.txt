@@ -37,9 +37,13 @@ both `setup.sh` and `shrc`.
 Sourcing flow
 -------------
 
-$HOME/.profile           <= console login (maybe sourced from .{ba,z}sh_profile)
+When using `sh`, rc file for interactive use is found by `ENV` and it is usually
+set to `$HOME/.shrc`.
+
+
+$HOME/.{ba,z}shrc     <= bash, zsh
 |
-`--$HOME/.{ba,z}shrc
+`--$HOME/.shrc        <= sh
    |
    `--$HOME/.dotfiles/shrc
 
@@ -50,3 +54,5 @@ $HOME/.profile           <= console login (maybe sourced from .{ba,z}sh_profile)
    |--~/.dotfiles/xprofile
    |
    `--~/.dotfiles/xprograms
+
+
