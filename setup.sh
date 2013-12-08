@@ -194,7 +194,7 @@ _fetch_script(){
     name="$2"
     dst="$HOME/.local/bin/$name"
     command -v "$name" >/dev/null && return
-    if __download "$url" "$dst"
+    if _download "$url" "$dst"
     then
         chmod u+x "$dst"
     else
