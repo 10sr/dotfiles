@@ -160,7 +160,7 @@ local["^https?://(www\.|cloud\.|)feedly\.com/"] = [
     // }],
     ['l', function(ev, arg){
         var host = window.content.location.host;
-        if (host === "cloud.feedly.com") {
+        if (host === "cloud.feedly.com" || host === "feedly.com") {
             window.content.location.href = "http://" + host + "/#latest";
         } else if (host === "www.feedly.com") {
             window.content.location.href = "http://" + host + "/home#latest";
