@@ -1007,10 +1007,8 @@ found, otherwise returns nil."
        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
        t)
   (lazy-load-eval 'js2-mode)
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
-  ;; (add-hook 'js2-mode-hook
-  ;;           (lambda ()
+  ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
   (add-hook 'js2-mode-hook
             (lambda ()
               (define-key js2-mode-map (kbd "C-m") (lambda ()
