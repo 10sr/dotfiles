@@ -850,10 +850,7 @@ tb(){
     __datenum=`date +%Y%m%d-%H%M%S`
     __tb="$HOME/.var/tb/$__datenum"
     mkdir -p "$__tb"
-    for file in "$@"
-    do
-        mv -t "$__tb" "$file"
-    done
+    mv "$@" "$__tb"
 }
 
 mkcd(){
