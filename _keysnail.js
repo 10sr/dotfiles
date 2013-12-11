@@ -744,7 +744,6 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-
 hook.setHook('KeyBoardQuit', function (aEvent) {
     // ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
@@ -774,14 +773,6 @@ hook.setHook('Unload', function () {
 
 
 // ============================= Key bindings ============================== //
-
-key.setGlobalKey('C-<right>', function () {
-    getBrowser().mTabContainer.advanceSelectedTab(1, true);
-}, 'ひとつ右のタブへ');
-
-key.setGlobalKey('C-<left>', function () {
-    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
-}, 'ひとつ左のタブへ');
 
 key.setGlobalKey('C-<up>', function () {
     var browser = getBrowser();
@@ -1029,3 +1020,11 @@ key.setEditKey('C-p', function (ev) {
 key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
+
+key.setGlobalKey('C-<right>', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(1, true);
+}, 'ひとつ右のタブへ');
+
+key.setGlobalKey('C-<left>', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
+}, 'ひとつ左のタブへ');
