@@ -375,8 +375,7 @@ fi
 #     pwd
 # }
 cd(){
-    builtin cd "$@"
-    pwd
+    builtin cd "$@" && pwd
 }
 
 # pad
