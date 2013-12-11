@@ -296,8 +296,8 @@ ext.add("my-index-html", function(ev, arg){
 }, "open my index.html");
 
 ext.add("echo-tab-info", function(){
-    var all = gBrowser.tabs.length;
-    var ix = gBrowser.mCurrentTab._tPos;
+    var all = getBrowser().tabs.length;
+    var ix = getBrowser().mCurrentTab._tPos;
     var title = window.document.title;
     var url = window.content.location.href;
     display.echoStatusBar((ix + 1).toString() + " / " +
@@ -465,10 +465,10 @@ ext.add('auto-install-plugins', function(ev, arg){
 }, 'Install plugins automatically if not installed yet.');
 
 ext.add('put-aside-this-page', function (ev, arg) {
-    var n = gBrowser.mCurrentTab._tPos;
-    gBrowser.moveTabTo(gBrowser.mCurrentTab, 0);
+    var n = getBrowser().mCurrentTab._tPos;
+    getBrowser().moveTabTo(getBrowser().mCurrentTab, 0);
     if (n != 0) {
-        gBrowser.selectedTab = gBrowser.mTabs[n];
+        getBrowser().selectedTab = getBrowser().mTabs[n];
     }
 }, 'put aside this page');
 
@@ -495,9 +495,9 @@ ext.add("hide-sidebar", function(){
 }, "hide-sidebar");
 
 ext.add("close-and-next-tab", function (ev, arg) {
-    var n = gBrowser.mCurrentTab._tPos;
-    gBrowser.removeCurrentTab();
-    gBrowser.selectedTab = gBrowser.mTabs[n];
+    var n = getBrowser().mCurrentTab._tPos;
+    getBrowser().removeCurrentTab();
+    getBrowser().selectedTab = getBrowser().mTabs[n];
 }, "close and focus to next tab");
 
 //////////////////////////////////////
@@ -693,7 +693,7 @@ ext.add("list-closed-tabs", function () {
 ext.add("list-tab-history", function () {
     const fav = "chrome://mozapps/skin/places/defaultFavicon.png";
     var tabHistory = [];
-    var sessionHistory = gBrowser.webNavigation.sessionHistory;
+    var sessionHistory = getBrowser().webNavigation.sessionHistory;
     if (sessionHistory.count < 1)
         return void display.echoStatusBar("Tab history not exist", 2000);
     var curIdx = sessionHistory.index;
@@ -720,7 +720,8 @@ ext.add("list-tab-history", function () {
             header      : ["Title", "URL"],
             initialIndex : thIdx,
             callback    : function(i) {
-                if (i >= 0) gBrowser.webNavigation.gotoIndex(tabHistory[i][3]);
+                if (i >= 0)
+                    getBrowser().webNavigation.gotoIndex(tabHistory[i][3]);
             }
         });
 },  'List tab history');
@@ -747,7 +748,7 @@ key.suspendKey           = "Not defined";
 hook.setHook('KeyBoardQuit', function (aEvent) {
     // ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-    gBrowser.focus();
+    getBrowser().focus();
     content.focus();
     command.closeFindBar();
     if (util.isCaretEnabled()) {
@@ -775,11 +776,11 @@ hook.setHook('Unload', function () {
 // ============================= Key bindings ============================== //
 
 key.setGlobalKey('C-<right>', function () {
-    gBrowser.mTabContainer.advanceSelectedTab(1, true);
+    getBrowser().mTabContainer.advanceSelectedTab(1, true);
 }, 'ひとつ右のタブへ');
 
 key.setGlobalKey('C-<left>', function () {
-    gBrowser.mTabContainer.advanceSelectedTab(-1, true);
+    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
 }, 'ひとつ左のタブへ');
 
 key.setGlobalKey('C-<up>', function () {
@@ -803,7 +804,7 @@ key.setGlobalKey('C-<down>', function () {
 
 key.setGlobalKey('<delete>', function (ev, arg) {
     let (elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-    gBrowser.focus();
+    getBrowser().focus();
     content.focus();
 }, 'コンテンツへフォーカス', true);
 
@@ -847,7 +848,7 @@ key.setViewKey(['t', 'p'], function (ev, arg) {
     ext.exec("twitter-client-tweet-this-page", arg, ev);
 }, 'このページのタイトルと URL を使ってつぶやく', true);
 
-key.setViewKey('u', function (ev) {
+key.setViewKey([['u'], ['S-SPC']], function (ev) {
     goDoCommand("cmd_scrollPageUp");
 }, '一画面分スクロールアップ');
 
@@ -913,7 +914,7 @@ key.setViewKey('a', function (ev, arg) {
     allTabs.open();
 }, 'alltabs.open');
 
-key.setViewKey('d', function (ev) {
+key.setViewKey([['d'], ['SPC']], function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
@@ -1028,11 +1029,3 @@ key.setEditKey('C-p', function (ev) {
 key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
-
-key.setViewKey('S-SPC', function (ev) {
-    goDoCommand("cmd_scrollPageUp");
-}, '一画面分スクロールアップ');
-
-key.setViewKey('SPC', function (ev) {
-    goDoCommand("cmd_scrollPageDown");
-}, '一画面スクロールダウン');
