@@ -849,10 +849,7 @@ tb(){
     __datenum=`date +%Y%m%d-%H%M%S`
     __tb="$HOME/.var/tb/$__datenum"
     mkdir -p "$__tb"
-    for file in "$@"
-    do
-        mv -t "$__tb" "$file"
-    done
+    mv "$@" "$__tb"
 }
 
 mkcd(){
@@ -1064,6 +1061,7 @@ __my_ps1_moc(){
 }
 
 for f in /usr/share/git/git-prompt.sh \
+    /usr/local/share/git-core/contrib/completion/git-prompt.sh \
     /etc/bash_completion.d/git-prompt \
     /opt/local/share/git-core/git-prompt.sh \
     /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
