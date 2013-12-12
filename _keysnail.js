@@ -1021,10 +1021,10 @@ key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
 
-key.setGlobalKey('C-<right>', function (ev) {
-    getBrowser().mTabContainer.advanceSelectedTab(1, true);
-}, 'ひとつ右のタブへ');
-
-key.setGlobalKey('C-<left>', function (ev) {
-    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
-}, 'ひとつ左のタブへ');
+//key.setGlobalKey('C-<right>', function (ev) {
+//getBrowser().mTabContainer.advanceSelectedTab(1, true);
+//}, 'ひとつ右のタブへ');
+//
+//key.setGlobalKey('C-<left>', function (ev) {
+//getBrowser().mTabContainer.advanceSelectedTab(-1, true);
+//}, 'ひとつ左のタブへ');
