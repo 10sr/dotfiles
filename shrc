@@ -1184,6 +1184,9 @@ then
         newkiwi)
             __my_c4="$__color_light_purple"
             ;;
+        freebsd-vb-win7-opti)
+            __my_c4="$__color_light_red"
+            ;;
         *)
             __my_c4="$__color_light_green"
             ;;
