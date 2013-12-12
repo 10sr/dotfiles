@@ -167,7 +167,7 @@ setup_tmux(){
             ;;
         freebsd-vb-win7-opti)
             tmux_bg_color=red
-            tmux_fg_color=whtie
+            tmux_fg_color=white
             ;;
         *)
             tmux_bg_color=green
