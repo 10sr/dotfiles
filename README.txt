@@ -49,25 +49,36 @@ This file set ENV to $HOME/.shrc , which is loaded when sh is run interactively.
 Add lines like `test -n "$BASH_VERSION" && . "$HOME/.bashrc"` .
 
 
+2.$HOME/{.bash_profile,.zprofile}
+
+
+Sourced if current shell is login shell and shell is bash or zsh.
+Srouce $HOME/.profile .
+
+
 3. $HOME/.shrc
 
 Sourced through ENV when shell is sh, and $HOME/.{ba,z}shrc if bash or zsh
 respectively. Source $HOME/.dotfiles/shrc .
 
 
-3. $HOME/.{ba,z}shrc
+4. $HOME/.{ba,z}shrc
 
 Sourced when current shell is bash or zsh respectively and current shell is not
 login shell. When current shell is login shell, these files are sourced
-explicitly by $HOME/.bash_profile or $HOME/.zprofile .
+explicitly by $HOME/.profile . Source $HOME/.shrc .
 
 
 
-$HOME/.{ba,z}shrc     <= bash, zsh
+$HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
 |
-`--$HOME/.shrc        <= sh
-   |
-   `--$HOME/.dotfiles/shrc
+`--$HOME/.profile                <= login with sh
+   | |
+   | `--$HOME/.{ba,z}shrc        <= bash, zsh
+   |    |
+   `----`--$HOME/.shrc           <= sh
+           |
+           `--$HOME/.dotfiles/shrc
 
 ~/.xinitrc                <= startx
 |
