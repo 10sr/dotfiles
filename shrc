@@ -655,6 +655,7 @@ __realpath(){
 }
 
 tx(){
+    tmux start-server
     if test $# -eq 0
     then
         echo ":: tx <session> to attach."
