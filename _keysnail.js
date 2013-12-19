@@ -252,9 +252,10 @@ var echoTabInfo = (function(){
     var currenttab;
     function _display(msg){
         display.prettyPrint(msg, {
-            timeout: 2000,
+            timeout: 1500,
             style: {
-                "font-size": "18px"
+                "font-size": "18px",
+                "font-family": "monospace"
             }
         });
     }
@@ -275,8 +276,9 @@ var echoTabInfo = (function(){
         var title = window.content.document.title;
         var url = window.content.location.href;
         _display(
-            (idx + 1).toString() + " / " +
-                len.toString() + " : " +
+            "[" +
+                (idx + 1).toString() + "/" +
+                len.toString() + "] " +
                 title + " <" +
                 decodeURIComponent(url) + ">"
         );
