@@ -278,7 +278,7 @@ var echoTabInfo = (function(){
             (idx + 1).toString() + " / " +
                 len.toString() + " : " +
                 title + " <" +
-                url + ">"
+                decodeURIComponent(url) + ">"
         );
     }
 
