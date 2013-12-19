@@ -246,7 +246,46 @@ plugins.options["twitter_client.jmp_key"] =
 plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
-// my ext
+// my exts and functions
+
+var echoTabInfo = (function(){
+    var currenttab;
+    function _display(msg){
+        display.prettyPrint(msg, {
+            timeout: 2000,
+            style: {
+                "font-size": "18px"
+            }
+        });
+    }
+
+    function __display(msg){
+        display.echoStatusBar(msg);
+    }
+
+    function echo(){
+        var newtab = getBrowser().mCurrentTab;
+        if (currenttab === newtab) {
+            return;
+        }
+
+        currenttab = newtab;
+        var len = getBrowser().tabs.length;
+        var idx = currenttab._tPos;
+        var title = window.content.document.title;
+        var url = window.content.location.href;
+        _display(
+            (idx + 1).toString() + " / " +
+                len.toString() + " : " +
+                title + " <" +
+                url + ">"
+        );
+    }
+
+    return {
+        echo: echo
+    };
+})();
 
 ext.add("open-remote-init-file", function(ev, arg){
     const URL = "https://raw.github.com/10sr/dotfiles/master/_keysnail.js";
@@ -294,17 +333,6 @@ ext.add("my-index-html", function(ev, arg){
         window.openUILinkIn(path, "tab");
     }
 }, "open my index.html");
-
-ext.add("echo-tab-info", function(){
-    var all = getBrowser().tabs.length;
-    var ix = getBrowser().mCurrentTab._tPos;
-    var title = window.document.title;
-    var url = window.content.location.href;
-    display.echoStatusBar((ix + 1).toString() + " / " +
-                          all.toString() + " : " +
-                          title + " <" +
-                          url + ">");
-}, "echo tab info");
 
 ext.add("strong-fullscreen", function(){
     var elemids = [
@@ -771,7 +799,9 @@ hook.setHook('Unload', function () {
     });
 });
 
-
+hook.setHook('LocationChange', function (aNsURI) {
+    echoTabInfo.echo();
+});
 // ============================= Key bindings ============================== //
 
 key.setGlobalKey('C-<up>', function () {
