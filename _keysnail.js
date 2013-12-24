@@ -261,11 +261,7 @@ var echoTabInfo = (function(){
     }
 
     function __display(msg){
-        var doc = content ? content.document : document;
-        var dBody = doc.body;
-        if (dBody && !util.isFrameSetWindow(content)) {
-            display.echoStatusBar(msg);
-        }
+        display.echoStatusBar(msg);
     }
 
     function echo(){
@@ -279,13 +275,19 @@ var echoTabInfo = (function(){
         var idx = currenttab._tPos;
         var title = window.content.document.title;
         var url = window.content.location.href;
-        _display(
-            "[" +
-                (idx + 1).toString() + "/" +
-                len.toString() + "] " +
-                title + " <" +
-                decodeURIComponent(url) + ">"
-        );
+
+        var doc = content ? content.document : document;
+        var dBody = doc.body;
+        if (dBody && !util.isFrameSetWindow(content)) {
+            // if page has been prepared
+            _display(
+                "[" +
+                    (idx + 1).toString() + "/" +
+                    len.toString() + "] " +
+                    title + " <" +
+                    decodeURIComponent(url) + ">"
+            );
+        }
     }
 
     return {
