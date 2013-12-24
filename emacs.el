@@ -1114,7 +1114,7 @@ If called intearctively, find word at point."
        (add-to-list 'load-path
                     d)))
 
-(when (lazy-load-eval 'gtags '(gtags-mode))
+'(when (lazy-load-eval 'gtags '(gtags-mode))
   (add-hook 'gtags-mode-hook
             (lambda ()
               (setq gtags-select-buffer-single t)

@@ -261,7 +261,11 @@ var echoTabInfo = (function(){
     }
 
     function __display(msg){
-        display.echoStatusBar(msg);
+        var doc = content ? content.document : document;
+        var dBody = doc.body;
+        if (dBody && !util.isFrameSetWindow(content)) {
+            display.echoStatusBar(msg);
+        }
     }
 
     function echo(){
