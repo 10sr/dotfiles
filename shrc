@@ -1178,7 +1178,7 @@ then
     # color for ::
     case "`hostname`" in
         arch-aspireone)
-            __my_c4="$__color_light_blue"
+            __my_c4="$__color_yellow"
             ;;
         darwin-mba.local)
             __my_c4="$__color_light_cyan"

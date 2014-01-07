@@ -154,8 +154,8 @@ setup_tmux(){
 
     case "`hostname`" in
         arch-aspireone)
-            tmux_bg_color=blue
-            tmux_fg_color=white
+            tmux_bg_color=yellow
+            tmux_fg_color=black
             ;;
         darwin-mba.local)
             tmux_bg_color=cyan
