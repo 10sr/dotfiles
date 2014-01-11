@@ -2005,7 +2005,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   "grep command for ack")
 
 (defvar my-rgrep-global
-  "global --result grep"
+  "global --result grep "
   "grep command for global")
 
 (defvar my-rgrep-grep
