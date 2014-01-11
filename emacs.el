@@ -999,8 +999,8 @@ found, otherwise returns nil."
                   indent-tabs-mode nil)
             ;; (set-face-foreground 'font-lock-keyword-face "blue")
             (c-toggle-hungry-state -1)
-            (and (require 'gtags nil t)
-                 (gtags-mode 1))
+            ;; (and (require 'gtags nil t)
+            ;;      (gtags-mode 1))
             ))
 
 (when (fetch-library
@@ -1114,9 +1114,10 @@ If called intearctively, find word at point."
        (add-to-list 'load-path
                     d)))
 
-'(when (lazy-load-eval 'gtags '(gtags-mode))
+(when (lazy-load-eval 'gtags '(gtags-mode))
   (add-hook 'gtags-mode-hook
             (lambda ()
+              (view-mode gtags-mode)
               (setq gtags-select-buffer-single t)
               ;; (local-set-key "\M-t" 'gtags-find-tag)
               ;; (local-set-key "\M-r" 'gtags-find-rtag)
@@ -1127,7 +1128,7 @@ If called intearctively, find word at point."
               (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
               (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
               (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
-              (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
+              (define-key gtags-mode-map (kbd "C-x t f") 'gtags-find-file)
               (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
               )))
 
