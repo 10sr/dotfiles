@@ -1023,6 +1023,8 @@ found, otherwise returns nil."
               ;;           t)
               )))
 
+(require 'js-doc nil t)
+
 (when (require 'uniquify nil t)
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
   (setq uniquify-ignore-buffers-re "*[^*]+*")
