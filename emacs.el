@@ -999,8 +999,8 @@ found, otherwise returns nil."
                   indent-tabs-mode nil)
             ;; (set-face-foreground 'font-lock-keyword-face "blue")
             (c-toggle-hungry-state -1)
-            (and (require 'gtags nil t)
-                 (gtags-mode 1))
+            ;; (and (require 'gtags nil t)
+            ;;      (gtags-mode 1))
             ))
 
 (when (fetch-library
@@ -1048,22 +1048,22 @@ found, otherwise returns nil."
             (define-key view-mode-map "?" 'isearch-backward-regexp)
             (define-key view-mode-map "n" 'isearch-repeat-forward)
             (define-key view-mode-map "N" 'isearch-repeat-backward)
-            (define-key view-mode-map (kbd "C-m") 'my-view-mode-search-word)
+            (define-key view-mode-map (kbd "C-m") 'my-rgrep-symbol-at-point)
             ))
 (global-set-key "\M-r" 'view-mode)
 (setq view-read-only t)
 
-(defun my-view-mode-search-word (word)
-  "Search for word current directory and subdirectories.
-If called intearctively, find word at point."
-  (interactive (list (thing-at-point 'symbol)))
-  (if word
-      (if (and (require 'gtags nil t)
-               (gtags-get-rootpath))
-          (gtags-goto-tag word "s")
-        (my-rgrep word))
-    (message "No word at point.")
-    nil))
+;; (defun my-view-mode-search-word (word)
+;;   "Search for word current directory and subdirectories.
+;; If called intearctively, find word at point."
+;;   (interactive (list (thing-at-point 'symbol)))
+;;   (if word
+;;       (if (and (require 'gtags nil t)
+;;                (gtags-get-rootpath))
+;;           (gtags-goto-tag word "s")
+;;         (my-rgrep word))
+;;     (message "No word at point.")
+;;     nil))
 
 (add-hook 'Man-mode-hook
           (lambda ()
@@ -1116,22 +1116,29 @@ If called intearctively, find word at point."
        (add-to-list 'load-path
                     d)))
 
-'(when (lazy-load-eval 'gtags '(gtags-mode))
+(when (lazy-load-eval 'gtags '(gtags-mode))
   (add-hook 'gtags-mode-hook
             (lambda ()
+              (view-mode gtags-mode)
               (setq gtags-select-buffer-single t)
               ;; (local-set-key "\M-t" 'gtags-find-tag)
               ;; (local-set-key "\M-r" 'gtags-find-rtag)
               ;; (local-set-key "\M-s" 'gtags-find-symbol)
               ;; (local-set-key "\C-t" 'gtags-pop-stack)
-              (define-key gtags-mode-map (kbd "C-x t h") 'gtags-find-tag-from-here)
+              (define-key gtags-mode-map (kbd "C-x t h")
+                'gtags-find-tag-from-here)
               (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
               (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
               (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
               (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
-              (define-key gtags-mdoe-map (kbd "C-x t f") 'gtags-find-file)
+              (define-key gtags-mode-map (kbd "C-x t f") 'gtags-find-file)
               (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
-              )))
+              ))
+  (add-hook 'gtags-select-mode-hook
+            (lambda ()
+              (define-key gtags-select-mode-map (kbd "C-m") 'gtags-select-tag)
+              ))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
@@ -1999,6 +2006,10 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   "ack --nocolor --nogroup --nopager "
   "grep command for ack")
 
+(defvar my-rgrep-global
+  "global --result grep "
+  "grep command for global")
+
 (defvar my-rgrep-grep
   (concat "find . "
           "-path '*/.git' -prune -o "
@@ -2009,19 +2020,32 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 (defun my-rgrep-grep-command ()
   "Return recursive grep command for current directory."
-  (if (eq 0
-          (shell-command "git rev-parse --git-dir"))
-      my-rgrep-gitgrep
-    (if (executable-find "ag")
-        my-rgrep-ag
-      (if (executable-find "ack")
-          my-rgrep-ack
-        my-rgrep-grep))))
+  (if (and (require 'gtags nil t)
+           (gtags-get-rootpath))
+      my-rgrep-global
+    (if (eq 0
+            (shell-command "git rev-parse --git-dir"))
+        my-rgrep-gitgrep
+      (if (executable-find "ag")
+          my-rgrep-ag
+        (if (executable-find "ack")
+            my-rgrep-ack
+          my-rgrep-grep)))))
 
 (defun my-rgrep (command-args)
   "My recursive grep."
   (interactive (list (read-shell-command "grep command: "
                                          (my-rgrep-grep-command)
+                                         'grep-find-history)))
+  (compilation-start command-args
+                     'grep-mode))
+
+(defun my-rgrep-symbol-at-point (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         (concat (my-rgrep-grep-command)
+                                                 " "
+                                                 (thing-at-point 'symbol))
                                          'grep-find-history)))
   (compilation-start command-args
                      'grep-mode))
@@ -2037,6 +2061,13 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   "My recursive grep."
   (interactive (list (read-shell-command "grep command: "
                                          my-rgrep-ag
+                                         'grep-find-history)))
+  (my-rgrep command-args))
+
+(defun my-rgrep-global (command-args)
+  "My recursive grep by gnu global."
+  (interactive (list (read-shell-command "grep command: "
+                                         my-rgrep-global
                                          'grep-find-history)))
   (my-rgrep command-args))
 

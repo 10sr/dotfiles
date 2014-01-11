@@ -417,7 +417,8 @@ do
     test -f $f && alias vl=$f && break
 done
 
-alias pa=pacapt
+__safe_alias pa=pacman
+__safe_alias pa=pacapt
 
 __safe_alias yt=yaourt
 __safe_alias cower="cower --color=auto"
@@ -1177,7 +1178,7 @@ then
     # color for ::
     case "`hostname`" in
         arch-aspireone)
-            __my_c4="$__color_light_blue"
+            __my_c4="$__color_yellow"
             ;;
         darwin-mba.local)
             __my_c4="$__color_light_cyan"
