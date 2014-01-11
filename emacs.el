@@ -398,7 +398,8 @@ found, otherwise returns nil."
 ;;              '(global-whitespace-mode ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; show current info
+;; system info
+
 (defun my-message-current-info ()
   ""
   (interactive)
@@ -1742,26 +1743,19 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
         (lambda ()
           (with-temp-buffer
             (let (p1 p2 p3 p4)
-              (insert " [")
+              (insert ":: [")
               (setq p1 (point))
               (insert (abbreviate-file-name default-directory))
               (setq p2 (point))
-              (insert "]"
-                      "\n")
+              (insert ":")
               (setq p3 (point))
               (insert user-login-name
                       "@"
-                      (or (getenv "HOSTNAME")
-                          (substring (shell-command-to-string
-                                      (or (executable-find "hostname")
-                                          "echo ''"))
-                                     0
-                                     -1)))
+                      system-name
+                      )
               (setq p4 (point))
-              (insert " "
-                      (format-time-string "%a, %d %b %Y %T %z")
-                      " eshell\n"
-                      "last:"
+              (insert "]")
+              (insert "\n:: "
                       (number-to-string eshell-last-command-status)
                       (if (= (user-uid)
                              0)
@@ -1769,10 +1763,10 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                         " $ "))
               (add-text-properties p1
                                    p2
-                                   '(face ((foreground-color . "yellow"))))
+                                   '(face ((underline . t))))
               (add-text-properties p3
                                    p4
-                                   '(face ((foreground-color . "cyan"))))
+                                   '(face ((underline . t))))
               (buffer-substring (point-min)
                                 (point-max))))))
 
@@ -1920,10 +1914,31 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                        my-desktop-terminal))
     (my-term)))
 
-(defvar my-term nil "my terminal buffer")
-(defun my-term ()
-  "open terminal buffer and return that buffer."
+(defun my-delete-frame-or-kill-emacs ()
+  "Delete frame when opening multiple frame, kill Emacs when only one."
   (interactive)
+  (if (eq 1
+          (length (frame-list)))
+      (save-buffers-kill-emacs)
+    (delete-frame)))
+
+;; (define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
+(define-key my-prefix-map (kbd "C-f") 'make-frame-command-with-name)
+(global-set-key (kbd "C-x C-c") 'my-delete-frame-or-kill-emacs)
+(define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; my-term
+
+(defvar my-term nil
+  "My terminal buffer.")
+(defvar my-term-function nil
+  "Function to create terminal buffer.
+This function accept no argument and return newly created buffer of terminal.")
+
+(defun my-term (&optional arg)
+  "Open terminal buffer and return that buffer."
+  (interactive "P")
   (if (and my-term
            (buffer-name my-term))
       (pop-to-buffer my-term)
@@ -1933,31 +1948,17 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
     (and my-term
          (my-term))))
 
-(defvar my-term-function nil
-  "Function to create terminal buffer.")
 
-(setq my-term-function
-      (lambda ()
-        (if (eq system-type 'windows-nt)
-            (eshell)
-          (if (require 'multi-term nil t)
-              (multi-term)
-            (ansi-term shell-file-name)))))
+;; (setq my-term-function
+;;       (lambda ()
+;;         (if (eq system-type 'windows-nt)
+;;             (eshell)
+;;           (if (require 'multi-term nil t)
+;;               (multi-term)
+;;             (ansi-term shell-file-name)))))
 
-;; (setq my-term-function 'eshell)
-
-(defun my-delete-frame-or-kill-emacs ()
-  "delete frame when opening multiple frame, kill emacs when only one."
-  (interactive)
-  (if (eq 1
-          (length (frame-list)))
-      (save-buffers-kill-emacs)
-    (delete-frame)))
-
-(define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
-(define-key my-prefix-map (kbd "C-f") 'make-frame-command-with-name)
-(global-set-key (kbd "C-x C-c") 'my-delete-frame-or-kill-emacs)
-(define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
+(setq my-term-function 'eshell)
+(define-key my-prefix-map (kbd "C-s") 'my-term)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; x open
