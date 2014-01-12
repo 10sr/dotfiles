@@ -1681,8 +1681,13 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 
   (defun eshell/clear ()
     "Clear the current buffer, leaving one prompt at the top."
+    (interactive)
     (let ((inhibit-read-only t))
       (erase-buffer)))
+
+  (defun eshell-clear ()
+    (interactive)
+    nil)
 
   (defun eshell/d (&optional dirname switches)
     "if first arg is omitted open current directory."
@@ -1759,6 +1764,16 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
         (insert "cd " dir)
         (eshell-send-input))))
 
+  (defadvice eshell-next-matching-input-from-input
+    ;; do not cycle history
+    (around eshell-history-do-not-cycle activate)
+    (if (= 0
+           eshell-history-index)
+        (progn
+          (delete-region eshell-last-output-end (point))
+          (insert-and-inherit eshell-matching-input-from-input-string))
+      ad-do-it))
+
   (setq eshell-directory-name "~/.emacs.d/eshell/")
   (setq eshell-term-name "eterm-color")
   (setq eshell-scroll-to-bottom-on-input t)
@@ -1812,12 +1827,14 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                 'eshell-kill-input)
               (define-key eshell-mode-map (kbd "C-d")
                 'eshell-delete-char-or-logout)
+              (define-key eshell-mode-map (kbd "C-l")
+                'eshell/clear)
               (define-key eshell-mode-map (kbd "DEL")
                 'my-eshell-backward-delete-char)
-              ;; (define-key eshell-mode-map
-              ;;   (kbd "C-p") 'eshell-previous-matching-input-from-input)
-              ;; (define-key eshell-mode-map
-              ;;   (kbd "C-n") 'eshell-next-matching-input-from-input)
+              (define-key eshell-mode-map
+                (kbd "C-p") 'eshell-previous-matching-input-from-input)
+              (define-key eshell-mode-map
+                (kbd "C-n") 'eshell-next-matching-input-from-input)
 
               (apply 'eshell/addpath exec-path)
               (set (make-local-variable 'scroll-margin) 0)
@@ -1870,7 +1887,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                "*Messages*")))
 
 (defun make-frame-command-with-name (name)
-  "Make frame with name specified."
+  "Make frame with NAME specified."
   (interactive "sName for new frame: ")
   (set-frame-parameter (make-frame-command)
                        'name
