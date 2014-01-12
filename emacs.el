@@ -1687,7 +1687,9 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 
   (defun eshell-clear ()
     (interactive)
-    nil)
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (insert (funcall eshell-prompt-function))))
 
   (defun eshell/d (&optional dirname switches)
     "if first arg is omitted open current directory."
@@ -1830,8 +1832,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                 'eshell-kill-input)
               (define-key eshell-mode-map (kbd "C-d")
                 'eshell-delete-char-or-logout)
-              (define-key eshell-mode-map (kbd "C-l")
-                'eshell/clear)
+              ;; (define-key eshell-mode-map (kbd "C-l")
+              ;;   'eshell-clear)
               (define-key eshell-mode-map (kbd "DEL")
                 'my-eshell-backward-delete-char)
               (define-key eshell-mode-map
