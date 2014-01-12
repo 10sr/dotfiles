@@ -1691,17 +1691,29 @@ Optional prefix ARG says how many lines to unflag; default is one line."
   (defun eshell/v ()
     (view-mode 1))
 
+  (defun eshell/aaa (&rest args)
+    (message "%S"
+             args))
+
   (defun eshell/git (&rest args)
+    (if (require 'git-command nil t)
+        (git-command (mapconcat 'shell-quote-argument
+                                args
+                                " "))
+      (apply 'eshell-git-fallback args)))
+
+  (defun eshell-git-fallback (&rest args)
     ""
     (if (member (car args)
-                '("di" "diff" "log" "show"))
+                '("di" "diff" "log" "show" "graph"))
         (apply 'eshell-exec-visual "git" args)
-      (shell-command (mapconcat 'shell-quote-argument
-                                `("git" ,@args)
-                                " ")
-                     t)
+      (shell-command-to-string (mapconcat 'shell-quote-argument
+                                          `("git" ,@args)
+                                          " "))
       ;; (eshell-external-command "git" args)
       ))
+
+  (defalias 'eshell/g 'eshell/git)
 
   (defalias 'eshell/: 'ignore)
   (defalias 'eshell/type 'eshell/which)
@@ -1713,6 +1725,23 @@ Optional prefix ARG says how many lines to unflag; default is one line."
     ""
     (interactive)
     (goto-char (point-max)))
+
+  (defun eshell-delete-char-or-logout (n)
+    (interactive "p")
+    (if (equal (eshell-get-old-input)
+               "")
+        (progn
+          (insert "exit")
+          (eshell-send-input))
+      (delete-char n)))
+
+  (defun eshell-kill-input ()
+    (interactive)
+    (delete-region (point)
+                   (progn (eshell-bol)
+                          (point))))
+
+  (defalias 'eshell/logout 'eshell/exit)
 
   (defun eshell-cd-default-directory (&optional eshell-buffer-or-name)
     "open eshell and change wd
@@ -1745,14 +1774,14 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
             (let (p1 p2 p3 p4)
               (insert ":: [")
               (setq p1 (point))
-              (insert (abbreviate-file-name default-directory))
-              (setq p2 (point))
-              (insert ":")
-              (setq p3 (point))
               (insert user-login-name
                       "@"
                       system-name
                       )
+              (setq p2 (point))
+              (insert ":")
+              (setq p3 (point))
+              (insert (abbreviate-file-name default-directory))
               (setq p4 (point))
               (insert "]")
               (insert "\n:: "
@@ -1775,20 +1804,21 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
               ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
               ;;                                               (interactive)
               ;;                             (switch-to-buffer (other-buffer))))
-              (define-key eshell-mode-map (kbd "C-u") (lambda ()
-                                                        (interactive)
-                                                        (eshell-goto-prompt)
-                                                        (eshell-kill-input)))
-              (define-key eshell-mode-map (kbd "C-g") (lambda ()
-                                                        (interactive)
-                                                        (eshell-goto-prompt)
-                                                        (my-keyboard-quit)))
-              (define-key eshell-mode-map
-                (kbd "DEL") 'my-eshell-backward-delete-char)
-              (define-key eshell-mode-map
-                (kbd "C-p") 'eshell-previous-matching-input-from-input)
-              (define-key eshell-mode-map
-                (kbd "C-n") 'eshell-next-matching-input-from-input)
+              ;; (define-key eshell-mode-map (kbd "C-g") (lambda ()
+              ;;                                           (interactive)
+              ;;                                           (eshell-goto-prompt)
+              ;;                                           (keyboard-quit)))
+              (define-key eshell-mode-map (kbd "C-u")
+                'eshell-kill-input)
+              (define-key eshell-mode-map (kbd "C-d")
+                'eshell-delete-char-or-logout)
+              (define-key eshell-mode-map (kbd "DEL")
+                'my-eshell-backward-delete-char)
+              ;; (define-key eshell-mode-map
+              ;;   (kbd "C-p") 'eshell-previous-matching-input-from-input)
+              ;; (define-key eshell-mode-map
+              ;;   (kbd "C-n") 'eshell-next-matching-input-from-input)
+
               (apply 'eshell/addpath exec-path)
               (set (make-local-variable 'scroll-margin) 0)
               ;; (eshell/export "GIT_PAGER=")
@@ -1819,7 +1849,6 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                         ; ("ll" "ls -l $*")
                                         ; ("la" "ls -a $*")
                                         ; ("lla" "ls -al $*")
-                        ("aptin" "apt-get install $*")
                         ("eless"
                          (concat "cat >>> (with-current-buffer "
                                  "(get-buffer-create \"*eshell output\") "
@@ -1827,7 +1856,6 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                  "(setq buffer-read-only nil) "
                                  "(current-buffer)) "
                                  "(view-buffer (get-buffer \"*eshell output*\"))")
-                         ("g" "git $*")
                          ))
                       )))
   )                          ; eval after load eshell
