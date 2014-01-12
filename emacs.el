@@ -1770,10 +1770,12 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
     ;; do not cycle history
     (around eshell-history-do-not-cycle activate)
     (if (= 0
-           eshell-history-index)
+           (or eshell-history-index
+               0))
         (progn
           (delete-region eshell-last-output-end (point))
-          (insert-and-inherit eshell-matching-input-from-input-string))
+          (insert-and-inherit eshell-matching-input-from-input-string)
+          (setq eshell-history-index nil))
       ad-do-it))
 
   (setq eshell-directory-name "~/.emacs.d/eshell/")
