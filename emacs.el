@@ -1814,10 +1814,10 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                         "$ "))
               (add-text-properties p1
                                    p2
-                                   '(face ((underline . t))))
+                                   '(face underline))
               (add-text-properties p3
                                    p4
-                                   '(face ((underline . t))))
+                                   '(face underline))
               (buffer-substring (point-min)
                                 (point-max))))))
 
