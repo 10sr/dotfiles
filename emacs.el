@@ -1799,12 +1799,15 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
               (insert (abbreviate-file-name default-directory))
               (setq p4 (point))
               (insert "]")
-              (insert "\n:: "
-                      (number-to-string eshell-last-command-status)
-                      (if (= (user-uid)
+              (insert "\n:: ")
+              (unless (eq 0
+                          eshell-last-command-status)
+                (insert (format "[STATUS:%d] "
+                                eshell-last-command-status)))
+              (insert (if (= (user-uid)
                              0)
-                          " # "
-                        " $ "))
+                          "# "
+                        "$ "))
               (add-text-properties p1
                                    p2
                                    '(face ((underline . t))))
