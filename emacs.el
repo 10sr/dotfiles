@@ -2117,6 +2117,13 @@ This function accept no argument and return newly created buffer of terminal.")
                                          'grep-find-history)))
   (my-rgrep command-args))
 
+(defun my-rgrep-gitgrep (command-args)
+  "My recursive grep."
+  (interactive (list (read-shell-command "grep command: "
+                                         my-rgrep-gitgrep
+                                         'grep-find-history)))
+  (my-rgrep command-args))
+
 (defun my-rgrep-global (command-args)
   "My recursive grep by gnu global."
   (interactive (list (read-shell-command "grep command: "
