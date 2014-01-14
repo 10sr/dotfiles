@@ -2051,96 +2051,160 @@ ARG is ignored."
                                                "")
                                              "memo.txt"))))
 
-(defvar my-rgrep-gitgrep
-  "git --no-pager -c color.grep=false grep -nH -e "
-  "Grep command for git grep.")
+;; (defvar my-rgrep-gitgrep
+;;   "git --no-pager -c color.grep=false grep -nH -e "
+;;   "Grep command for git grep.")
 
-(defvar my-rgrep-ag
-  "ag --nocolor --nogroup --nopager "
-  "Grep command for ag")
+;; (defvar my-rgrep-ag
+;;   "ag --nocolor --nogroup --nopager "
+;;   "Grep command for ag")
 
-(defvar my-rgrep-ack
-  "ack --nocolor --nogroup --nopager "
-  "Grep command for ack")
+;; (defvar my-rgrep-ack
+;;   "ack --nocolor --nogroup --nopager "
+;;   "Grep command for ack")
 
-(defvar my-rgrep-global
-  "global --result grep "
-  "Grep command for global")
+;; (defvar my-rgrep-global
+;;   "global --result grep "
+;;   "Grep command for global")
 
-(defvar my-rgrep-grep
-  (concat "find . "
-          "-path '*/.git' -prune -o "
-          "-path '*/.svn' -prune -o "
-          "-type f -print0 | "
-          "xargs -0 -e grep -nH -e ")
-  "Grep command for grep")
+;; (defvar my-rgrep-grep
+;;   (concat "find . "
+;;           "-path '*/.git' -prune -o "
+;;           "-path '*/.svn' -prune -o "
+;;           "-type f -print0 | "
+;;           "xargs -0 -e grep -nH -e ")
+;;   "Grep command for grep")
 
-(defun my-rgrep-grep-command ()
-  "Return recursive grep command for current directory."
-  (if (and (require 'gtags nil t)
-           (gtags-get-rootpath))
-      my-rgrep-global
-    (if (eq 0
-            (shell-command "git rev-parse --git-dir"))
-        my-rgrep-gitgrep
-      (if (executable-find "ag")
-          my-rgrep-ag
-        (if (executable-find "ack")
-            my-rgrep-ack
-          my-rgrep-grep)))))
+(defvar my-rgrep-alist
+  `(
+    ;; gnu global
+    ("global"
+     (and (require 'gtags nil t)
+          (gtags-get-rootpath))
+     "global --result grep ")
+
+    ;; git grep
+    ("gitgrep"
+     (eq 0
+         (shell-command "git rev-parse --git-dir"))
+     "git --no-pager -c color.grep=false grep -nH -e ")
+
+    ;; the silver searcher
+    ("ag"
+     (executable-find "ag")
+     "ag --nocolor --nogroup --nopager ")
+
+    ;; ack
+    ("ack"
+     (executable-find "ack")
+     "ack --nocolor --nogroup --nopager ")
+
+    ;; grep
+    ("grep"
+     t
+     ,(concat "find . "
+             "-path '*/.git' -prune -o "
+             "-path '*/.svn' -prune -o "
+             "-type f -print0 | "
+             "xargs -0 grep -nH -e "))
+    )
+  "Alist of rgrep command.
+Each element is in the form like (NAME SEXP COMMAND), where SEXP returns the
+condition to choose COMMAND when evaluated.")
+
+(defvar my-rgrep-default nil
+  "Default command name for my-rgrep.")
+
+(defun my-rgrep-grep-command (&optional name alist)
+  "Return recursive grep command for current directory or nil.
+If NAME is given, use that without testing.
+Commands are searched from ALIST."
+  (if alist
+      (if name
+          ;; if name is given search that from alist and return the command
+          (nth 2 (assoc name
+                        alist))
+
+        ;; if name is not given try test in 1th elem
+        (let ((car (car alist))
+              (cdr (cdr alist)))
+
+          (if (eval (nth 1 car))
+              ;; if the condition is true return the command
+              (nth 2 car)
+
+            ;; try next one
+            (and cdr
+                 (my-rgrep-grep-command name cdr)))))
+
+    ;; if alist is not given set default value
+    (my-rgrep-grep-command name my-rgrep-alist)))
+
+(my-rgrep-grep-command "ag" nil)
 
 (defun my-rgrep (command-args)
-  "My recursive grep."
-  (interactive (list (read-shell-command "grep command: "
-                                         (my-rgrep-grep-command)
-                                         'grep-find-history)))
+  "My recursive grep.  Run COMMAND-ARGS."
+  (interactive (let ((cmd (my-rgrep-grep-command my-rgrep-default
+                                                 nil)))
+                 (if cmd
+                     (list (read-shell-command "grep command: "
+                                               cmd
+                                               'grep-find-history))
+                   (error "my-rgrep: Command for rgrep not found")
+                   )))
   (compilation-start command-args
                      'grep-mode))
 
-(defun my-rgrep-symbol-at-point (command-args)
-  "My recursive grep."
-  (interactive (list (read-shell-command "grep command: "
-                                         (concat (my-rgrep-grep-command)
-                                                 " "
-                                                 (thing-at-point 'symbol))
-                                         'grep-find-history)))
-  (compilation-start command-args
-                     'grep-mode))
+;; (defun my-rgrep-symbol-at-point (command-args)
+;;   "My recursive grep. Run COMMAND-ARGS."
+;;   (interactive (list (read-shell-command "grep command: "
+;;                                          (concat (my-rgrep-grep-command)
+;;                                                  " "
+;;                                                  (thing-at-point 'symbol))
+;;                                          'grep-find-history)))
+;;   (compilation-start command-args
+;;                      'grep-mode))
 
-(defun my-rgrep-ack (command-args)
-  "My recursive grep."
-  (interactive (list (read-shell-command "grep command: "
-                                         my-rgrep-ack
-                                         'grep-find-history)))
-  (my-rgrep command-args))
+(defun my-rgrep-ack ()
+  "My recursive grep by ack."
+  (interactive)
+  (let ((my-rgrep-default "ack"))
+    (if (called-interactively-p 'any)
+        (call-interactively 'my-rgrep)
+      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
 
-(defun my-rgrep-ag (command-args)
-  "My recursive grep."
-  (interactive (list (read-shell-command "grep command: "
-                                         my-rgrep-ag
-                                         'grep-find-history)))
-  (my-rgrep command-args))
+(defun my-rgrep-ag ()
+  "My recursive grep by ack."
+  (interactive)
+  (let ((my-rgrep-default "ag"))
+    (if (called-interactively-p 'any)
+        (call-interactively 'my-rgrep)
+      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
 
-(defun my-rgrep-gitgrep (command-args)
-  "My recursive grep."
-  (interactive (list (read-shell-command "grep command: "
-                                         my-rgrep-gitgrep
-                                         'grep-find-history)))
-  (my-rgrep command-args))
+(defun my-rgrep-gitgrep ()
+  "My recursive grep by ack."
+  (interactive)
+  (let ((my-rgrep-default "gitgrep"))
+    (if (called-interactively-p 'any)
+        (call-interactively 'my-rgrep)
+      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
 
-(defun my-rgrep-global (command-args)
-  "My recursive grep by gnu global."
-  (interactive (list (read-shell-command "grep command: "
-                                         my-rgrep-global
-                                         'grep-find-history)))
-  (my-rgrep command-args))
+(defun my-rgrep-grep ()
+  "My recursive grep by ack."
+  (interactive)
+  (let ((my-rgrep-default "grep"))
+    (if (called-interactively-p 'any)
+        (call-interactively 'my-rgrep)
+      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
 
-(defun my-rgrep-grep (command-args)
-  "My recursive grep."
-  (interactive (list (read-shell-command "grep command: "
-                                         my-rgrep-grep
-                                         'grep-find-history)))
-  (my-rgrep command-args))
+(defun my-rgrep-global ()
+  "My recursive grep by ack."
+  (interactive)
+  (let ((my-rgrep-default "global"))
+    (if (called-interactively-p 'any)
+        (call-interactively 'my-rgrep)
+      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
+
 
 (define-key ctl-x-map "s" 'my-rgrep)
 
