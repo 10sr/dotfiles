@@ -201,6 +201,8 @@ found, otherwise returns nil."
 (setq system-time-locale "C")
 
 ;; my prefix map
+(defvar my-prefix-map nil
+  "My prefix map.")
 (define-prefix-command 'my-prefix-map)
 (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
 (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
@@ -215,7 +217,6 @@ found, otherwise returns nil."
 
 ;; modifier keys
 ;; (setq mac-option-modifier 'control)
-(setq w32-apps-modifier 'meta)
 
 ;; display
 (setq redisplay-dont-pause t)
@@ -230,7 +231,7 @@ found, otherwise returns nil."
      (require 'save-window-size nil t))
 
 (defun reload-init-file ()
-  "Reload emacs init file."
+  "Reload Emacs init file."
   (interactive)
   (when (file-readable-p user-init-file)
     (load-file user-init-file)))
@@ -239,7 +240,7 @@ found, otherwise returns nil."
 ;; for windows
 
 (defun start-ckw-bash ()
-  ""
+  "Start ckw in windows."
   (interactive)
   (start-process
    "ckw_bash"
@@ -248,7 +249,7 @@ found, otherwise returns nil."
 ;; command seems to have to be in c drive
 
 (defun my-w32-add-export-path (&rest args)
-  ""
+  "Add pathes ARGS for windows."
   (mapc (lambda (path)
             (add-to-list 'exec-path (expand-file-name path)))
           (reverse args))
@@ -272,6 +273,7 @@ found, otherwise returns nil."
 
   (when window-system
     (setq w32-enable-synthesized-fonts t))
+  (setq w32-apps-modifier 'meta)
   (setq file-name-coding-system 'sjis))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -357,12 +359,14 @@ found, otherwise returns nil."
             (when display-time-mode
               (display-time-update))
             ))
-(setq display-time-interval 29)
-(setq display-time-day-and-date t)
-(setq display-time-format "%a, %d %b %Y %T")
-(if window-system
-    (display-time-mode 0)
-  (display-time-mode 1))
+
+(when (require 'time nil t)
+  (setq display-time-interval 29)
+  (setq display-time-day-and-date t)
+  (setq display-time-format "%a, %d %b %Y %T")
+  (if window-system
+      (display-time-mode 0)
+    (display-time-mode 1)))
 
 ;; ;; current directory
 ;; (let ((ls (member 'mode-line-buffer-identification
@@ -382,6 +386,7 @@ found, otherwise returns nil."
 ;;                 (cdr ls))))
 
 (defun buffer-list-not-start-with-space ()
+  "Return a list of buffers that not start with whitespaces."
   (let ((bl (buffer-list))
         b nbl)
     (while bl
@@ -401,7 +406,7 @@ found, otherwise returns nil."
 ;; system info
 
 (defun my-message-current-info ()
-  ""
+  "Echo current login name, hostname and directory."
   (interactive)
   (message "%s@%s:%s"
            user-login-name
@@ -451,13 +456,14 @@ found, otherwise returns nil."
   (add-hook 'input-method-inactivate-hook
             (lambda () (set-cursor-color "black"))))
 
-(show-paren-mode 1)
-(setq show-paren-delay 0.5
-      show-paren-style 'parenthesis)    ; mixed is hard to read
-(set-face-background 'show-paren-match
-                     (face-foreground 'default))
-(set-face-inverse-video-p 'show-paren-match
-                          t)
+(when (require 'paren nil t)
+  (show-paren-mode 1)
+  (setq show-paren-delay 0.5
+        show-paren-style 'parenthesis)    ; mixed is hard to read
+  (set-face-background 'show-paren-match
+                       (face-foreground 'default))
+  (set-face-inverse-video-p 'show-paren-match
+                            t))
 
 (transient-mark-mode 1)
 
@@ -535,7 +541,7 @@ found, otherwise returns nil."
 ;; fonts
 
 (defun my-set-ascii-and-jp-font (list)
-  "font configuration"
+  "Set font configuration List."
   (let ((fspec1 (if (> emacs-major-version 22)
                    ;; font spec is available in emacs23 and later
                    (font-spec :family (nth 2 list) :size (nth 3 list))
@@ -572,10 +578,10 @@ found, otherwise returns nil."
                        (if (face-inverse-video-p 'mode-line) fg bg))
   (set-face-foreground 'mode-line-inactive
                        (if (face-inverse-video-p 'mode-line) bg fg)))
-(set-face-underline-p 'mode-line-inactive
-                      t)
-(set-face-underline-p 'vertical-border
-                      nil)
+(set-face-underline 'mode-line-inactive
+                    t)
+(set-face-underline 'vertical-border
+                    nil)
 
 (and (fetch-library
       "https://raw.github.com/tarao/elisp/master/end-mark.el"
@@ -643,7 +649,7 @@ found, otherwise returns nil."
 ;; editting
 
 (defun my-copy-whole-line ()
-  ""
+  "Copy whole line."
   (interactive)
   (kill-new (concat (buffer-substring (point-at-bol)
                                       (point-at-eol))
@@ -654,7 +660,7 @@ found, otherwise returns nil."
 (setq scroll-conservatively 35
       scroll-margin 2
       scroll-step 0)
-(setq default-major-mode 'text-mode)
+(setq-default major-mode 'text-mode)
 (setq next-line-add-newlines nil)
 (setq kill-read-only-ok t)
 (setq truncate-partial-width-windows nil) ; when splitted horizontally
@@ -707,7 +713,7 @@ found, otherwise returns nil."
 ;; japanese input method
 
 (defun my-load-scim ()
-  "use scim-bridge.el as japanese im."
+  "Use scim-bridge.el as japanese im."
   ;; Load scim-bridge.
   (when (require 'scim-bridge nil t)
     ;; Turn on scim-mode automatically after loading .emacs
@@ -718,7 +724,7 @@ found, otherwise returns nil."
     (scim-define-common-key ?\^/ nil)))
 
 (defun my-load-anthy ()
-  "use anthy.el as japanese im."
+  "Use anthy.el as japanese im."
   ;; anthy
   (when (require 'anthy nil t)
     (global-set-key
@@ -731,7 +737,7 @@ found, otherwise returns nil."
 ;; aproposs input-method for some information
 ;; (setq default-input-method "japanese")
 (defun my-load-mozc-el ()
-  ""
+  "Use mozc.el as japanese im."
   (setq mozc-leim-title "[MZ]")
   (when (require 'mozc nil t)
     (setq defauit-input-method "japanese-mozc")
@@ -754,10 +760,10 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
 
-(defun my-delete-window-killing-buffer () nil)
+;; (defun my-delete-window-killing-buffer () nil)
 
 (defun my-query-kill-current-buffer ()
-  ""
+  "Interactively kill current buffer."
   (interactive)
   (if (y-or-n-p (concat "kill current buffer? :"))
       (kill-buffer (current-buffer))))
@@ -767,7 +773,7 @@ found, otherwise returns nil."
 ;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
 
 (defun my-kill-buffers ()
-  ""
+  "Kill buffers that visit files."
   (interactive)
   (mapcar (lambda (buf)
             (when (buffer-file-name buf)
@@ -803,9 +809,6 @@ found, otherwise returns nil."
 ;; https://github.com/lunaryorn/flycheck
 (when (require 'flycheck nil t)
   (add-hook 'after-init-hook 'global-flycheck-mode))
-
-(defun my-install-packages ()
-  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
@@ -926,7 +929,7 @@ found, otherwise returns nil."
 (setq sh-here-document-word "__EOC__")
 
 (defun my-execute-shell-command-current-line ()
-  ""
+  "Run current line as shell command"
   (interactive)
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
@@ -1080,10 +1083,10 @@ found, otherwise returns nil."
 (when (lazy-load-eval 'python '(python-mode))
   (setq python-python-command (or (executable-find "python3")
                                   (executable-find "python")))
-  (defun my-python-run-as-command ()
-    ""
-    (interactive)
-    (shell-command (concat python-python-command " " buffer-file-name)))
+  ;; (defun my-python-run-as-command ()
+  ;;   ""
+  ;;   (interactive)
+  ;;   (shell-command (concat python-python-command " " buffer-file-name)))
   (defun my-python-display-python-buffer ()
     ""
     (interactive)
@@ -1256,7 +1259,7 @@ found, otherwise returns nil."
 (iswitchb-mode 1)
 
 (defun iswitchb-buffer-display-other-window ()
-  ""
+  "Do iswitchb in other window."
   (interactive)
   (let ((iswitchb-default-method 'display))
     (call-interactively 'iswitchb-buffer)))
@@ -1531,13 +1534,13 @@ found, otherwise returns nil."
   ;; reuse current dired buffer for the file to open
   (setq dired-ls-F-marks-symlinks t)
 
-  (require 'ls-lisp)
-  (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
-  (setq ls-lisp-dirs-first t)
-  (setq ls-lisp-use-localized-time-format t)
-  (setq ls-lisp-format-time-list
-        '("%Y-%m-%d %H:%M"
-          "%Y-%m-%d      "))
+  (when (require 'ls-lisp nil t)
+    (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
+    (setq ls-lisp-dirs-first t)
+    (setq ls-lisp-use-localized-time-format t)
+    (setq ls-lisp-format-time-list
+          '("%Y-%m-%d %H:%M"
+            "%Y-%m-%d      ")))
 
   (setq dired-dwim-target t)
 
@@ -1606,7 +1609,7 @@ found, otherwise returns nil."
     (insert cur)))
 
 (defun my-dired-mark (arg)
-  "toggle mark the current (or next ARG) files.
+  "Toggle mark the current (or next ARG) files.
 If on a subdir headerline, mark all its files except `.' and `..'.
 
 Use \\[dired-unmark-all-files] to remove all marks
@@ -1903,7 +1906,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 (defvar my-frame-buffer-plist nil)
 
 (defun my-frame-buffer-add (&optional buf frame)
-  ""
+  "Add BUF to buffer list for FRAME."
   (setq my-frame-buffer-plist
         (plist-put my-frame-buffer-plist
                    (or frame
@@ -1917,7 +1920,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                                  (current-buffer))))))))
 
 (defun my-frame-buffer-remove (&optional buf frame)
-  ""
+  "Remove BUF from bufferlist for FRAME."
   (setq my-frame-buffer-plist
         (plist-put my-frame-buffer-plist
                    (or frame
@@ -1927,13 +1930,13 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                          (my-frame-buffer-get frame)))))
 
 (defun my-frame-buffer-get (&optional frame)
-  ""
+  "Get buffer list for FRAME."
   (plist-get my-frame-buffer-plist
              (or frame
                  (selected-frame))))
 
 (defun my-frame-buffer-kill-all-buffer (&optional frame)
-  ""
+  "Kill all buffer of FRAME."
   (mapcar 'kill-buffer
           (my-frame-buffer-get frame)))
 
@@ -1954,7 +1957,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 (defvar my-desktop-terminal "roxterm")
 (defun my-execute-terminal ()
-  ""
+  "Invole terminal program."
   (interactive)
   (if (and (or (eq system-type 'windows-nt)
                window-system)
@@ -1989,7 +1992,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 This function accept no argument and return newly created buffer of terminal.")
 
 (defun my-term (&optional arg)
-  "Open terminal buffer and return that buffer."
+  "Open terminal buffer and return that buffer.
+ARG is ignored."
   (interactive "P")
   (if (and my-term
            (buffer-name my-term))
@@ -2019,7 +2023,7 @@ This function accept no argument and return newly created buffer of terminal.")
 (setq my-filer (or (executable-find "pcmanfm")
                    (executable-find "nautilus")))
 (defun my-x-open (file)
-  "open file."
+  "open FILE."
   (interactive "FOpen File: ")
   (setq file (expand-file-name file))
   (message "Opening %s..." file)
@@ -2040,7 +2044,7 @@ This function accept no argument and return newly created buffer of terminal.")
 ;; misc funcs
 
 (defun memo (&optional dir)
-  "Open memo.txt"
+  "Open memo.txt in DIR."
   (interactive)
   (pop-to-buffer (find-file-noselect (concat (if dir
                                                  (file-name-as-directory dir)
@@ -2049,19 +2053,19 @@ This function accept no argument and return newly created buffer of terminal.")
 
 (defvar my-rgrep-gitgrep
   "git --no-pager -c color.grep=false grep -nH -e "
-  "grep command for git grep.")
+  "Grep command for git grep.")
 
 (defvar my-rgrep-ag
   "ag --nocolor --nogroup --nopager "
-  "grep command for ag")
+  "Grep command for ag")
 
 (defvar my-rgrep-ack
   "ack --nocolor --nogroup --nopager "
-  "grep command for ack")
+  "Grep command for ack")
 
 (defvar my-rgrep-global
   "global --result grep "
-  "grep command for global")
+  "Grep command for global")
 
 (defvar my-rgrep-grep
   (concat "find . "
@@ -2069,7 +2073,7 @@ This function accept no argument and return newly created buffer of terminal.")
           "-path '*/.svn' -prune -o "
           "-type f -print0 | "
           "xargs -0 -e grep -nH -e ")
-  "grep command for grep")
+  "Grep command for grep")
 
 (defun my-rgrep-grep-command ()
   "Return recursive grep command for current directory."
@@ -2147,19 +2151,19 @@ This function accept no argument and return newly created buffer of terminal.")
 (defalias 'make 'compile)
 
 (defvar sed-in-place-history nil
-  "History of `sed-in-place'")
+  "History of `sed-in-place'.")
 
 (defvar sed-in-place-command "sed --in-place=.bak -e")
 (defun sed-in-place (command)
-  "sed in place"
+  "Issue sed in place COMMAND."
   (interactive (list (read-shell-command "sed in place: "
                                          (concat sed-in-place-command " ")
                                          'sed-in-place-history)))
   (shell-command command
                  "*sed in place*"))
 (defun dired-do-sed-in-place (&optional arg)
-  "sed in place dired"
-  (interactive "P")
+  "Issue sed in place dired.  If ARG is given, use the next ARG files."
+  (interactive "p")
   (require 'dired-aux)
   (let* ((files (dired-get-marked-files t arg))
          (expr (dired-mark-read-string "Run sed-in-place for %s: "
@@ -2180,6 +2184,7 @@ This function accept no argument and return newly created buffer of terminal.")
                      "*sed in place*"))))
 
 (defun dir-show (&optional dir)
+  "Show DIR list."
   (interactive)
   (let ((bf (get-buffer-create "*dir show*"))
         (list-directory-brief-switches "-C"))
@@ -2247,17 +2252,20 @@ this is test, does not rename files."
               "] "))
 
 (defadvice read-from-minibuffer (before info-in-prompt activate)
+  "Show system info when use `read-from-minibuffer'."
   (ad-set-arg 0
               (concat my-system-info
                       (ad-get-arg 0))))
 
 (defadvice read-string (before info-in-prompt activate)
+  "Show system info when use `read-string'."
   (ad-set-arg 0
               (concat my-system-info
                       (ad-get-arg 0))))
 
 (when (< emacs-major-version 24)
   (defadvice completing-read (before info-in-prompt activate)
+    "Show system info when use `completing-read'."
     (ad-set-arg 0
                 (concat my-system-info
                         (ad-get-arg 0)))))
