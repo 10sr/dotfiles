@@ -2051,30 +2051,6 @@ ARG is ignored."
                                                "")
                                              "memo.txt"))))
 
-;; (defvar my-rgrep-gitgrep
-;;   "git --no-pager -c color.grep=false grep -nH -e "
-;;   "Grep command for git grep.")
-
-;; (defvar my-rgrep-ag
-;;   "ag --nocolor --nogroup --nopager "
-;;   "Grep command for ag")
-
-;; (defvar my-rgrep-ack
-;;   "ack --nocolor --nogroup --nopager "
-;;   "Grep command for ack")
-
-;; (defvar my-rgrep-global
-;;   "global --result grep "
-;;   "Grep command for global")
-
-;; (defvar my-rgrep-grep
-;;   (concat "find . "
-;;           "-path '*/.git' -prune -o "
-;;           "-path '*/.svn' -prune -o "
-;;           "-type f -print0 | "
-;;           "xargs -0 -e grep -nH -e ")
-;;   "Grep command for grep")
-
 (defvar my-rgrep-alist
   `(
     ;; gnu global
