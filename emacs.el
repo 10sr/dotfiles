@@ -2336,6 +2336,10 @@ this is test, does not rename files."
 ;; TODO: remove dependant of sdcv, and change the name to something like
 ;; `ilookup`
 
+;; TODO: enter to lookup word at point
+
+;; TODO: enter on prompt to wait for output of command
+
 (defvar isdcv-prompt "> "
   "Prompt string for isdcv input.")
 
