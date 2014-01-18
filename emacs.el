@@ -2426,6 +2426,10 @@ result for that word.")
                    (shell-command-to-string
                     (format "alc '%s' | head -n 20"
                             word))))
+        ("app" . (lambda (word)
+                   (shell-command-to-string
+                    (format "dict_app '%s'"
+                            word))))
         ))
 
 (setq ilookup-default "ja")
