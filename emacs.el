@@ -2430,6 +2430,7 @@ result for that word.")
                    (shell-command-to-string
                     (format "dict_app '%s'"
                             word))))
+        ;; letters broken
         ("ms" .
          (lambda (word)
            (let ((url (concat "http://api.microsofttranslator.com/V2/Ajax.svc/"
@@ -2442,10 +2443,20 @@ result for that word.")
                                            apikey
                                            eword
                                            target))
-               (search-forward-regexp "^$")
-               (buffer-substring-no-properties (point)
-                                               (point-max))))))
+               (message "")
+               (goto-char (point-min))
+               (search-forward-regexp "^$"
+                                      nil
+                                      t)
+               (url-unhex-string (buffer-substring-no-properties (point)
+                                                                 (point-max)))))))
         ))
+
+;; (funcall (cdr (assoc "ms"
+;;                      ilookup-alist))
+;;          "dictionary")
+
+;; (switch-to-buffer (url-retrieve-synchronously "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?appId=3C9778666C5BA4B406FFCBEE64EF478963039C51&text=dictionary&to=ja"))
 
 ;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
 
@@ -2497,8 +2508,8 @@ This function insert newline if required."
         (outpoint (ilookup--get-output-start)))
     (and input
          ;; do not query same word twice
-         (not (eq ilookup--last-input
-                  input))
+         (not (equal ilookup--last-input
+                     input))
          outpoint
          (let* (
                 ;; colon sepatated list of input
