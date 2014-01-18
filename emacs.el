@@ -2333,6 +2333,9 @@ this is test, does not rename files."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; isdcv
 
+;; TODO: remove dependant of sdcv, and change the name to something like
+;; `ilookup`
+
 (defvar isdcv-prompt "> "
   "Prompt string for isdcv input.")
 
@@ -2410,8 +2413,10 @@ Freeze current input and show next prompt."
   "Return point to bol ignoring prompt."
   (save-excursion
     (beginning-of-line)
-    (search-forward isdcv-prompt
-                    (point-at-eol))))
+    (or (search-forward isdcv-prompt
+                        (point-at-eol)
+                        t)
+        (point))))
 
 (defun isdcv--get-output-start ()
   "Return point where outputs should be inserted.
