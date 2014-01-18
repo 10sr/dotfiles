@@ -136,9 +136,14 @@ setup_gitconf(){
     # $_gc alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     $_gc alias.addi "add -i"
     $_gc alias.clean-p "!test -z \"\$(git status -s -uno)\""
+
+    # alias bopen and bclose, which can be useful for topic branching
     $_gc alias.bopen "checkout -b"
     $_gc alias.bclose \
         "!sh -cx 'git stash && git checkout master && git merge --no-ff -'"
+
+    $_gc alias.todo "grep -E -i 'todo:|note:|fixme:'"
+
     #$_gc alias.wc "!git ls-files -z | xargs -0 wc"
     # $_gc push.default "simple"
     if $iswindows; then
