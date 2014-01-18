@@ -2388,12 +2388,16 @@ Freeze current input and show next prompt."
 
 (defvar isdcv-sdcv-command "sdcv -n '%s'"
   "Command of sdcv.")
+(setq isdcv-sdcv-command "sdcv -n -u jmdict-en-ja '%s'")
 
 (defvar isdcv-buffer nil
   "Pointer to incremental sdcv buffer.")
 
 (defvar isdcv--timer nil
   "Idle timer object for isdcv.")
+
+(defvar isdcv--last-input nil
+  "Last input queryed.")
 
 (defun isdcv--timer-add ()
   "Entry idle timer for isdcv."
@@ -2440,12 +2444,16 @@ This function insert newline if required."
   (let ((input (isdcv--get-input))
         (outpoint (isdcv--get-output-start)))
     (and input
+         ;; do not query same word twice
+         (not (eq isdcv--last-input
+                  input))
          outpoint
          isdcv-sdcv-command
          (save-excursion
            (goto-char outpoint)
            (delete-region (point)
                           (point-max))
+           (setq isdcv--last-input input)
            (call-process-shell-command (format isdcv-sdcv-command
                                                input)
                                        nil
