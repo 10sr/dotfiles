@@ -2338,8 +2338,6 @@ this is test, does not rename files."
 
 ;; TODO: enter to lookup word at point
 
-;; TODO: enter on prompt to wait for output of command
-
 (defvar ilookup-prompt ">>> "
   "Prompt string for ilookup input.")
 
@@ -2414,6 +2412,20 @@ Each element should be in the form of (NAME . FUNCTION).
 FUNCTION must accept one argument as word to search and return the string of
 result for that word.")
 
+(setq ilookup-alist
+      '(
+        ("en" . (lambda (word)
+                  (shell-command-to-string
+                   (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
+                           word))))
+        ("ja" . (lambda (word)
+                  (shell-command-to-string
+                   (format "sdcv -n -u jmdict-en-ja '%s'"
+                           word))))
+        ))
+
+(setq ilookup-default "ja")
+
 (defun ilookup--timer-add ()
   "Entry idle timer for ilookup."
   (and (eq ilookup-buffer
@@ -2463,8 +2475,11 @@ This function insert newline if required."
          (not (eq ilookup--last-input
                   input))
          outpoint
-         (let* ((inputl (split-string input
+         (let* (
+                ;; colon sepatated list of input
+                (inputl (split-string input
                                       ":"))
+                ;; funcname for `ilookup-alist'
                 (fname (if (eq (length inputl)
                                2)
                            (car inputl)
