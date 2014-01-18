@@ -2330,11 +2330,51 @@ this is test, does not rename files."
 ;; (my-real-function-subr-p 'my-real-function-subr-p)
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; isdcv
+
+(defvar isdcv-prompt "> "
+  "Prompt string for isdcv input.")
+
+(defvar isdcv-current-prompt-point nil
+  "Point of beginning of current prompt.")
+(make-variable-buffer-local 'isdcv--current-prompt-point)
+
+(defvar isdcv-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-m") 'isdcv-enter)
+    (define-key map (kbd "C-u") 'isdcv-kill-input)
+    (define-key map (kbd "C-a") 'isdcv-goto-bol)
+    map))
+
 (define-derived-mode isdcv-mode fundamental-mode
   "iSDCV"
   "Major mode for incremental sdcv buffer."
   (set (make-local-variable 'font-lock-function)
        'ignore))
+
+(defun isdcv-enter ()
+  "Enter function for `isdcv-mode'.
+Freeze current input and show next prompt."
+  (interactive)
+  (goto-char (point-max))
+  (unless (eq (point)
+              (point-at-bol))
+    (newline))
+  (setq isdcv-current-prompt-point
+        (point))
+  (insert isdcv-prompt))
+
+(defun isdcv-kill-input ()
+  "Delete `isdcv-bol' to current point."
+  (interactive)
+  (delete-region (isdcv-bol)
+                 (point)))
+
+(defun isdcv-goto-bol ()
+  "Go to isdcv bol."
+  (interactive)
+  (goto-char (isdcv-bol)))
 
 (defvar isdcv-sdcv-command "sdcv -n '%s'"
   "Command of sdcv.")
@@ -2363,13 +2403,12 @@ this is test, does not rename files."
        isdcv--timer
        (cancel-timer isdcv--timer)))
 
-(defvar isdcv-current-prompt-point nil
-  "Point of beginning of current prompt.")
-(make-variable-buffer-local 'isdcv--current-prompt-point)
-
 (defun isdcv-bol ()
   "Return point to bol ignoring prompt."
-  (point-at-bol))
+  (save-excursion
+    (beginning-of-line)
+    (search-forward isdcv-prompt
+                    (point-at-eol))))
 
 (defun isdcv--get-output-start ()
   "Return point where outputs should be inserted.
@@ -2420,9 +2459,7 @@ Return nil if current position is not on prompt line."
                                (get-buffer-create "*isdcv*"))
       (isdcv-mode)
       (font-lock-mode t)
-      (setq isdcv-current-prompt-point
-            (point))
-      (forward-line -1)
+      (isdcv-enter)
       (isdcv--timer-add)
       (add-hook 'kill-buffer-hook
                 'isdcv--timer-remove)
