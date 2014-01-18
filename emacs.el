@@ -53,7 +53,8 @@ If FORCE-DOWNLOAD-P it t ignore exisiting library and always download."
     (locate-library lib)))
 
 (defun download-file (url path &optional ok-if-already-exists)
-  "Download file from URL and output to PATH."
+  "Download file from URL and output to PATH.
+IF OK-IF-ALREADY-EXISTS is true force download."
   (or
    (let ((curl (executable-find "curl")))
      (when curl
@@ -140,7 +141,8 @@ found, otherwise returns nil."
             (eval-after-load ,feature
               (quote (progn
                        ,@body)))
-            ,libpath))))
+            (locate-library ,libname)))))
+
 (put 'lazy-load-eval 'lisp-indent-function 2)
 
 (when (lazy-load-eval 'tetris nil
