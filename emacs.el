@@ -24,9 +24,11 @@
 ;; download library from web
 
 (defun fetch-library (url &optional byte-compile-p force-download-p)
-  "If library does not exist, download it from URL and locate it in
-\"~/emacs.d/lisp/\". Return nil if library unfound and failed to download,
-otherwise the path where the library installed."
+  "Download a library from URL and locate it in \"~/emacs.d/lisp/\".
+Return nil if library unfound and failed to download,
+otherwise the path where the library installed.
+If BYTE-COMPILE-P is t byte compile the file after downloading.
+If FORCE-DOWNLOAD-P it t ignore exisiting library and always download."
   (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
          (lib (file-name-sans-extension (file-name-nondirectory url)))
          (lpath (concat dir lib ".el"))
@@ -2326,5 +2328,105 @@ this is test, does not rename files."
     (subrp def)))
 
 ;; (my-real-function-subr-p 'my-real-function-subr-p)
+
+
+(define-derived-mode isdcv-mode fundamental-mode
+  "iSDCV"
+  "Major mode for incremental sdcv buffer."
+  (set (make-local-variable 'font-lock-function)
+       'ignore))
+
+(defvar isdcv-sdcv-command "sdcv -n '%s'"
+  "Command of sdcv.")
+
+(defvar isdcv-buffer nil
+  "Pointer to incremental sdcv buffer.")
+
+(defvar isdcv--timer nil
+  "Idle timer object for isdcv.")
+
+(defun isdcv--timer-add ()
+  "Entry idle timer for isdcv."
+  (and (eq isdcv-buffer
+           (current-buffer))
+       ;; do not duplicate timer
+       (not isdcv--timer)
+       (setq isdcv--timer (run-with-idle-timer 1
+                                               t
+                                               'isdcv--timer-function))))
+
+(defun isdcv--timer-remove ()
+  "Remove idle timer for isdcv."
+  ;; remote only when killing buffer is isdcv buffer
+  (and (eq isdcv-buffer
+           (current-buffer))
+       isdcv--timer
+       (cancel-timer isdcv--timer)))
+
+(defvar isdcv-current-prompt-point nil
+  "Point of beginning of current prompt.")
+(make-variable-buffer-local 'isdcv--current-prompt-point)
+
+(defun isdcv-bol ()
+  "Return point to bol ignoring prompt."
+  (point-at-bol))
+
+(defun isdcv--get-output-start ()
+  "Return point where outputs should be inserted.
+This function insert newline if required."
+  (when isdcv-current-prompt-point
+    (save-excursion
+      (goto-char isdcv-current-prompt-point)
+      (forward-line 1)
+      (when (eq (line-number-at-pos)
+                (line-number-at-pos isdcv-current-prompt-point))
+        (end-of-line)
+        (newline))
+      (point-at-bol))))
+
+(defun isdcv--timer-function ()
+  "Get entry for current isdcv input."
+  (let ((input (isdcv--get-input))
+        (outpoint (isdcv--get-output-start)))
+    (and input
+         outpoint
+         isdcv-sdcv-command
+         (save-excursion
+           (goto-char outpoint)
+           (delete-region (point)
+                          (point-max))
+           (call-process-shell-command (format isdcv-sdcv-command
+                                               input)
+                                       nil
+                                       t
+                                       t)))))
+
+(defun isdcv--get-input ()
+  "Get current input for isdcv buffer.
+Return nil if current position is not on prompt line."
+  (and (eq isdcv-buffer
+           (current-buffer))
+       (eq (line-number-at-pos)
+           (line-number-at-pos isdcv-current-prompt-point))
+       (buffer-substring-no-properties (isdcv-bol)
+                                       (point-at-eol))))
+
+(defun isdcv-open ()
+  "Open isdcv buffer."
+  (interactive)
+  (if isdcv-buffer
+      (pop-to-buffer isdcv-buffer)
+    (with-current-buffer (setq isdcv-buffer
+                               (get-buffer-create "*isdcv*"))
+      (isdcv-mode)
+      (font-lock-mode t)
+      (setq isdcv-current-prompt-point
+            (point))
+      (forward-line -1)
+      (isdcv--timer-add)
+      (add-hook 'kill-buffer-hook
+                'isdcv--timer-remove)
+      )
+    (pop-to-buffer isdcv-buffer)))
 
 ;;; emacs.el ends here
