@@ -2344,7 +2344,7 @@ this is test, does not rename files."
 
 (defvar isdcv-current-prompt-point nil
   "Point of beginning of current prompt.")
-(make-variable-buffer-local 'isdcv--current-prompt-point)
+(make-variable-buffer-local 'isdcv-current-prompt-point)
 
 (defvar isdcv-mode-map
   (let ((map (make-sparse-keymap)))
