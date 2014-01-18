@@ -2419,9 +2419,21 @@ result for that word.")
                    (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
                            word))))
         ("ja" . (lambda (word)
-                  (shell-command-to-string
+                   (shell-command-to-string
+                   (format "sdcv -n -u EJ-GENE95 '%s'"
+                           word))))
+        ("jaj" . (lambda (word)
+                   (shell-command-to-string
                    (format "sdcv -n -u jmdict-en-ja '%s'"
                            word))))
+        ("jag" . (lambda (word)
+                  (with-temp-buffer
+                    (insert (shell-command-to-string
+                             (format "sdcv -n -u 'Genius English-Japanese' '%s'"
+                                     word)))
+                    (html2text)
+                    (buffer-substring (point-min)
+                                      (point-max)))))
         ("alc" . (lambda (word)
                    (shell-command-to-string
                     (format "alc '%s' | head -n 20"
