@@ -2430,7 +2430,24 @@ result for that word.")
                    (shell-command-to-string
                     (format "dict_app '%s'"
                             word))))
+        ("ms" .
+         (lambda (word)
+           (let ((url (concat "http://api.microsofttranslator.com/V2/Ajax.svc/"
+                              "Translate?appId=%s&text=%s&to=%s"))
+                 (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
+                 (target "ja")
+                 (eword (url-hexify-string word)))
+             (with-current-buffer (url-retrieve-synchronously
+                                   (format url
+                                           apikey
+                                           eword
+                                           target))
+               ;; (search-forward-regexp "^$")
+               (buffer-substring-no-properties (point)
+                                               (point-max))))))
         ))
+
+;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
 
 (setq ilookup-default "ja")
 
@@ -2500,10 +2517,10 @@ This function insert newline if required."
                                inputl)
                         (car inputl))))
            (save-excursion
+             (setq ilookup--last-input input)
              (goto-char outpoint)
              (delete-region (point)
                             (point-max))
-             (setq ilookup--last-input input)
              (insert (if func
                          (funcall func
                                   word)
