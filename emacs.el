@@ -2422,6 +2422,10 @@ result for that word.")
                   (shell-command-to-string
                    (format "sdcv -n -u jmdict-en-ja '%s'"
                            word))))
+        ("alc" . (lambda (word)
+                   (shell-command-to-string
+                    (format "alc '%s' | head -n 20"
+                            word))))
         ))
 
 (setq ilookup-default "ja")
