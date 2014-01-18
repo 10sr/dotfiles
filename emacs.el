@@ -2331,12 +2331,7 @@ this is test, does not rename files."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; isdcv
-
-;; TODO: remove dependant of sdcv, and change the name to something like
-;; `ilookup`
-
-;; TODO: enter to lookup word at point
+;; ilookup
 
 (defvar ilookup-prompt ">>> "
   "Prompt string for ilookup input.")
@@ -2367,8 +2362,7 @@ Freeze current input and show next prompt."
   (interactive)
   (let ((pword (and
                 ;; do not get if currently on prompt
-                (not (eq (line-number-at-pos)
-                         (line-number-at-pos ilookup-current-prompt-point)))
+                (not (ilookup--on-prompt-p))
                 (thing-at-point 'word))))
     ;; print result is done only when currently on prompt
     (ilookup--print-result-from-input)
@@ -2518,8 +2512,7 @@ This function insert newline if required."
     (save-excursion
       (goto-char ilookup-current-prompt-point)
       (forward-line 1)
-      (when (eq (line-number-at-pos)
-                (line-number-at-pos ilookup-current-prompt-point))
+      (when (ilookup--on-prompt-p)
         (end-of-line)
         (newline))
       (point-at-bol))))
@@ -2569,10 +2562,14 @@ This function insert newline if required."
 Return nil if current position is not on prompt line."
   (and (eq ilookup-buffer
            (current-buffer))
-       (eq (line-number-at-pos)
-           (line-number-at-pos ilookup-current-prompt-point))
+       (ilookup--on-prompt-p)
        (buffer-substring-no-properties (ilookup-bol)
                                        (point-at-eol))))
+
+(defsubst ilookup--on-prompt-p ()
+  "Return true if currently on prompt line."
+  (eq (line-number-at-pos)
+      (line-number-at-pos ilookup-current-prompt-point)))
 
 (defun ilookup-open ()
   "Open ilookup buffer."
