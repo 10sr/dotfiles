@@ -2336,6 +2336,9 @@ this is test, does not rename files."
 (defvar isdcv-prompt "> "
   "Prompt string for isdcv input.")
 
+(defvar isdcv-interval 0.5
+  "Time in second to show sdcv result for current input.")
+
 (defvar isdcv-current-prompt-point nil
   "Point of beginning of current prompt.")
 (make-variable-buffer-local 'isdcv--current-prompt-point)
@@ -2391,7 +2394,7 @@ Freeze current input and show next prompt."
            (current-buffer))
        ;; do not duplicate timer
        (not isdcv--timer)
-       (setq isdcv--timer (run-with-idle-timer 1
+       (setq isdcv--timer (run-with-idle-timer isdcv-interval
                                                t
                                                'isdcv--timer-function))))
 
