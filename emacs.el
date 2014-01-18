@@ -2365,13 +2365,22 @@ this is test, does not rename files."
   "Enter function for `ilookup-mode'.
 Freeze current input and show next prompt."
   (interactive)
-  (goto-char (point-max))
-  (unless (eq (point)
-              (point-at-bol))
-    (newline))
-  (setq ilookup-current-prompt-point
-        (point))
-  (insert ilookup-prompt))
+  (let ((pword (and
+                ;; do not get if currently on prompt
+                (not (eq (line-number-at-pos)
+                         (line-number-at-pos ilookup-current-prompt-point)))
+                (thing-at-point 'word))))
+    ;; print result is done only when currently on prompt
+    (ilookup--print-result-from-input)
+    (goto-char (point-max))
+    (unless (eq (point)
+                (point-at-bol))
+      (newline))
+    (setq ilookup-current-prompt-point
+          (point))
+    (insert ilookup-prompt)
+    (and pword
+         (insert pword))))
 
 (defun ilookup-kill-input ()
   "Delete `ilookup-bol' to current point."
@@ -2420,7 +2429,7 @@ result for that word.")
                            word))))
         ("ja" . (lambda (word)
                    (shell-command-to-string
-                   (format "sdcv -n -u EJ-GENE95 '%s'"
+                   (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
                            word))))
         ("jaj" . (lambda (word)
                    (shell-command-to-string
@@ -2480,9 +2489,10 @@ result for that word.")
            (current-buffer))
        ;; do not duplicate timer
        (not ilookup--timer)
-       (setq ilookup--timer (run-with-idle-timer ilookup-interval
-                                               t
-                                               'ilookup--timer-function))))
+       (setq ilookup--timer
+             (run-with-idle-timer ilookup-interval
+                                  t
+                                  'ilookup--print-result-from-input))))
 
 (defun ilookup--timer-remove ()
   "Remove idle timer for ilookup."
@@ -2514,7 +2524,7 @@ This function insert newline if required."
         (newline))
       (point-at-bol))))
 
-(defun ilookup--timer-function ()
+(defun ilookup--print-result-from-input ()
   "Get entry for current ilookup input."
   (let ((input (ilookup--get-input))
         (outpoint (ilookup--get-output-start)))
@@ -2549,6 +2559,10 @@ This function insert newline if required."
                                   word)
                        (format "No func found for `%s'"
                                fname))))))))
+
+(defun ilookup--get-result (word fname)
+  "Return result string for WORD with FNAME."
+  nil)
 
 (defun ilookup--get-input ()
   "Get current input for ilookup buffer.
