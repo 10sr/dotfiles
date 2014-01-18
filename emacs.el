@@ -2340,150 +2340,177 @@ this is test, does not rename files."
 
 ;; TODO: enter on prompt to wait for output of command
 
-(defvar isdcv-prompt "> "
-  "Prompt string for isdcv input.")
+(defvar ilookup-prompt ">>> "
+  "Prompt string for ilookup input.")
 
-(defvar isdcv-interval 0.5
+(defvar ilookup-interval 0.5
   "Time in second to show sdcv result for current input.")
 
-(defvar isdcv-current-prompt-point nil
+(defvar ilookup-current-prompt-point nil
   "Point of beginning of current prompt.")
-(make-variable-buffer-local 'isdcv-current-prompt-point)
+(make-variable-buffer-local 'ilookup-current-prompt-point)
 
-(defvar isdcv-mode-map
+(defvar ilookup-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-m") 'isdcv-enter)
-    (define-key map (kbd "C-u") 'isdcv-kill-input)
-    (define-key map (kbd "C-a") 'isdcv-goto-bol)
+    (define-key map (kbd "C-m") 'ilookup-enter)
+    (define-key map (kbd "C-u") 'ilookup-kill-input)
+    (define-key map (kbd "C-a") 'ilookup-goto-bol)
     map))
 
-(define-derived-mode isdcv-mode fundamental-mode
-  "iSDCV"
+(define-derived-mode ilookup-mode fundamental-mode
+  "iLookUp"
   "Major mode for incremental sdcv buffer."
   (set (make-local-variable 'font-lock-function)
        'ignore))
 
-(defun isdcv-enter ()
-  "Enter function for `isdcv-mode'.
+(defun ilookup-enter ()
+  "Enter function for `ilookup-mode'.
 Freeze current input and show next prompt."
   (interactive)
   (goto-char (point-max))
   (unless (eq (point)
               (point-at-bol))
     (newline))
-  (setq isdcv-current-prompt-point
+  (setq ilookup-current-prompt-point
         (point))
-  (insert isdcv-prompt))
+  (insert ilookup-prompt))
 
-(defun isdcv-kill-input ()
-  "Delete `isdcv-bol' to current point."
+(defun ilookup-kill-input ()
+  "Delete `ilookup-bol' to current point."
   (interactive)
-  (delete-region (isdcv-bol)
+  (delete-region (ilookup-bol)
                  (point)))
 
-(defun isdcv-goto-bol ()
-  "Go to isdcv bol."
+(defun ilookup-goto-bol ()
+  "Go to ilookup bol."
   (interactive)
-  (goto-char (isdcv-bol)))
+  (goto-char (ilookup-bol)))
 
-(defvar isdcv-sdcv-command "sdcv -n '%s'"
+(defvar ilookup-sdcv-command "sdcv -n '%s'"
   "Command of sdcv.")
-(setq isdcv-sdcv-command "sdcv -n -u jmdict-en-ja '%s'")
+(setq ilookup-sdcv-command "sdcv -n -u jmdict-en-ja '%s'")
 
-(defvar isdcv-buffer nil
-  "Pointer to incremental sdcv buffer.")
+(defvar ilookup-buffer nil
+  "Pointer to ilookup buffer.")
 
-(defvar isdcv--timer nil
-  "Idle timer object for isdcv.")
+(defvar ilookup--timer nil
+  "Idle timer object for ilookup.")
 
-(defvar isdcv--last-input nil
+(defvar ilookup--last-input nil
   "Last input queryed.")
 
-(defun isdcv--timer-add ()
-  "Entry idle timer for isdcv."
-  (and (eq isdcv-buffer
+(defvar ilookup-default "sdcv"
+  "Default command for ilookup.
+This value should be a key of `ilookup-alist'.")
+
+(defvar ilookup-alist
+  '(
+    ("sdcv" . (lambda (word)
+               (shell-command-to-string (format "sdcv -n '%s'"
+                                                word))))
+    )
+  "Alist of ilookup functions.
+Each element should be in the form of (NAME . FUNCTION).
+FUNCTION must accept one argument as word to search and return the string of
+result for that word.")
+
+(defun ilookup--timer-add ()
+  "Entry idle timer for ilookup."
+  (and (eq ilookup-buffer
            (current-buffer))
        ;; do not duplicate timer
-       (not isdcv--timer)
-       (setq isdcv--timer (run-with-idle-timer isdcv-interval
+       (not ilookup--timer)
+       (setq ilookup--timer (run-with-idle-timer ilookup-interval
                                                t
-                                               'isdcv--timer-function))))
+                                               'ilookup--timer-function))))
 
-(defun isdcv--timer-remove ()
-  "Remove idle timer for isdcv."
-  ;; remote only when killing buffer is isdcv buffer
-  (and (eq isdcv-buffer
+(defun ilookup--timer-remove ()
+  "Remove idle timer for ilookup."
+  ;; remote only when killing buffer is ilookup buffer
+  (and (eq ilookup-buffer
            (current-buffer))
-       isdcv--timer
-       (cancel-timer isdcv--timer)))
+       ilookup--timer
+       (cancel-timer ilookup--timer)))
 
-(defun isdcv-bol ()
+(defun ilookup-bol ()
   "Return point to bol ignoring prompt."
   (save-excursion
     (beginning-of-line)
-    (or (search-forward isdcv-prompt
+    (or (search-forward ilookup-prompt
                         (point-at-eol)
                         t)
         (point))))
 
-(defun isdcv--get-output-start ()
+(defun ilookup--get-output-start ()
   "Return point where outputs should be inserted.
 This function insert newline if required."
-  (when isdcv-current-prompt-point
+  (when ilookup-current-prompt-point
     (save-excursion
-      (goto-char isdcv-current-prompt-point)
+      (goto-char ilookup-current-prompt-point)
       (forward-line 1)
       (when (eq (line-number-at-pos)
-                (line-number-at-pos isdcv-current-prompt-point))
+                (line-number-at-pos ilookup-current-prompt-point))
         (end-of-line)
         (newline))
       (point-at-bol))))
 
-(defun isdcv--timer-function ()
-  "Get entry for current isdcv input."
-  (let ((input (isdcv--get-input))
-        (outpoint (isdcv--get-output-start)))
+(defun ilookup--timer-function ()
+  "Get entry for current ilookup input."
+  (let ((input (ilookup--get-input))
+        (outpoint (ilookup--get-output-start)))
     (and input
          ;; do not query same word twice
-         (not (eq isdcv--last-input
+         (not (eq ilookup--last-input
                   input))
          outpoint
-         isdcv-sdcv-command
-         (save-excursion
-           (goto-char outpoint)
-           (delete-region (point)
-                          (point-max))
-           (setq isdcv--last-input input)
-           (call-process-shell-command (format isdcv-sdcv-command
-                                               input)
-                                       nil
-                                       t
-                                       t)))))
+         (let* ((inputl (split-string input
+                                      ":"))
+                (fname (if (eq (length inputl)
+                               2)
+                           (car inputl)
+                         ilookup-default))
+                (func (cdr (assoc fname
+                                  ilookup-alist)))
+                (word (if (eq (length inputl)
+                              2)
+                          (nth 1
+                               inputl)
+                        (car inputl))))
+           (save-excursion
+             (goto-char outpoint)
+             (delete-region (point)
+                            (point-max))
+             (setq ilookup--last-input input)
+             (insert (if func
+                         (funcall func
+                                  word)
+                       (format "No func found for `%s'"
+                               fname))))))))
 
-(defun isdcv--get-input ()
-  "Get current input for isdcv buffer.
+(defun ilookup--get-input ()
+  "Get current input for ilookup buffer.
 Return nil if current position is not on prompt line."
-  (and (eq isdcv-buffer
+  (and (eq ilookup-buffer
            (current-buffer))
        (eq (line-number-at-pos)
-           (line-number-at-pos isdcv-current-prompt-point))
-       (buffer-substring-no-properties (isdcv-bol)
+           (line-number-at-pos ilookup-current-prompt-point))
+       (buffer-substring-no-properties (ilookup-bol)
                                        (point-at-eol))))
 
-(defun isdcv-open ()
-  "Open isdcv buffer."
+(defun ilookup-open ()
+  "Open ilookup buffer."
   (interactive)
-  (if isdcv-buffer
-      (pop-to-buffer isdcv-buffer)
-    (with-current-buffer (setq isdcv-buffer
-                               (get-buffer-create "*isdcv*"))
-      (isdcv-mode)
+  (if ilookup-buffer
+      (pop-to-buffer ilookup-buffer)
+    (with-current-buffer (setq ilookup-buffer
+                               (get-buffer-create "*ilookup*"))
+      (ilookup-mode)
       (font-lock-mode t)
-      (isdcv-enter)
-      (isdcv--timer-add)
+      (ilookup-enter)
+      (ilookup--timer-add)
       (add-hook 'kill-buffer-hook
-                'isdcv--timer-remove)
+                'ilookup--timer-remove)
       )
-    (pop-to-buffer isdcv-buffer)))
+    (pop-to-buffer ilookup-buffer)))
 
 ;;; emacs.el ends here
