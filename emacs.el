@@ -2442,7 +2442,7 @@ result for that word.")
                                            apikey
                                            eword
                                            target))
-               ;; (search-forward-regexp "^$")
+               (search-forward-regexp "^$")
                (buffer-substring-no-properties (point)
                                                (point-max))))))
         ))
