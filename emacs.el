@@ -81,6 +81,18 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
 
+(defvar my-package-list nil
+  "Package list just for me.")
+(setq my-package-list
+      '(
+        markdown-mode
+        yaml-mode
+        ;; ack
+        color-moccur
+        gtags
+        )
+)
+
 (when (require 'package nil t)
   (add-to-list 'package-archives
                '("ELPA" . "http://tromey.com/elpa/"))
@@ -91,22 +103,16 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                '("marmalade" . "http://marmalade-repo.org/packages/"))
   (package-initialize)
   ;; (package-refresh-contents)
+
+  (defun my-auto-install-package ()
+    "Install packages semi-automatically."
+    (interactive)
+    (mapc (lambda (pkg)
+            (or (package-installed-p pkg)
+                (locate-library (symbol-name pkg))
+                (package-install pkg)))
+          my-package-list))
   )
-
-(defun my-auto-install-package ()
-  "Install packages semi-automatically."
-  (interactive)
-  (mapc (lambda (pkg)
-          (or (package-installed-p pkg)
-              (locate-library (symbol-name pkg))
-              (package-install pkg)))
-        '(
-          markdown-mode
-          yaml-mode
-          ;; ack
-          color-moccur
-          )))
-
 
 ;; (lazy-load-eval 'sudoku)
 
