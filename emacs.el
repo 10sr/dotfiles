@@ -2345,7 +2345,7 @@ this is test, does not rename files."
        t)
   (lazy-load-eval 'ilookup
       '(ilookup-open)
-    (setq ilookup-alist
+    (setq ilookup-dict-alist
           '(
             ("en" . (lambda (word)
                       (shell-command-to-string
