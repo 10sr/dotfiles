@@ -1711,9 +1711,9 @@ Optional prefix ARG says how many lines to unflag; default is one line."
   (defun eshell/v ()
     (view-mode 1))
 
-  (defun eshell/aaa (&rest args)
-    (message "%S"
-             args))
+  ;; (defun eshell/aaa (&rest args)
+  ;;   (message "%S"
+  ;;            args))
 
   (defun eshell/git (&rest args)
     (if (require 'git-command nil t)
