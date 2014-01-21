@@ -1715,23 +1715,25 @@ Optional prefix ARG says how many lines to unflag; default is one line."
   ;;   (message "%S"
   ;;            args))
 
-  (defun eshell/git (&rest args)
-    (if (require 'git-command nil t)
-        (git-command (mapconcat 'shell-quote-argument
-                                args
-                                " "))
-      (apply 'eshell-git-fallback args)))
+  (defvar eshell/git-cat-command
+    nil
+    "List of git commands that cat just return strings as results.")
+  (setq eshell/git-cat-command
+        '("status" "st")
+        )
 
-  (defun eshell-git-fallback (&rest args)
-    ""
+
+  (defun eshell/git (&rest args)
     (if (member (car args)
-                '("di" "diff" "log" "show" "graph"))
-        (apply 'eshell-exec-visual "git" args)
-      (shell-command-to-string (mapconcat 'shell-quote-argument
-                                          `("git" ,@args)
-                                          " "))
-      ;; (eshell-external-command "git" args)
-      ))
+                eshell/git-cat-command)
+        (shell-command-to-string (mapconcat 'shell-quote-argument
+                                            `("git" ,@args)
+                                            " "))
+      (if (require 'git-command nil t)
+          (git-command (mapconcat 'shell-quote-argument
+                                  args
+                                  " "))
+        (apply 'eshell-exec-visual "git" args))))
 
   (defalias 'eshell/g 'eshell/git)
 
