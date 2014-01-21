@@ -1719,7 +1719,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
     nil
     "List of git commands that cat just return strings as results.")
   (setq eshell/git-cat-command
-        '("status" "st")
+        '("status" "st" "b" "branch" "ls" "ls-files")
         )
 
 
@@ -1727,13 +1727,30 @@ Optional prefix ARG says how many lines to unflag; default is one line."
     (if (member (car args)
                 eshell/git-cat-command)
         (shell-command-to-string (mapconcat 'shell-quote-argument
-                                            `("git" ,@args)
+                                            `("git"
+                                              "-c"
+                                              "color.ui=always"
+                                              ,@args)
                                             " "))
+        ;; (eshell-git-shell-command-to-string args)
       (if (require 'git-command nil t)
           (git-command (mapconcat 'shell-quote-argument
                                   args
                                   " "))
         (apply 'eshell-exec-visual "git" args))))
+
+  ;; (defun eshell-git-shell-command-to-string (args)
+  ;;   "Return string of output of ARGS."
+  ;;   (let ((sargs (mapconcat 'shell-quote-argument
+  ;;                           args
+  ;;                           " ")))
+  ;;     (if (require 'ansi-color nil t)
+  ;;         (identity
+  ;;          (shell-command-to-string (concat "git "
+  ;;                                           "-c color.ui=always "
+  ;;                                           sargs)))
+  ;;       (shell-command-to-string (concat "git "
+  ;;                                     sargs)))))
 
   (defalias 'eshell/g 'eshell/git)
 
