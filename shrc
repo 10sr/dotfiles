@@ -19,16 +19,13 @@ __match(){
 
 #################################
 # profile-like setups
-# aliases:
-#     isinteractive: true if the current session is interactive
-#     issourced: true if this file is sourced from another file (not so assured)
-#     __firstload: true if this file is sourced for the first time (not so
-#                  assured)
 
 __safe_add_path_r(){
+    # add path to right
     test -d "$1" && PATH="${PATH}:$1"
 }
 __safe_add_path_l(){
+    # add path to left
     test -d "$1" && PATH="$1:${PATH}"
 }
 
@@ -253,6 +250,15 @@ type fortune >/dev/null 2>&1 && {
 uname -a
 echo TERM $TERM $(tput colors) colors connected to $(tty), \
     running $BASH $BASH_VERSION
+
+if null type tmux
+then
+    echo
+    echo tmux sessions:
+    tmux ls
+    echo
+fi
+
 if test -n "$TMUX"
 then
     tmux display -p 'Using tmux #S:#I:#W.#P, client is #{client_termname}' \
