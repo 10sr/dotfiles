@@ -1275,7 +1275,7 @@ if test -n "$TMUX"
 then
     __terminal_title="\$(basename \${PWD})"
 else
-    if test -n "$SSH_CONNECTION" && expr "$TERM" : '^screen'
+    if test -n "$SSH_CONNECTION" && expr "$TERM" : '^screen' >/dev/null
     then
         __terminal_title="`whoami`@`hostname`:\$(basename \${PWD})"
     else
