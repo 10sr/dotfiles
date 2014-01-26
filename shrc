@@ -681,27 +681,30 @@ _tmux_prefs(){
 }
 
 dt(){
-    # dt [<name>] [<command ...>]
+    # dt [-h] [<name>] [<command ...>]
     __dtach_dir="${TMP}/dtach"
     mkdir -p "${__dtach_dir}"
 
     if test -n "${__MY_DTACH}"
     then
-        soc_name="`echo $__MY_DTACH | sed -e "s ^$__dtach_dir/  "`"
+        # if already in dtach session print current session
+        soc_name="`basename "$__MY_DTACH"`"
         echo "Current session: ${soc_name}"
     fi
 
     if test -z "$1"
     then
+        # if no arg given show list of sessions
         echo "Sessions:"
         ls "${__dtach_dir}"
         return 0
     elif test "$1" = "-h"
     then
-        echo "dt: usage: dt <name> [<command ...>]" 1>&2
+        echo "dt: usage: dt [-h] [<name>] [<command ...>]" 1>&2
         return 1
     fi
 
+    # set socket name
     soc_name="${__dtach_dir}/$1"
     shift
 
@@ -718,6 +721,7 @@ dt(){
         return 1
     elif test -z "$1"
     then
+        # if no command given invoke current shell
         __MY_DTACH="$soc_name" dtach -c "$soc_name" -e ^^ sh -c "$SHELL"
         # echo "dt: Socket named $soc_name not exists and no command specified."
         # return 1
@@ -1048,8 +1052,11 @@ test -n "$__MY_SCRIPT" && \
 test -n "$SSH_CONNECTION" && \
     __my_ps1_str="${__my_ps1_str}${__my_c5}SSH${__my_cdef} "
 
-test -n "$__MY_DTACH" && \
-    __my_ps1_str="${__my_ps1_str}${__my_c5}DTACH${__my_cdef} "
+if test -n "$__MY_DTACH"
+then
+    __dt_name="`basename "$__MY_DTACH"`"
+    __my_ps1_str="${__my_ps1_str}${__my_c5}DT:${__dt_name}${__my_cdef} "
+fi
 
 __my_ps1_scale(){
     if null type stty && ! $ismsys
