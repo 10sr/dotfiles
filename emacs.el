@@ -1819,39 +1819,43 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (setq eshell-ls-initial-args '("-hCFG"
                                  "--color=auto"
                                  "--time-style=long-iso"))     ; "-hF")
+
   (setq eshell-prompt-function
-        (lambda ()
-          (with-temp-buffer
-            (let (p1 p2 p3 p4)
-              (insert ":: [")
-              (setq p1 (point))
-              (insert user-login-name
-                      "@"
-                      system-name
-                      )
-              (setq p2 (point))
-              (insert ":")
-              (setq p3 (point))
-              (insert (abbreviate-file-name default-directory))
-              (setq p4 (point))
-              (insert "]")
-              (insert "\n:: ")
-              (unless (eq 0
-                          eshell-last-command-status)
-                (insert (format "[STATUS:%d] "
-                                eshell-last-command-status)))
-              (insert (if (= (user-uid)
-                             0)
-                          "# "
-                        "$ "))
-              (add-text-properties p1
-                                   p2
-                                   '(face underline))
-              (add-text-properties p3
-                                   p4
-                                   '(face underline))
-              (buffer-substring (point-min)
-                                (point-max))))))
+        'my-eshell-prompt-function)
+
+  (defun my-eshell-prompt-function ()
+    (with-temp-buffer
+      (let (p1 p2 p3 p4)
+        (insert ":: [")
+        (setq p1 (point))
+        (insert user-login-name
+                "@"
+                (car (split-string system-name
+                                   "\\."))
+                )
+        (setq p2 (point))
+        (insert ":")
+        (setq p3 (point))
+        (insert (abbreviate-file-name default-directory))
+        (setq p4 (point))
+        (insert "]")
+        (insert "\n:: ")
+        (unless (eq 0
+                    eshell-last-command-status)
+          (insert (format "[STATUS:%d] "
+                          eshell-last-command-status)))
+        (insert (if (= (user-uid)
+                       0)
+                    "# "
+                  "$ "))
+        (add-text-properties p1
+                             p2
+                             '(face underline))
+        (add-text-properties p3
+                             p4
+                             '(face underline))
+        (buffer-substring (point-min)
+                          (point-max)))))
 
   (add-hook 'eshell-mode-hook
             (lambda ()
