@@ -939,7 +939,7 @@ found, otherwise returns nil."
 (setq sh-here-document-word "__EOC__")
 
 (defun my-execute-shell-command-current-line ()
-  "Run current line as shell command"
+  "Run current line as shell command."
   (interactive)
   (shell-command (buffer-substring-no-properties (point-at-bol)
                                                  (point))))
@@ -1002,6 +1002,7 @@ found, otherwise returns nil."
   (add-hook 'markdown-mode-hook
             (lambda ()
               (outline-minor-mode 1)
+              (flyspell-mode)
               (set (make-local-variable 'comment-start) ";"))))
 
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
