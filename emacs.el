@@ -90,6 +90,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         ;; ack
         color-moccur
         gtags
+        flymake-jslint
+        flymake-python-pyflakes
         )
 )
 
@@ -1047,6 +1049,12 @@ found, otherwise returns nil."
               ;;           nil
               ;;           t)
               )))
+
+(when (lazy-load-eval 'flymake-jslint
+          '(flymake-jslint-load))
+  (lazy-load-eval 'js nil
+    (add-hook 'js-mode-hook
+              'flymake-jslint-load)))
 
 (require 'js-doc nil t)
 
