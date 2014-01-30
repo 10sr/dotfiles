@@ -984,6 +984,16 @@ found, otherwise returns nil."
             (define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
             (define-key isearch-mode-map (kbd "M-r")
               'isearch-query-replace-regexp)))
+;; do not cleanup isearch highlight: use `lazy-highlight-cleanup' to remove
+(setq lazy-highlight-cleanup nil)
+;; face for isearch highlighing
+(set-face-attribute 'lazy-highlight
+                    nil
+                    :foreground `unspecified
+                    :background `unspecified
+                    :underline t
+                    ;; :weight `bold
+                    )
 
 (add-hook 'outline-mode-hook
           (lambda ()
