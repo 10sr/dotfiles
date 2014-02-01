@@ -1,0 +1,5 @@
+# http://qiita.com/yoshikazusawa/items/3eaa6db78fa348d38bfe
+
+bind generic G none
+bind generic g move-first-line
+bind generic G move-last-line
