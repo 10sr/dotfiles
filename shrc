@@ -248,23 +248,23 @@ type fortune >/dev/null 2>&1 && {
     echo
 }
 uname -a
-echo TERM $TERM $(tput colors) colors connected to $(tty), \
-    running $BASH $BASH_VERSION
+echo TERM $TERM with $(tput colors) colors using $(tty)
 
 if null type tmux
 then
     echo
     echo tmux sessions:
-    tmux ls
+    tmux ls 2>/dev/null| sed -e 's/^/  /g'
     echo
 fi
 
-if test -n "$TMUX"
-then
-    tmux display -p 'Using tmux #S:#I:#W.#P, client is #{client_termname}' \
-        2>/dev/null
-    echo
-fi
+# if test -n "$TMUX"
+# then
+#     tmux display -p \
+#         'TMUX #S:#I:#W.#P, client TERM: #{client_termname}' \
+#         2>/dev/null
+#     echo
+# fi
 
 ###################################
 # some aliases and functions
@@ -673,11 +673,6 @@ tx(){
     else
         tmux new -s "$1"
     fi
-}
-
-_tmux_prefs(){
-    null type tmux || return 1
-    tmux set -g mode-keys vi
 }
 
 dt(){
