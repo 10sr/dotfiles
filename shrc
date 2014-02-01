@@ -494,25 +494,26 @@ randomstr(){
 }
 
 datestr(){
-    # datestr yyyyMMdd-hhmmss
-    if test -z "$1" || test "$1" == "-h"
+    # datestr YYYYMMDDhhmmss
+    if test -z "$1" || test "$1" = "-h"
     then
-        echo "datestr: usage: datestr <yyyyMMddhhmmss>"
+        echo "datestr: usage: datestr <YYYYMMDDhhmmss>"
         return 1
     fi
 
-    dfmt=                       # actual format for date command
+    dfmt=""                       # actual format for date command
     while test -n "$1"
     do
         fmt="$1"
+        shift
         while test -n "$fmt"
         do
             case "$fmt" in
-                yyyy*)          # year
+                YYYY*|yyyy*)          # year
                     dfmt="${dfmt}%Y"
                     fmt="`echo "$fmt" | cut -c 5-`"
                     ;;
-                yy*)            # last two digits of year
+                YY*|yy*)            # last two digits of year
                     dfmt="${dfmt}%y"
                     fmt="`echo "$fmt" | cut -c 3-`"
                     ;;
@@ -520,7 +521,7 @@ datestr(){
                     dfmt="${dfmt}%m"
                     fmt="`echo "$fmt" | cut -c 3-`"
                     ;;
-                dd*)            # day of month (01..12)
+                DD*|dd*)            # day of month (01..12)
                     dfmt="${dfmt}%d"
                     fmt="`echo "$fmt" | cut -c 3-`"
                     ;;
@@ -532,7 +533,7 @@ datestr(){
                     dfmt="${dfmt}%M"
                     fmt="`echo "$fmt" | cut -c 3-`"
                     ;;
-                ss*)            # second (00..60)
+                SS*|ss*)            # second (00..60)
                     dfmt="${dfmt}%S"
                     fmt="`echo "$fmt" | cut -c 3-`"
                     ;;
@@ -543,7 +544,6 @@ datestr(){
                     ;;
             esac
         done
-        shift
     done
     date +"$dfmt"
 }
