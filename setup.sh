@@ -137,12 +137,15 @@ setup_gitconf(){
     $_gc alias.addi "add -i"
     $_gc alias.clean-p "!test -z \"\$(git status -s -uno)\""
 
-    # alias open-branch and close-branch, which can be useful for topic branching
-    $_gc alias.open-branch "checkout -b"
-    $_gc alias.close-branch \
-        "!sh -cx 'git stash && git checkout master && git merge --no-ff -'"
-    $_gc alias.open "open-branch"
-    $_gc alias.close "close-branch"
+    # alias open-branch and close-branch, which will be useful for topic branch
+    # workflow
+    _git_open_branch="checkout -b"
+    _git_close_branch="!sh -cx 'git stash && \
+git checkout master && git merge --no-ff -'"
+    $_gc alias.open-branch "$_git_open_branch"
+    $_gc alias.close-branch "$_git_close_branch"
+    $_gc alias.o "$_git_open_branch"
+    $_gc alias.c "$_git_close_branch"
 
     $_gc alias.todo "grep -E -i 'todo:|note:|fixme:'"
 
