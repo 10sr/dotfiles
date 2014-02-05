@@ -2423,6 +2423,7 @@ this is test, does not rename files."
         (restorecolor "\033[0m")
         (cols (frame-parameter nil 'width))
         (length (length string)))
+    ;; (redraw-frame (selected-frame))
     (send-string-to-terminal (concat savepos
                                      (format movecursor
                                              (1+ (- cols length)))
@@ -2430,11 +2431,10 @@ this is test, does not rename files."
                                      string
                                      restorecolor
                                      restorepos))
-    ;; (redraw-frame (selected-frame))
     ))
 
 (run-with-timer
- 1
+ 0.1
  1
  (lambda ()
    (set-terminal-header (concat " "
