@@ -2433,9 +2433,9 @@ this is test, does not rename files."
     ;; (redraw-frame (selected-frame))
     ))
 
-(run-with-idle-timer
+(run-with-timer
  1
- t
+ 1
  (lambda ()
    (set-terminal-header (concat " "
                                 user-login-name
