@@ -2416,19 +2416,22 @@ this is test, does not rename files."
 
 (defun set-terminal-header (string)
   "Set terminal header STRING."
-  (let ((point (point))
+  (let ((savepos "\033[s")
+        (restorepos "\033[u")
         (movecursor "\033[0;%dH")
         (inverse "\033[7m")
-        (restore "\033[0m")
+        (restorecolor "\033[0m")
         (cols (frame-parameter nil 'width))
         (length (length string)))
-    (send-string-to-terminal (concat (format movecursor
+    (send-string-to-terminal (concat savepos
+                                     (format movecursor
                                              (1+ (- cols length)))
                                      inverse
                                      string
-                                     restore))
-    (goto-char point)
-    (redraw-frame (current-frame))))
+                                     restorecolor
+                                     restorepos))
+    ;; (redraw-frame (selected-frame))
+    ))
 
 (run-with-idle-timer
  1
