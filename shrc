@@ -1248,8 +1248,10 @@ __my_set_header_line(){
     printf "\033[0;0H"
     # clear curent to eol
     printf "\033[K"
+    # inverse color
     printf "\033[7m"
     printf "$1"
+    # restore color
     printf "\033[0m"
     # restore saved position
     printf "\033[u"

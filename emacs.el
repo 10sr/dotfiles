@@ -2410,7 +2410,38 @@ this is test, does not rename files."
      (yank)
      (text-mode)
      (current-local-map)
-     (goto-char (point-min)))))
+     (goto-char (point-min))
+     (yank)
+     (current-buffer))))
+
+(defun set-terminal-header (string)
+  "Set terminal header STRING."
+  (let ((point (point))
+        (movecursor "\033[0;%dH")
+        (inverse "\033[7m")
+        (restore "\033[0m")
+        (cols (frame-parameter nil 'width))
+        (length (length string)))
+    (send-string-to-terminal (concat (format movecursor
+                                             (1+ (- cols length)))
+                                     inverse
+                                     string
+                                     restore))
+    (goto-char point)
+    (redraw-frame (current-frame))))
+
+(run-with-idle-timer
+ 1
+ t
+ (lambda ()
+   (set-terminal-header (concat " "
+                                user-login-name
+                                "@"
+                                (car (split-string system-name
+                                                   "\\."))
+                                " "
+                                (format-time-string "%Y/%m/%d %T %z")
+                                " "))))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; savage emacs
