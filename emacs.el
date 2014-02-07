@@ -2433,18 +2433,21 @@ this is test, does not rename files."
                                      restorepos))
     ))
 
-(run-with-timer
- 0.1
- 1
- (lambda ()
-   (set-terminal-header (concat " "
-                                user-login-name
-                                "@"
-                                (car (split-string system-name
-                                                   "\\."))
-                                " "
-                                (format-time-string "%Y/%m/%d %T %z")
-                                " "))))
+(defun my-set-terminal-header ()
+  "Set terminal header."
+  (set-terminal-header (concat " "
+                               user-login-name
+                               "@"
+                               (car (split-string system-name
+                                                  "\\."))
+                               " "
+                               (format-time-string "%Y/%m/%d %T %z")
+                               " ")))
+
+;; (run-with-timer
+;;  0.1
+;;  1
+;;  'my-set-terminal-header)
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; savage emacs
@@ -2459,35 +2462,16 @@ this is test, does not rename files."
 ;;                     ".")
 ;;                 " Stupid!")))
 
-(defvar my-system-info
+(defvar info-in-prompt
   nil
   "System info in the form of \"[user@host] \".")
-(setq my-system-info
+(setq info-in-prompt
       (concat "["
               user-login-name
               "@"
               (car (split-string system-name
                                  "\\."))
-              "] "))
-
-(defadvice read-from-minibuffer (before info-in-prompt activate)
-  "Show system info when use `read-from-minibuffer'."
-  (ad-set-arg 0
-              (concat my-system-info
-                      (ad-get-arg 0))))
-
-(defadvice read-string (before info-in-prompt activate)
-  "Show system info when use `read-string'."
-  (ad-set-arg 0
-              (concat my-system-info
-                      (ad-get-arg 0))))
-
-(when (< emacs-major-version 24)
-  (defadvice completing-read (before info-in-prompt activate)
-    "Show system info when use `completing-read'."
-    (ad-set-arg 0
-                (concat my-system-info
-                        (ad-get-arg 0)))))
+              "]"))
 
 (defun my-real-function-subr-p (function)
   "Return t if FUNCTION is a built-in function even if it is advised."
@@ -2505,6 +2489,46 @@ this is test, does not rename files."
     (subrp def)))
 
 ;; (my-real-function-subr-p 'my-real-function-subr-p)
+;; (defadvice read-from-minibuffer (before info-in-prompt activate)
+;;   "Show system info when use `read-from-minibuffer'."
+;;   (ad-set-arg 0
+;;               (concat my-system-info
+;;                       (ad-get-arg 0))))
+
+;; (defadvice read-string (before info-in-prompt activate)
+;;   "Show system info when use `read-string'."
+;;   (ad-set-arg 0
+;;               (concat my-system-info
+;;                       (ad-get-arg 0))))
+
+;; (when (< emacs-major-version 24)
+;;   (defadvice completing-read (before info-in-prompt activate)
+;;     "Show system info when use `completing-read'."
+;;     (ad-set-arg 0
+;;                 (concat my-system-info
+;;                         (ad-get-arg 0)))))
+
+(defmacro info-in-prompt-set (&rest functions)
+  "Set info-in-prompt advices for FUNCTIONS."
+  `(progn
+     ,@(mapcar (lambda (f)
+                 `(defadvice ,f (before info-in-prompt activate)
+                    "Show info in prompt."
+                    (let ((orig (ad-get-arg 0)))
+                      (unless (string-match-p (regexp-quote info-in-prompt)
+                                              orig)
+                        (ad-set-arg 0
+                                    (concat info-in-prompt
+                                            " "
+                                            orig))))))
+               functions)))
+
+;; (string-match-p (regexp-quote my-system-info)
+;;                 my-system-info)
+
+(info-in-prompt-set read-from-minibuffer
+                    read-string
+                    completing-read)
 
 
 ;;; emacs.el ends here
