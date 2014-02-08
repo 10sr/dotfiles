@@ -141,7 +141,7 @@ setup_gitconf(){
     # workflow
     _git_open_branch="checkout -b"
     _git_close_branch="!sh -cx 'git stash && \
-git checkout master && git merge --no-ff -'"
+git checkout master && git merge -'"
     $_gc alias.open-branch "$_git_open_branch"
     $_gc alias.close-branch "$_git_close_branch"
     $_gc alias.o "$_git_open_branch"
