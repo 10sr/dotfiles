@@ -2523,9 +2523,6 @@ this is test, does not rename files."
                                             orig))))))
                functions)))
 
-;; (string-match-p (regexp-quote my-system-info)
-;;                 my-system-info)
-
 (info-in-prompt-set read-from-minibuffer
                     read-string
                     completing-read)
