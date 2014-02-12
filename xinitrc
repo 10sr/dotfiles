@@ -19,6 +19,7 @@ setxkbmap -option "ctrl:nocaps,ctrl:menu_rctrl"
 xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
 #xmodmap -e 'remove Lock = Caps_Lock'
 #xmodmap -e 'add Control = Caps_Lock'
+#xmodmap -e 'keycode 134 = Pointer_Button3
 
 type synclient >/dev/null 2>&1 && {
     synclient MaxSpeed=1.6

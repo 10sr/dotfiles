@@ -10,7 +10,7 @@ _feh(){
 
 _tint2(){
 #tint2 -c ~/.dotfiles/tint2rc &
-    tint2 &
+    (sleep 1s && tint2) &
 }
 
 _dropbox(){
@@ -18,7 +18,7 @@ _dropbox(){
 }
 
 _volumeicon(){
-    volumeicon &
+    (sleep 1s && volumeicon) &
 }
 
 _gsoundap(){
@@ -57,7 +57,7 @@ _gkeyring(){
 }
 
 _nmapplet(){
-    nm-applet &
+    (sleep 1s && nm-applet) &
 }
 
 for p in $@
