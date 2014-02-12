@@ -12,8 +12,11 @@ esac
 unset TMUX
 
 setxkbmap -layout "jp"
-test "`hostname`" == "arch-aspireone" &&
-setxkbmap -model "acer_laptop" -layout "jp" # this line must comes first
+# use localectl list-x11-keymap-models to get list of available models
+test "`hostname`" = "arch-aspireone" && \
+    setxkbmap -model "acer_laptop" -layout "jp" # this line must comes first
+test "`hostname`" = "arch-mba" && \
+    setxkbmap -model "apple_laptop" -layout "jp" # this line must comes first
 
 setxkbmap -option "ctrl:nocaps,ctrl:menu_rctrl"
 xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
