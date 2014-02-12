@@ -1057,15 +1057,15 @@ key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
 
-key.setViewKey('<end>', function (ev) {
+key.setGlobalKey('<end>', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(1, true);
 }, 'ひとつ右のタブへ');
 
-key.setViewKey('<home>', function (ev) {
+key.setGlobalKey('<home>', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(-1, true);
 }, 'ひとつ左のタブへ');
 
-key.setViewKey('<next>', function (ev) {
+key.setGlobalKey('<next>', function (ev) {
     let browser = getBrowser();
     if (browser.mCurrentTab.nextSibling) {
         browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos + 1);
@@ -1074,7 +1074,7 @@ key.setViewKey('<next>', function (ev) {
     }
 }, '選択中のタブを右へ');
 
-key.setViewKey('<prior>', function (ev) {
+key.setGlobalKey('<prior>', function (ev) {
     let browser = getBrowser();
     if (browser.mCurrentTab.previousSibling) {
         browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
