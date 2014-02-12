@@ -62,7 +62,7 @@ then
 fi
 
 # in my environment powerdown does not work
-test -z "$SSH_CONNECTION" && \
+test -z "$DISPLAY" && test -z "$SSH_CONNECTION" && \
     type setterm >/dev/null 2>&1 && \
     setterm -blank 30 -powersave on # -powerdown 10
 
