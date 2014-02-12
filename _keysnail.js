@@ -780,6 +780,7 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
+
 hook.setHook('KeyBoardQuit', function (aEvent) {
     // ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
@@ -810,6 +811,7 @@ hook.setHook('Unload', function () {
 hook.setHook('LocationChange', function (aNsURI) {
     echoTabInfo.echo();
 });
+
 // ============================= Key bindings ============================== //
 
 key.setGlobalKey('C-<up>', function () {
@@ -947,10 +949,6 @@ key.setViewKey([['d'], ['SPC']], function (ev) {
     goDoCommand("cmd_scrollPageDown");
 }, '一画面スクロールダウン');
 
-key.setViewKey([['<prior>'], ['<next>']], function (ev, arg) {
-    return;
-}, 'ignore');
-
 key.setViewKey(':', function (ev, arg) {
     return !document.getElementById("keysnail-prompt").hidden &&
         document.getElementById("keysnail-prompt-textbox").focus();
@@ -1059,10 +1057,28 @@ key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
 
-//key.setGlobalKey('C-<right>', function (ev) {
-//getBrowser().mTabContainer.advanceSelectedTab(1, true);
-//}, 'ひとつ右のタブへ');
-//
-//key.setGlobalKey('C-<left>', function (ev) {
-//getBrowser().mTabContainer.advanceSelectedTab(-1, true);
-//}, 'ひとつ左のタブへ');
+key.setViewKey('<end>', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(1, true);
+}, 'ひとつ右のタブへ');
+
+key.setViewKey('<home>', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
+}, 'ひとつ左のタブへ');
+
+key.setViewKey('<next>', function (ev) {
+    let browser = getBrowser();
+    if (browser.mCurrentTab.nextSibling) {
+        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos + 1);
+    } else {
+        browser.moveTabTo(browser.mCurrentTab, 0);
+    }
+}, '選択中のタブを右へ');
+
+key.setViewKey('<prior>', function (ev) {
+    let browser = getBrowser();
+    if (browser.mCurrentTab.previousSibling) {
+        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
+    } else {
+        browser.moveTabTo(browser.mCurrentTab, browser.mTabContainer.childNodes.length - 1);
+    }
+}, '選択中のタブを左へ');
