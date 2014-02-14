@@ -13,6 +13,10 @@ _tint2(){
     (sleep 1s && tint2) &
 }
 
+_synapse(){
+    (sleep 1s && synapse --startup) &
+}
+
 _dropbox(){
     dropboxd & # done by ~/.config/autostart/dropbox.desktop
 }
@@ -45,6 +49,10 @@ _udisksvm(){
 
 _xcompmgr(){
     xcompmgr -c &
+}
+
+_compton(){
+    compton -b
 }
 
 _saku(){
