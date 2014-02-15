@@ -1,3 +1,5 @@
+##$ ln -s {} ~/.lftp/rc
+
 alias ls command cls
 alias lls !ls
 set default-protocol/ftp.*	ftp
