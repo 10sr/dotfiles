@@ -1188,7 +1188,7 @@ then
         arch-aspireone)
             __my_c4="$__color_yellow"
             ;;
-        darwin-mba.local)
+        arch-mba)
             __my_c4="$__color_light_cyan"
             ;;
         newkiwi)
@@ -1241,6 +1241,9 @@ else
     # PS1="$(printf $(whoami)@$(hostname)$ )"
 fi
 
+###################################
+# set header and titles
+
 __my_set_header_line(){
     # save current position
     printf "\033[s"
@@ -1277,14 +1280,14 @@ __my_set_title(){
 
 if test -n "$TMUX"
 then
+    # running tmux locally
     __terminal_title="\$(basename \${PWD})"
+elif test -n "$SSH_CONNECTION" && expr "$TERM" : '^screen' >/dev/null
+then
+    # ssh connect from tmux terminal
+    __terminal_title="`whoami`@`hostname`:\$(basename \${PWD})"
 else
-    if test -n "$SSH_CONNECTION" && expr "$TERM" : '^screen' >/dev/null
-    then
-        __terminal_title="`whoami`@`hostname`:\$(basename \${PWD})"
-    else
-        __terminal_title="`whoami`@`hostname`:\${PWD}"
-    fi
+    __terminal_title="`whoami`@`hostname`:\${PWD}"
 fi
 
 if $inzsh

@@ -167,7 +167,7 @@ setup_tmux(){
             tmux_bg_color=yellow
             tmux_fg_color=black
             ;;
-        darwin-mba.local)
+        arch-mba)
             tmux_bg_color=cyan
             tmux_fg_color=black
             ;;
