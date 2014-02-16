@@ -19,6 +19,7 @@ test "`hostname`" = "arch-mba" && \
     setxkbmap -model "apple_laptop" -layout "jp" # this line must comes first
 
 setxkbmap -option "ctrl:nocaps,ctrl:menu_rctrl"
+# use `xev` to get keycode
 xmodmap -e 'keycode 101 = Alt_R Meta_R' # hiragana key as alt
 #xmodmap -e 'remove Lock = Caps_Lock'
 #xmodmap -e 'add Control = Caps_Lock'
