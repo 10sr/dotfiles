@@ -334,6 +334,8 @@ __safe_alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
 __safe_alias py3=python3
 __safe_alias py2=python2
+__safe_alias ipy3=ipython3
+__safe_alias ipy2=ipython2
 # Sometimes SHELL cannot be used. For example, when running bash inside zsh
 # SHELL is set to be /bin/zsh
 if $inbash
@@ -441,7 +443,7 @@ __my_pacman_update_mirrorlist_with_reflector(){
         cmd="reflector --verbose -l 5 --sort rate --save $ml"
     fi
     echo "Running $cmd ..." 1>&2
-    sudo $cmd
+    sudo sh -c "$cmd"
 }
 null type reflector && test -f /etc/pacman.d/mirrorlist && \
     alias reflect_mirrorlist=__my_pacman_update_mirrorlist_with_reflector
