@@ -92,6 +92,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         gtags
         flymake-jslint
         flymake-python-pyflakes
+        xclip
+        gnuplot-mode
+        erlang
         )
 )
 

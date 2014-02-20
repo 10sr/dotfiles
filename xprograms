@@ -13,6 +13,10 @@ _tint2(){
     (sleep 1s && tint2) &
 }
 
+_neap_hotkey(){
+    (sleep 1s && neap-hotkey) &
+}
+
 _synapse(){
     (sleep 1s && synapse --startup) &
 }
