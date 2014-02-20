@@ -1,0 +1,34 @@
+[neap]
+
+;number of pixels between outer border and the actual grid
+padding = 2
+
+;number of pixels between grid boxes
+spacing = 1
+
+;foreground color (inactive desktops)
+color_inactive = #333333
+
+;highlight color (the active desktop)
+color_active = #999999
+
+;background color ("transparent" for transparent background)
+color_background = transparent
+
+;number of rows in desktop grid
+rows = 0
+
+;number of columns in desktop grid
+columns = 0
+
+;manual pager selection: virtual|viewport|auto
+;pager = auto
+
+;icon geometry: 20x20
+;geometry: 20x20
+
+[neap_hotkey]
+hotkey_up = <alt>Up
+hotkey_down = <alt>Down
+hotkey_left = <alt>Left
+hotkey_right = <alt>Right
