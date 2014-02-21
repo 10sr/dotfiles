@@ -38,19 +38,11 @@ xset dpms 1810 1820 1830
 unset LC_MESSAGES
 export LANG=ja_JP.utf8
 export BROWSER=firefox
-export DMENU_FONT='-*-dejavu sans mono-*-r-*-*-11-*-*-*-*-*-*-*'
+#export DMENU_FONT='-*-dejavu sans mono-*-r-*-*-11-*-*-*-*-*-*-*'
 
 __upper(){
     echo $1 | tr '[:lower:]' '[:upper:]'
 }
-
-XDG_DIRS=$HOME/.xdg-dirs
-
-for f in Desktop Download Templates Publicshare Documents Music Pictures Videos
-do
-    export XDG_`__upper $f`_DIR=$XDG_DIRS/$f
-    mkdir -p $XDG_DIRS/$f
-done
 
 if [ -d /etc/X11/xinit/xinitrc.d ]; then
   for f in /etc/X11/xinit/xinitrc.d/*; do
