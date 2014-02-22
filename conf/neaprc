@@ -1,7 +1,7 @@
 [neap]
 
 ;number of pixels between outer border and the actual grid
-padding = 2
+padding = 1
 
 ;number of pixels between grid boxes
 spacing = 1
@@ -26,6 +26,7 @@ columns = 0
 
 ;icon geometry: 20x20
 ;geometry: 20x20
+geometry: 16x16
 
 [neap_hotkey]
 hotkey_up = <alt>Up
