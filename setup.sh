@@ -54,9 +54,15 @@ gen_common(){
         (FreeBSD*) __isfreebsd=true ;;
         (Linux*) __islinux=true ;;
     esac
-    ( $__ismsys || $__iscygwin ) && __iswindows=true
+    if $__ismsys || $__iscygwin
+    then
+        __iswindows=true
+    fi
     # is this true?
-    ( $__isdarwin || $__freebsd ) && __isbsd=true
+    if $__isdarwin || $__freebsd
+    then
+        __isbsd=true
+    fi
 
     cat <<__EOC__ >"$__shrc_common"
 #!/bin/sh
