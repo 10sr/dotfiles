@@ -126,7 +126,7 @@ setup_gitconf(){
     $_gc alias.co "checkout"
     $_gc alias.cim "commit --verbose -m"
     $_gc alias.di "diff --color"
-    $_gc alias.me "merge --no-ff --stat -v"
+    $_gc alias.me "merge --no-ff --stat --verbose"
     $_gc alias.gr "grep -n"
     $_gc alias.ls "ls-files"
     # $_gc alias.ls "ls-files -v --full-name"
@@ -141,7 +141,7 @@ setup_gitconf(){
     # workflow
     _git_open_branch="checkout -b"
     _git_close_branch="!sh -cx 'git stash && \
-git checkout master && git merge -'"
+git checkout master && git merge --no-ff --stat --verbose -'"
     $_gc alias.open-branch "$_git_open_branch"
     $_gc alias.close-branch "$_git_close_branch"
     $_gc alias.o "$_git_open_branch"
