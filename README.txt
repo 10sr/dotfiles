@@ -87,3 +87,13 @@ $HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
    |--~/.dotfiles/xprofile
    |
    `--~/.dotfiles/xprograms
+
+
+Get setup.sh
+------------
+
+Issue
+
+    curl -L j.mp/10sr_setup >setup.sh
+
+to get latest setup.sh .
