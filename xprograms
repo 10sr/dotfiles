@@ -34,8 +34,8 @@ _gsoundap(){
 }
 
 _conky(){
-    conky -c ~/.dotfiles/conkyrc   >~/.var/log/conky.log 2>&1 &
-    conky -c ~/.dotfiles/conkyrc.2 >~/.var/log/conky.2.log 2>&1 &
+    (sleep 1s && conky -c ~/conkyrc   >~/.var/log/conky.log 2>&1) &
+    #conky -c ~/.dotfiles/conkyrc.2 >~/.var/log/conky.2.log 2>&1 &
 }
 
 _wicd(){
