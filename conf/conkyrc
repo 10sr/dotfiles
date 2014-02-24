@@ -1,7 +1,8 @@
 # ~/.conkyrc
 #
 double_buffer yes
-background no
+# Use -d option instead
+#background yes
 
 use_xft yes
 xftfont DejaVu Sans Mono:size=10
