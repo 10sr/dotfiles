@@ -623,6 +623,7 @@ s(){
     fi
 }
 
+MYMANPATH='/usr/lib/erlang/man'
 if $inbash || $inzsh
 then
     man(){
@@ -634,6 +635,7 @@ then
             LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
             LESS_TERMCAP_ue=$(printf "\e[0m") \
             LESS_TERMCAP_us=$(printf "\e[1;32m") \
+            MANPATH="`manpath`:$MYMANPATH" \
             man "$@"
     }
 fi
