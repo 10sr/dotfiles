@@ -478,8 +478,8 @@ ext.add('auto-install-plugins', function(ev, arg){
         'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/pixiv_autojump.ks.js',
         'https://raw.github.com/10sr/keysnail-plugin/master/list-current-urls.ks.js',
-        'https://raw.github.com/gist/1976942/firefox-addon-manager.ks.js',
-        'https://raw.github.com/gist/1450594/mstranslator.ks.js'
+        'https://gist.githubusercontent.com/10sr/1976942/raw/firefox-addon-manager.ks.js',
+        'https://gist.githubusercontent.com/958/1450594/raw/mstranslator.ks.js'
     ];
 
     function inst(a){
