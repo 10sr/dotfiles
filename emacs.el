@@ -1766,6 +1766,30 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 
 (lazy-load-eval 'eshell nil
 
+  (defvar eshell-text-mode-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "C-x t") 'eshell-text-mode-toggle)
+      map))
+
+  (define-derived-mode eshell-text-mode text-mode
+    "Eshell-Text"
+    "Text-mode for Eshell."
+    nil)
+
+  (defun eshell-text-mode-toggle ()
+    "Toggle eshell-text-mode and eshell-mode."
+    (interactive)
+    (cond ((eq major-mode
+               'eshell-text-mode)
+           (goto-char (point-max))
+           (eshell-mode))
+          ((eq major-mode
+               'eshell-mode)
+           (eshell-text-mode))
+          (t
+           (message "Not in eshell buffer")
+           nil)))
+
   (defun my-eshell-backward-delete-char ()
     (interactive)
     (when (< (save-excursion
@@ -1981,6 +2005,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
               ;;                                           (interactive)
               ;;                                           (eshell-goto-prompt)
               ;;                                           (keyboard-quit)))
+              (define-key eshell-mode-map (kbd "C-x t")
+                'eshell-text-mode-toggle)
               (define-key eshell-mode-map (kbd "C-u")
                 'eshell-kill-input)
               (define-key eshell-mode-map (kbd "C-d")
