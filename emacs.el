@@ -2204,6 +2204,7 @@ ARG is ignored."
     ;; gnu global
     ("global"
      (and (require 'gtags nil t)
+          (executable-find "global")
           (gtags-get-rootpath))
      "global --result grep ")
 
