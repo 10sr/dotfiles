@@ -1028,6 +1028,8 @@ found, otherwise returns nil."
           nil
         (add-to-list 'c-default-style
                      '(c-mode . "k&r"))
+        (add-to-list 'c-default-style
+                     '(c++-mode . "k&r"))
         (add-hook 'c-mode-common-hook
                   (lambda ()
                     ;; why c-basic-offset in k&r style defaults to 5 ???
