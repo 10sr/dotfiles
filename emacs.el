@@ -1020,18 +1020,24 @@ found, otherwise returns nil."
               (flyspell-mode)
               (set (make-local-variable 'comment-start) ";"))))
 
-;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; c-mode
-;; (setq c-default-style "bsd")
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (setq c-basic-offset 4
-                  indent-tabs-mode nil)
-            ;; (set-face-foreground 'font-lock-keyword-face "blue")
-            (c-toggle-hungry-state -1)
-            ;; (and (require 'gtags nil t)
-            ;;      (gtags-mode 1))
-            ))
+;; http://www.emacswiki.org/emacs/IndentingC
+;; http://en.wikipedia.org/wiki/Indent_style
+;; http://d.hatena.ne.jp/emergent/20070203/1170512717
+(when (lazy-load-eval 'cc-vars
+          nil
+        (add-to-list 'c-default-style
+                     '(c-mode . "k&r"))
+        (add-hook 'c-mode-common-hook
+                  (lambda ()
+                    ;; why c-basic-offset in k&r style defaults to 5 ???
+                    (setq c-basic-offset 4
+                          indent-tabs-mode nil)
+                    ;; (set-face-foreground 'font-lock-keyword-face "blue")
+                    (c-toggle-hungry-state -1)
+                    ;; (and (require 'gtags nil t)
+                    ;;      (gtags-mode 1))
+                    ))))
 
 (when (fetch-library
        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
