@@ -425,13 +425,14 @@ do
     test -f $f && alias vl=$f && break
 done
 
-__safe_alias pa=pacman
-__safe_alias pa=pacapt
+__safe_alias pa="pacman --color=always"
+__safe_alias pa="pacapt"
 
 __safe_alias yt=yaourt
 __safe_alias cower="cower --color=auto"
 null type pacmatic && {
     alias pacman="pacmatic"
+    # variable for yaourt
     export PACMAN="pacmatic"
 }
 
