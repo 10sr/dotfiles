@@ -2235,6 +2235,16 @@ ARG is ignored."
 
 (defvar my-rgrep-alist
   `(
+    ;; the silver searcher
+    ("ag"
+     (executable-find "ag")
+     "ag --nocolor --nogroup --nopager ")
+
+    ;; ack
+    ("ack"
+     (executable-find "ack")
+     "ack --nocolor --nogroup --nopager ")
+
     ;; gnu global
     ("global"
      (and (require 'gtags nil t)
@@ -2247,16 +2257,6 @@ ARG is ignored."
      (eq 0
          (shell-command "git rev-parse --git-dir"))
      "git --no-pager -c color.grep=false grep -nH -e ")
-
-    ;; the silver searcher
-    ("ag"
-     (executable-find "ag")
-     "ag --nocolor --nogroup --nopager ")
-
-    ;; ack
-    ("ack"
-     (executable-find "ack")
-     "ack --nocolor --nogroup --nopager ")
 
     ;; grep
     ("grep"
