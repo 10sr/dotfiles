@@ -40,10 +40,6 @@ export LANG=ja_JP.utf8
 export BROWSER=firefox
 #export DMENU_FONT='-*-dejavu sans mono-*-r-*-*-11-*-*-*-*-*-*-*'
 
-__upper(){
-    echo $1 | tr '[:lower:]' '[:upper:]'
-}
-
 if [ -d /etc/X11/xinit/xinitrc.d ]; then
   for f in /etc/X11/xinit/xinitrc.d/*; do
     [ -x "$f" ] && . "$f"
