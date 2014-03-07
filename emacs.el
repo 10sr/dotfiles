@@ -908,7 +908,10 @@ found, otherwise returns nil."
 (setq diff-switches "-u")
 (add-hook 'diff-mode-hook
           (lambda ()
-            (view-mode 1)
+            (when (eq major-mode
+                      'diff-mode)
+              ;; do not pass when major-mode is derived mode of diff-mode
+              (view-mode 1))
             (set-face-attribute 'diff-header nil
                                 :foreground nil
                                 :background nil
