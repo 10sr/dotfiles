@@ -1098,7 +1098,7 @@ found, otherwise returns nil."
             (define-key view-mode-map (kbd "C-m") 'my-rgrep-symbol-at-point)
             ))
 (global-set-key "\M-r" 'view-mode)
-(setq view-read-only t)
+;; (setq view-read-only t)
 
 ;; (defun my-view-mode-search-word (word)
 ;;   "Search for word current directory and subdirectories.
