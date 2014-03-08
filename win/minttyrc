@@ -1,5 +1,5 @@
-BoldAsFont=yes
-Transparency=medium
+BoldAsFont=no
+Transparency=low
 CursorType=block
 Font=Source Code Pro Light
 FontHeight=10
