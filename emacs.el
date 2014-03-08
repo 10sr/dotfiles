@@ -294,8 +294,8 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
-(global-set-key (kbd "<up>") (lambda() (interactive) (scroll-down 1)))
-(global-set-key (kbd "<down>") (lambda() (interactive) (scroll-up 1)))
+(global-set-key (kbd "<up>") 'scroll-down-line)
+(global-set-key (kbd "<down>") 'scroll-up-line)
 (global-set-key (kbd "<left>") 'scroll-down)
 (global-set-key (kbd "<right>") 'scroll-up)
 
@@ -700,8 +700,8 @@ found, otherwise returns nil."
 (define-key esc-map "p" 'backward-paragraph)
 ;; (global-set-key (kbd "M-n") 'forward-paragraph)
 (define-key esc-map "n" 'forward-paragraph)
-(global-set-key (kbd "C-<up>") (lambda () (interactive)(scroll-down 1)))
-(global-set-key (kbd "C-<down>") (lambda () (interactive)(scroll-up 1)))
+(global-set-key (kbd "C-<up>") 'scroll-down-line)
+(global-set-key (kbd "C-<down>") 'scroll-up-line)
 (global-set-key (kbd "C-<left>") 'scroll-down)
 (global-set-key (kbd "C-<right>") 'scroll-up)
 (global-set-key (kbd "<select>") 'ignore) ; 'previous-line-mark)
@@ -1079,10 +1079,8 @@ found, otherwise returns nil."
 
 (add-hook 'view-mode-hook
           (lambda()
-            (define-key view-mode-map "j"
-              (lambda() (interactive) (scroll-up 1)))
-            (define-key view-mode-map "k"
-              (lambda() (interactive) (scroll-down 1)))
+            (define-key view-mode-map "j" 'scroll-up-line)
+            (define-key view-mode-map "k" 'scroll-down-line)
             (define-key view-mode-map "v" 'toggle-read-only)
             (define-key view-mode-map "q" 'bury-buffer)
             ;; (define-key view-mode-map "/" 'nonincremental-re-search-forward)
@@ -1231,10 +1229,8 @@ found, otherwise returns nil."
                 )
               ;; (define-key term-raw-map "\C-xl" 'term-line-mode)
               ;; (define-key term-mode-map "\C-xc" 'term-char-mode)
-              (define-key term-raw-map (kbd "<up>")
-                (lambda () (interactive) (scroll-down 1)))
-              (define-key term-raw-map (kbd "<down>")
-                (lambda () (interactive) (scroll-up 1)))
+              (define-key term-raw-map (kbd "<up>") 'scroll-down-line)
+              (define-key term-raw-map (kbd "<down>") 'scroll-up-line)
               (define-key term-raw-map (kbd "<right>") 'scroll-up)
               (define-key term-raw-map (kbd "<left>") 'scroll-down)
               (define-key term-raw-map (kbd "C-p") 'term-send-raw)
