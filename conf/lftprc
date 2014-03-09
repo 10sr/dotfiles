@@ -10,4 +10,6 @@ set cmd:term-status/*screen* "\e_\T\e\\"
 set cmd:term-status/*xterm* "\e[11;0]\e]2;\T\007\e[11]"
 set cmd:term-status/*rxvt* "\e[11;0]\e]2;\T\007\e[11]"
 set cmd:set-term-status on
+## make prompt look better
+#set prompt "lftp \S\? \u\@\h:\w> "
 set prompt "\[\e[1;30m\][\[\e[0;34m\]f\[\e[1m\]t\[\e[37m\]p\[\e[30m\]] \[\e[34m\]\u\[\e[0;34m\]\@\[\e[1m\]\h\[\e[1;30m\]:\[\e[1;34m\]\w\[\e[1;30m\]>\[\e[0m\] "
