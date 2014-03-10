@@ -1,8 +1,8 @@
 BoldAsFont=no
-Transparency=low
+Transparency=medium
 CursorType=block
 Font=Source Code Pro Light
-FontHeight=10
+FontHeight=11
 Locale=ja_JP
 Charset=UTF-8
 CopyOnSelect=no
@@ -10,3 +10,4 @@ CopyAsRTF=no
 Scrollbar=none
 Term=xterm-256color
 Blue=0,128,255
+OpaqueWhenFocused=no
