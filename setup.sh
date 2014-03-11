@@ -269,8 +269,8 @@ setup_windirs(){
 
     if $iscygwin
     then
-        # this may invalid on systems other than windows7
-        __winhome="/cygdrive/c/Users/`whoami`"
+        #__winhome="/cygdrive/c/Users/`whoami`"
+        __winhome=`cygpath -H`/`whoami`
     fi
 
     if test -n "$__winhome" -a -d "$__winhome" -a '!' -e "$HOME/.winhome"
