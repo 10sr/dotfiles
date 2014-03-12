@@ -1,8 +1,9 @@
 BoldAsFont=no
 Transparency=medium
 CursorType=block
-Font=Source Code Pro Light
-FontHeight=11
+#Font=Source Code Pro Light
+Font=DejaVu Sans Mono
+FontHeight=10
 Locale=ja_JP
 Charset=UTF-8
 CopyOnSelect=no
