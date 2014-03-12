@@ -1,8 +1,9 @@
 #!/bin/sh
+set -e
 
 # setup.sh --- 10sr setup script
 
-__setups="gitconf tmux scripts darwin dirs selfupdate"
+__setups="gitconf tmux scripts darwin dirs selfupdate windirs"
 
 __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
@@ -46,7 +47,7 @@ gen_common(){
     __islinux=false
 
     # $OSTYPE is another choice. which is better?
-    # sh on FreeBSD does not define OSTYPE
+    # NOTE: sh on FreeBSD does not define OSTYPE
     case `uname` in
         (MINGW*) __ismsys=true ;;
         (CYGWIN*) __iscygwin=true ;;
@@ -101,7 +102,7 @@ setup_gitconf(){
     if ! command -v git >/dev/null
     then
         echo "git not found"
-        return 1
+        return 0
     fi
 
     _gc="git config --global"
@@ -207,7 +208,7 @@ _fetch_script(){
     url="$1"
     name="$2"
     dst="$HOME/.local/bin/$name"
-    command -v "$name" >/dev/null && return
+    command -v "$name" >/dev/null && return 0
     if _download "$url" "$dst"
     then
         chmod u+x "$dst"
@@ -227,7 +228,7 @@ setup_scripts(){
 # darwin
 
 __darwin_set_defaults(){
-    $isdarwin || return 1
+    $isdarwin || return 0
 
     # http://appdrill.net/60641/mac-boot-mute.html
     #sudo nvram SystemAudioVolume=%80
@@ -246,7 +247,7 @@ __darwin_set_defaults(){
 }
 
 __darwin_start_daemon(){
-    $isdarwin || return 1
+    $isdarwin || return 0
 
     test "`launchctl getenv LC_ALL`" = C || sudo launchctl setenv LC_ALL C
     if ! (launchctl list | grep com.apple.locate) >/dev/null
@@ -258,6 +259,24 @@ __darwin_start_daemon(){
 setup_darwin(){
     __darwin_set_defaults
     __darwin_start_daemon
+}
+
+##########################
+# setup windows directories
+
+setup_windirs(){
+    $iswindows || return 0
+
+    if $iscygwin
+    then
+        #__winhome="/cygdrive/c/Users/`whoami`"
+        __winhome=`cygpath -H`/`whoami`
+    fi
+
+    if test -n "$__winhome" -a -d "$__winhome" -a '!' -e "$HOME/.winhome"
+    then
+        ln -s "$__winhome" "$HOME/.winhome"
+    fi
 }
 
 #########################
