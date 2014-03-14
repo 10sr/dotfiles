@@ -1500,7 +1500,10 @@ found, otherwise returns nil."
       recentf-show-file-shortcuts-flag nil)
 
 (when (require 'recentf nil t)
-  (add-to-list 'recentf-exclude (regexp-quote recentf-save-file))
+  (add-to-list 'recentf-exclude
+               (regexp-quote recentf-save-file))
+  (add-to-list 'recentf-exclude
+               (regexp-quote (expand-file-name user-emacs-directory)))
   (define-key ctl-x-map (kbd "C-r") 'recentf-open-files)
   (add-hook 'find-file-hook
             'recentf-save-list
