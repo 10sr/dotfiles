@@ -321,37 +321,37 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-(when (fetch-library
-       "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
-       t)
-  (require 'terminal-title nil t)
-  ;; if TERM is not screen use default value
-  (if (getenv "TMUX")
-      ;; if use tmux locally just basename of current dir
-      (setq terminal-title-format
-            '((file-name-nondirectory (directory-file-name
-                                       default-directory))))
-    (when (equal (car (split-string (frame-parameter nil
-                                                     'tty-type)
-                                    "-"))
-                 "screen")
-      (if (getenv "SSH_CONNECTION")
-          ;; TMUX is not set but TERM is screen:
-          ;; it seems that TMUX is used by locally and ssh to remote host
-          (setq terminal-title-format
-                `("em:"
-                  ,user-login-name
-                  "@"
-                  ,(car (split-string system-name
-                                      "\\."))
-                  ":"
-                  (file-name-nondirectory (directory-file-name
-                                           default-directory))))
-        ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
-        (setq terminal-title-format
-              '((file-name-nondirectory (directory-file-name
-                                         default-directory)))))))
-  (terminal-title-mode))
+(and (fetch-library
+      "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
+      t)
+     (require 'terminal-title nil t)
+     ;; if TERM is not screen use default value
+     (if (getenv "TMUX")
+         ;; if use tmux locally just basename of current dir
+         (setq terminal-title-format
+               '((file-name-nondirectory (directory-file-name
+                                          default-directory))))
+       (when (equal (car (split-string (frame-parameter nil
+                                                        'tty-type)
+                                       "-"))
+                    "screen")
+         (if (getenv "SSH_CONNECTION")
+             ;; TMUX is not set but TERM is screen:
+             ;; it seems that TMUX is used by locally and ssh to remote host
+             (setq terminal-title-format
+                   `("em:"
+                     ,user-login-name
+                     "@"
+                     ,(car (split-string system-name
+                                         "\\."))
+                     ":"
+                     (file-name-nondirectory (directory-file-name
+                                              default-directory))))
+           ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
+           (setq terminal-title-format
+                 '((file-name-nondirectory (directory-file-name
+                                            default-directory)))))))
+     (terminal-title-mode))
 
 (setq eol-mnemonic-dos "\\r\\n")
 (setq eol-mnemonic-mac "\\r")
