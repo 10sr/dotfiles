@@ -331,7 +331,6 @@ found, otherwise returns nil."
 (when (fetch-library
        "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
        t)
-  (require 'terminal-title nil t)
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
@@ -356,8 +355,9 @@ found, otherwise returns nil."
               ":"
               (file-name-nondirectory (directory-file-name
                                        default-directory))))))
-        ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
-  (terminal-title-mode))
+  ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
+  (and (require 'terminal-title nil t)
+       (terminal-title-mode)))
 
 (setq eol-mnemonic-dos "\\r\\n")
 (setq eol-mnemonic-mac "\\r")

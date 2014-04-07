@@ -445,7 +445,7 @@ __my_pacman_update_mirrorlist_with_reflector(){
     then
         cmd="reflector --verbose -l 5 --sort rate --save $ml"
     fi
-    echo "Running $cmd ..." 1>&2
+    echo ">>> $cmd ..." 1>&2
     sudo sh -c "$cmd"
 }
 null type reflector && test -f /etc/pacman.d/mirrorlist && \
