@@ -20,6 +20,13 @@
   (require 'cl nil t))
 
 
+;; (add-hook 'after-change-major-mode-hook
+;;           (lambda ()
+;;             (message "cmm: %S %s"
+;;                      major-mode
+;;                      buffer-file-name)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; download library from web
 
@@ -331,26 +338,25 @@ found, otherwise returns nil."
       (setq terminal-title-format
             '((file-name-nondirectory (directory-file-name
                                        default-directory))))
-    (when (equal (car (split-string (frame-parameter nil
-                                                     'tty-type)
-                                    "-"))
-                 "screen")
-      (if (getenv "SSH_CONNECTION")
-          ;; TMUX is not set but TERM is screen:
-          ;; it seems that TMUX is used by locally and ssh to remote host
-          (setq terminal-title-format
-                `("em:"
-                  ,user-login-name
-                  "@"
-                  ,(car (split-string system-name
-                                      "\\."))
-                  ":"
-                  (file-name-nondirectory (directory-file-name
-                                           default-directory))))
-        ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
+    (if (and (equal (car (split-string (frame-parameter nil
+                                                        'tty-type)
+                                       "-"))
+                    "screen")
+             (not (getenv "SSH_CONNECTION")))
         (setq terminal-title-format
               '((file-name-nondirectory (directory-file-name
-                                         default-directory)))))))
+                                         default-directory))))
+      ;; seems that TMUX is used by locally and ssh to remote host
+      (setq terminal-title-format
+            `("em:"
+              ,user-login-name
+              "@"
+              ,(car (split-string system-name
+                                  "\\."))
+              ":"
+              (file-name-nondirectory (directory-file-name
+                                       default-directory))))))
+        ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
   (terminal-title-mode))
 
 (setq eol-mnemonic-dos "\\r\\n")
