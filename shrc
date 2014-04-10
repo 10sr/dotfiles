@@ -575,9 +575,15 @@ __ssh_with_cd(){
 memo(){
     if test -z "$1"
     then
-        $EDITOR memo.txt
+        _memo="memo.txt"
     else
-        $EDITOR "$1/memo.txt"
+        _memo="$1/memo.txt"
+    fi
+        $EDITOR "$_memo"
+    if test -z "`cat "$_memo"`"
+    then
+        echo "$_memo is empty. Removing."
+        rm "$_memo"
     fi
 }
 
@@ -1111,6 +1117,10 @@ __my_ps1_bttry(){
     fi
 }
 
+__my_ps1_memo(){
+    test -f memo.txt && echo "[m:`du -b memo.txt|cut -f 1`]"
+}
+
 __my_ps1_dirs(){
     dirs | wc -l
 }
@@ -1131,7 +1141,7 @@ __my_ps1_jobs(){
 
 __my_alert_fail(){
     test $laststatus -eq 0 || \
-        echo "[STATUS:${laststatus}] "
+        echo "[STATUS:${laststatus}]"
 }
 
 # About ansi escape sequences
@@ -1223,9 +1233,17 @@ then
     __my_ps1_sh="[ZSH:$ZSH_VERSION]"
 fi
 
-__my_ps1_info(){
+__my_ps1_info1(){
+    # first line of PS1
     echo "${__my_ps1_sh}$(__my_ps1_scale)$(__my_ps1_git)$(__my_ps1_bttry)$(__my_ps1_ipaddr)$(__my_ps1_moc)"
 }
+
+__my_ps1_info2(){
+    # second line of PS1
+    echo "$(__my_ps1_memo)$(__my_ps1_jobs)${__my_ps1_str}$(__my_alert_fail) "
+}
+
+__my_ps1_beg="${__my_c4}:: ${__my_cdef}"
 
 __my_ps1_save_pos="\[\033[s\]"
 __my_ps1_restore_pos="\[\033[u\]"
@@ -1238,14 +1256,14 @@ __my_ps1_move_15left="\[\033[15D\]"
 if $inzsh
 then
     PROMPT="\
-${__my_c4}:: ${__my_cdef}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info)
-${__my_c4}:: ${__my_cdef}\$(__my_ps1_jobs)${__my_ps1_str}\$(__my_alert_fail)%# "
+${__my_ps1_beg}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info1)
+${__my_ps1_beg}\$(__my_ps1_info2)%# "
     RPROMPT="%D{%Y/%m/%d %H:%M}"
 elif $inbash
 then
     PS1="\
-${__my_c4}:: ${__my_cdef}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info)\n\
-${__my_c4}:: ${__my_cdef}\D{%Y/%m/%d %H:%M} \$(__my_ps1_jobs \j)${__my_ps1_str}\$(__my_alert_fail)${__my_ps1_right}\$ "
+${__my_ps1_beg}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info1)\n\
+${__my_ps1_beg}\D{%Y/%m/%d %H:%M} \$(__my_ps1_info2)${__my_ps1_right}\$ "
 else
     true
     # PS1="$(printf $(whoami)@$(hostname)$ )"
