@@ -255,13 +255,13 @@ type fortune >/dev/null 2>&1 && {
 uname -a
 echo TERM $TERM with $(tput colors) colors using $(tty)
 
-if null type tmux
-then
-    echo
-    echo tmux sessions:
-    tmux ls 2>/dev/null| sed -e 's/^/  /g'
-    echo
-fi
+# if null type tmux
+# then
+#     echo
+#     echo tmux sessions:
+#     tmux ls 2>/dev/null| sed -e 's/^/  /g'
+#     echo
+# fi
 
 # if test -n "$TMUX"
 # then
