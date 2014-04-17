@@ -353,8 +353,8 @@ found, otherwise returns nil."
               ,(car (split-string system-name
                                   "\\."))
               ":"
-              (file-name-nondirectory (directory-file-name
-                                       default-directory))))))
+              default-directory))
+      ))
   ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
   (and (require 'terminal-title nil t)
        (terminal-title-mode)))
