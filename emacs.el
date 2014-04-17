@@ -1126,6 +1126,7 @@ found, otherwise returns nil."
 
 (setq woman-cache-filename (expand-file-name (concat user-emacs-directory
                                                      "woman_cache.el")))
+(defalias 'man 'woman)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
