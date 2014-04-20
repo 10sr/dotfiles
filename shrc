@@ -687,10 +687,12 @@ tx(){
     elif test -z "$TMUX"
     then
         # -A: attach if already exists
-        tmux new-session -A -c "$HOME" -s "$1"
+        # tmux new-session -A -c "$HOME" -s "$1"
+        tmux new-session -A -s "$1"
     else
         # create new session if not exists yet
-        tmux has-session -t "$1" || TMUX= tmux new-session -d -c "$HOME" -s "$1"
+        # tmux has-session -t "$1" || TMUX= tmux new-session -d -c "$HOME" -s "$1"
+        tmux has-session -t "$1" || TMUX= tmux new-session -d -s "$1"
         tmux switch-client -t "$1"
     fi
 }
