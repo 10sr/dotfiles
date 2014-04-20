@@ -1719,6 +1719,10 @@ found, otherwise returns nil."
                                          'my-dired-next-line dired-mode-map)
               (substitute-key-definition 'dired-previous-line
                                          'my-dired-previous-line dired-mode-map)
+              ;; (define-key dired-mode-map (kbd "C-p") 'my-dired-previous-line)
+              ;; (define-key dired-mode-map (kbd "p") 'my-dired-previous-line)
+              ;; (define-key dired-mode-map (kbd "C-n") 'my-dired-next-line)
+              ;; (define-key dired-mode-map (kbd "n") 'my-dired-next-line)
               (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
               (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
               (define-key dired-mode-map (kbd "ESC p") 'my-dired-scroll-up)
