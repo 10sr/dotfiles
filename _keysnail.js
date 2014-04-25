@@ -843,6 +843,32 @@ key.setGlobalKey('<f11>', function (ev, arg) {
     ext.exec("strong-fullscreen", arg, ev);
 }, 'go fullscreen with hiding toolbar and tabbar', true);
 
+key.setGlobalKey('<end>', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(1, true);
+}, 'ひとつ右のタブへ');
+
+key.setGlobalKey('<home>', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
+}, 'ひとつ左のタブへ');
+
+key.setGlobalKey('<next>', function (ev) {
+    let browser = getBrowser();
+    if (browser.mCurrentTab.nextSibling) {
+        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos + 1);
+    } else {
+        browser.moveTabTo(browser.mCurrentTab, 0);
+    }
+}, '選択中のタブを右へ');
+
+key.setGlobalKey('<prior>', function (ev) {
+    let browser = getBrowser();
+    if (browser.mCurrentTab.previousSibling) {
+        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
+    } else {
+        browser.moveTabTo(browser.mCurrentTab, browser.mTabContainer.childNodes.length - 1);
+    }
+}, '選択中のタブを左へ');
+
 key.setViewKey('0', function (ev) {
     BrowserCloseTabOrWindow();
 }, 'タブ / ウィンドウを閉じる');
@@ -1057,28 +1083,10 @@ key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
 
-key.setGlobalKey('<end>', function (ev) {
-    getBrowser().mTabContainer.advanceSelectedTab(1, true);
-}, 'ひとつ右のタブへ');
+key.setViewKey('j', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_DOWN, true);
+}, '一行スクロールダウン');
 
-key.setGlobalKey('<home>', function (ev) {
-    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
-}, 'ひとつ左のタブへ');
-
-key.setGlobalKey('<next>', function (ev) {
-    let browser = getBrowser();
-    if (browser.mCurrentTab.nextSibling) {
-        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos + 1);
-    } else {
-        browser.moveTabTo(browser.mCurrentTab, 0);
-    }
-}, '選択中のタブを右へ');
-
-key.setGlobalKey('<prior>', function (ev) {
-    let browser = getBrowser();
-    if (browser.mCurrentTab.previousSibling) {
-        browser.moveTabTo(browser.mCurrentTab, browser.mCurrentTab._tPos - 1);
-    } else {
-        browser.moveTabTo(browser.mCurrentTab, browser.mTabContainer.childNodes.length - 1);
-    }
-}, '選択中のタブを左へ');
+key.setViewKey('k', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
+}, '一行スクロールアップ');
