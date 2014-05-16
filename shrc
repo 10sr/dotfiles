@@ -1064,15 +1064,15 @@ ipaddress(){
 __my_ps1_str=""
 
 test -n "$__MY_SCRIPT" && \
-    __my_ps1_str="${__my_ps1_str}${__my_c5}SCR${__my_cdef} "
+    __my_ps1_str=" ${__my_ps1_str}${__my_c5}SCR${__my_cdef}"
 
 test -n "$SSH_CONNECTION" && \
-    __my_ps1_str="${__my_ps1_str}${__my_c5}SSH${__my_cdef} "
+    __my_ps1_str=" ${__my_ps1_str}${__my_c5}SSH${__my_cdef}"
 
 if test -n "$__MY_DTACH"
 then
     __dt_name="`basename "$__MY_DTACH"`"
-    __my_ps1_str="${__my_ps1_str}${__my_c5}DT:${__dt_name}${__my_cdef} "
+    __my_ps1_str=" ${__my_ps1_str}${__my_c5}DT:${__dt_name}${__my_cdef}"
 fi
 
 __my_ps1_scale(){
@@ -1124,7 +1124,7 @@ __my_ps1_bttry(){
 }
 
 __my_ps1_memo(){
-    test -f memo.txt && echo "[m:`du -b memo.txt|cut -f 1`]"
+    test -f memo.txt && echo "m:`du -b memo.txt|cut -f 1`"
 }
 
 __my_ps1_dirs(){
@@ -1141,13 +1141,13 @@ __my_ps1_jobs(){
     fi
     if test "$jobs" -gt 0
     then
-        echo "[JOBS:$jobs] "
+        echo "JOBS:$jobs"
     fi
 }
 
 __my_alert_fail(){
     test $laststatus -eq 0 || \
-        echo "[STATUS:${laststatus}]"
+        echo "STATUS:${laststatus}"
 }
 
 # About ansi escape sequences
@@ -1246,7 +1246,8 @@ __my_ps1_info1(){
 
 __my_ps1_info2(){
     # second line of PS1
-    echo "$(__my_ps1_memo)$(__my_ps1_jobs)${__my_ps1_str}$(__my_alert_fail) "
+    echo $(__my_ps1_memo) $(__my_ps1_jobs) ${__my_ps1_str} $(__my_alert_fail) \
+        | sed -e 's/ /|/g'
 }
 
 __my_ps1_beg="${__my_c4}:: ${__my_cdef}"
@@ -1263,13 +1264,13 @@ if $inzsh
 then
     PROMPT="\
 ${__my_ps1_beg}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info1)
-${__my_ps1_beg}\$(__my_ps1_info2)%# "
+${__my_ps1_beg}\$(__my_ps1_info2) %# "
     RPROMPT="%D{%Y/%m/%d %H:%M}"
 elif $inbash
 then
     PS1="\
 ${__my_ps1_beg}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info1)\n\
-${__my_ps1_beg}\D{%Y/%m/%d %H:%M} \$(__my_ps1_info2)${__my_ps1_right}\$ "
+${__my_ps1_beg}\D{%Y/%m/%d %H:%M} \$(__my_ps1_info2)${__my_ps1_right} \$ "
 else
     true
     # PS1="$(printf $(whoami)@$(hostname)$ )"
