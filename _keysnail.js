@@ -780,7 +780,6 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
-
 hook.setHook('KeyBoardQuit', function (aEvent) {
     // ext.exec("hide-sidebar");
     let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
@@ -873,11 +872,11 @@ key.setViewKey('0', function (ev) {
     BrowserCloseTabOrWindow();
 }, 'タブ / ウィンドウを閉じる');
 
-key.setViewKey('N', function (ev) {
+key.setViewKey('l', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(1, true);
 }, 'ひとつ右のタブへ');
 
-key.setViewKey('P', function (ev) {
+key.setViewKey('h', function (ev) {
     getBrowser().mTabContainer.advanceSelectedTab(-1, true);
 }, 'ひとつ左のタブへ');
 
@@ -920,10 +919,6 @@ key.setViewKey('G', function () {
 key.setViewKey('r', function (aEvent) {
     BrowserReload();
 }, '再読み込み');
-
-key.setViewKey('m', function (ev, arg) {
-    _fi.toogle();
-}, 'fetchimiをトグル');
 
 key.setViewKey('z', function (ev, arg) {
     ext.exec("keysnail-z-menu", arg, ev);
@@ -1006,21 +1001,9 @@ key.setViewKey('T', function (ev, arg) {
     ext.exec("mstranslator-open-prompt", arg, ev);
 }, 'MSTranslator - Open prompt', true);
 
-key.setViewKey('n', function (ev) {
-    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_DOWN, true);
-}, '一行スクロールダウン');
-
-key.setViewKey('p', function (ev) {
-    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
-}, '一行スクロールアップ');
-
 key.setViewKey('f', function (ev, arg) {
     ext.exec('strong-fullscreen', arg, ev);
 }, 'go fullscreen with hiding toolbar and tabbar', true);
-
-key.setViewKey('b', function (ev) {
-    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_LEFT, true);
-}, '左へスクロール');
 
 key.setViewKey('F', function (ev) {
     var browser = getBrowser();
@@ -1034,6 +1017,14 @@ key.setViewKey('F', function (ev) {
 key.setViewKey('U', function (ev, arg) {
     ext.exec("list-closed-tabs", arg, ev);
 }, 'List closed tabs', true);
+
+key.setViewKey('j', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_DOWN, true);
+}, '一行スクロールダウン');
+
+key.setViewKey('k', function (ev) {
+    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
+}, '一行スクロールアップ');
 
 key.setEditKey('C-<tab>', function (ev) {
     command.walkInputElement(command.elementsRetrieverTextarea, true, true);
@@ -1083,10 +1074,10 @@ key.setEditKey('C-o', function (ev) {
     command.openLine(ev);
 }, '行を開く (Open line)');
 
-key.setViewKey('j', function (ev) {
-    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_DOWN, true);
-}, '一行スクロールダウン');
+key.setViewKey('p', function (ev, arg) {
+    ext.exec('pocket-add-current', arg, ev);
+}, 'Add current page', true);
 
-key.setViewKey('k', function (ev) {
-    key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
-}, '一行スクロールアップ');
+key.setViewKey('P', function (ev, arg) {
+    ext.exec('pocket-open-latest', arg, ev);
+}, 'Open last saved page', true);
