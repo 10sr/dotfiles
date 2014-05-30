@@ -221,6 +221,7 @@ then
         _history
     # zstyle ':completion:*:*:cd:*' completer
     zstyle ':completion:*' accept-exact-dirs true
+    zstyle ':completion:*' special-dirs true
 
     autoload colors; colors
 
