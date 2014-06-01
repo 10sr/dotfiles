@@ -449,12 +449,12 @@ __my_pacman_update_mirrorlist_with_reflector(){
     cmd="$(expr "$(grep -m 1 reflector $ml)" : '# With: *\(.*\)')"
     if test -z "$cmd"
     then
-        cmd="reflector --verbose --countries Japan --latest 5 --sort rate --save $ml"
+        cmd="reflector --verbose --country Japan --latest 5 --sort rate --save $ml"
     fi
     echo ">>> $cmd ..." 1>&2
     sudo sh -c "$cmd"
 }
-null type reflector && test -f /etc/pacman.d/mirrorlist && \
+null type reflector && test -d /etc/pacman.d && \
     alias reflect_mirrorlist=__my_pacman_update_mirrorlist_with_reflector
 
 null type apt-get && {
