@@ -449,7 +449,7 @@ __my_pacman_update_mirrorlist_with_reflector(){
     cmd="$(expr "$(grep -m 1 reflector $ml)" : '# With: *\(.*\)')"
     if test -z "$cmd"
     then
-        cmd="reflector --verbose -l 5 --sort rate --save $ml"
+        cmd="reflector --verbose --countries Japan --latest 5 --sort rate --save $ml"
     fi
     echo ">>> $cmd ..." 1>&2
     sudo sh -c "$cmd"
@@ -458,8 +458,8 @@ null type reflector && test -f /etc/pacman.d/mirrorlist && \
     alias reflect_mirrorlist=__my_pacman_update_mirrorlist_with_reflector
 
 null type apt-get && {
-    alias aupgrade="sudo apt-get autoremove --yes && \
-sudo apt-get update --yes && sudo apt-get upgrade --yes"
+    alias aupgrade="sudo sh -xc 'apt-get autoremove --yes && \
+apt-get update --yes && apt-get upgrade --yes'"
     alias aptin="apt-get install"
     alias aptsearch="apt-cache search"
     alias aptshow="apt-cache show"
@@ -467,8 +467,8 @@ sudo apt-get update --yes && sudo apt-get upgrade --yes"
 
 null type port && {
     alias port="port -v"
-    alias pupgrade="sudo port -v selfupdate && \
-{ sudo port -v upgrade outdated; }"
+    alias pupgrade="sudo sh -xc 'port -v selfupdate && \
+port -v upgrade outdated'"
 }
 
 if $iscygwin
