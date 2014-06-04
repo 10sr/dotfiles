@@ -247,7 +247,6 @@ fi
 ######################
 # Print welcome messages
 
-$iswindows && alias tty="echo cmd.exe"
 type fortune >/dev/null 2>&1 && {
     fortune
     echo
@@ -255,7 +254,11 @@ type fortune >/dev/null 2>&1 && {
     echo
 }
 uname -a
+$iswindows && alias tty="echo cmd.exe"
 echo TERM $TERM with $(tput colors) colors using $(tty)
+
+echo
+__safe_run w yuk
 
 # if null type tmux
 # then
