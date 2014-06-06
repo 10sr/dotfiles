@@ -1070,6 +1070,8 @@ found, otherwise returns nil."
               ;;           t)
               )))
 
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+
 (when (lazy-load-eval 'flymake-jslint
           '(flymake-jslint-load))
   (lazy-load-eval 'js nil
