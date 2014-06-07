@@ -373,6 +373,7 @@ __safe_alias htags="htags --xhtml --symbol --line-number \
 __safe_alias au=aunpack
 # __safe_alias lv="lv|less"
 __safe_alias rs="rsync --progress --itemize-changes --compress"
+__safe_alias vagr=vagrant
 if $iscygwin
 then
     __my_wget_options=" --no-check-certificate"
