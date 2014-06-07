@@ -371,7 +371,7 @@ __safe_alias gtags="gtags --verbose"
 __safe_alias htags="htags --xhtml --symbol --line-number \
 --frame --alphabet --verbose"
 __safe_alias au=aunpack
-__safe_alias lv="lv|less"
+# __safe_alias lv="lv|less"
 __safe_alias rs="rsync --progress --itemize-changes --compress"
 if $iscygwin
 then
