@@ -92,6 +92,7 @@ plugins.options["search-url-list"] = [
     ["twitter search","http://twitter.com/search?q=%q&lang=all"],
     ["tospy", "http://topsy.com/s?allow_lang=ja&q=%q"],
     ["2ch","http://2ch-ranking.net/search.php?q=%q&imp=and&order=time"],
+    ["2ch_ttsearch", "http://ttsearch.net/s2.cgi?k=%q&o=r"],
     ["I\'m feelig lucky!","http://www.google.co.jp/search?q=%q&btnI=kudos"],
     ["uncyclopedia","http://ja.uncyclopedia.info/wiki/%q"],
     ["wikipedia","http://ja.wikipedia.org/wiki/%q"],
