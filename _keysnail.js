@@ -440,6 +440,7 @@ ext.add('my-setpref', function(){
             "{\"bold\":true,\"italic\":false,\"underline\":true,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#000000\",\"bgColor\":false,\"bgColorCode\":\"#000000\",\"outline\":false,\"outlineColorCode\":\"#000000\"}",
             "extensions.tabutils.styles.unread":
             "{\"bold\":false,\"italic\":false,\"underline\":false,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#CC0000\",\"bgColor\":false,\"bgColorCode\":\"undefined\",\"outline\":false,\"outlineColorCode\":\"undefined\"}",
+            "extensions.tabutils.TFS_Enable":false,
             "extensions.yass.edgetype":0,
             "extensions.yass.selectedpreset":"red",
             "font.default.x-western":"sans-serif",
