@@ -1,12 +1,12 @@
 ---
 - hosts: all
-  sudo: yes
   vars:
     packages: [rsync, git, htop]
   tasks:
   - name: install packages
     action: pacman pkg={{ item }} state=installed
     with_items: packages
+    sudo: yes
     when: ansible_os_family == "Archlinux"
   # handlers:
   #   - name: restart ntpd
