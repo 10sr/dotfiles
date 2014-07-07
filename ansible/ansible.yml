@@ -2,9 +2,9 @@
 - hosts: all
   sudo: yes
   vars:
-    packages: [rsync, git]
+    packages: [rsync, git, htop]
   tasks:
-  - name: Install packages
+  - name: install packages
     action: pacman pkg={{ item }} state=installed
     with_items: packages
     when: ansible_os_family == "Archlinux"
