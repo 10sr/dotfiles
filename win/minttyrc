@@ -1,9 +1,8 @@
 BoldAsFont=no
 Transparency=medium
 CursorType=block
-#Font=Source Code Pro Light
 Font=DejaVu Sans Mono
-FontHeight=10
+FontHeight=12
 Locale=ja_JP
 Charset=UTF-8
 CopyOnSelect=no
@@ -12,3 +11,4 @@ Scrollbar=none
 Term=xterm-256color
 Blue=0,128,255
 OpaqueWhenFocused=no
+ForegroundColour=255,255,255
