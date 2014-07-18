@@ -8,6 +8,11 @@
     with_items: packages
     sudo: yes
     when: ansible_os_family == "Archlinux"
+  - name: install script colortable16
+    get_url: url=https://gist.github.com/10sr/6852317/raw/colortable16.sh dest={{ ansible_env.HOME }}/.local/bin/colortable16.sh mode=0755
+  - name: install script 256colors
+    get_url: url=https://gist.github.com/10sr/6852331/raw/256colors2.pl dest={{ ansible_env.HOME }}/.local/bin/256colors2.pl mode=0755
+
   # handlers:
   #   - name: restart ntpd
   #     action: service name=ntpd state=restarted
