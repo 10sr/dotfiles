@@ -969,6 +969,11 @@ found, otherwise returns nil."
      (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
                                    auto-mode-alist)))
 
+(add-hook 'yaml-mode-hook
+          (lambda ()
+            (define-key yaml-mode-map (kbd "C-m")
+              'newline)))
+
 (add-hook 'html-mode-hook
           (lambda ()
             (define-key html-mode-map (kbd "C-m")
