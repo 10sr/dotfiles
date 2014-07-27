@@ -320,6 +320,7 @@ alias pstree="LANG=C pstree"
 alias cp="cp -v"
 alias mv="mv -v"
 alias rm="rm -v"
+alias mkdir="mkdir -v"
 alias psaux="ps auxww"
 alias q=exit
 __safe_alias e3=e3em
@@ -887,6 +888,11 @@ tb(){
     mv "$@" "$__tb"
 }
 
+mkdd(){
+    _d=`date +%Y%m%d-%H%M%S` && \
+        mkdir -p "$_d"
+}
+
 mkcd(){
     if test -z "$1"
     then
@@ -904,8 +910,8 @@ mkcd(){
 
 mkcdd(){
     # make and change date directory
-    _d=`date +%Y%m%d-%H%M%S`
-    mkcd "$_d"
+    _d=`date +%Y%m%d-%H%M%S` && \
+        mkcd "$_d"
 }
 
 if test -n "$TMUX" && null type reattach-to-user-namespace
