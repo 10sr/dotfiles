@@ -3,10 +3,14 @@ set -e
 
 # setup.sh --- 10sr setup script
 
+# Auther: 10sr
+# LICENSE: Unlicense: http://unlicense.org
+
 __setups="shrc_common gitconf tmux scripts darwin dirs selfupdate windirs"
 
 __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
+__dotfiles_dir_default="$HOME/10sr_dotfiles"
 
 ###########################
 # utils
@@ -52,9 +56,30 @@ detect_systems(){
     return 0
 }
 
+###############################
+# selfupdate
+
+__setup_url="https://raw.github.com/10sr/dotfiles/master/setup.sh"
+
+if test -z "$DOTFILES_DIR"
+then
+    DOTFILES_DIR="$__dotfiles_dir_default"
+fi
+
+setup_selfupdate(){
+    mkdir -p "$DOTFILES_DIR"
+    _download $__setup_url "$DOTFILES_DIR/"setup.sh
+    chmod +x "$DOTFILES_DIR"/setup.sh
+}
+
+
+
+################################
+# setups
+
 
 #############################
-# shrc_common
+# setup shrc_common
 
 # Generate ~/.shrc.common, which contains system infos and is sourced from
 # setup.sh (this file) and dotfiles/shrc .
@@ -86,23 +111,8 @@ __homevar="$__homevar"
 __EOC__
 }
 
-###############################
-# selfupdate
-
-__setup_url="https://raw.github.com/10sr/dotfiles/master/setup.sh"
-
-setup_selfupdate(){
-    if test -z "$SETUP_OUTPUT"
-    then
-        echo SETUP_OUTPUT is not set.
-        echo Ignore selfupdate.
-        return
-    fi
-    _download $__setup_url "$SETUP_OUTPUT"
-}
-
 ################################
-# git_configs
+# setup gitconf
 
 setup_gitconf(){
     if ! command -v git >/dev/null
@@ -164,7 +174,7 @@ git checkout master && git merge --no-ff --stat --verbose -'"
 }
 
 #############################
-# gen_tmux_conf_local
+# setup tmux
 
 setup_tmux(){
     tmux_conf_local="$HOME/.tmux.conf.local"
@@ -207,7 +217,7 @@ __EOC__
 }
 
 ##############################
-# install_scripts
+# setup scripts
 
 _fetch_script(){
     # _fetch_script <url> <binname>
@@ -231,7 +241,7 @@ setup_scripts(){
 }
 
 ################################
-# darwin
+# setup darwin
 
 __darwin_set_defaults(){
     $isdarwin || return 0
@@ -268,7 +278,7 @@ setup_darwin(){
 }
 
 ##########################
-# setup windows directories
+# setup windirs
 
 setup_windirs(){
     $iswindows || return 0
@@ -286,13 +296,15 @@ setup_windirs(){
 }
 
 #########################
-# mkdirs
+# setup dirs
 
 setup_dirs(){
     mkdir -p "$__homelocal"
     mkdir -p "$__homelocal/bin"
     mkdir -p "$__homevar"
 }
+
+
 
 #########################
 # main
