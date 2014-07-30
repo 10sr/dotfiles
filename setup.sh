@@ -12,6 +12,8 @@ __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
 __dotfiles_dir_default="$HOME/10sr_dotfiles"
 
+# TODO: how to give args to command?
+
 ###########################
 # utils
 
