@@ -77,6 +77,10 @@ _lxpolkit(){
     (sleep 1s && /usr/lib/lxpolkit/lxpolkit) &
 }
 
+_devmon(){
+    (sleep 1s && devmon) &
+}
+
 for p in $@
 do
     _$p
