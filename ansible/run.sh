@@ -8,4 +8,4 @@ then
     exit 1
 fi
 
-ansible-playbook -i hosts ansible.yml --ask-sudo-pass
+ansible-playbook -i hosts --ask-sudo-pass "$@"
