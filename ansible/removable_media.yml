@@ -2,7 +2,7 @@
 # do not forget to add lxpolkit to autostart!
 - hosts: all
   vars:
-    packages: [gvfs, gvfs-afc, polkit, lxpolkit]
+    packages: [gvfs, gvfs-afc, polkit, lxpolkit, ntfs-3g]
   sudo: yes
   tasks:
   - name: install packages
@@ -11,6 +11,7 @@
     when: ansible_os_family == "Archlinux"
   - name: add user yuk to storage group
     user: append=yes groups=storage name=yuk
+  # is this required?
   - name: put polkit rule for mount by storage group
     copy: src=enable-mount.rules.polkit
           dest=/etc/polkit-1/rules.d/10-enable-mount.rules
