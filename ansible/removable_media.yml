@@ -1,4 +1,5 @@
 ---
+# https://wiki.archlinux.org/index.php/File_manager_functionality
 # do not forget to add lxpolkit to autostart!
 - hosts: all
   vars:
