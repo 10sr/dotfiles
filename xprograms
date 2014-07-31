@@ -77,6 +77,15 @@ _lxpolkit(){
     (sleep 1s && /usr/lib/lxpolkit/lxpolkit) &
 }
 
+_xscreensaver(){
+    (sleep 1s && xscreensaver -no-splash) &
+}
+
+_xsslock(){
+    # run _xscreensaver then this to enable locking on sleep
+    (sleep 3s && xss-lock -- xscreensaver-command -lock) &
+}
+
 for p in $@
 do
     _$p
