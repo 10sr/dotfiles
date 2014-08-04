@@ -1,4 +1,4 @@
-BoldAsFont=no
+BoldAsFont=yes
 Transparency=medium
 CursorType=block
 Font=DejaVu Sans Mono
@@ -11,4 +11,5 @@ Scrollbar=none
 Term=xterm-256color
 Blue=0,128,255
 OpaqueWhenFocused=no
-ForegroundColour=255,255,255
+ForegroundColour=225,225,225
+FontSmoothing=default
