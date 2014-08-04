@@ -1,0 +1,45 @@
+---
+- hosts: all
+  vars:
+    conf: /etc/ssh/sshd_config
+  sudo: yes
+  tasks:
+  - name: Protocol 2
+    lineinfile: dest={{conf}}
+                regexp="^(#)?Protocol"
+                line="Protocol 2"
+    notify: restart sshd
+  - name: PermitRootLogin no
+    lineinfile: dest={{conf}}
+                regexp="^(#)?PermitRootLogin"
+                line="PermitRootLogin no"
+    notify: restart sshd
+  - name: RSAAuthentication no
+    lineinfile: dest={{conf}}
+                regexp="^(#)?RSAAuthentication"
+                line="RSAAuthentication no"
+    notify: restart sshd
+  - name: PasswordAuthentication no
+    lineinfile: dest={{conf}}
+                regexp="^(#)?PasswordAuthentication"
+                line="PasswordAuthentication no"
+    notify: restart sshd
+  - name: PermitEmptyPassword no
+    lineinfile: dest={{conf}}
+                regexp="^(#)?PermitEmptyPasswords"
+                line="PermitEmptyPasswords no"
+    notify: restart sshd
+  - name: ChallengeResponseAuthentication no
+    lineinfile: dest={{conf}}
+                regexp="^(#)?ChallengeResponseAuthentication"
+                line="ChallengeResponseAuthentication no"
+    notify: restart sshd
+  - name: UseDNS no
+    lineinfile: dest={{conf}}
+                regexp="^(#)?UseDNS"
+                line="UseDNS no"
+    notify: restart sshd
+
+  handlers:
+  - name: restart sshd
+    service: name=ssh state=restarted
