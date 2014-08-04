@@ -21,7 +21,7 @@
     copy: src=debian_setup.static_ip.interfaces
           dest=/etc/network/interfaces.d/static_ip
     notify:
-    - restart network service
+    - restart networking service
 
   handlers:
   - name: restart networking service
