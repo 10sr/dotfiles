@@ -8,4 +8,10 @@ then
     exit 1
 fi
 
-ansible-playbook -i hosts --ask-sudo-pass "$@"
+if test $# -eq 0
+then
+    echo "usage: $0 <playbook> [...]"
+    exit 1
+fi
+
+ansible-playbook -i local.hosts --ask-sudo-pass "$@"
