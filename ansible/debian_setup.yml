@@ -3,6 +3,9 @@
   vars:
   sudo: yes
   tasks:
+  - name: assert debian
+    assert:
+      that: "ansible_os_family == 'Debian'"
   - name: add line to source interfaces.d
     lineinfile: dest=/etc/network/interfaces
                 line="source-directory interfaces.d"
