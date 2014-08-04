@@ -1,0 +1,5 @@
+---
+- hosts: all
+  vars:
+  tasks:
+  - name: put interfaces file for fixed IP
