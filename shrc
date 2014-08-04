@@ -190,6 +190,13 @@ then
     export CHIT_PATH="$HOME/dbx/.chit"
 fi
 
+# adhoc fix for ansible on cygwin
+# http://blog.s-uni.net/2013/08/27/ansible-running-on-cygwin/
+if $incygwin
+then
+    export ANSIBLE_SSH_ARGS="-o ControlMaster=no"
+fi
+
 ##########################
 # Zsh specific preferences
 
