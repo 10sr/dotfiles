@@ -3,11 +3,16 @@
   vars:
     packages: [rsync, git, htop]
   tasks:
-  - name: install packages
-    action: pacman pkg={{ item }} state=installed
+  - name: install packages for pacman
+    pacman: pkg={{ item }} state=installed
     with_items: packages
     sudo: yes
-    when: ansible_os_family == "Archlinux"
+    when: ansible_pkg_mgr == "pacman"
+  - name: install packages
+    apt: name={{ item }} state=present
+    with_items: packages
+    sudo: yes
+    when: ansible_pkg_mgr == "apt"
   - name: install script colortable16
     get_url: url=https://gist.github.com/10sr/6852317/raw/colortable16.sh dest={{ ansible_env.HOME }}/.local/bin/colortable16.sh mode=0755
   - name: install script 256colors
