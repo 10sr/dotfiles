@@ -254,12 +254,21 @@ fi
 ######################
 # Print welcome messages
 
-type fortune >/dev/null 2>&1 && {
-    fortune
-    echo
-    fortune -o
-    echo
+command -v fortune >/dev/nul && {
+    if command -v cowsay >/dev/null
+    then
+        fortune | cowsay
+        echo
+        fortune -o | cowsay
+        echo
+    else
+        fortune
+        echo
+        fortune -o
+        echo
+    fi
 }
+
 uname -a
 $iswindows && alias tty="echo cmd.exe"
 echo TERM $TERM with $(tput colors) colors using $(tty)
