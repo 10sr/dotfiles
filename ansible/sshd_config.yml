@@ -1,9 +1,16 @@
 ---
 - hosts: all
-  vars:
-    conf: /etc/ssh/sshd_config
+  # vars:
+  #   conf: /etc/ssh/sshd_config
   sudo: yes
   tasks:
+  - name: find sshd_config
+    set_fact: conf={{item}}
+    with_first_found:
+    - /etc/ssh/sshd_config
+    - /etc/sshd_config
+  - name: assert sshd_config found
+    assert: conf is defined
   - name: Protocol 2
     lineinfile: dest={{conf}}
                 regexp="^(#)?Protocol"
