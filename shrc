@@ -254,7 +254,7 @@ fi
 ######################
 # Print welcome messages
 
-command -v fortune >/dev/nul && {
+command -v fortune >/dev/null && {
     if command -v cowsay >/dev/null
     then
         fortune | cowsay
