@@ -3,6 +3,13 @@
 expr "$-" : '^.*i' >/dev/null || return
 
 ##########################################
+
+__shrc_lock=/tmp/shrc_lock.$USER.$$
+test -f "$__shrc_lock" && return
+touch "$__shrc_lock"
+
+
+##########################################
 null(){
     "$@" >/dev/null 2>&1
 }
@@ -368,12 +375,12 @@ __safe_alias ipy2=ipython2
 # SHELL is set to be /bin/zsh
 if $inbash
 then
-    alias _reloadrc="exec bash"
+    alias _reloadrc="rm '$__shrc_lock'; exec bash"
 elif $inzsh
 then
-    alias _reloadrc="exec zsh"
+    alias _reloadrc="rm '$__shrc_lock'; exec zsh"
 else
-    alias _reloadrc="exec $SHELL"
+    alias _reloadrc="rm '$__shrc_lock'; exec $SHELL"
 fi
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
