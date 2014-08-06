@@ -12,7 +12,7 @@
     when: ansible_os_family == "Archlinux"
   - name: add user yuk to storage group
     user: append=yes groups=storage name=yuk
-  # is this required?
-  - name: put polkit rule for mount by storage group
-    copy: src=enable-mount.rules.polkit
-          dest=/etc/polkit-1/rules.d/10-enable-mount.rules
+  # # is this required?
+  # - name: put polkit rule for mount by storage group
+  #   copy: src=enable-mount.rules.polkit
+  #         dest=/etc/polkit-1/rules.d/10-enable-mount.rules
