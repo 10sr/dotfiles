@@ -158,6 +158,8 @@ then
     TERM=screen-256color
 fi
 
+# set TMP, TEMP, TMPDIR
+
 if test -z "$TMP"
 then
     if test -n "$TMPDIR"
@@ -170,9 +172,10 @@ then
         export TMP=/tmp
     fi
 fi
-__match "$TMP" "${USER}-tmp" >/dev/null || export TMP="${TMP}/${USER}-tmp"
-export TEMP="$TMP"
+__match "$TMP" "${USER}-tmp" >/dev/null || TMP="${TMP}/${USER}-tmp"
 test -d "$TMP" || mkdir -p "$TMP"
+export TEMP=$TMP
+export TMPDIR=$TMP
 
 if ! $iswindows && null type stty
 then
