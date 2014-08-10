@@ -344,6 +344,7 @@ alias cp="cp -v"
 alias mv="mv -v"
 alias rm="rm -v"
 alias mkdir="mkdir -v"
+alias rmdir="rmdir -v"
 alias psaux="ps auxww"
 alias q=exit
 __safe_alias e3=e3em
