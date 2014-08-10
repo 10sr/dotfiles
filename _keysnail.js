@@ -102,8 +102,7 @@ plugins.options["search-url-list"] = [
      "http://maps.google.co.jp/maps?hl=ja&q=%q&um=1&ie=UTF-8&sa=N&tab=wl"],
     ["weblio","http://www.weblio.jp/content_find?query=%q"],
     ["shoutcast","http://www.shoutcast.com/Internet-Radio/%q"],
-    ["delicious 10sr",
-     "http://delicious.com/10sr?addtag=%q&setcount=50&opennew=1"],
+    ["delicious 10sr", "http://delicious.com/10sr/%q"],
     ["open raw","%r"]
 ];
 
@@ -681,7 +680,8 @@ ext.add("query-then-engine", function () {
     prompt.reader({
         message : "Search Word?:",
         group : "query_word",
-        completer : completer.matcher.header(share.friendsCache || []),
+        // completer : completer.matcher.header(share.friendsCache || []),
+        initialInput : content.document.getSelection() || "",
         callback : function (q) {
             if (q) {
                 prompt.selector({
@@ -693,12 +693,14 @@ ext.add("query-then-engine", function () {
                             getBrowser().addTab(
                                 plugins.options["search-url-list"][i][1].
                                     replace("%r",q).replace(
-                                        "%q",encodeURIComponent(q)));
+                                        "%q",encodeURIComponent(q)
+                                    )
+                            )
+                        ;
                     }
                 });
             };
-        },
-        initialInput : content.document.getSelection() || ""
+        }
     });
 }, "enter search word and then select engine");
 
