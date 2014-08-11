@@ -249,30 +249,104 @@ plugins.options["twitter_client.use_jmp"] = true;
 // my exts and functions
 
 var autoSaveTabList = (function(){
-    const PREF_KEY_DEST = "";
+    const PREF_PREFIX = "extensions.keysnail.plugins.autosavetablist.";
+    const PREF_DSTDIR = "dstdir";
+    const PREF_ENABLED = "enabled";
+    // use plugin option to set
+    var save_interval = 60 * 10;
+    // "/" for unix system
+    const DIR_DELIM = userscript.directoryDelimitter;
 
-    function init(){
-        // set destination directory
+    function selectDirectory(title){
+        // open dialog and return nsILocalFile object
+        // https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsILocalFile
+        // this function blocks.
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].
             createInstance(nsIFilePicker);
-
-        fp.init(window,
-                "Select Directory to Save Tab List",
-                nsIFilePicker.modeGetFolder);
+        fp.init(window, title, nsIFilePicker.modeGetFolder);
 
         // block
-        var response = fp.show();
-        if (response !== nsIFilePicker.returnOK) {
+        var res = fp.show();
+        if (res !== nsIFilePicker.returnOK) {
+            return null;
+        }
+        return fp.file;
+    }
+
+    function setup(){
+        // set destination directory
+        var dstdir = selectDirectory("Select Directory to Save Tab List");
+        if (! dstdir) { return; }
+        if (! dstdir.isWritable()) {
+            display.notify("Directory is not writable");
             return;
         }
-        alert(fp.file.path);
+
+        util.setUnicharPref(PREF_PREFIX + PREF_DSTDIR, dstdir.path);
+    }
+
+    function genFileName(){
+        function formatCurrent(){
+            var d = new Date();
+            function pad(n){
+                return n < 10 ? '0' + n.toString() : n.toString()
+            }
+            return [
+                d.getFullYear().toString(),
+                pad(d.getMonth() + 1),
+                pad(d.getDate()),
+                "-",
+                pad(d.getHours()),
+                pad(d.getMinutes()),
+                pad(d.getSeconds())
+            ].join("");
+        }
+
+        return "tablist." + formatCurrent() + ".lst";
+    }
+
+    function getTabList(){
+        // returns list of urls of current tabs.
+        return [(function(){
+            var browser = tab.linkedBrowser;
+            var win     = browser.contentWindow;
+            // var title = tab.label;
+            var url   = win.location.href;
+            return url;
+        })() for each (tab in Array.slice(gBrowser.mTabContainer.childNodes))];
+        // Array.slice is required?
+    }
+
+    function saveCurrentList(){
+        var dstdir = util.getUnicharPref(PREF_PREFIX + PREF_DSTDIR);
+        if (! dstdir) {
+            display.showPopup("AutoSaveTabList",
+                              "Dest dir is not set yet. Run setup first");
+            return;
+        }
+
+        var filename = genFileName();
+
+        util.writeTextFile(
+            getTabList().join("\n") + "\n",
+            dstdir + userscript.directoryDelimiter + filename
+        );
+        display.showPopup("AutoSaveTabList",
+                          "Tab List saved: " + filename);
     }
 
     return {
-        init: init
+        selectDirectory: selectDirectory,
+        setup: setup,
+        getTabList: getTabList,
+        saveCurrentList: saveCurrentList
     };
 })();
+
+ext.add("astl-setup", autoSaveTabList.setup, "Auto save tab list - Setup");
+ext.add("astl-save-current", autoSaveTabList.saveCurrentList,
+        "Auto save tab list - Save current list");
 
 var echoTabInfo = (function(){
     var currenttab;
