@@ -194,12 +194,12 @@ local["^https?://(www\.|cloud\.|)feedly\.com/"] = [
 /////////////////////////////////////////
 // tumblr/dashboard
 local["^http://www.tumblr.com/dashboard"] = [
-           // ["C-<left>", function(ev, arg){
-           //     gBrowser.mTabContainer.advanceSelectedTab(-1, true);
-           // }],
-           // ["C-<right>", function(ev, arg){
-           //     gBrowser.mTabContainer.advanceSelectedTab(1, true);
-           // }],
+    // ["C-<left>", function(ev, arg){
+    //     gBrowser.mTabContainer.advanceSelectedTab(-1, true);
+    // }],
+    // ["C-<right>", function(ev, arg){
+    //     gBrowser.mTabContainer.advanceSelectedTab(1, true);
+    // }],
     ["<left>", function(ev, arg){
         window.content.location.href = "http://www.tumblr.com/dashboard";
     }],
@@ -247,6 +247,32 @@ plugins.options["twitter_client.use_jmp"] = true;
 
 ////////////////////////////////////////////
 // my exts and functions
+
+var autoSaveTabList = (function(){
+    const PREF_KEY_DEST = "";
+
+    function init(){
+        // set destination directory
+        var nsIFilePicker = Components.interfaces.nsIFilePicker;
+        var fp = Components.classes["@mozilla.org/filepicker;1"].
+            createInstance(nsIFilePicker);
+
+        fp.init(window,
+                "Select Directory to Save Tab List",
+                nsIFilePicker.modeGetFolder);
+
+        // block
+        var response = fp.show();
+        if (response !== nsIFilePicker.returnOK) {
+            return;
+        }
+        alert(fp.file.path);
+    }
+
+    return {
+        init: init
+    };
+})();
 
 var echoTabInfo = (function(){
     var currenttab;
@@ -300,7 +326,7 @@ ext.add("open-remote-init-file", function(ev, arg){
     window.openUILinkIn(URL, "tab");
 }, "Open remote initialization file");
 
-(function(){
+var importExportBookmarks = (function(){
     function getOrganizer(){
         // [How to call for Firefox bookmark dialog? - Stack Overflow]
         // (http://stackoverflow.com/questions/9158187/how-to-call-for-firefox-bookmark-dialog)
@@ -331,6 +357,10 @@ ext.add("open-remote-init-file", function(ev, arg){
             organizer.PlacesOrganizer.importBookmarks();
         }
     }, "import bookmarks");
+
+    return {
+        getOrganizer: getOrganizer
+    };
 })();
 
 ext.add("my-index-html", function(ev, arg){
@@ -490,16 +520,16 @@ ext.add('auto-install-plugins', function(ev, arg){
         }else{
             var url = a.shift();
             var path = userscript.pluginDir +
-                    userscript.directoryDelimiter + url.match(/[^/]+$/)[0];
-            if(plugins.context[path] === undefined){
-                userscript.installPluginFromURL(url, function(){inst(a);});
-            }else{
-                inst(a);
-            }
+                userscript.directoryDelimiter + url.match(/[^/]+$/)[0];
+        if(plugins.context[path] === undefined){
+            userscript.installPluginFromURL(url, function(){inst(a);});
+        }else{
+            inst(a);
         }
     }
-    inst(urls);
-}, 'Install plugins automatically if not installed yet.');
+}
+        inst(urls);
+       }, 'Install plugins automatically if not installed yet.');
 
 ext.add('put-aside-this-page', function (ev, arg) {
     var n = getBrowser().mCurrentTab._tPos;
@@ -515,8 +545,8 @@ ext.add('send-escape', function (ev, arg) {
 
 ext.add("open-hatebu-comment", function (ev, arg) {
     var url = window.content.location.href.replace(/^[^/]*\/\//, "");
-    window.content.location.href = "http://b.hatena.ne.jp/entry/" + url;
-}, 'hatebu');
+        window.content.location.href = "http://b.hatena.ne.jp/entry/" + url;
+       }, 'hatebu');
 
 // ext.add("focus-on-content", function(){
 //    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
@@ -541,7 +571,7 @@ ext.add("close-and-next-tab", function (ev, arg) {
 //
 ext.add("restart-firefox-add-menu", function(){
     const XUL_NS =
-              "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
     var cmdelm = document.createElementNS(XUL_NS, "command");
     cmdelm.setAttribute("id", "my_cmd_restartFirefoxKs");
@@ -569,7 +599,7 @@ ext.add("feed-add-to-feedly", function(){
         encodeURIComponent(url);
 }, "Add current feed to feedly");
 
-(function(){
+var feedUtils = (function(){
     var feedhandler = "http://cloud.feedly.com/#subscription%2Ffeed%2F%s";
 
     function getFeeds(){
@@ -596,17 +626,15 @@ ext.add("feed-add-to-feedly", function(){
             display.echoStatusBar("No feed found.");
             return;
         }
-        prompt.selector(
-            {
-                message    : "Select Feed",
-                collection : feeds,
-                callback   : function (i) {
-                    if (i >= 0) {
-                        command.setClipboardText(feeds[i][1]);
-                    }
+        prompt.selector({
+            message    : "Select Feed",
+            collection : feeds,
+            callback   : function (i) {
+                if (i >= 0) {
+                    command.setClipboardText(feeds[i][1]);
                 }
             }
-        );
+        });
     }, "Copy url or feed url of current page");
 
     ext.add("open-feed", function () {
@@ -620,7 +648,7 @@ ext.add("feed-add-to-feedly", function(){
             collection : feeds,
             callback   : function (i) {
                 if (i < 0) {
-                    return;
+                     return;
                 }
 
                 var feedurl = feeds[i][1];
@@ -635,6 +663,11 @@ ext.add("feed-add-to-feedly", function(){
             }
         });
     }, "Copy url or feed url of current page");
+
+    return {
+        getFeeds: getFeeds
+    };
+
 })();
 
 ///////////////////////////////////////
@@ -714,7 +747,7 @@ ext.add("list-closed-tabs", function () {
     var json = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
     var closedTabs = [[tab.image || fav, tab.title, tab.url]
                       for each (tab in json.decode(ss.getClosedTabData(window)))
-                      ];
+                          ];
 
     if (!closedTabs.length)
         return void display.echoStatusBar("No recently closed tab.", 2000);
@@ -743,8 +776,8 @@ ext.add("list-tab-history", function () {
             continue;
         try {
             var iconURL = Cc["@mozilla.org/browser/favicon-service;1"]
-                    .getService(Ci.nsIFaviconService)
-                    .getFaviconForPage(entry.URI).spec;
+                .getService(Ci.nsIFaviconService)
+                .getFaviconForPage(entry.URI).spec;
         } catch (ex) {}
         tabHistory.push([iconURL || fav, entry.title, entry.URI.spec, i]);
     }
@@ -805,7 +838,7 @@ hook.setHook('Unload', function () {
         }
         const ks = win.KeySnail;
         share.pluginUpdater = ks.getPluginUpdater(
-        share.pluginUpdater.pluginsWithUpdate);
+            share.pluginUpdater.pluginsWithUpdate);
         ks.setUpPluginUpdaterDelegator();
         return true;
     });
