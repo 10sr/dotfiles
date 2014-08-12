@@ -507,6 +507,21 @@ then
     # alias cygsu="cygstart /cygwinsetup.exe"
 fi
 
+mkpatch(){
+    if test $# -eq 0
+    then
+        echo "usage: mkpatch <olddir> <newdir>"
+    elif ! test -d "$1"
+    then
+        echo "mkpatch: $1 is not a directory"
+    elif ! test -d "$2"
+    then
+        echo "mkpatch: $2 is not a directory"
+    else
+        diff -Naur "$1" "$2"
+    fi
+}
+
 g(){
     if test $# -eq 0 && null type git-info
     then
