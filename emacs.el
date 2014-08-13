@@ -914,8 +914,9 @@ found, otherwise returns nil."
 (setq diff-switches "-u")
 (add-hook 'diff-mode-hook
           (lambda ()
-            (when (eq major-mode
-                      'diff-mode)
+            (when (and (eq major-mode
+                           'diff-mode)
+                       (not buffer-file-name))
               ;; do not pass when major-mode is derived mode of diff-mode
               (view-mode 1))
             (set-face-attribute 'diff-header nil

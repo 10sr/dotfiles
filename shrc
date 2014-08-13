@@ -3,6 +3,13 @@
 expr "$-" : '^.*i' >/dev/null || return
 
 ##########################################
+
+__shrc_lock=/tmp/shrc_lock.$USER.$$
+test -f "$__shrc_lock" && return
+touch "$__shrc_lock"
+
+
+##########################################
 null(){
     "$@" >/dev/null 2>&1
 }
@@ -340,6 +347,7 @@ alias cp="cp -v"
 alias mv="mv -v"
 alias rm="rm -v"
 alias mkdir="mkdir -v"
+alias rmdir="rmdir -v"
 alias psaux="ps auxww"
 alias q=exit
 __safe_alias e3=e3em
@@ -371,12 +379,12 @@ __safe_alias ipy2=ipython2
 # SHELL is set to be /bin/zsh
 if $inbash
 then
-    alias _reloadrc="exec bash"
+    alias _reloadrc="rm '$__shrc_lock'; exec bash"
 elif $inzsh
 then
-    alias _reloadrc="exec zsh"
+    alias _reloadrc="rm '$__shrc_lock'; exec zsh"
 else
-    alias _reloadrc="exec $SHELL"
+    alias _reloadrc="rm '$__shrc_lock'; exec $SHELL"
 fi
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
@@ -501,6 +509,21 @@ then
         alias windate="cmd.exe //c 'echo %DATE%-%TIME%'"
     # alias cygsu="cygstart /cygwinsetup.exe"
 fi
+
+mkpatch(){
+    if test $# -eq 0
+    then
+        echo "usage: mkpatch <olddir> <newdir>"
+    elif ! test -d "$1"
+    then
+        echo "mkpatch: $1 is not a directory"
+    elif ! test -d "$2"
+    then
+        echo "mkpatch: $2 is not a directory"
+    else
+        diff -Naur "$1" "$2"
+    fi
+}
 
 g(){
     if test $# -eq 0 && null type git-info
