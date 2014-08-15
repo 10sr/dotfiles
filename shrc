@@ -525,6 +525,12 @@ mkpatch(){
     fi
 }
 
+__sdcv_less(){
+    command sdcv -n "$@" | less --quit-if-one-screen
+}
+
+command -v sdcv >/dev/null && alias dict=__sdcv_less
+
 g(){
     if test $# -eq 0 && null type git-info
     then
