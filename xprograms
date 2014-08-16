@@ -86,11 +86,18 @@ _xsslock(){
     (sleep 3s && xss-lock -- xscreensaver-command -lock) &
 }
 
-_mac_rightclick(){
-    if ! sh /usr/local/bin/rightbutton_emulate.sh --check
+_macbook_rightclick(){
+    _mrc_emutgt=dev.mac_hid.mouse_button_emulation
+    _mrc_codetgt=dev.mac_hid.mouse_button3_keycode
+
+    if test "`sysctl -n $_mrc_emutgt`" = 1 -a "`sysctl -n $_mrc_codetgt`" = 126
     then
-        (sleep 3s && \
-            gksudo sh /usr/local/bin/rightbutton_emulate.sh >/dev/null) &
+        # nothing to do
+        true
+    else
+        (sleep 2s && \
+            gksudo -- sh -c "sysctl ${_mrc_emutgt}=1 ${_mrc_codetgt}=126 | \
+                             logger -t macbook_rightclick") &
     fi
 }
 
