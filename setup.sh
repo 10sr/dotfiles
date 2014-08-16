@@ -292,6 +292,7 @@ set -g pane-active-border-fg $tmux_bg_color
 __EOC__
 
     _tmux_conf="$HOME"/.tmux.conf
+    _msg "Prepare $_tmux_conf"
     if test -f "$_tmux_conf"
     then
         _warn "Tmux config file found. Skipping"
