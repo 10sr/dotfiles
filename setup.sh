@@ -2,9 +2,7 @@
 set -e
 
 # setup.sh --- 10sr setup script
-
-# Auther: 10sr
-# LICENSE: Unlicense: http://unlicense.org
+# 2014, 10sr. Unlicensed <http://unlicense.org>
 
 __setups="shrc_common gitconf tmux scripts darwin dirs selfupdate windirs"
 
