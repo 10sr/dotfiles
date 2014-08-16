@@ -420,7 +420,7 @@ main(){
 
     _msg Running setup_$_cmd
     setup_$_cmd "$@"
-    _msg Setup done
+    _msg Running setup_$_cmd done
 }
 
 main "$@"
