@@ -145,7 +145,7 @@ setup_dotfiles(){
         for f in $@
         do
             _msg "Prepareing $f"
-            mkdir -p "`dirname $f`"
+            mkdir -p "`dirname $DOTFILES_DIR/$f`"
             _download $_dotfiles_url_base/$f "$DOTFILES_DIR"/$f
         done
     fi
