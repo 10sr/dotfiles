@@ -290,6 +290,14 @@ set -g mode-bg $tmux_bg_color
 set -g mode-fg $tmux_fg_color
 set -g pane-active-border-fg $tmux_bg_color
 __EOC__
+
+    _tmux_conf="$HOME"/.tmux.conf
+    if test -f "$_tmux_conf"
+    then
+        _warn "Tmux config file found. Skipping"
+    else
+        echo "source \"$DOTFILES_DIR/tmux.conf\"" >>"$_tmux_conf"
+    fi
 }
 
 ##############################
