@@ -86,6 +86,14 @@ _xsslock(){
     (sleep 3s && xss-lock -- xscreensaver-command -lock) &
 }
 
+_mac_rightclick(){
+    if ! sh /usr/local/bin/rightbutton_emulate.sh --check
+    then
+        (sleep 3s && \
+            gksudo sh /usr/local/bin/rightbutton_emulate.sh >/dev/null) &
+    fi
+}
+
 for p in $@
 do
     _$p
