@@ -4,13 +4,33 @@ set -e
 # setup.sh --- 10sr setup script
 # 2014, 10sr. Unlicensed <http://unlicense.org>
 
-__setups="shrc_common gitconf tmux scripts darwin dirs selfupdate windirs"
+__setups="shrc_common gitconf tmux scripts darwin dirs selfupdate windirs dotfiles"
 
 __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
 __dotfiles_dir_default="$HOME/10sr_dotfiles"
 
 # TODO: how to give args to command?
+
+
+#################################################################
+
+_dotfiles_url_base=https://raw.githubusercontent.com/10sr/dotfiles/master/
+
+if test -z "$DOTFILES_DIR"
+then
+    DOTFILES_DIR="$__dotfiles_dir_default"
+fi
+
+ismsys=
+iscygwin=
+iswindows=
+
+isdarwin=
+isfreebsd=
+isbsd=
+
+islinux=
 
 ###########################
 # utils
@@ -26,8 +46,6 @@ _download(){
     fi
 }
 
-
-##################################
 # Detect systems
 
 detect_systems(){
@@ -56,27 +74,43 @@ detect_systems(){
     return 0
 }
 
+################################
+# setups
+
+
 ###############################
-# selfupdate
-
-__setup_url="https://raw.github.com/10sr/dotfiles/master/setup.sh"
-
-if test -z "$DOTFILES_DIR"
-then
-    DOTFILES_DIR="$__dotfiles_dir_default"
-fi
+# setup selfupdate
 
 setup_selfupdate(){
     mkdir -p "$DOTFILES_DIR"
-    _download $__setup_url "$DOTFILES_DIR/"setup.sh
+    _download $_dotfiles_url_base/setup.sh "$DOTFILES_DIR/"setup.sh
     chmod +x "$DOTFILES_DIR"/setup.sh
 }
 
 
+##################################
+# setup dotfiles
 
-################################
-# setups
-
+setup_dotfiles(){
+    mkdir -p "$DOTFILES_DIR"
+    if test "$1" = "--git"
+    then
+        # git clone
+        if test -d "$DOTFILES_DIR"/.git
+        then
+            echo "Git repository $DOTFILES_DIR already exists"
+            echo "Skipping"
+        else
+            git clone git@github.com:10sr/dotfiles.git "$DOTFILES_DIR"
+        fi
+    else
+        for f in $@
+        do
+            mkdir -p "`dirname $f`"
+            _download $_dotfiles_url_base/$f "$DOTFILES_DIR"/$f
+        done
+    fi
+}
 
 #############################
 # setup shrc_common
@@ -315,36 +349,17 @@ main(){
 
     if test -z "$1"
     then
-        echo "Usage: ./setup.sh <setups> ..."
-        echo "setups: all $__setups"
+        echo "Usage: ./setup.sh <cmd> ..."
+        echo "Available cmds are: $__setups"
         exit 1
     fi
 
-    while test -n "$1"
-    do
+    _cmd=$1
+    shift
 
-        if test "$1" = all
-        then
-            for c in $__setups
-            do
-                set -x
-                setup_$c
-                set +x
-            done
-        fi
-
-        for c in $__setups
-        do
-            if test "$1" = "$c"
-            then
-                set -x
-                setup_$c
-                set +x
-            fi
-        done
-
-        shift
-    done
+    set -x
+    setup_$_cmd "$@"
+    set +x
 }
 
 main "$@"
