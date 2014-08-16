@@ -106,7 +106,7 @@ detect_systems(){
 
 setup_selfupdate(){
     _msg "Download latest setup.sh from 10sr repository."
-    mkdir -p "$DOTFILES_DIR"
+    mkdir -p "$DOTFILES_nDIR"
     _download $_dotfiles_url_base/setup.sh "$DOTFILES_DIR/"setup.sh
     chmod +x "$DOTFILES_DIR"/setup.sh
 }
@@ -121,13 +121,24 @@ setup_dotfiles(){
     if test "$1" = "--git"
     then
         # git clone
-        _msg "Using git"
+        _msg "Option \"--git\" has been given. Using git"
         if test -d "$DOTFILES_DIR"/.git
         then
             _warn "Git repository $DOTFILES_DIR already exists"
             _warn "Skipping"
         else
-            git clone git@github.com:10sr/dotfiles.git "$DOTFILES_DIR"
+            _msg "Checking github.com connectivity"
+            ssh git@github.com 2>/dev/null && true
+            if test $? -eq 1
+            then
+                _git_clone_url=git@github.com:10sr/dotfiles.git
+                _msg "Authentication succeeded"
+            else
+                _git_clone_url=https://github.com/10sr/dotfiles.git
+                _msg "Authentication failed"
+            fi
+            _msg "Git cloning $_git_clone_url"
+            git clone $_git_clone_url "$DOTFILES_DIR"
         fi
     else
         for f in $@
@@ -393,7 +404,6 @@ setup_env(){
 # main
 
 main(){
-
     detect_systems
 
     if test -z "$1"
