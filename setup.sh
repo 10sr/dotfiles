@@ -244,7 +244,7 @@ git checkout master && git merge --no-ff --stat --verbose -'"
     $_gc alias.o "$_git_open_branch"
     $_gc alias.c "$_git_close_branch"
 
-    $_gc alias.todo "grep -E -i 'todo:|note:|fixme:'"
+    $_gc alias.todo "grep -nH -E -i 'todo:|note:|fixme:'"
 
     #$_gc alias.wc "!git ls-files -z | xargs -0 wc"
     # $_gc push.default "simple"
