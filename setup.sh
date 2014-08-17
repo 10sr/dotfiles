@@ -125,28 +125,27 @@ setup_selfupdate(){
 setup_dotfiles(){
     _msg "Prepare latest dotfiles."
     mkdir -p "$DOTFILES_DIR"
-    if test "$1" = "--git"
+    if test -d "$DOTFILES_DIR"/.git
+    then
+        # if git repository found, always skip
+        _warn "Git repository $DOTFILES_DIR already exists"
+        _warn "Skipping"
+    elif test "$1" = "--git"
     then
         # git clone
         _msg "Option \"--git\" has been given. Using git"
-        if test -d "$DOTFILES_DIR"/.git
+        _msg "Checking github.com connectivity"
+        ssh git@github.com 2>/dev/null && true
+        if test $? -eq 1
         then
-            _warn "Git repository $DOTFILES_DIR already exists"
-            _warn "Skipping"
+            _git_clone_url=git@github.com:10sr/dotfiles.git
+            _msg "Authentication succeeded"
         else
-            _msg "Checking github.com connectivity"
-            ssh git@github.com 2>/dev/null && true
-            if test $? -eq 1
-            then
-                _git_clone_url=git@github.com:10sr/dotfiles.git
-                _msg "Authentication succeeded"
-            else
-                _git_clone_url=https://github.com/10sr/dotfiles.git
-                _msg "Authentication failed"
-            fi
-            _msg "Git cloning $_git_clone_url"
-            git clone $_git_clone_url "$DOTFILES_DIR"
+            _git_clone_url=https://github.com/10sr/dotfiles.git
+            _msg "Authentication failed"
         fi
+        _msg "Git cloning $_git_clone_url"
+        git clone $_git_clone_url "$DOTFILES_DIR"
     else
         for f in $@
         do
@@ -305,6 +304,31 @@ __EOC__
     else
         echo "source \"$DOTFILES_DIR/tmux.conf\"" >>"$_tmux_conf"
     fi
+
+    setup_dotfiles tmux.conf
+}
+
+###############################
+# setup emacs
+
+setup_emacs(){
+    _msg "Setup emacs init.el"
+    _emacs_dir="$HOME"/.emacs.d
+    mkdir -vp "$_emacs_dir"
+
+    _emacs_init_el="$_emacs_dir"/init.el
+
+    if test -f "$_emacs_init_el"
+    then
+        _warn "Emacs init.el found. Skipping"
+    else
+        cat <<__EOC__ >>"$_emacs_init_el"
+(and (file-readable-p "$DOTFILES_DIR/emacs.el")
+     (load-file "$DOTFILES_DIR/emacs.el"))
+__EOC__
+    fi
+
+    setup_dotfiles emacs.el
 }
 
 ##############################
