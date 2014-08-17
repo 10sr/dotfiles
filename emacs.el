@@ -75,15 +75,16 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                 nil
                                 "--output"
                                 path
+                                "-L"
                                 url
                                 ))
               path))))
    (ignore-errors
-        (require 'url)
-        (url-copy-file url
-                       path
-                       ok-if-already-exists)
-        path)))
+     (require 'url)
+     (url-copy-file url
+                    path
+                    ok-if-already-exists)
+     path)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
@@ -103,7 +104,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         gnuplot-mode
         erlang
         )
-)
+      )
 
 (when (require 'package nil t)
   (add-to-list 'package-archives
@@ -145,15 +146,15 @@ found, otherwise returns nil."
             ,@(mapcar (lambda (f)
                         (unless (fboundp f)
                           `(progn
-                            (message "Autoloaded function `%S' defined (%s)"
-                                     (quote ,f)
-                                     ,libpath)
-                            (autoload (quote ,f)
-                              ,libname
-                              ,(concat "Autoloaded function defined in \""
-                                       libpath
-                                       "\".")
-                              t))))
+                             (message "Autoloaded function `%S' defined (%s)"
+                                      (quote ,f)
+                                      ,libpath)
+                             (autoload (quote ,f)
+                               ,libname
+                               ,(concat "Autoloaded function defined in \""
+                                        libpath
+                                        "\".")
+                               t))))
                       (or (eval functions)
                           `(,(eval feature))))
             (eval-after-load ,feature
@@ -273,8 +274,8 @@ found, otherwise returns nil."
 (defun my-w32-add-export-path (&rest args)
   "Add pathes ARGS for windows."
   (mapc (lambda (path)
-            (add-to-list 'exec-path (expand-file-name path)))
-          (reverse args))
+          (add-to-list 'exec-path (expand-file-name path)))
+        (reverse args))
   (setenv "PATH"
           (mapconcat 'convert-standard-filename
                      exec-path
@@ -564,8 +565,8 @@ found, otherwise returns nil."
 (defun my-set-ascii-and-jp-font (list)
   "Set font configuration List."
   (let ((fspec1 (if (> emacs-major-version 22)
-                   ;; font spec is available in emacs23 and later
-                   (font-spec :family (nth 2 list) :size (nth 3 list))
+                    ;; font spec is available in emacs23 and later
+                    (font-spec :family (nth 2 list) :size (nth 3 list))
                   (cons (nth 2 list) "jisx0208.*")))
         (fspec2 (if (> emacs-major-version 22)
                     (font-spec :family (nth 2 list) :size (nth 3 list))
@@ -869,7 +870,7 @@ found, otherwise returns nil."
 (require 'session nil t)
 
 (lazy-load-eval 'sql '(sql-mode)
-    (require 'sql-indent nil t))
+  (require 'sql-indent nil t))
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                     t)
@@ -887,7 +888,7 @@ found, otherwise returns nil."
                     '("graph" . fundamental-mode))
        (add-to-list 'git-command-major-mode-alist
                     '("log" . fundamental-mode)))
-       ;; (setq git-command-default-options "-c color.ui=always")
+     ;; (setq git-command-default-options "-c color.ui=always")
      (define-key ctl-x-map "g" 'git-command))
 
 (and (fetch-library
@@ -1295,8 +1296,8 @@ found, otherwise returns nil."
                               (save-excursion
                                 (set-buffer buf)
                                 (not (memq major-mode
-                                      '(term-mode
-                                        eshell-mode))))))))
+                                           '(term-mode
+                                             eshell-mode))))))))
         ;; (setq bs-configurations (list
         ;; '("processes" nil get-buffer-process ".*" nil nil)
         ;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
@@ -1903,7 +1904,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
                                               "color.ui=always"
                                               ,@args)
                                             " "))
-        ;; (eshell-git-shell-command-to-string args)
+      ;; (eshell-git-shell-command-to-string args)
       (if (require 'git-command nil t)
           (git-command (mapconcat 'shell-quote-argument
                                   args
@@ -2286,10 +2287,10 @@ ARG is ignored."
     ("grep"
      t
      ,(concat "find . "
-             "-path '*/.git' -prune -o "
-             "-path '*/.svn' -prune -o "
-             "-type f -print0 | "
-             "xargs -0 grep -nH -e "))
+              "-path '*/.git' -prune -o "
+              "-path '*/.svn' -prune -o "
+              "-type f -print0 | "
+              "xargs -0 grep -nH -e "))
     )
   "Alist of rgrep command.
 Each element is in the form like (NAME SEXP COMMAND), where SEXP returns the
