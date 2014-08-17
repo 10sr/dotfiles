@@ -114,8 +114,8 @@ setup_selfupdate(){
         _die "Abort"
     fi
     mkdir -vp "`dirname $1`"
-    _download $_dotfiles_url_base/setup.sh "$DOTFILES_DIR/$1"
-    chmod +x "$DOTFILES_DIR/$1"
+    _download $_dotfiles_url_base/setup.sh "$1"
+    chmod +x "$1"
 }
 
 
