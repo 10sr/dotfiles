@@ -107,9 +107,15 @@ detect_systems(){
 
 setup_selfupdate(){
     _msg "Download latest setup.sh from 10sr repository."
-    mkdir -p "$DOTFILES_nDIR"
-    _download $_dotfiles_url_base/setup.sh "$DOTFILES_DIR/"setup.sh
-    chmod +x "$DOTFILES_DIR"/setup.sh
+    if test -z "$1"
+    then
+        _warn "Filename for setup script is not given"
+        echo "usage: setup.sh selfupdate <filename>"
+        _die "Abort"
+    fi
+    mkdir -vp "`dirname $1`"
+    _download $_dotfiles_url_base/setup.sh "$DOTFILES_DIR/$1"
+    chmod +x "$DOTFILES_DIR/$1"
 }
 
 
