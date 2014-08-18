@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# TODO: decide the naming scheme of variables (global, local, ...)
+
 expr "$-" : '^.*i' >/dev/null || return
 
 ##########################################
@@ -631,14 +633,14 @@ memo(){
 }
 
 now(){
-    local tformat="%Y/%m/%d %H:%M:%S %z"
+    ___tformat="%Y/%m/%d %H:%M:%S %z"
     cal
     REPLY=
-    printf "\\r`date "+${tformat}"`"
+    printf "\\r`date "+${___tformat}"`"
     read -t 1
     while test $? -ne 0
     do
-        printf "\\r`date "+${tformat}"`"
+        printf "\\r`date "+${___tformat}"`"
         read -t 1
     done
 }
@@ -788,9 +790,9 @@ dt(){
 
 scr(){
     test -n "$1" && pf="${1}-"
-    local _tformat="%Y%m%d-%H%M%S%z"
-    local _file="${HOME}/${pf}`date +${_tformat}`.script"
-    __MY_SCRIPT=${_file} script ${_file} "$@"
+    ___tformat="%Y%m%d-%H%M%S%z"
+    ___file="${HOME}/${pf}`date +${___tformat}`.script"
+    __MY_SCRIPT=${___file} script ${___file} "$@"
 }
 
 dtscr(){
@@ -801,16 +803,16 @@ dtscr(){
         return 1
     fi
 
-    local _cmdstr="`echo $@ | tr ' ' +`"
-    local _tformat="%Y%m%d-%H%M%S%z"
-    local _name="${pf}`date +${_tformat}`-${_cmdstr}"
+    ___cmdstr="`echo $@ | tr ' ' +`"
+    ___tformat="%Y%m%d-%H%M%S%z"
+    ___name="${pf}`date +${___tformat}`-${___cmdstr}"
 
-    local _scr_file="${HOME}/${_name}.script"
+    ___scr_file="${HOME}/${___name}.script"
 
-    local _dt_dir="${TMP}/dtscr"
-    mkdir -p "$_dt_dir"
+    ___dt_dir="${TMP}/dtscr"
+    mkdir -p "$___dt_dir"
 
-    dtach -n "${_dt_dir}/${_name}" script "${_scr_file_}" "$@"
+    dtach -n "${___dt_dir}/${___name}" script "${___scr_file_}" "$@"
     # echo $_name
     # echo $_file
 }
@@ -840,30 +842,30 @@ dgpg(){
         echo "dgpg: dgpg <en|de> <src-suffix> [<dst-suffix>]" 1>&2
         return
     fi
-    local srcs="$2"
-    local dsts="$3"
-    test -z "$dsts" && dsts="${srcs}.out"
-    local pw
+    ___srcs="$2"
+    ___dsts="$3"
+    test -z "$___dsts" && ___dsts="${___srcs}.out"
+    ___pw=
     echo -n "dgpg pw: "
-    read -s pw
+    read -s ___pw
     echo ""
-    test -z "$pw" && return 1
-    for f in *${srcs}
+    test -z "$___pw" && return 1
+    for f in *${___srcs}
     do
-        local d="$(basename "$f" "${srcs}")${dsts}"
-        echo -n "Processing $f to $d..."
+        ___d="$(basename "$f" "${___srcs}")${___dsts}"
+        echo -n "Processing $f to $___d..."
         if test -d "$f"
         then
             echo "`printf 'failed (%s is directory)' $f`"
-        elif test -f "$d"
+        elif test -f "$___d"
         then
-            echo "`printf 'failed (%s is already exists)' $d`"
-        elif <"$f" gpg_stream $1 $pw >"$d" 2>/dev/null
+            echo "`printf 'failed (%s is already exists)' $___d`"
+        elif <"$f" gpg_stream $1 $___pw >"$___d" 2>/dev/null
         then
             echo "done"
         else
             echo "failed"
-            test -f "$d" && rm "$d"
+            test -f "$___d" && rm "$___d"
         fi
     done
 }
@@ -906,11 +908,11 @@ bak(){
 di(){
     if type colordiff >/dev/null 2>&1 && test $TERM != dumb
     then
-        local diffcmd=colordiff
+        ___diffcmd=colordiff
     else
-        local diffcmd=diff
+        ___diffcmd=diff
     fi
-    ${diffcmd} -u "$@" | ${PAGER}
+    ${___diffcmd} -u "$@" | ${PAGER}
 }
 
 tb(){
@@ -1067,32 +1069,31 @@ __my_moc_state(){
 }
 
 __my_parse_svn_branch() {
-    local LANG=C
-    local svn_url=$(svn info 2>/dev/null | sed -ne 's#^URL: ##p')
-    local svn_repository_root=$(svn info 2>/dev/null | \
+    ___svn_url=$(LANG=C svn info 2>/dev/null | sed -ne 's#^URL: ##p')
+    ___svn_repository_root=$(LANG=C svn info 2>/dev/null | \
         sed -ne 's#^Repository Root: ##p')
-    echo ${svn_url} | sed -e 's#^'"${svn_repository_root}"'##g' | \
+    echo ${___svn_url} | sed -e 's#^'"${___svn_repository_root}"'##g' | \
         awk '{print $1}'
 }
 
 __my_svn_ps1(){
     if svn status >/dev/null 2>&1
     then
-        local svn_branch=$(__my_parse_svn_branch)
-        test -n "${svn_branch}" && printf "$1" "{$svn_branch}"
+        ___svn_branch=$(__my_parse_svn_branch)
+        test -n "${___svn_branch}" && printf "$1" "{$___svn_branch}"
     fi
 }
 
 __my_battery_status(){
-    local dir=/sys/class/power_supply/BAT0
-    if test -d $dir && test -r $dir/status && test -r $dir/charge_full && \
-        test -r $dir/charge_now
+    ___dir=/sys/class/power_supply/BAT0
+    if test -d $___dir && test -r $___dir/status && test -r $___dir/charge_full && \
+        test -r $___dir/charge_now
     then
-        local st=$(cat $dir/status)
-        local full=$(cat $dir/charge_full)
-        local now=$(cat $dir/charge_now)
-        local rate=$(expr $now \* 100 / $full)
-        printf "$1" "${st}:${rate}%"
+        ___st=$(cat $___dir/status)
+        ___full=$(cat $___dir/charge_full)
+        ___now=$(cat $___dir/charge_now)
+        ___rate=$(expr $now \* 100 / $full)
+        printf "$1" "${___st}:${___rate}%"
     fi
 }
 alias bat='__my_battery_status %s\\n'
@@ -1106,8 +1107,8 @@ __my_ps1_scale(){
 
 __my_ps1_tmux(){
     null type tmux || return $last
-    local tmuxc="$(tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
-    test -n "$TMUX" && echo "[TMUX:$tmuxc]"
+    ___tmuxc="$(tmux display -p '#S:#I:#W.#P' 2>/dev/null)"
+    test -n "$TMUX" && echo "[TMUX:$___tmuxc]"
 }
 
 __my_ps1_moc(){
@@ -1133,9 +1134,9 @@ __my_ps1_git(){
 __printf_ipaddr(){
     # ipaddress <fmt>
     type ip >/dev/null 2>&1 || return 1
-    local ip=$(LANG=C ip addr show scope global | \
+    ___ip=$(LANG=C ip addr show scope global | \
         \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
-    test -n "$ip" && printf "$1" $ip
+    test -n "$___ip" && printf "$1" $___ip
 }
 
 alias addr="__printf_ipaddr '%s
@@ -1146,13 +1147,13 @@ __my_ps1_ipaddr(){
 }
 
 __my_ps1_bttry(){
-    local bst="${TMP}/batterystatus"
+    ___bst="${TMP}/batterystatus"
     if test -z "$DISPLAY" && ! $iswindows
     then
-        test -f $bst && local bstr="$(cat $bst)"
-        test -n "$bstr" && ! echo $bstr | grep 100 >/dev/null 2>&1 && \
-            echo "[Battery:$bstr]"
-        __my_battery_status %s >$bst &
+        test -f $___bst && ___bstr="$(cat $___bst)"
+        test -n "$___bstr" && ! echo $___bstr | grep 100 >/dev/null 2>&1 && \
+            echo "[Battery:$___bstr]"
+        __my_battery_status %s >$___bst &
     fi
 }
 
