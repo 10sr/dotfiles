@@ -497,10 +497,14 @@ found, otherwise returns nil."
   (show-paren-mode 1)
   (setq show-paren-delay 0.5
         show-paren-style 'parenthesis)    ; mixed is hard to read
-  (set-face-background 'show-paren-match
-                       (face-foreground 'default))
-  (set-face-inverse-video-p 'show-paren-match
-                            t))
+  ;; (set-face-background 'show-paren-match
+  ;;                      "black")
+  ;;                      ;; (face-foreground 'default))
+  ;; (set-face-foreground 'show-paren-match
+  ;;                      "white")
+  ;; (set-face-inverse-video-p 'show-paren-match
+  ;;                           t)
+  )
 
 (transient-mark-mode 1)
 
