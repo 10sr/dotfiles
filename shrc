@@ -1113,14 +1113,6 @@ __my_battery_status(){
 }
 alias bat='__my_battery_status %s\\n'
 
-ipaddress(){
-    # ipaddress <fmt>
-    type ip >/dev/null 2>&1 || return 1
-    local ip=$(LANG=C ip addr show scope global | \
-        \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
-    test -n "$ip" && printf $1 $ip
-}
-
 __my_ps1_scale(){
     if null type stty && ! $ismsys
     then
@@ -1154,8 +1146,19 @@ __my_ps1_git(){
     __git_ps1 "[GIT:$(__safe_run git config --get user.name):%s]"
 }
 
+__printf_ipaddr(){
+    # ipaddress <fmt>
+    type ip >/dev/null 2>&1 || return 1
+    local ip=$(LANG=C ip addr show scope global | \
+        \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
+    test -n "$ip" && printf "$1" $ip
+}
+
+alias addr="__printf_ipaddr '%s
+'"
+
 __my_ps1_ipaddr(){
-    ! $iswindows && ipaddress '[Addr:%s]'
+    ! $iswindows && __printf_ipaddr '[Addr:%s]'
 }
 
 __my_ps1_bttry(){
@@ -1287,7 +1290,7 @@ fi
 
 __my_ps1_info1(){
     # first line of PS1
-    echo "${__my_ps1_sh}$(__my_ps1_scale)$(__my_ps1_git)$(__my_ps1_bttry)$(__my_ps1_ipaddr)$(__my_ps1_moc)"
+    echo "${__my_ps1_sh}$(__my_ps1_scale)$(__my_ps1_git)$(__my_ps1_bttry)$(__my_ps1_moc)"
 }
 
 test -n "$__MY_SCRIPT" && \
