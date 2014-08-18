@@ -2265,46 +2265,24 @@ Commands are searched from ALIST."
 ;;   (compilation-start command-args
 ;;                      'grep-mode))
 
-(defun my-rgrep-ack ()
-  "My recursive grep by ack."
-  (interactive)
-  (let ((my-rgrep-default "ack"))
-    (if (called-interactively-p 'any)
-        (call-interactively 'my-rgrep)
-      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
+(defmacro define-my-rgrep (name)
+  "Define rgrep for NAME."
+  `(defun ,(intern (concat "my-rgrep-"
+                           name)) ()
+     ,(format "My recursive grep by %s."
+              name)
+     (interactive)
+     (let ((my-rgrep-default ,name))
+       (if (called-interactively-p 'any)
+           (call-interactively 'my-rgrep)
+         (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
+  )
 
-(defun my-rgrep-ag ()
-  "My recursive grep by ack."
-  (interactive)
-  (let ((my-rgrep-default "ag"))
-    (if (called-interactively-p 'any)
-        (call-interactively 'my-rgrep)
-      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
-
-(defun my-rgrep-gitgrep ()
-  "My recursive grep by ack."
-  (interactive)
-  (let ((my-rgrep-default "gitgrep"))
-    (if (called-interactively-p 'any)
-        (call-interactively 'my-rgrep)
-      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
-
-(defun my-rgrep-grep ()
-  "My recursive grep by ack."
-  (interactive)
-  (let ((my-rgrep-default "grep"))
-    (if (called-interactively-p 'any)
-        (call-interactively 'my-rgrep)
-      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
-
-(defun my-rgrep-global ()
-  "My recursive grep by ack."
-  (interactive)
-  (let ((my-rgrep-default "global"))
-    (if (called-interactively-p 'any)
-        (call-interactively 'my-rgrep)
-      (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
-
+(define-my-rgrep "ack")
+(define-my-rgrep "ag")
+(define-my-rgrep "gitgrep")
+(define-my-rgrep "grep")
+(define-my-rgrep "global")
 
 (define-key ctl-x-map "s" 'my-rgrep)
 
