@@ -331,6 +331,28 @@ __EOC__
     setup_dotfiles emacs.el
 }
 
+##################################
+# setup vim
+
+setup_vim(){
+    _msg "Setup vimrc"
+    _vimrc="$HOME"/.vimrc
+
+    if test -f "$_vimrc"
+    then
+        _warn "Vim rcfile found. Skipping"
+    else
+        cat <<__EOC__ >>"$_vimrc"
+if filereadable(expand('$DOTFILES_DIR/vimrc'))
+    source $DOTFILES_DIR/vimrc
+endif
+__EOC__
+
+    fi
+
+    setup_dotfiles vimrc
+}
+
 ##############################
 # setup scripts
 
