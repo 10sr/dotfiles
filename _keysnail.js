@@ -77,7 +77,10 @@ function ignore(k, i) [k, null];
 //         ]]></>.toString()
 // );
 style.register(
-    '@-moz-document url-prefix(\"http://www.tumblr.com/\") { #pagination {' +
+    '@-moz-document ' +
+        'url-prefix(\"http://www.tumblr.com/\"), ' +
+        'url-prefix(\"https://www.tumblr.com/\") ' +
+        '{ #pagination {' +
         'position: fixed;' +
         'bottom: 50px;' +
         'right: 100px;' +
