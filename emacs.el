@@ -547,10 +547,13 @@ found, otherwise returns nil."
                            ))
   ;; (setq whitespace-newline 'font-lock-comment-face)
   (global-whitespace-mode t)
-  (when (eq (display-color-cells)
-            256)
-    (set-face-foreground 'whitespace-newline "brightblack")))
-
+  (if (eq (display-color-cells)
+          256)
+      (set-face-foreground 'whitespace-newline "brightblack")
+    ;; (progn
+    ;;   (set-face-bold-p 'whitespace-newline
+    ;;                      t))
+    ))
 (and nil
      (fetch-library
       "http://www.emacswiki.org/emacs/download/fill-column-indicator.el"
