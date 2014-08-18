@@ -1301,10 +1301,6 @@ found, otherwise returns nil."
         ;; (add-to-list 'bs-configurations
         ;; '("processes" nil get-buffer-process ".*" nil nil))
         (add-to-list 'bs-configurations
-                     '("this-frame" nil (lambda (buf)
-                                          (memq buf (my-frame-buffer-get)))
-                       ".*" nil nil))
-        (add-to-list 'bs-configurations
                      '("files-and-terminals" nil nil nil
                        (lambda (buf)
                          (and (bs-visits-non-file buf)
@@ -2108,101 +2104,6 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                          ))
                       )))
   )                          ; eval after load eshell
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; frame buffer
-;; todo: work well when opening files already opened on another window
-
-(add-hook 'after-make-frame-functions
-          (lambda (f)
-            (set-window-buffer (frame-selected-window f)
-                               "*Messages*")))
-
-(defun make-frame-command-with-name (name)
-  "Make frame with NAME specified."
-  (interactive "sName for new frame: ")
-  (set-frame-parameter (make-frame-command)
-                       'name
-                       name))
-
-(defvar my-frame-buffer-plist nil)
-
-(defun my-frame-buffer-add (&optional buf frame)
-  "Add BUF to buffer list for FRAME."
-  (setq my-frame-buffer-plist
-        (plist-put my-frame-buffer-plist
-                   (or frame
-                       (selected-frame))
-                   (let ((lst (my-frame-buffer-get frame)))
-                     (if lst
-                         (add-to-list 'lst
-                                      (or buf
-                                          (current-buffer)))
-                       (list (or buf
-                                 (current-buffer))))))))
-
-(defun my-frame-buffer-remove (&optional buf frame)
-  "Remove BUF from bufferlist for FRAME."
-  (setq my-frame-buffer-plist
-        (plist-put my-frame-buffer-plist
-                   (or frame
-                       (selected-frame))
-                   (delq (or buf
-                             (current-buffer))
-                         (my-frame-buffer-get frame)))))
-
-(defun my-frame-buffer-get (&optional frame)
-  "Get buffer list for FRAME."
-  (plist-get my-frame-buffer-plist
-             (or frame
-                 (selected-frame))))
-
-(defun my-frame-buffer-kill-all-buffer (&optional frame)
-  "Kill all buffer of FRAME."
-  (mapcar 'kill-buffer
-          (my-frame-buffer-get frame)))
-
-(add-hook 'find-file-hook
-          'my-frame-buffer-add)
-;; (add-hook 'term-mode-hook
-;;           'my-frame-buffer-add)
-(add-hook 'eshell-mode-hook
-          'my-frame-buffer-add)
-(add-hook 'Man-mode-hook
-          'my-frame-buffer-add)
-
-(add-hook 'kill-buffer-hook
-          'my-frame-buffer-remove)
-(add-hook 'delete-frame-functions
-          'my-frame-buffer-kill-all-buffer)
-
-
-(defvar my-desktop-terminal "roxterm")
-(defun my-execute-terminal ()
-  "Invole terminal program."
-  (interactive)
-  (if (and (or (eq system-type 'windows-nt)
-               window-system)
-           my-desktop-terminal
-           )
-      (let ((process-environment (cons "TERM=xterm" process-environment)))
-        (start-process "terminal"
-                       nil
-                       my-desktop-terminal))
-    (my-term)))
-
-(defun my-delete-frame-or-kill-emacs ()
-  "Delete frame when opening multiple frame, kill Emacs when only one."
-  (interactive)
-  (if (eq 1
-          (length (frame-list)))
-      (save-buffers-kill-emacs)
-    (delete-frame)))
-
-;; (define-key my-prefix-map (kbd "C-s") 'my-execute-terminal)
-(define-key my-prefix-map (kbd "C-f") 'make-frame-command-with-name)
-(global-set-key (kbd "C-x C-c") 'my-delete-frame-or-kill-emacs)
-(define-key my-prefix-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my-term
