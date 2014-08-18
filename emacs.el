@@ -130,11 +130,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (add-to-list 'package-archives
                '("marmalade" . "http://marmalade-repo.org/packages/"))
   (package-initialize)
-  ;; (package-refresh-contents)
 
   (defun my-auto-install-package ()
     "Install packages semi-automatically."
     (interactive)
+    (package-refresh-contents)
     (mapc (lambda (pkg)
             (or (package-installed-p pkg)
                 (locate-library (symbol-name pkg))
