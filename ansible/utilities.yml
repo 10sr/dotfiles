@@ -1,7 +1,7 @@
 ---
 - hosts: all
   vars:
-    packages: [rsync, git, htop, sl]
+    packages: [rsync, git, htop, sl, atool]
   tasks:
   - name: install packages for pacman
     pacman: pkg={{ item }} state=installed
