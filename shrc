@@ -390,6 +390,8 @@ else
 fi
 # alias mytime="date +%Y%m%d-%H%M%S"
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
+
+# some extra utilities
 # type trash >/dev/null 2>&1 && alias rm=trash
 __safe_alias mpg123="mpg123 -C -v --title"
 __safe_alias xm="xmms2"
@@ -404,6 +406,9 @@ __safe_alias au=aunpack
 # __safe_alias lv="lv|less"
 __safe_alias rs="rsync --progress --itemize-changes --compress"
 __safe_alias vagr=vagrant
+
+__safe_alias ztw='twitter set "`zenity --entry --title ztw --text Status:`"'
+
 if $iscygwin
 then
     __my_wget_options=" --no-check-certificate"
