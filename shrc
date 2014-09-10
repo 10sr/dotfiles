@@ -457,25 +457,24 @@ do
 done
 
 __safe_alias pa="pacman --color=always"
+__safe_alias pa="pacmatic --color=always"
 __safe_alias pa="pacapt"
 
 __safe_alias yt=yaourt
+# variable for yaourt
+null type pacmatic && export PACMAN="pacmatic"
+
 __safe_alias cower="cower --color=auto"
-null type pacmatic && {
-    alias pacman="pacmatic"
-    # variable for yaourt
-    export PACMAN="pacmatic"
-}
 
 __my_pacman_update_mirrorlist_with_reflector(){
-    ml=/etc/pacman.d/mirrorlist
-    cmd="$(expr "$(grep -m 1 reflector $ml)" : '# With: *\(.*\)')"
+    f=/etc/pacman.d/mirrorlist
+    cmd="$(expr "$(grep -m 1 reflector $f)" : '# With: *\(.*\)')"
     if test -z "$cmd"
     then
-        cmd="reflector --verbose --country Japan --latest 5 --sort rate --save $ml"
+        cmd="reflector --verbose --number 5 --sort rate --protocol http --protocol https --save $f"
     fi
     echo ">>> $cmd ..." 1>&2
-    sudo sh -c "$cmd"
+    sudo sh -c "$cmd" && cat $f
 }
 null type reflector && test -d /etc/pacman.d && \
     alias reflect_mirrorlist=__my_pacman_update_mirrorlist_with_reflector
