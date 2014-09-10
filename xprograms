@@ -86,6 +86,10 @@ _xsslock(){
     (sleep 3s && xss-lock -- xscreensaver-command -lock) &
 }
 
+_tomboy(){
+    (sleep 3s && tomboy) &
+}
+
 _macbook_rightclick(){
     _mrc_emutgt=dev.mac_hid.mouse_button_emulation
     _mrc_codetgt=dev.mac_hid.mouse_button3_keycode
