@@ -161,14 +161,15 @@ local["^https?://(www\.|cloud\.|)feedly\.com/"] = [
     // ['x', function(ev, arg){
     //     ev.target.dispatchEvent(key.stringToKeyEvent("g", true));
     // }],
-    ['l', function(ev, arg){
-        var host = window.content.location.host;
-        if (host === "cloud.feedly.com" || host === "feedly.com") {
-            window.content.location.href = "http://" + host + "/#latest";
-        } else if (host === "www.feedly.com") {
-            window.content.location.href = "http://" + host + "/home#latest";
-        }
-    }],
+    // ['l', function(ev, arg){
+    //     var host = window.content.location.host;
+    //     if (host === "cloud.feedly.com" || host === "feedly.com") {
+    //         window.content.location.href = "http://" + host + "/#latest";
+    //     } else if (host === "www.feedly.com") {
+    //         window.content.location.href = "http://" + host + "/home#latest";
+    //     }
+    // }],
+    ['a', null],
     [['t', 'p'], function(ev, arg){
         ev.target.dispatchEvent(key.stringToKeyEvent("t", true));
     }],
