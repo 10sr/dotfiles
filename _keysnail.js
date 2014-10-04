@@ -415,7 +415,6 @@ var updateInitFile = (function(){
             throw util.getLocaleString("failedToInstallFile", [aFile.leafName]) + " :: " + x;
         }
 
-        // TODO: fail when dstdir is empty
         try
         {
             // calc dir from path
@@ -433,8 +432,11 @@ var updateInitFile = (function(){
                 }
 
                 let confirmed = force ||
-                    util.confirm(util.getLocaleString("overWriteConfirmationTitle"),
-                                 util.getLocaleString("overWriteConfirmation", [destinationFile.path]));
+                    util.confirm(
+                        util.getLocaleString("overWriteConfirmationTitle"),
+                        util.getLocaleString("overWriteConfirmation",
+                                             [destinationFile.path])
+                    );
 
                 if (!confirmed) {
                     throw util.getLocaleString("canceledByUser");
@@ -447,7 +449,9 @@ var updateInitFile = (function(){
         }
         catch (x)
         {
-            throw util.getLocaleString("failedToInstallFile", [aFile.leafName]) + " :: " + x;
+            throw util.getLocaleString("failedToInstallFile",
+                                       [aFile.leafName]) +
+                " :: " + x;
         }
     }
 
@@ -462,8 +466,18 @@ var updateInitFile = (function(){
                 let file = userscript.writeTextTmp(name, req.responseText);
                 let installed = placeFile(file);
                 util.message(installed.path + " installed");
+                display.showPopup("update-init-file",
+                                  installed.path + " installed")
             } catch (x) {
-                util.message("An error occured while installing required scripts :: " + x.message);
+                util.message(
+                    "An error occured while installing required scripts :: " +
+                        x.message
+                );
+                display.showPopup(
+                    "update-init-file",
+                    "An error occured while installing required scripts :: " +
+                        x.message
+                );
             }
         });
     }
