@@ -404,6 +404,78 @@ ext.add("open-remote-init-file", function(ev, arg){
     window.openUILinkIn(URL, "tab");
 }, "Open remote initialization file");
 
+var updateInitFile = (function(){
+    const URL = "https://raw.github.com/10sr/dotfiles/master/_keysnail.js";
+
+    // content/modules/userscript.js
+    // copy file from aFile
+    function placeFile(aFile, force) {
+        var dstdir = util.getUnicharPref("extensions.keysnail.userscript.location");
+        if (dstdir === "") {
+            throw util.getLocaleString("failedToInstallFile", [aFile.leafName]) + " :: " + x;
+        }
+
+        // TODO: fail when dstdir is empty
+        try
+        {
+            // calc dir from path
+            let destinationDir  = util.openFile(dstdir);
+            let destinationFile = util.openFile(dstdir);
+
+            destinationFile.append(aFile.leafName);
+
+            if (destinationFile.exists())
+            {
+                if (util.hashFile(aFile) === util.hashFile(destinationFile))
+                {
+                    // no need to install this file
+                    return destinationFile;
+                }
+
+                let confirmed = force ||
+                    util.confirm(util.getLocaleString("overWriteConfirmationTitle"),
+                                 util.getLocaleString("overWriteConfirmation", [destinationFile.path]));
+
+                if (!confirmed) {
+                    throw util.getLocaleString("canceledByUser");
+                }
+            }
+
+            aFile.moveTo(destinationDir, "");
+
+            return destinationFile;
+        }
+        catch (x)
+        {
+            throw util.getLocaleString("failedToInstallFile", [aFile.leafName]) + " :: " + x;
+        }
+    }
+
+    function updateFile() {
+        util.httpGet(URL, false, function (req) {
+            if (req.status !== 200) {
+                util.message(req.responseText);
+            }
+
+            try {
+                let name = util.getLeafNameFromURL(URL);
+                let file = userscript.writeTextTmp(name, req.responseText);
+                let installed = placeFile(file);
+                util.message(installed.path + " installed");
+            } catch (x) {
+                util.message("An error occured while installing required scripts :: " + x.message);
+            }
+        });
+    }
+
+    return {
+        updateFile: updateFile
+    };
+
+})();
+
+ext.add("update-init-file", updateInitFile.updateFile, "update init file");
+
 var importExportBookmarks = (function(){
     function getOrganizer(){
         // [How to call for Firefox bookmark dialog? - Stack Overflow]
