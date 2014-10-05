@@ -77,29 +77,44 @@ If FORCE-DOWNLOAD-P it t ignore exisiting library and always download."
 (defun download-file (url path &optional ok-if-already-exists)
   "Download file from URL and output to PATH.
 IF OK-IF-ALREADY-EXISTS is true force download."
-  (or
-   (let ((curl (executable-find "curl")))
-     (when curl
-       (if (and (not ok-if-already-exists)
-                (file-exists-p path))
-           nil
-         (and (eq 0
-                  (call-process curl
-                                nil
-                                nil
-                                nil
-                                "--output"
-                                path
-                                "-L"
-                                url
-                                ))
-              path))))
-   (ignore-errors
-     (require 'url)
-     (url-copy-file url
-                    path
-                    ok-if-already-exists)
-     path)))
+  (let ((curl (executable-find "curl"))
+        (wget (executable-find "wget")))
+    (cond (wget
+           (if (and (not of-if-already-exists)
+                    (file-exists-p path))
+               nil
+             (and (eq 0
+                      (call-process curl
+                                    nil
+                                    nil
+                                    nil
+                                    "-O"
+                                    path
+                                    url
+                                    ))
+                  path)))
+          (curl
+           (if (and (not ok-if-already-exists)
+                    (file-exists-p path))
+               nil
+             (and (eq 0
+                      (call-process curl
+                                    nil
+                                    nil
+                                    nil
+                                    "--output"
+                                    path
+                                    "-L"
+                                    url
+                                    ))
+                  path)))
+          (t
+           (ignore-errors
+             (require 'url)
+             (url-copy-file url
+                            path
+                            ok-if-already-exists)
+             path)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
