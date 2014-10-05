@@ -67,7 +67,11 @@ If FORCE-DOWNLOAD-P it t ignore exisiting library and always download."
                               (require 'bytecomp nil t))
                      (and (file-exists-p (byte-compile-dest-file lpath))
                           (delete-file (byte-compile-dest-file lpath)))
-                     (byte-compile-file lpath)))
+                     (message "Byte-compiling %s..."
+                              lpath)
+                     (byte-compile-file lpath)
+                     (message "Byte-compiling %s...done"
+                              lpath)))
           (progn (and (file-writable-p lpath)
                       (delete-file lpath))
                  (message "Downloading %s...failed"
