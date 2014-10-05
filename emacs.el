@@ -928,7 +928,11 @@ found, otherwise returns nil."
        (add-to-list 'git-command-major-mode-alist
                     '("graph" . fundamental-mode))
        (add-to-list 'git-command-major-mode-alist
-                    '("log" . fundamental-mode)))
+                    '("log" . fundamental-mode))
+       (or git-command-prompt-file
+           (setq git-command-prompt-file
+                 (git-command-find-git-ps1
+                  "/usr/share/git-core/contrib/completion/git-prompt.sh"))))
      ;; (setq git-command-default-options "-c color.ui=always")
      (define-key ctl-x-map "g" 'git-command))
 
