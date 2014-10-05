@@ -2,6 +2,7 @@ BoldAsFont=yes
 Transparency=medium
 CursorType=block
 Font=DejaVu Sans Mono
+#Font=Source Code Pro Light
 FontHeight=12
 Locale=ja_JP
 Charset=UTF-8
