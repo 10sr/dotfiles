@@ -1120,6 +1120,7 @@ __my_ps1_moc(){
 }
 
 for f in /usr/share/git/git-prompt.sh \
+    /usr/share/git-core/contrib/completion/git-prompt.sh \
     /usr/local/share/git-core/contrib/completion/git-prompt.sh \
     /etc/bash_completion.d/git-prompt \
     /opt/local/share/git-core/git-prompt.sh \
