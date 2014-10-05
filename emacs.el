@@ -80,11 +80,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (let ((curl (executable-find "curl"))
         (wget (executable-find "wget")))
     (cond (wget
-           (if (and (not of-if-already-exists)
+           (if (and (not ok-if-already-exists)
                     (file-exists-p path))
                nil
              (and (eq 0
-                      (call-process curl
+                      (call-process wget
                                     nil
                                     nil
                                     nil
