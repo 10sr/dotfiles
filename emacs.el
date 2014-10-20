@@ -1122,6 +1122,9 @@ found, otherwise returns nil."
               ;;           t)
               )))
 
+(add-to-list 'interpreter-mode-alist
+             '("node" . js-mode))
+
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 (when (lazy-load-eval 'flymake-jslint
