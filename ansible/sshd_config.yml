@@ -47,6 +47,11 @@
                 regexp="^(#)?UseDNS"
                 line="UseDNS no"
     notify: restart sshd
+  - name: UsePAM no
+    lineinfile: dest={{conf}}
+                regexp="^(#)?UsePAM"
+                line="UsePAM no"
+    notify: restart sshd
 
   handlers:
   - name: restart sshd
