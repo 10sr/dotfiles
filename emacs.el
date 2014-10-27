@@ -132,8 +132,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         ;; ack
         color-moccur
         gtags
-        flymake-jslint
-        flymake-python-pyflakes
+        flycheck
+        ;; is flymake installs are required?
+        ;;flymake-jshint
+        ;;flymake-python-pyflakes
         xclip
         gnuplot-mode
         erlang
