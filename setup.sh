@@ -215,7 +215,7 @@ setup_gitconf(){
         $_gc tar.txz.command "xz -c"
     $_gc push.default current
 
-    $_gc alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --all --date=iso -n 499"
+    $_gc alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --date=iso -n 499"
     $_gc alias.st "status -s -b"
     $_gc alias.b "branch"
     $_gc alias.sb "show-branch"
