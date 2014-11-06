@@ -379,6 +379,8 @@ setup_scripts(){
         https://gist.github.com/10sr/6852331/raw/256colors2.pl 256colors2.pl
     _fetch_script \
         https://github.com/icy/pacapt/raw/ng/pacapt pacapt
+    _fetch_script \
+        http://beyondgrep.com/ack-2.12-single-file ack-2.12
 }
 
 ################################
