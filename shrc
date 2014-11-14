@@ -732,6 +732,7 @@ __realpath(){
     fi
 }
 
+__safe_alias tmux='env -u SHLVL tmux'
 tx(){
     tmux start-server
     if test -z "$1"
