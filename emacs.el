@@ -1108,6 +1108,7 @@ found, otherwise returns nil."
        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
        t)
   (lazy-load-eval 'js2-mode)
+  ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
   (add-hook 'js2-mode-hook
@@ -1124,10 +1125,11 @@ found, otherwise returns nil."
               ;;           t)
               )))
 
+(eval-after-load "js"
+  (setq js-indent-level 2))
+
 (add-to-list 'interpreter-mode-alist
              '("node" . js-mode))
-
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 (when (lazy-load-eval 'flymake-jslint
           '(flymake-jslint-load))
@@ -1136,6 +1138,8 @@ found, otherwise returns nil."
               'flymake-jslint-load)))
 
 (require 'js-doc nil t)
+
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 (when (require 'uniquify nil t)
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
