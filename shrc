@@ -637,7 +637,7 @@ memo(){
     else
         _memo="$1/memo.txt"
     fi
-        $EDITOR "$_memo"
+    $EDITOR "$_memo"
     if test -z "`cat "$_memo"`"
     then
         echo "$_memo is empty. Removing."
@@ -732,6 +732,7 @@ __realpath(){
     fi
 }
 
+__safe_alias tmux='env -u SHLVL tmux'
 tx(){
     tmux start-server
     if test -z "$1"
@@ -1193,6 +1194,15 @@ __my_ps1_jobs(){
     fi
 }
 
+__my_ps1_dollar(){
+    if test -z "$SHLVL"
+    then
+        printf "$1"
+    else
+        perl -e 'while($ARGV[0]-- > 0){print "$ARGV[1]";}' $SHLVL "$1"
+    fi
+}
+
 __my_alert_fail(){
     test $laststatus -eq 0 || \
         echo "STATUS:${laststatus}"
@@ -1322,13 +1332,13 @@ if $inzsh
 then
     PROMPT="\
 ${__my_ps1_beg}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info1)
-${__my_ps1_beg}\$(__my_ps1_info2) %# "
+${__my_ps1_beg}\$(__my_ps1_info2) $(__my_ps1_dollar %#) "
     RPROMPT="%D{%Y/%m/%d %H:%M}"
 elif $inbash
 then
     PS1="\
 ${__my_ps1_beg}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info1)\n\
-${__my_ps1_beg}\D{%Y/%m/%d %H:%M} \$(__my_ps1_info2)${__my_ps1_right} \$ "
+${__my_ps1_beg}\D{%Y/%m/%d %H:%M} \$(__my_ps1_info2)${__my_ps1_right} $(__my_ps1_dollar \\$) "
 else
     true
     # PS1="$(printf $(whoami)@$(hostname)$ )"
