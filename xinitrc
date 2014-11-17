@@ -9,14 +9,16 @@ case "$TERM" in
     xterm*) return;;
 esac
 
+unset SHLVL
 unset TMUX
 
+# -model set must come before -option
 setxkbmap -layout "jp"
 # use localectl list-x11-keymap-models to get list of available models
 test "`hostname`" = "arch-aspireone" && \
-    setxkbmap -model "acer_laptop" -layout "jp" # this line must comes first
+    setxkbmap -model "acer_laptop" -layout "jp"
 test "`hostname`" = "arch-mba" && \
-    setxkbmap -model "apple_laptop" -layout "jp" # this line must comes first
+    setxkbmap -model "apple_laptop" -layout "jp"
 
 setxkbmap -option "ctrl:nocaps,ctrl:menu_rctrl"
 # use `xev` to get keycode
