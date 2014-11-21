@@ -351,6 +351,7 @@ alias rm="rm -v"
 alias mkdir="mkdir -v"
 alias rmdir="rmdir -v"
 alias psaux="ps auxww"
+alias modest="ionice -c 2 -n 7 nice -n 19"
 alias q=exit
 __safe_alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
