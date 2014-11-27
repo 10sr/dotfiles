@@ -1157,8 +1157,7 @@ __printf_ipaddr(){
     test -n "$___ip" && printf "$1" $___ip
 }
 
-alias addr="__printf_ipaddr '%s
-'"
+alias addr="__printf_ipaddr '%s'"
 
 __my_ps1_ipaddr(){
     ! $iswindows && __printf_ipaddr '[Addr:%s]'
