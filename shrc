@@ -25,6 +25,8 @@ __match(){
     expr "$1" : ".*$2.*" >/dev/null
 }
 
+__ln=$'\n'
+__cr=$'\r'
 
 #################################
 # profile-like setups
