@@ -538,7 +538,7 @@ g(){
     then
         git info
     else
-        git -c color.ui=always "$@"
+        git "$@"
     fi
 }
 if null type _git && $inbash
