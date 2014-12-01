@@ -2223,7 +2223,7 @@ ARG is ignored."
     ;; ack
     ("ack"
      (executable-find "ack")
-     "ack --nocolor --nogroup --nopager --with-filename")
+     "ack --nocolor --nogroup --nopager --with-filename ")
 
     ;; gnu global
     ("global"
