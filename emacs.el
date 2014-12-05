@@ -884,6 +884,13 @@ found, otherwise returns nil."
      (lazy-load-eval 'window-organizer)
      (define-key ctl-x-map (kbd "w") 'window-organizer))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; server
+
+(lazy-load-eval 'server nil
+  (setq server-name (concat "server"
+                            (number-to-string (emacs-pid)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
