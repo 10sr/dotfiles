@@ -931,6 +931,10 @@ found, otherwise returns nil."
                     '("graph" . fundamental-mode))
        (add-to-list 'git-command-major-mode-alist
                     '("log" . fundamental-mode))
+       (when (boundp 'git-command-view-command-list)
+         (setq git-command-view-command-list
+               `("log" "graph" ,@git-command-view-command-list))
+         )
        (or git-command-prompt-file
            (setq git-command-prompt-file
                  (git-command-find-git-ps1
