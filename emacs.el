@@ -925,16 +925,28 @@ found, otherwise returns nil."
       t)
      (lazy-load-eval 'git-command
          nil
-       (add-to-list 'git-command-major-mode-alist
-                    '("di" . diff-mode))
-       (add-to-list 'git-command-major-mode-alist
-                    '("graph" . fundamental-mode))
-       (add-to-list 'git-command-major-mode-alist
-                    '("log" . fundamental-mode))
+
+       ;; for git-command old version
+       (when (boundp 'git-command-major-mode-alist)
+         (add-to-list 'git-command-major-mode-alist
+                      '("di" . diff-mode))
+         (add-to-list 'git-command-major-mode-alist
+                      '("graph" . fundamental-mode))
+         (add-to-list 'git-command-major-mode-alist
+                      '("log" . fundamental-mode)))
+
+       ;; for git-command new version
        (when (boundp 'git-command-view-command-list)
          (setq git-command-view-command-list
                `("log" "graph" ,@git-command-view-command-list))
          )
+       (when (boundp 'git-command-aliases-alist)
+         ;; (message "new version of git-command!")
+         (add-to-list 'git-command-aliases-alist
+                      '("di" . (lambda (options cmd args)
+                                 (git-command-exec options
+                                                   "diff"
+                                                   args)))))
        (or git-command-prompt-file
            (setq git-command-prompt-file
                  (git-command-find-git-ps1
