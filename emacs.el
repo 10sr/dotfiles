@@ -27,12 +27,12 @@
   "Prepare ~/.emacs/init.el to load ELFILE."
   (interactive "fFilename to set to be loaded: ")
   (with-temp-buffer
-      (insert (format "(and (file-readable-p \"%s\")
+    (insert (format "(and (file-readable-p \"%s\")
      (load-file \"%s\"))"
-                      elfile
-                      elfile))
-      (write-file (expand-file-name (concat user-emacs-directory
-                                            "init.el")))))
+                    elfile
+                    elfile))
+    (write-file (expand-file-name (concat user-emacs-directory
+                                          "init.el")))))
 
 
 ;; (add-hook 'after-change-major-mode-hook
@@ -970,8 +970,8 @@ found, otherwise returns nil."
                                        (git-command-construct-commandline
                                         options
                                         "status"
-                                        `("-s" "-b" ,@args))))))))
-         (setq git-command-use-emacsclient t)
+                                        `("-s" "-b" ,@args)))))))))
+       (setq git-command-use-emacsclient t)
        (or git-command-prompt-file
            (setq git-command-prompt-file
                  (git-command-find-git-ps1
@@ -2062,8 +2062,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
         (eshell-send-input))))
 
   (defadvice eshell-next-matching-input-from-input
-    ;; do not cycle history
-    (around eshell-history-do-not-cycle activate)
+      ;; do not cycle history
+      (around eshell-history-do-not-cycle activate)
     (if (= 0
            (or eshell-history-index
                0))
