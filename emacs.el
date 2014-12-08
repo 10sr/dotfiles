@@ -938,7 +938,8 @@ found, otherwise returns nil."
       t)
      (lazy-load-eval 'git-command
          nil
-       ;; old git-command
+
+       ;; for git-command old version
        (when (boundp 'git-command-major-mode-alist)
          (add-to-list 'git-command-major-mode-alist
                       '("di" . diff-mode))
@@ -947,11 +948,12 @@ found, otherwise returns nil."
          (add-to-list 'git-command-major-mode-alist
                       '("log" . fundamental-mode)))
 
-       ;; new git-command
+       ;; for git-command new version
        (when (boundp 'git-command-view-command-list)
          (add-to-list 'git-command-view-command-list
                       "graph"))
        (when (boundp 'git-command-aliases-alist)
+         ;; (message "new version of git-command!")
          (add-to-list 'git-command-aliases-alist
                       '("di" . (lambda (options cmd args)
                                  (git-command-exec options
