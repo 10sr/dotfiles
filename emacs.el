@@ -139,6 +139,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         xclip
         gnuplot-mode
         erlang
+        git-commit-mode
         )
       )
 
