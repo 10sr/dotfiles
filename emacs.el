@@ -960,17 +960,7 @@ found, otherwise returns nil."
                       '("di" . (lambda (options cmd args)
                                  (git-command-exec options
                                                    "diff"
-                                                   args))))
-         (add-to-list
-          'git-command-aliases-alist
-          '("st" . (lambda (options cmd args)
-                     (message "%s"
-                              (shell-command-to-string
-                               (concat "git "
-                                       (git-command-construct-commandline
-                                        options
-                                        "status"
-                                        `("-s" "-b" ,@args)))))))))
+                                                   args)))))
        (setq git-command-use-emacsclient t)
        (or git-command-prompt-file
            (setq git-command-prompt-file
