@@ -959,6 +959,7 @@ found, otherwise returns nil."
                                  (git-command-exec options
                                                    "diff"
                                                    args)))))
+       (setq git-command-use-emacsclient t)
        (or git-command-prompt-file
            (setq git-command-prompt-file
                  (git-command-find-git-ps1
