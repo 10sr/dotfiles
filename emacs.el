@@ -244,6 +244,12 @@ found, otherwise returns nil."
           ;; load init file when terminating emacs to ensure file is not broken
           'reload-init-file)
 
+(defun my-force-kill-emacs ()
+  "My force kill emacs."
+  (interactive)
+  (let ((kill-emacs-hook nil))
+    (kill-emacs)))
+
 (add-hook 'after-init-hook
           (lambda ()
             (message "%s %s" invocation-name emacs-version)
@@ -932,12 +938,14 @@ found, otherwise returns nil."
       t)
      (lazy-load-eval 'git-command
          nil
-       (add-to-list 'git-command-major-mode-alist
-                    '("di" . diff-mode))
-       (add-to-list 'git-command-major-mode-alist
-                    '("graph" . fundamental-mode))
-       (add-to-list 'git-command-major-mode-alist
-                    '("log" . fundamental-mode))
+       (if (boundp 'git-command-major-mode-alist)
+           (progn
+             (add-to-list 'git-command-major-mode-alist
+                          '("di" . diff-mode))
+             (add-to-list 'git-command-major-mode-alist
+                          '("graph" . fundamental-mode))
+             (add-to-list 'git-command-major-mode-alist
+                          '("log" . fundamental-mode))))
        (or git-command-prompt-file
            (setq git-command-prompt-file
                  (git-command-find-git-ps1
@@ -969,11 +977,11 @@ found, otherwise returns nil."
 (setq diff-switches "-u")
 (add-hook 'diff-mode-hook
           (lambda ()
-            (when (and (eq major-mode
-                           'diff-mode)
-                       (not buffer-file-name))
-              ;; do not pass when major-mode is derived mode of diff-mode
-              (view-mode 1))
+            ;; (when (and (eq major-mode
+            ;;                'diff-mode)
+            ;;            (not buffer-file-name))
+            ;;   ;; do not pass when major-mode is derived mode of diff-mode
+            ;;   (view-mode 1))
             (set-face-attribute 'diff-header nil
                                 :foreground nil
                                 :background nil
