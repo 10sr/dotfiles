@@ -942,6 +942,7 @@ found, otherwise returns nil."
 
        ;; for git-command old version
        (when (boundp 'git-command-major-mode-alist)
+         (message "You are using old git-command !  Update it !!!")
          (add-to-list 'git-command-major-mode-alist
                       '("di" . diff-mode))
          (add-to-list 'git-command-major-mode-alist
@@ -959,8 +960,18 @@ found, otherwise returns nil."
                       '("di" . (lambda (options cmd args)
                                  (git-command-exec options
                                                    "diff"
-                                                   args)))))
-       (setq git-command-use-emacsclient t)
+                                                   args))))
+         (add-to-list
+          'git-command-aliases-alist
+          '("st" . (lambda (options cmd args)
+                     (message "%s"
+                              (shell-command-to-string
+                               (concat "git "
+                                       (git-command-construct-commandline
+                                        options
+                                        "status"
+                                        `("-s" "-b" ,@args))))))))
+         (setq git-command-use-emacsclient t)
        (or git-command-prompt-file
            (setq git-command-prompt-file
                  (git-command-find-git-ps1
