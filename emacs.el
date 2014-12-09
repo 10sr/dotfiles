@@ -2214,6 +2214,48 @@ ARG is ignored."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; x open
 
+(defvar my-filer nil)
+(setq my-filer (or (executable-find "pcmanfm")
+                   (executable-find "nautilus")))
+(defun my-x-open (file)
+  "open FILE."
+  (interactive "FOpen File: ")
+  (setq file (expand-file-name file))
+  (message "Opening %s..." file)
+  (cond ((eq system-type 'windows-nt)
+         (call-process "cmd.exe" nil 0 nil
+                       "/c" "start" "" (convert-standard-filename file)))
+        ((eq system-type 'darwin)
+         (call-process "open" nil 0 nil file))
+        ((getenv "DISPLAY")
+         (call-process (or my-filer "xdg-open") nil 0 nil file))
+        (t
+         (find-file file))
+        )
+  ;; (recentf-add-file file)
+  (message "Opening %s...done" file))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; misc funcs
+
+(defun my-git-apply-index-from-buffer (&optional buf)
+  "Git apply buffer.  BUF is buffer to apply.  nil to use current buffer."
+  (interactive)
+  (let ((buf (or buf
+                 (current-buffer)))
+        (file (make-temp-file "git-apply-diff.emacs")))
+    (with-current-buffer buf
+      (write-region (point-min)
+                    (point-max)
+                    file)
+      (call-process "git"
+                    nil
+                    nil
+                    nil
+                    "apply"
+                    "--cached"
+                    file))))
+
 (defvar term-shell-command-history nil
   "History for term-shell-command.")
 (defun my-term-shell-command (command &optional buffer-or-name)
@@ -2266,30 +2308,6 @@ COMMAND."
                                     (goto-char (point-max)))))
         ;; (goto-char (point-max))
         ))))
-
-(defvar my-filer nil)
-(setq my-filer (or (executable-find "pcmanfm")
-                   (executable-find "nautilus")))
-(defun my-x-open (file)
-  "open FILE."
-  (interactive "FOpen File: ")
-  (setq file (expand-file-name file))
-  (message "Opening %s..." file)
-  (cond ((eq system-type 'windows-nt)
-         (call-process "cmd.exe" nil 0 nil
-                       "/c" "start" "" (convert-standard-filename file)))
-        ((eq system-type 'darwin)
-         (call-process "open" nil 0 nil file))
-        ((getenv "DISPLAY")
-         (call-process (or my-filer "xdg-open") nil 0 nil file))
-        (t
-         (find-file file))
-        )
-  ;; (recentf-add-file file)
-  (message "Opening %s...done" file))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; misc funcs
 
 (defun memo (&optional dir)
   "Open memo.txt in DIR."
