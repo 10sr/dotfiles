@@ -953,7 +953,9 @@ found, otherwise returns nil."
        ;; for git-command new version
        (when (boundp 'git-command-view-command-list)
          (add-to-list 'git-command-view-command-list
-                      "graph"))
+                      "graph")
+         (add-to-list 'git-command-view-command-list
+                      "help"))
        (when (boundp 'git-command-aliases-alist)
          ;; (message "new version of git-command!")
          (add-to-list 'git-command-aliases-alist
