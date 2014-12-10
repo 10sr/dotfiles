@@ -953,7 +953,9 @@ found, otherwise returns nil."
        ;; for git-command new version
        (when (boundp 'git-command-view-command-list)
          (add-to-list 'git-command-view-command-list
-                      "graph"))
+                      "graph")
+         (add-to-list 'git-command-view-command-list
+                      "help"))
        (when (boundp 'git-command-aliases-alist)
          ;; (message "new version of git-command!")
          (add-to-list 'git-command-aliases-alist
@@ -2245,6 +2247,77 @@ ARG is ignored."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
+
+(defun my-git-apply-index-from-buffer (&optional buf)
+  "Git apply buffer.  BUF is buffer to apply.  nil to use current buffer."
+  (interactive)
+  (let ((buf (or buf
+                 (current-buffer)))
+        (file (make-temp-file "git-apply-diff.emacs")))
+    (with-current-buffer buf
+      (write-region (point-min)
+                    (point-max)
+                    file)
+      (call-process "git"
+                    nil
+                    nil
+                    nil
+                    "apply"
+                    "--cached"
+                    file))))
+
+(defvar term-shell-command-history nil
+  "History for term-shell-command.")
+(defun my-term-shell-command (command &optional buffer-or-name)
+  "Run COMMAND in terminal emulator.
+If BUFFER-OR-NAME is given, use this buffer.  In this case, old process in the
+buffer is destroyed.  Otherwise, new buffer is generated automatically from
+COMMAND."
+  (interactive (list (read-shell-command "Run program: "
+                                         nil
+                                         'term-shell-command-history)))
+  (let* ((name (car (split-string command
+                                  " ")))
+         (buf (if buffer-or-name
+                  (get-buffer-create buffer-or-name)
+                (generate-new-buffer (concat "*"
+                                             name
+                                             "*"))))
+         (proc (get-buffer-process buf))
+         (dir default-directory))
+    (and proc
+         (delete-process proc))
+    (display-buffer buf)
+    (with-current-buffer buf
+      (cd dir)
+      (set (make-local-variable 'term-scroll-to-bottom-on-output)
+           t)
+      (let ((inhibit-read-only t))
+        (goto-char (point-max))
+        (insert "\n")
+        (insert "Start executing "
+                command)
+        (add-text-properties (point-at-bol)
+                             (point-at-eol)
+                             '(face bold))
+        (insert "\n\n"))
+      (require 'term)
+      (term-mode)
+      (term-exec buf
+                 (concat "term-" name)
+                 shell-file-name
+                 nil
+                 (list shell-command-switch
+                       command))
+      (term-char-mode)
+      (if (ignore-errors (get-buffer-process buf))
+          (set-process-sentinel (get-buffer-process buf)
+                                (lambda (proc change)
+                                  (with-current-buffer (process-buffer proc)
+                                    (term-sentinel proc change)
+                                    (goto-char (point-max)))))
+        ;; (goto-char (point-max))
+        ))))
 
 (defun memo (&optional dir)
   "Open memo.txt in DIR."
