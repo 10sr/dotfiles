@@ -960,7 +960,17 @@ found, otherwise returns nil."
                       '("di" . (lambda (options cmd args)
                                  (git-command-exec options
                                                    "diff"
-                                                   args)))))
+                                                   args))))
+         (add-to-list 'git-command-aliases-alist
+                      '("grep" . (lambda (options cmd args)
+                                   (my-rgrep
+                                    (concat
+                                     "git "
+                                     (git-command-construct-commandline
+                                      `(,@options "--no-pager"
+                                                  "-c" "color.grep=false")
+                                      cmd
+                                      `("-nHe" ,@args))))))))
        (setq git-command-use-emacsclient t)
        (or git-command-prompt-file
            (setq git-command-prompt-file
@@ -2310,8 +2320,6 @@ Commands are searched from ALIST."
     ;; if alist is not given set default value
     (my-rgrep-grep-command name my-rgrep-alist)))
 
-(my-rgrep-grep-command "ag" nil)
-
 (defun my-rgrep (command-args)
   "My recursive grep.  Run COMMAND-ARGS."
   (interactive (let ((cmd (my-rgrep-grep-command my-rgrep-default
@@ -2324,6 +2332,8 @@ Commands are searched from ALIST."
                    )))
   (compilation-start command-args
                      'grep-mode))
+
+(my-rgrep "git --no-pager grep -nH emacs emacs.el")
 
 ;; (defun my-rgrep-symbol-at-point (command-args)
 ;;   "My recursive grep. Run COMMAND-ARGS."
