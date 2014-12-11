@@ -1898,6 +1898,14 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 
 (lazy-load-eval 'eshell nil
 
+  (setq eshell-banner-message (format "Welcome to the Emacs shell
+%s
+C-x t to toggling emacs-text-mode
+
+"
+                                      (shell-command-to-string "uname -a")
+                                      ))
+
   (defvar eshell-text-mode-map
     (let ((map (make-sparse-keymap)))
       (define-key map (kbd "C-x t") 'eshell-text-mode-toggle)
