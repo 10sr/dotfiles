@@ -501,6 +501,9 @@ found, otherwise returns nil."
 
 (define-key minibuffer-local-map (kbd "C-u")
   (lambda () (interactive) (delete-region (point-at-bol) (point))))
+;; I dont know these bindings are good
+(define-key minibuffer-local-map (kbd "C-p") (kbd "ESC p"))
+(define-key minibuffer-local-map (kbd "C-n") (kbd "ESC n"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
