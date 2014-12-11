@@ -905,28 +905,28 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
-(lazy-load-eval 'dirtree nil
-  (defun my-dirtree-current-line-directory-p ()
-    "Return nil if element on current line is not a directory."
-    (file-directory-p (widget-get (tree-mode-button-current-line)
-                                  :file)))
+(when (lazy-load-eval 'dirtree nil
+        (defun my-dirtree-current-line-directory-p ()
+          "Return nil if element on current line is not a directory."
+          (file-directory-p (widget-get (tree-mode-button-current-line)
+                                        :file)))
 
-  ;; This fix is actually a little strange.  Strictly speaking
-  ;; judging tree should be done by whether the widget is a tree one.
-  (defun my-dirtree-next-node (arg)
-    "Fix the problem that `tree-mode-next-node' moves cursor 2 lines."
-    (interactive "p")
-    (if (my-dirtree-current-line-directory-p)
-        (widget-forward (* arg 2))
-      (widget-forward arg)))
-  (defun my-dirtree-previous-node (arg)
-    "Fix the problem that `tree-mode-previous-node' moves cursor 2 lines."
-    (interactive "p")
-    (my-dirtree-next-node (- arg)))
+        ;; This fix is actually a little strange.  Strictly speaking
+        ;; judging tree should be done by whether the widget is a tree one.
+        (defun my-dirtree-next-node (arg)
+          "Fix the problem that `tree-mode-next-node' moves cursor 2 lines."
+          (interactive "p")
+          (if (my-dirtree-current-line-directory-p)
+              (widget-forward (* arg 2))
+            (widget-forward arg)))
+        (defun my-dirtree-previous-node (arg)
+          "Fix the problem that `tree-mode-previous-node' moves cursor 2 lines."
+          (interactive "p")
+          (my-dirtree-next-node (- arg)))
 
-  (define-key dirtree-mode-map "n" 'my-dirtree-next-node)
-  (define-key dirtree-mode-map "p" 'my-dirtree-previous-node)
-  )
+        (define-key dirtree-mode-map "n" 'my-dirtree-next-node)
+        (define-key dirtree-mode-map "p" 'my-dirtree-previous-node))
+  (define-key ctl-x-map "d" 'dirtree))
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/remember-major-modes-mode.el"
