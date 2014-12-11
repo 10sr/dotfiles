@@ -2414,8 +2414,6 @@ Commands are searched from ALIST."
   (compilation-start command-args
                      'grep-mode))
 
-(my-rgrep "git --no-pager grep -nH emacs emacs.el")
-
 ;; (defun my-rgrep-symbol-at-point (command-args)
 ;;   "My recursive grep. Run COMMAND-ARGS."
 ;;   (interactive (list (read-shell-command "grep command: "
