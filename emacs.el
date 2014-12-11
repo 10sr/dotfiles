@@ -140,6 +140,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         gnuplot-mode
         erlang
         git-commit-mode
+        dirtree
         )
       )
 
@@ -900,6 +901,8 @@ found, otherwise returns nil."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
+
+(lazy-load-eval 'dirtree)
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/remember-major-modes-mode.el"
