@@ -1914,9 +1914,11 @@ Optional prefix ARG says how many lines to unflag; default is one line."
     (cond ((eq major-mode
                'eshell-text-mode)
            (goto-char (point-max))
+           (message "Eshell text mode disabled")
            (eshell-mode))
           ((eq major-mode
                'eshell-mode)
+           (message "Eshell text mode enabled")
            (eshell-text-mode))
           (t
            (message "Not in eshell buffer")
