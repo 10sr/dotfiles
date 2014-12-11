@@ -1033,6 +1033,12 @@ found, otherwise returns nil."
             (set-face-attribute 'diff-changed nil
                                 :foreground "magenta"
                                 :weight 'normal)
+            (set-face-attribute 'diff-refine-change nil
+                                :foreground nil
+                                :background nil
+                                :weight 'bold
+                                :inverse-video t)
+            (diff-auto-refine-mode)
             ))
 
 ;; (ffap-bindings)
