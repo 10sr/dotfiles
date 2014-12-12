@@ -2264,7 +2264,8 @@ ARG is ignored."
 ;;             (ansi-term shell-file-name)))))
 
 (setq my-term-function 'eshell)
-(define-key my-prefix-map (kbd "C-s") 'my-term)
+;;(define-key my-prefix-map (kbd "C-s") 'my-term)
+(define-key ctl-x-map "t" 'my-term)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; x open
