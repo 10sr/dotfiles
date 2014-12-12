@@ -205,17 +205,18 @@ setup_gitconf(){
 
     $_gc user.name '10sr'
     $_gc user.email '8slashes+git@gmail.com'
+
     $_gc core.autocrlf false
     $_gc core.excludesfile '~/.gitignore'
     $_gc color.ui auto
     $_gc status.relativePaths false
     $_gc status.showUntrackedFiles normal
     $_gc log.date iso
+    $_gc push.default current
     command -v xz >/dev/null && \
         $_gc tar.txz.command "xz -c"
-    $_gc push.default current
 
-    $_gc alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --date=iso -n 499"
+    $_gc alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --date=short -n 499"
     $_gc alias.st "status -s -b"
     $_gc alias.b "branch"
     $_gc alias.sb "show-branch"
