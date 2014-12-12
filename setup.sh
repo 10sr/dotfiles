@@ -225,6 +225,7 @@ setup_gitconf(){
     $_gc alias.cim "commit --verbose -m"
     $_gc alias.di "diff --color"
     $_gc alias.me "merge --no-ff --stat --verbose"
+    $_gc alias.ffme "merge --ff-only --stat --verbose"
     $_gc alias.gr "grep -n"
     $_gc alias.ls "ls-files"
     # $_gc alias.ls "ls-files -v --full-name"
