@@ -568,50 +568,11 @@ datestr(){
         return 1
     fi
 
-    dfmt=""                       # actual format for date command
-    while test -n "$1"
-    do
-        fmt="$1"
-        shift
-        while test -n "$fmt"
-        do
-            case "$fmt" in
-                YYYY*|yyyy*)          # year
-                    dfmt="${dfmt}%Y"
-                    fmt="`echo "$fmt" | cut -c 5-`"
-                    ;;
-                YY*|yy*)            # last two digits of year
-                    dfmt="${dfmt}%y"
-                    fmt="`echo "$fmt" | cut -c 3-`"
-                    ;;
-                MM*)            # month (01..12)
-                    dfmt="${dfmt}%m"
-                    fmt="`echo "$fmt" | cut -c 3-`"
-                    ;;
-                DD*|dd*)            # day of month (01..12)
-                    dfmt="${dfmt}%d"
-                    fmt="`echo "$fmt" | cut -c 3-`"
-                    ;;
-                HH* | hh*)            # hour (00..23)
-                    dfmt="${dfmt}%H"
-                    fmt="`echo "$fmt" | cut -c 3-`"
-                    ;;
-                mm*)            # minute (00..59)
-                    dfmt="${dfmt}%M"
-                    fmt="`echo "$fmt" | cut -c 3-`"
-                    ;;
-                SS*|ss*)            # second (00..60)
-                    dfmt="${dfmt}%S"
-                    fmt="`echo "$fmt" | cut -c 3-`"
-                    ;;
-                *)
-                    char=`echo "$fmt" | cut -c 1`
-                    dfmt="${dfmt}${char}"
-                    fmt="`echo "$fmt" | cut -c 2-`"
-                    ;;
-            esac
-        done
-    done
+    # actual format for date command
+    dfmt="`echo "$1" | \
+sed -e 's/YYYY/%Y/g' -e 's/yyyy/%Y/g' -e 's/YY/%y/g' -e 's/yy/%y/g' |\
+sed -e 's/MM/%m/g' -e 's/DD/%d/g' -e 's/dd/%d/g' | \
+sed -e 's/HH/%H/g' -e 's/hh/%H/g' -e 's/mm/%M/g' -e 's/SS/%S/g' -e 's/ss/%S/g'`"
     date +"$dfmt"
 }
 
