@@ -1065,7 +1065,8 @@ found, otherwise returns nil."
                                 :background nil
                                 :weight 'bold
                                 :inverse-video t)
-            (diff-auto-refine-mode)
+            ;; Annoying !
+            ;;(diff-auto-refine-mode)
             ))
 
 ;; (ffap-bindings)
