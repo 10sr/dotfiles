@@ -2265,7 +2265,7 @@ ARG is ignored."
 
 (setq my-term-function 'eshell)
 ;;(define-key my-prefix-map (kbd "C-s") 'my-term)
-(define-key ctl-x-map "t" 'my-term)
+(define-key ctl-x-map "i" 'my-term)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; x open
@@ -2364,6 +2364,7 @@ COMMAND."
                                     (goto-char (point-max)))))
         ;; (goto-char (point-max))
         ))))
+(define-key ctl-x-map "c" 'my-term-shell-command)
 
 (defun memo (&optional dir)
   "Open memo.txt in DIR."
