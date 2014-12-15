@@ -2364,7 +2364,7 @@ COMMAND."
                                     (goto-char (point-max)))))
         ;; (goto-char (point-max))
         ))))
-(define-key ctl-x-map "c" 'my-term-shell-command)
+(define-key ctl-x-map ":" 'my-term-shell-command)
 
 (defun memo (&optional dir)
   "Open memo.txt in DIR."
