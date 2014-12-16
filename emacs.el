@@ -2361,8 +2361,10 @@ COMMAND."
                                 (lambda (proc change)
                                   (with-current-buffer (process-buffer proc)
                                     (term-sentinel proc change)
-                                    (goto-char (point-max)))))
-        ;; (goto-char (point-max))
+                                    (goto-char (point-max))
+                                    (fundamental-mode))))
+        (fundamental-mode)
+        (goto-char (point-max))
         ))))
 (define-key ctl-x-map ":" 'my-term-shell-command)
 
