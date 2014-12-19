@@ -2314,21 +2314,19 @@ ARG is ignored."
 
 (defvar term-shell-command-history nil
   "History for term-shell-command.")
-(defun my-term-shell-command (command &optional buffer-or-name)
+(defun my-term-shell-command (command &optional new-buffer-p)
   "Run COMMAND in terminal emulator.
-If BUFFER-OR-NAME is given, use this buffer.  In this case, old process in the
-buffer is destroyed.  Otherwise, new buffer is generated automatically from
-COMMAND."
+If NEW-BUFFER-P is given or called with prefix argument, generate new buffer
+and set the buffer the process buffer.  Otherwise, existing buffer will be used."
   (interactive (list (read-shell-command "Run program: "
                                          nil
-                                         'term-shell-command-history)))
+                                         'term-shell-command-history)
+                     current-prefix-arg))
   (let* ((name (car (split-string command
                                   " ")))
-         (buf (if buffer-or-name
-                  (get-buffer-create buffer-or-name)
-                (generate-new-buffer (concat "*"
-                                             name
-                                             "*"))))
+         (buf (if new-buffer-p
+                  (generate-new-buffer "*term shell command*")
+                (get-buffer-create "*term shell command*")))
          (proc (get-buffer-process buf))
          (dir default-directory))
     (and proc
