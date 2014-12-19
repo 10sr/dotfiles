@@ -140,6 +140,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         gnuplot-mode
         erlang
         git-commit-mode
+        gitignore-mode
         dirtree
         )
       )
