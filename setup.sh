@@ -248,7 +248,9 @@ git checkout master && git merge --no-ff --stat --verbose -'"
 
     $_gc alias.todo "grep -nH -E -i 'todo:|note:|fixme:'"
 
-    #$_gc alias.wc "!git ls-files -z | xargs -0 wc"
+    $_gc alias.snap '! gitdir="`git rev-parse --git-dir`" && : >>"$gitdir"/logs/refs/snapshot && git update-ref refs/snapshot $(git stash create)'
+
+#$_gc alias.wc "!git ls-files -z | xargs -0 wc"
     # $_gc push.default "simple"
     if $iswindows; then
         $_gc core.fileMode false
