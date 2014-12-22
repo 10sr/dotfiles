@@ -248,13 +248,14 @@ git checkout master && git merge --no-ff --stat --verbose -'"
 
     $_gc alias.todo "grep -nH -E -i 'todo:|note:|fixme:'"
 
-    $_gc alias.snap '! gitdir="`git rev-parse --git-dir`" && : >>"$gitdir"/logs/refs/snapshot && cmt=`git stash create` && test -n "$cmt" && git update-ref refs/snapshot $cmt'
+    $_gc alias.snap '! gitdir="`git rev-parse --git-dir`" && : >>"$gitdir"/logs/refs/snapshot && cmt=`git stash create` && test -n "$cmt" && git update-ref refs/snapshot $cmt && echo Snapshot created: $cmt'
 
 #$_gc alias.wc "!git ls-files -z | xargs -0 wc"
     # $_gc push.default "simple"
     if $iswindows; then
         $_gc core.fileMode false
     fi
+
 }
 
 #############################
