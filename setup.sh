@@ -255,7 +255,6 @@ git checkout master && git merge --no-ff --stat --verbose -'"
     if $iswindows; then
         $_gc core.fileMode false
     fi
-
 }
 
 #############################
