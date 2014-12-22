@@ -234,7 +234,7 @@ setup_gitconf(){
     # $_gc alias.my-ls "ls-files | xargs ls"
     # $_gc alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     $_gc alias.addi "add -i"
-    $_gc alias.clean-p "!test -z \"\$(git status -s -uno)\""
+    $_gc alias.clean-p "diff --quiet"
 
     # alias open-branch and close-branch, which will be useful for topic branch
     # workflow
