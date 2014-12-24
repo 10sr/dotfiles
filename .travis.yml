@@ -1,4 +1,6 @@
 language: shell
+before_install:
+  - sudo apt-get install zsh
 script: ./test/run.sh
 notifications:
   email: 8slashes+travis-ci@gmail.com
