@@ -10,7 +10,7 @@ sh "$top"/setup.sh help
 # shrc
 for sh in sh bash zsh
 do
-    sh -n "$top"/shrc
+    $sh -n "$top"/shrc
 done
 
 
