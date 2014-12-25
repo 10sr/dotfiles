@@ -19,7 +19,6 @@
 (eval-when-compile
   (require 'cl nil t))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; prepare init.el
 

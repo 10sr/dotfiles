@@ -14,4 +14,4 @@ sh "$top"/setup.sh help
 
 # emacs
 emacs --version
-emacs -q --debug-init --batch --load "$top"/emacs.el --kill
+emacs -q --debug-init --batch --eval "(setq debug-on-error t)" --load "$top"/emacs.el --kill
