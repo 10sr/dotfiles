@@ -383,10 +383,12 @@ found, otherwise returns nil."
       (setq terminal-title-format
             '((file-name-nondirectory (directory-file-name
                                        default-directory))))
-    (if (and (equal (car (split-string (frame-parameter nil
-                                                        'tty-type)
-                                       "-"))
-                    "screen")
+    (if (and (let ((tty-type (frame-parameter nil
+                                              'tty-type)))
+               (and tty-type
+                    (equal (car (split-string tty-type
+                                              "-"))
+                           "screen")))
              (not (getenv "SSH_CONNECTION")))
         (setq terminal-title-format
               '((file-name-nondirectory (directory-file-name
