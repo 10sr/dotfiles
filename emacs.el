@@ -301,7 +301,8 @@ found, otherwise returns nil."
 (defun reload-init-file ()
   "Reload Emacs init file."
   (interactive)
-  (when (file-readable-p user-init-file)
+  (when (and user-init-file
+             (file-readable-p user-init-file))
     (load-file user-init-file)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -871,6 +872,7 @@ found, otherwise returns nil."
      ;; (< emacs-major-version 24)
      (fetch-library "http://www.emacswiki.org/emacs/download/xclip.el" t)
      (require 'xclip nil t)
+     nil
      (turn-on-xclip))
 
 (and (eq system-type 'darwin)
