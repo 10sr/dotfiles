@@ -13,4 +13,5 @@ __EOC__
 sh "$top"/setup.sh help
 
 # emacs
+emacs --version
 emacs -q --debug-init --batch --load "$top"/emacs.el --kill
