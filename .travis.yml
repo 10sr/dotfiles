@@ -1,2 +1,4 @@
 language: shell
 script: ./test/run.sh
+notifications:
+  email: 8slashes+travis-ci@gmail.com
