@@ -1,1 +1,2 @@
+language: shell
 script: ./test/run.sh
