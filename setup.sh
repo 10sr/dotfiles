@@ -470,20 +470,31 @@ setup_env(){
 
 
 #########################
-# main
+# help and main
+
+help(){
+    echo "Usage: ./setup.sh <cmd> ..."
+    echo "   or: ./setup.sh help"
+    echo "Available cmds are: $__setups"
+}
 
 main(){
     detect_systems
 
     if test -z "$1"
     then
-        echo "Usage: ./setup.sh <cmd> ..."
-        echo "Available cmds are: $__setups"
-        exit 1
+        help
+        return 1
     fi
 
     _cmd=$1
     shift
+
+    if test "$_cmd" = help
+    then
+        help
+        return 0
+    fi
 
     _msg Running setup_$_cmd
     setup_$_cmd "$@"
