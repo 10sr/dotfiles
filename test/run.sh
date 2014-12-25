@@ -13,4 +13,4 @@ __EOC__
 sh "$top"/setup.sh help
 
 # emacs
-emacs -q --batch --load "$top"/emacs.el --kill
+emacs -q --debug-init --batch --load "$top"/emacs.el --kill
