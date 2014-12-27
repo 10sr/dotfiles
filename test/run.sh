@@ -5,7 +5,7 @@ dir="`dirname $0`"
 top="$dir"/..
 
 # setup.sh
-sh "$top"/setup.sh help
+sh "$top"/setup.sh shrc_common
 
 # shrc
 cat <<__EOC__ | sh -si
