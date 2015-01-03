@@ -1699,7 +1699,7 @@ found, otherwise returns nil."
                   (point-min)
                   (progn (goto-line (if arg
                                         (prefix-numeric-value arg)
-                                      10))
+                                      7))
                          (point-at-eol)))))))
 
   (defun my-dired-diff ()
