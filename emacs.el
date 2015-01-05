@@ -990,12 +990,13 @@ found, otherwise returns nil."
        (when (boundp 'git-command-aliases-alist)
          ;; (message "new version of git-command!")
          (add-to-list 'git-command-aliases-alist
-                      '("di" . (lambda (options cmd args)
+                      '("di" . (lambda (options cmd args new-buffer-p)
                                  (git-command-exec options
                                                    "diff"
-                                                   args))))
+                                                   args
+                                                   new-buffer-p))))
          (add-to-list 'git-command-aliases-alist
-                      '("grep" . (lambda (options cmd args)
+                      '("grep" . (lambda (options cmd args new-buffer-p)
                                    (my-rgrep
                                     (concat
                                      "git "
