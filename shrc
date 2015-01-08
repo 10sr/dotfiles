@@ -1071,7 +1071,7 @@ __my_battery_status(){
         ___st=$(cat $___dir/status)
         ___full=$(cat $___dir/charge_full)
         ___now=$(cat $___dir/charge_now)
-        ___rate=$(expr $now \* 100 / $full)
+        ___rate=$(expr "$___now" \* 100 / "$___full")
         printf "$1" "${___st}:${___rate}%"
     fi
 }
@@ -1131,7 +1131,7 @@ __my_ps1_bttry(){
     then
         test -f $___bst && ___bstr="$(cat $___bst)"
         test -n "$___bstr" && ! echo $___bstr | grep 100 >/dev/null 2>&1 && \
-            echo "[Battery:$___bstr]"
+            echo "[Battery:${___bstr}]"
         __my_battery_status %s >$___bst &
     fi
 }
