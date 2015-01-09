@@ -1961,6 +1961,7 @@ C-x t to toggling emacs-text-mode
           ((eq major-mode
                'eshell-mode)
            (message "Eshell text mode enabled")
+           (eshell-write-history)
            (eshell-text-mode))
           (t
            (message "Not in eshell buffer")
