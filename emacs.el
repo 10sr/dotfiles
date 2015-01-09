@@ -1370,7 +1370,7 @@ found, otherwise returns nil."
               (unless (memq (current-buffer)
                             (and (featurep 'multi-term)
                                  ;; current buffer is not multi-term buffer
-                                 (multi-term-list)))
+                                 multi-term-buffer-list))
                 ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
                 ;; (define-key term-raw-map "\C-r" 'term-send-raw)
                 ;; (define-key term-raw-map "\C-s" 'term-send-raw)
@@ -2191,6 +2191,10 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
               ;;   'eshell-clear)
               (define-key eshell-mode-map (kbd "DEL")
                 'my-eshell-backward-delete-char)
+              (define-key eshell-mode-map (kbd "<up>")
+                'scroll-down-line)
+              (define-key eshell-mode-map (kbd "<down>")
+                'scroll-up-line)
               (define-key eshell-mode-map
                 (kbd "C-p") 'eshell-previous-matching-input-from-input)
               (define-key eshell-mode-map
@@ -2323,7 +2327,7 @@ ARG is ignored."
   "Run COMMAND in terminal emulator.
 If NEW-BUFFER-P is given or called with prefix argument, generate new buffer
 and set the buffer the process buffer.  Otherwise, existing buffer will be used."
-  (interactive (list (read-shell-command "Run program: "
+  (interactive (list (read-shell-command "Shell Command: "
                                          nil
                                          'term-shell-command-history)
                      current-prefix-arg))
