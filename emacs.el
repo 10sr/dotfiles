@@ -170,12 +170,12 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; autoload
 
-(defmacro lazy-load-eval (feature &optional functions &rest body)
+(defmacro autoload-eval-lazily (feature &optional functions &rest body)
   "Define autoloading FEATURE that defines FUNCTIONS.
 FEATURE is a symbol.  FUNCTIONS is a list of symbols.  If FUNCTIONS is nil,
 the function same as FEATURE is defined as autoloaded function.  BODY is passed
  to `eval-after-load'.
-When this macro is evaluated, this returns the path to library if FEATURE
+After this macro is expanded, this returns the path to library if FEATURE
 found, otherwise returns nil."
   (let* ((libname (symbol-name (eval feature)))
          (libpath (locate-library libname)))
@@ -200,9 +200,9 @@ found, otherwise returns nil."
                        ,@body)))
             (locate-library ,libname)))))
 
-(put 'lazy-load-eval 'lisp-indent-function 2)
+(put 'autoload-eval-lazily 'lisp-indent-function 2)
 
-(when (lazy-load-eval 'tetris nil
+(when (autoload-eval-lazily 'tetris nil
         (message "Tetris loaded!"))
   (message "Tetris found!"))
 
@@ -708,7 +708,7 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/read-only-only-mode.el"
       t)
-     (lazy-load-eval 'read-only-only-mode))
+     (autoload-eval-lazily 'read-only-only-mode))
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
@@ -896,20 +896,20 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/window-organizer.el"
       t)
-     (lazy-load-eval 'window-organizer)
+     (autoload-eval-lazily 'window-organizer)
      (define-key ctl-x-map (kbd "w") 'window-organizer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; server
 
-(lazy-load-eval 'server nil
+(autoload-eval-lazily 'server nil
   (setq server-name (concat "server"
                             (number-to-string (emacs-pid)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
-(when (lazy-load-eval 'dirtree nil
+(when (autoload-eval-lazily 'dirtree nil
         (defun my-dirtree-current-line-directory-p ()
           "Return nil if element on current line is not a directory."
           (file-directory-p (widget-get (tree-mode-button-current-line)
@@ -957,18 +957,18 @@ found, otherwise returns nil."
 
 (require 'session nil t)
 
-(lazy-load-eval 'sql '(sql-mode)
+(autoload-eval-lazily 'sql '(sql-mode)
   (require 'sql-indent nil t))
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                     t)
-     (lazy-load-eval 'gtkbm)
+     (autoload-eval-lazily 'gtkbm)
      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
       t)
-     (lazy-load-eval 'git-command
+     (autoload-eval-lazily 'git-command
          nil
 
        ;; for git-command old version
@@ -1016,7 +1016,7 @@ found, otherwise returns nil."
 (and (fetch-library
       "http://www.emacswiki.org/emacs/download/sl.el"
       t)
-     (lazy-load-eval 'sl))
+     (autoload-eval-lazily 'sl))
 
 (defalias 'qcalc 'quick-calc)
 
@@ -1096,7 +1096,7 @@ found, otherwise returns nil."
         ("PKGBUILD\\'" . sh-mode)
         ,@auto-mode-alist))
 
-(and (lazy-load-eval 'pkgbuild-mode)
+(and (autoload-eval-lazily 'pkgbuild-mode)
      (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
                                    auto-mode-alist)))
 
@@ -1155,7 +1155,7 @@ found, otherwise returns nil."
 (when (fetch-library
        "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
        t)
-  (lazy-load-eval 'markdown-mode)
+  (autoload-eval-lazily 'markdown-mode)
   (setq markdown-command (or (executable-find "markdown")
                              (executable-find "markdown.pl")))
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
@@ -1169,7 +1169,7 @@ found, otherwise returns nil."
 ;; http://www.emacswiki.org/emacs/IndentingC
 ;; http://en.wikipedia.org/wiki/Indent_style
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
-(when (lazy-load-eval 'cc-vars
+(when (autoload-eval-lazily 'cc-vars
           nil
         (add-to-list 'c-default-style
                      '(c-mode . "k&r"))
@@ -1189,7 +1189,7 @@ found, otherwise returns nil."
 (when (fetch-library
        "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
        t)
-  (lazy-load-eval 'js2-mode)
+  (autoload-eval-lazily 'js2-mode)
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
@@ -1213,9 +1213,9 @@ found, otherwise returns nil."
 (add-to-list 'interpreter-mode-alist
              '("node" . js-mode))
 
-(when (lazy-load-eval 'flymake-jslint
+(when (autoload-eval-lazily 'flymake-jslint
           '(flymake-jslint-load))
-  (lazy-load-eval 'js nil
+  (autoload-eval-lazily 'js nil
     (add-hook 'js-mode-hook
               'flymake-jslint-load)))
 
@@ -1276,7 +1276,7 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
 
-(when (lazy-load-eval 'python '(python-mode))
+(when (autoload-eval-lazily 'python '(python-mode))
   (setq python-python-command (or (executable-find "python3")
                                   (executable-find "python")))
   ;; (defun my-python-run-as-command ()
@@ -1316,7 +1316,7 @@ found, otherwise returns nil."
        (add-to-list 'load-path
                     d)))
 
-(when (lazy-load-eval 'gtags '(gtags-mode))
+(when (autoload-eval-lazily 'gtags '(gtags-mode))
   (add-hook 'gtags-mode-hook
             (lambda ()
               (view-mode gtags-mode)
@@ -1346,13 +1346,13 @@ found, otherwise returns nil."
 ;; (setq multi-term-program shell-file-name)
 (and (fetch-library "http://www.emacswiki.org/emacs/download/multi-term.el"
                     t)
-     (lazy-load-eval 'multi-term)
+     (autoload-eval-lazily 'multi-term)
      (progn
        (setq multi-term-switch-after-close nil)
        (setq multi-term-dedicated-select-after-open-p t)
        (setq multi-term-dedicated-window-height 20)))
 
-(when (lazy-load-eval 'term '(term ansi-term))
+(when (autoload-eval-lazily 'term '(term ansi-term))
   (defun my-term-quit-or-send-raw ()
     ""
     (interactive)
@@ -1418,7 +1418,7 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer switching
 
-(when (lazy-load-eval 'bs '(bs-show)
+(when (autoload-eval-lazily 'bs '(bs-show)
         ;; (add-to-list 'bs-configurations
         ;; '("processes" nil get-buffer-process ".*" nil nil))
         (add-to-list 'bs-configurations
@@ -1459,7 +1459,7 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sdic
 
-(when (lazy-load-eval 'sdic '(sdic-describe-word-at-point))
+(when (autoload-eval-lazily 'sdic '(sdic-describe-word-at-point))
   ;; (define-key my-prefix-map "\C-w" 'sdic-describe-word)
   (define-key my-prefix-map "\C-t" 'sdic-describe-word-at-point-echo)
   (defun sdic-describe-word-at-point-echo ()
@@ -1492,7 +1492,7 @@ found, otherwise returns nil."
 (when (fetch-library
        "https://raw.github.com/10sr/emacs-lisp/master/ilookup.el"
        t)
-  (lazy-load-eval 'ilookup
+  (autoload-eval-lazily 'ilookup
       '(ilookup-open)
     (setq ilookup-dict-alist
           '(
@@ -1571,7 +1571,7 @@ found, otherwise returns nil."
     ))
 
 
-(when (lazy-load-eval 'google-translate '(google-translate-translate
+(when (autoload-eval-lazily 'google-translate '(google-translate-translate
                                           google-translate-at-point))
   (setq google-translate-default-source-language "auto")
   (setq google-translate-default-target-language "ja"))
@@ -1591,7 +1591,7 @@ found, otherwise returns nil."
 (when (and (fetch-library
             "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
             t)
-           (lazy-load-eval 'gauche-mode '(gauche-mode run-scheme)))
+           (autoload-eval-lazily 'gauche-mode '(gauche-mode run-scheme)))
   (let ((s (executable-find "gosh")))
     (setq scheme-program-name s
           gauche-program-name s))
@@ -1669,7 +1669,7 @@ found, otherwise returns nil."
   (and (fetch-library
         "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
         t)
-       (lazy-load-eval 'recentf-show)
+       (autoload-eval-lazily 'recentf-show)
        (define-key ctl-x-map (kbd "C-r") 'recentf-show)
        (add-hook 'recentf-show-before-listing-hook
                  'recentf-load-list))
@@ -1688,7 +1688,7 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
 
-(when (lazy-load-eval 'dired nil)
+(when (autoload-eval-lazily 'dired nil)
   (defun my-dired-echo-file-head (arg)
     ""
     (interactive "P")
@@ -1875,7 +1875,7 @@ found, otherwise returns nil."
 
   (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                       t)
-       (lazy-load-eval 'pack '(dired-do-pack-or-unpack pack))
+       (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack))
        (add-hook 'dired-mode-hook
                  (lambda ()
                    (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
@@ -1883,7 +1883,7 @@ found, otherwise returns nil."
   (and (fetch-library
         "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
         t)
-       (lazy-load-eval 'dired-list-all-mode)
+       (autoload-eval-lazily 'dired-list-all-mode)
        (setq dired-listing-switches "-lhF")
        (add-hook 'dired-mode-hook
                  (lambda ()
@@ -1930,7 +1930,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; eshell
 
-(lazy-load-eval 'eshell nil
+(autoload-eval-lazily 'eshell nil
 
   (setq eshell-banner-message (format "Welcome to the Emacs shell
 %s
