@@ -128,6 +128,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
       '(
         markdown-mode
         yaml-mode
+        gnuplot-mode
+        erlang
+        js2-mode
+        git-commit-mode
+        gitignore-mode
         ;; ack
         color-moccur
         gtags
@@ -136,10 +141,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         ;;flymake-jshint
         ;;flymake-python-pyflakes
         xclip
-        gnuplot-mode
-        erlang
-        git-commit-mode
-        gitignore-mode
+        foreign-regexp
+        multi-term
         dirtree
         )
       )
@@ -871,7 +874,6 @@ found, otherwise returns nil."
      (not (equal (getenv "DISPLAY") ""))
      (executable-find "xclip")
      ;; (< emacs-major-version 24)
-     (fetch-library "http://www.emacswiki.org/emacs/download/xclip.el" t)
      (require 'xclip nil t)
      nil
      (turn-on-xclip))
@@ -946,10 +948,7 @@ found, otherwise returns nil."
              '("python2" . python-mode))
 
 ;; http://fukuyama.co/foreign-regexp
-'(and (fetch-library
-       "https://raw.github.com/k-talo/foreign-regexp.el/master/foreign-regexp.el"
-       t)
-      (require 'foreign-regexp nil t)
+'(and (require 'foreign-regexp nil t)
       (progn
         (setq foreign-regexp/regexp-type 'perl)
         '(setq reb-re-syntax 'foreign-regexp)
@@ -1152,13 +1151,9 @@ found, otherwise returns nil."
 (add-to-list 'auto-mode-alist (cons "\\.ol\\'" 'outline-mode))
 
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
-(when (fetch-library
-       "http://jblevins.org/projects/markdown-mode/markdown-mode.el"
-       t)
-  (autoload-eval-lazily 'markdown-mode)
+(when (autoload-eval-lazily 'markdown-mode)
   (setq markdown-command (or (executable-find "markdown")
                              (executable-find "markdown.pl")))
-  (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
   (add-hook 'markdown-mode-hook
             (lambda ()
               (outline-minor-mode 1)
@@ -1186,10 +1181,7 @@ found, otherwise returns nil."
                     ;;      (gtags-mode 1))
                     ))))
 
-(when (fetch-library
-       "https://raw.github.com/mooz/js2-mode/master/js2-mode.el"
-       t)
-  (autoload-eval-lazily 'js2-mode)
+(when (autoload-eval-lazily 'js2-mode)
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
@@ -1344,13 +1336,10 @@ found, otherwise returns nil."
 ;; term mode
 
 ;; (setq multi-term-program shell-file-name)
-(and (fetch-library "http://www.emacswiki.org/emacs/download/multi-term.el"
-                    t)
-     (autoload-eval-lazily 'multi-term)
-     (progn
-       (setq multi-term-switch-after-close nil)
-       (setq multi-term-dedicated-select-after-open-p t)
-       (setq multi-term-dedicated-window-height 20)))
+(when (autoload-eval-lazily 'multi-term)
+  (setq multi-term-switch-after-close nil)
+  (setq multi-term-dedicated-select-after-open-p t)
+  (setq multi-term-dedicated-window-height 20))
 
 (when (autoload-eval-lazily 'term '(term ansi-term))
   (defun my-term-quit-or-send-raw ()
