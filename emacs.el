@@ -1152,6 +1152,7 @@ found, otherwise returns nil."
 
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (when (autoload-eval-lazily 'markdown-mode)
+  (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'markdown-mode))
   (setq markdown-command (or (executable-find "markdown")
                              (executable-find "markdown.pl")))
   (add-hook 'markdown-mode-hook
