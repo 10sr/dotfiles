@@ -15,6 +15,8 @@ shrc_common_tpl =
 
 emacs ?= emacs
 
+all: default
+
 tests = test_el test_sh
 test: $(tests)
 
@@ -33,7 +35,6 @@ setup_directory = $(setup_directories)
 .PHONY: all default test $(tests) $(test_shs) \
 	setup $(setups) $(setup_darwins) emacs
 
-all: default
 
 
 
