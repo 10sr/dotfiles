@@ -1166,6 +1166,7 @@ found, otherwise returns nil."
 ;; http://www.emacswiki.org/emacs/IndentingC
 ;; http://en.wikipedia.org/wiki/Indent_style
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
+;; http://seesaawiki.jp/whiteflare503/d/Emacs%20%a5%a4%a5%f3%a5%c7%a5%f3%a5%c8
 (when (autoload-eval-lazily 'cc-vars
           nil
         (add-to-list 'c-default-style
