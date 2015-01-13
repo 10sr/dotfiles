@@ -73,12 +73,14 @@ explicitly by $HOME/.profile . Source $HOME/.shrc .
 $HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
 |
 `--$HOME/.profile                <= login with sh
-   | |
-   | `--$HOME/.{ba,z}shrc        <= bash, zsh
-   |    |
-   `----`--$HOME/.shrc           <= sh
-           |
-           `--$HOME/.dotfiles/shrc
+   |  |
+   |  `--$HOME/.dotfiles/profile
+   |
+   |  $HOME/.{ba,z}shrc          <= bash, zsh
+   |  |
+   `--`--$HOME/.shrc             <= sh (by EnvVal ENV)
+         |
+         `--$HOME/.dotfiles/shrc
 
 ~/.xinitrc                <= startx
 |
