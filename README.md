@@ -40,10 +40,11 @@ Sourcing flow
 1. $HOME/.profile
 
 Sourced if:
-currnet shell is login shell and
-    (current shell is sh ||
-     (current shell is bash && $HOME/.bash_profile does not exist) ||
-     (current shell is zsh && $HOME/.zprofile does not exist))
+
+* currnet shell is login shell and
+  * (current shell is sh ||
+  * (current shell is bash && $HOME/.bash_profile does not exist) ||
+  * (current shell is zsh && $HOME/.zprofile does not exist))
 
 This file set ENV to $HOME/.shrc , which is loaded when sh is run interactively.
 Add lines like `test -n "$BASH_VERSION" && . "$HOME/.bashrc"` .
@@ -69,7 +70,7 @@ login shell. When current shell is login shell, these files are sourced
 explicitly by $HOME/.profile . Source $HOME/.shrc .
 
 
-
+```
 $HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
 |
 `--$HOME/.profile                <= login with sh
@@ -81,7 +82,9 @@ $HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
    `--`--$HOME/.shrc             <= sh (by EnvVal ENV)
          |
          `--$HOME/.dotfiles/shrc
+```
 
+```
 ~/.xinitrc                <= startx
 |
 `--openbox-session
@@ -89,6 +92,7 @@ $HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
    |--~/.dotfiles/xprofile
    |
    `--~/.dotfiles/xprograms
+```
 
 
 Get setup.sh
