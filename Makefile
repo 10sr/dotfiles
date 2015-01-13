@@ -15,8 +15,11 @@ shrc_common_tpl =
 
 emacs ?= emacs
 
-tests = test_el test_shrc
+tests = test_el test_sh
 test: $(tests)
+
+test_shs = test_shrc test_profile
+test_sh: $(test_shs)
 
 setups = setup_darwin setup_directories setup_emacs
 setup: $(setups)
@@ -27,7 +30,8 @@ setup_darwin: $(setup_darwins)
 setup_directories = $(localdir) $(vardir) $(bindir)
 setup_directory = $(setup_directories)
 
-.PHONY: all default test $(tests) setup $(setups) $(setup_darwins) emacs
+.PHONY: all default test $(tests) $(test_shs) \
+	setup $(setups) $(setup_darwins) emacs
 
 all: default
 
@@ -82,8 +86,12 @@ setup_emacs: emacs.el
 # test
 # ====
 
+test_profile: profile
+	sh -exc 'for sh in $(shrc_loadables); do $$sh -n $<; done'
+
 test_shrc: shrc
 	sh -exc 'for sh in $(shrc_loadables); do $$sh -n $<; done'
+
 
 test_el: emacs.el
 	$(emacs) -q --debug-init --batch --eval "(setq debug-on-error t)" \
