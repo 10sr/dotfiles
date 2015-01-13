@@ -28,6 +28,35 @@ __match(){
 __ln=$'\n'
 __cr=$'\r'
 
+##########################
+# system type
+
+gnu_coreutils=false      # for mac
+null ls --version && gnu_coreutils=true
+
+inbash=false
+inzsh=false
+
+if test -n "$BASH_VERSION"
+then
+    inbash=true
+elif test -n "$ZSH_VERSION"
+then
+    inzsh=true
+fi
+
+#################################
+# file pathes:
+#     shrc: Path to this file
+
+if $inbash
+then
+    __shrc="$BASH_SOURCE"
+elif $inzsh
+then
+    __shrc="$0"
+fi
+
 #################################
 # profile-like setups
 
@@ -42,7 +71,7 @@ __safe_add_path_l(){
 
 __safe_add_path_l "$HOME/.cabal/bin"
 __safe_add_path_l "$HOME/.local/lib/gems/bin"
-__safe_add_path_l "$HOME/.local/bin"
+# __safe_add_path_l "$HOME/.local/bin"
 __safe_add_path_l "$HOME/.gem/ruby/2.1.0/bin"
 __safe_add_path_r "/c/mingw/bin"
 __safe_add_path_r "/c/mingw/msys/1.0/bin"
@@ -79,49 +108,6 @@ test -z "$DISPLAY" && test -z "$SSH_CONNECTION" && \
     type setterm >/dev/null 2>&1 && \
     setterm -blank 30 -powersave on # -powerdown 10
 
-#########################
-# shrc.common
-# this variable must consistent with setup.sh
-__shrc_common="$HOME/.shrc.common"
-
-if test -f "$__shrc_common"
-then
-    . "$__shrc_common"
-else
-    echo "$__shrc_common not found."
-    echo "Run setup.sh first."
-    return
-fi
-
-##########################
-# system type
-
-gnu_coreutils=false      # for mac
-null ls --version && gnu_coreutils=true
-
-inbash=false
-inzsh=false
-
-if test -n "$BASH_VERSION"
-then
-    inbash=true
-elif test -n "$ZSH_VERSION"
-then
-    inzsh=true
-fi
-
-#################################
-# file pathes:
-#     shrc: Path to this file
-
-if $inbash
-then
-    __shrc="$BASH_SOURCE"
-elif $inzsh
-then
-    __shrc="$0"
-fi
-
 ##################################
 # EnvVal definitions
 
@@ -130,15 +116,9 @@ export LC_MESSAGES=C
 export LC_TIME=C
 
 export TERMCAP="${TERMCAP}:vb="
-$ismsys && export HOSTNAME
 # export ENV=~/.shrc
 
-if false $iswindows
-then
-    export PAGER='tr -d \\r | less'
-else
-    export PAGER="less"
-fi
+export PAGER="less"
 export LESS="-iRMX"
 
 # Style for lesspipe is defined in esc.style
@@ -188,17 +168,6 @@ test -d "$TMP" || mkdir -p "$TMP"
 export TEMP=$TMP
 export TMPDIR=$TMP
 
-if ! $iswindows && null type stty
-then
-    stty stop undef        # unbind C-s to stop displaying output
-    # stty erase '^h'
-fi
-
-if $iswindows
-then
-    export USER=$USERNAME
-fi
-
 if test -d ~/dbx
 then
     export CHIT_PATH="$HOME/dbx/.chit"
@@ -211,11 +180,37 @@ then
     export ANSIBLE_SSH_ARGS="-o ControlMaster=no"
 fi
 
+#########################
+# shrc.common
+# this variable must consistent with setup.sh
+__shrc_common="$HOME/.shrc.common"
+
+if test -f "$__shrc_common"
+then
+    . "$__shrc_common"
+else
+    echo "$__shrc_common not found."
+    echo "Run setup.sh first."
+    return
+fi
+
+if $iswindows
+then
+    export USER=$USERNAME
+fi
+$ismsys && export HOSTNAME
+
 ##########################
+# Terminal setups
+
+if ! $iswindows && null type stty
+then
+    stty stop undef        # unbind C-s to stop displaying output
+    # stty erase '^h'
+fi
+
 # Zsh specific preferences
-
 # http://www.clear-code.com/blog/2011/9/5.html
-
 if $inzsh
 then
     bindkey -e
