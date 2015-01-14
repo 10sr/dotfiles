@@ -91,7 +91,7 @@ FORCE-DOWNLOAD-P) will be ignored."
              (< 0
                 (length dryrun)))
     (setq fetch-library-enabled-p
-          t)
+          nil)
     (message "EMACS_EL_DRY_RUN is set. Skip fetching libraries.")))
 
 (defun download-file (url path &optional ok-if-already-exists)
