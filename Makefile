@@ -87,7 +87,7 @@ test_sh: $(test_shs)
 .PHONY: $(test_shs)
 
 $(test_shs): test_%: %
-	sh -exc 'for sh in $(shrc_loadables); do $$sh -n $<; done'
+	sh -ec 'for sh in $(shrc_loadables); do $$sh -n $<; done'
 
 test_el: emacs.el
 	EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \

@@ -1,6 +1,6 @@
 language: shell
 before_install:
   - sudo apt-get install zsh
-script: make test
+script: make --debug=b test
 notifications:
   email: 8slashes+travis-ci@gmail.com
