@@ -117,5 +117,5 @@ test-syntax-el: $(test_syntax_els)
 .PHONY: $(test_syntax_els)
 
 $(test_syntax_els): test-syntax-%: %
-	$(emacs) -q --debug-init --batch \
+	$(emacs) -Q --debug-init --batch \
 		--eval '(with-temp-buffer(emacs-lisp-mode)(insert-file-contents "$<")(check-parens))' --kill
