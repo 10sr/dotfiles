@@ -96,11 +96,11 @@ $HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
 ```
 
 
-Get setup.sh
-------------
+Get Latest Makefile
+-------------------
 
 Issue
 
-    curl -L j.mp/10sr_setup >setup.sh
+    curl -L j.mp/10sr_make | make -f -
 
-to get latest setup.sh .
+to use latest Makefile.
