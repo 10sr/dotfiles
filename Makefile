@@ -24,7 +24,7 @@ check: test
 check-syntax: test-syntax
 
 tests = test-el
-test: $(tests) test-syntax
+test: test-syntax $(tests)
 
 test_syntaxes = test-syntax-el test-syntax-sh
 test-syntax: $(test_syntaxes)
@@ -110,3 +110,12 @@ test-syntax-sh: $(test_syntax_shs)
 
 $(test_syntax_shs): test-syntax-%: %
 	sh -ec 'for sh in $(shrc_loadables); do $$sh -n $<; done'
+
+
+test_syntax_els = test-syntax-emacs.el
+test-syntax-el: $(test_syntax_els)
+.PHONY: $(test_syntax_els)
+
+$(test_syntax_els): test-syntax-%: %
+	$(emacs) -q --debug-init --batch \
+		--eval '(with-temp-buffer(emacs-lisp-mode)(insert-file-contents "$<")(check-parens))' --kill
