@@ -17,10 +17,10 @@ emacs ?= emacs
 
 all: default
 
-tests = test_el test_sh
+tests = test-el test-sh
 test: $(tests)
 
-setups = setup_darwin setup_directories setup_emacs
+setups = setup-darwin setup-directories setup-emacs
 setup: $(setups)
 
 .PHONY: all default test $(tests) setup $(setups)
@@ -35,7 +35,7 @@ setup: $(setups)
 # ------------------
 
 setup_directories = $(localdir) $(vardir) $(bindir)
-setup_directory: $(setup_directories)
+setup-directory: $(setup_directories)
 
 $(localdir) $(vardir) $(bindir):
 	mkdir -vp $@
@@ -43,11 +43,11 @@ $(localdir) $(vardir) $(bindir):
 # darwin
 # ------
 
-setup_darwins = setup_darwin_defaults setup_darwin_daemon
-setup_darwin: $(setup_darwins)
+setup_darwins = setup-darwin-defaults setup-darwin-daemon
+setup-darwin: $(setup_darwins)
 .PHONY: $(setup_darwins)
 
-setup_darwin_defaults:
+setup-darwin-defaults:
 # http://appdrill.net/60641/mac-boot-mute.html
 #sudo nvram SystemAudioVolume=%80
 
@@ -63,7 +63,7 @@ setup_darwin_defaults:
 # disable dashboard
 #defaults write com.apple.dashboard mcx-disabled -bool YES
 
-setup_darwin_daemon:
+setup-darwin-daemon:
 	test "`launchctl getenv LC_ALL`" = C || sudo launchctl setenv LC_ALL C
 	if ! (launchctl list | grep com.apple.locate) >/dev/null ;\
 	then \
@@ -73,7 +73,7 @@ setup_darwin_daemon:
 # emacs setup
 # -----------
 
-setup_emacs: emacs.el
+setup-emacs: emacs.el
 	$(emacs) -q --debug-init --batch --load $< -f my-auto-install-package
 
 
@@ -82,13 +82,13 @@ setup_emacs: emacs.el
 # test
 # ====
 
-test_shs = test_shrc test_profile test_setup.sh test_xinitrc test_xprograms
-test_sh: $(test_shs)
+test_shs = test-shrc test-profile test-setup.sh test-xinitrc test-xprograms
+test-sh: $(test_shs)
 .PHONY: $(test_shs)
 
-$(test_shs): test_%: %
+$(test_shs): test-%: %
 	sh -ec 'for sh in $(shrc_loadables); do $$sh -n $<; done'
 
-test_el: emacs.el
+test-el: emacs.el
 	EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \
 		--eval "(setq debug-on-error t)" --load $< --kill
