@@ -20,20 +20,10 @@ all: default
 tests = test_el test_sh
 test: $(tests)
 
-test_shs = test_shrc test_profile
-test_sh: $(test_shs)
-
 setups = setup_darwin setup_directories setup_emacs
 setup: $(setups)
 
-setup_darwins = setup_darwin_defaults setup_darwin_daemon
-setup_darwin: $(setup_darwins)
-
-setup_directories = $(localdir) $(vardir) $(bindir)
-setup_directory = $(setup_directories)
-
-.PHONY: all default test $(tests) $(test_shs) \
-	setup $(setups) $(setup_darwins) emacs
+.PHONY: all default test $(tests) setup $(setups)
 
 
 
@@ -43,14 +33,19 @@ setup_directory = $(setup_directories)
 
 # create directories
 # ------------------
+
+setup_directories = $(localdir) $(vardir) $(bindir)
+setup_directory: $(setup_directories)
+
 $(localdir) $(vardir) $(bindir):
 	mkdir -vp $@
 
-
-
-
 # darwin
 # ------
+
+setup_darwins = setup_darwin_defaults setup_darwin_daemon
+setup_darwin: $(setup_darwins)
+.PHONY: $(setup_darwins)
 
 setup_darwin_defaults:
 # http://appdrill.net/60641/mac-boot-mute.html
@@ -75,8 +70,6 @@ setup_darwin_daemon:
 		sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist ;\
 	fi
 
-
-
 # emacs setup
 # -----------
 
@@ -84,15 +77,17 @@ setup_emacs: emacs.el
 	$(emacs) -q --debug-init --batch --load $< -f my-auto-install-package
 
 
+
+
 # test
 # ====
 
-test_profile: profile
-	sh -exc 'for sh in $(shrc_loadables); do $$sh -n $<; done'
+test_shs = test_shrc test_profile test_setup.sh test_xinitrc test_xprograms
+test_sh: $(test_shs)
+.PHONY: $(test_shs)
 
-test_shrc: shrc
+$(test_shs): test_%: %
 	sh -exc 'for sh in $(shrc_loadables); do $$sh -n $<; done'
-
 
 test_el: emacs.el
 	$(emacs) -q --debug-init --batch --eval "(setq debug-on-error t)" \
