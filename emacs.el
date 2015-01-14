@@ -86,11 +86,13 @@ FORCE-DOWNLOAD-P) will be ignored."
     (locate-library lib)))
 ;; If EMACS_EL_DRY_RUN is set and it is not an empty string, fetch-library
 ;; does not actually fetch library.
-(setq fetch-library-enabled-p
-      (let ((dryrun (getenv "EMACS_EL_DRY_RUN")))
-        (not (and dryrun
-             (eq 0
-                 (length dryrun))))))
+(let ((dryrun (getenv "EMACS_EL_DRY_RUN")))
+  (when (and dryrun
+             (< 0
+                (length dryrun)))
+    (setq fetch-library-enabled-p
+          t)
+    (message "EMACS_EL_DRY_RUN is set. Skip fetching libraries.")))
 
 (defun download-file (url path &optional ok-if-already-exists)
   "Download file from URL and output to PATH.
