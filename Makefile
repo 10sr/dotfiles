@@ -17,13 +17,25 @@ emacs ?= emacs
 
 all: default
 
-tests = test-el test-sh
-test: $(tests)
+# `make check` is just an alias for `make test`
+check: test
+
+# Similarly, check-syntax is test-syntax
+check-syntax: test-syntax
+
+tests = test-el
+test: $(tests) test-syntax
+
+test_syntaxes = test-syntax-el test-syntax-sh
+test-syntax: $(test_syntaxes)
 
 setups = setup-darwin setup-directories setup-emacs
 setup: $(setups)
 
-.PHONY: all default test $(tests) setup $(setups)
+.PHONY: all default \
+	test check $(tests) \
+	test-syntax check-syntax $(test_syntaxes)\
+	setup $(setups)
 
 
 
@@ -82,13 +94,19 @@ setup-emacs: emacs.el
 # test
 # ====
 
-test_shs = test-shrc test-profile test-setup.sh test-xinitrc test-xprograms
-test-sh: $(test_shs)
-.PHONY: $(test_shs)
-
-$(test_shs): test-%: %
-	sh -ec 'for sh in $(shrc_loadables); do $$sh -n $<; done'
-
 test-el: emacs.el
 	EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \
 		--eval "(setq debug-on-error t)" --load $< --kill
+
+
+
+# test syntax
+# ===========
+
+test_syntax_shs = test-syntax-shrc test-syntax-profile test-syntax-setup.sh \
+	test-syntax-xinitrc test-syntax-xprograms
+test-syntax-sh: $(test_syntax_shs)
+.PHONY: $(test_syntax_shs)
+
+$(test_syntax_shs): test-syntax-%: %
+	sh -ec 'for sh in $(shrc_loadables); do $$sh -n $<; done'
