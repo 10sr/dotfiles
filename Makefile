@@ -116,6 +116,18 @@ test_syntax_els = test-syntax-emacs.el
 test-syntax-el: $(test_syntax_els)
 .PHONY: $(test_syntax_els)
 
+sexp_elisp_syntax_check = \
+	(with-temp-buffer \
+		(emacs-lisp-mode) \
+		(insert-file-contents file) \
+		(condition-case err \
+			(check-parens) \
+			(user-error \
+				(error (format "%s:%d:%d:Unmatched brancet or quote" \
+								file \
+								(line-number-at-pos) \
+								(- (point) (point-at-bol)))))))
+
 $(test_syntax_els): test-syntax-%: %
 	$(emacs) -Q --debug-init --batch \
-		--eval '(with-temp-buffer(emacs-lisp-mode)(insert-file-contents "$<")(check-parens))' --kill
+		--eval '(let ((file "$<")) $(sexp_elisp_syntax_check))' --kill
