@@ -44,17 +44,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; download library from web
 
+(defvar fetch-library-enabled-p t
+  "Set nil to skip downloading with `fetch-library'.")
 (defun fetch-library (url &optional byte-compile-p force-download-p)
   "Download a library from URL and locate it in \"~/emacs.d/lisp/\".
 Return nil if library unfound and failed to download,
 otherwise the path where the library installed.
 If BYTE-COMPILE-P is t byte compile the file after downloading.
-If FORCE-DOWNLOAD-P it t ignore exisiting library and always download."
+If FORCE-DOWNLOAD-P it t ignore exisiting library and always download.
+
+This function also checks the value of `fetch-library-enabled-p' and do not
+fetch libraries if this value is nil.  In this case all arguments (including
+FORCE-DOWNLOAD-P) will be ignored."
   (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
          (lib (file-name-sans-extension (file-name-nondirectory url)))
          (lpath (concat dir lib ".el"))
          (locate-p (locate-library lib)))
-    (if (or force-download-p (not locate-p))
+    (if (and fetch-library-enabled-p
+             (or force-download-p
+                 (not locate-p)))
         (if (progn (message "Downloading %s..."
                             url)
                    (download-file url
@@ -76,6 +84,13 @@ If FORCE-DOWNLOAD-P it t ignore exisiting library and always download."
                  (message "Downloading %s...failed"
                           url))))
     (locate-library lib)))
+;; If EMACS_EL_DRY_RUN is set and it is not an empty string, fetch-library
+;; does not actually fetch library.
+(setq fetch-library-enabled-p
+      (let ((dryrun (getenv "EMACS_EL_DRY_RUN")))
+        (not (and dryrun
+             (eq 0
+                 (length dryrun))))))
 
 (defun download-file (url path &optional ok-if-already-exists)
   "Download file from URL and output to PATH.

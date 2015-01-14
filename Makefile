@@ -90,5 +90,5 @@ $(test_shs): test_%: %
 	sh -exc 'for sh in $(shrc_loadables); do $$sh -n $<; done'
 
 test_el: emacs.el
-	$(emacs) -q --debug-init --batch --eval "(setq debug-on-error t)" \
-		--load $< --kill
+	EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \
+		--eval "(setq debug-on-error t)" --load $< --kill
