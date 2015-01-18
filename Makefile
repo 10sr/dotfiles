@@ -94,9 +94,14 @@ setup-emacs: emacs.el
 # test
 # ====
 
-test-el: emacs.el
+test_els = test-el-emacs.el
+test-el: $(test_els)
+.PHONY: $(test_els)
+
+$(test_els): test-el-%: %
+	$(emacs) -Q -batch -f batch-byte-compile $<
 	EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \
-		--eval "(setq debug-on-error t)" --load $< --kill
+		--eval "(setq debug-on-error t)" --load $<c --kill
 
 
 
