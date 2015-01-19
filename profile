@@ -40,10 +40,7 @@ export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
 # http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
 # without this ENV i cannot run tmux. another way is to use --disable-shared
 # when building tmux
-if ! __match "$LD_LIBRARY_PATH" "$HOME/.local/lib"
-then
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
-fi
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
 
 # in my environment powerdown does not work
 test -z "$DISPLAY" && test -z "$SSH_CONNECTION" && \
@@ -85,8 +82,8 @@ export GIT_EDITOR="$EDITOR"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \
-    __match $TERM screen && \
-    __match `tmux display -p '#{client_termname}'` 256color
+    expr "$TERM" : screen && \
+    expr "`tmux display -p '#{client_termname}'`" : '.*-256color$'
 then
     TERM=screen-256color
 fi
@@ -105,10 +102,10 @@ then
         export TMP=/tmp
     fi
 fi
-__match "$TMP" "${USER}-tmp" >/dev/null || TMP="${TMP}/${USER}-tmp"
-test -d "$TMP" || mkdir -p "$TMP"
+export TMP="${TMP}/${USER}-tmp"
 export TEMP=$TMP
 export TMPDIR=$TMP
+test -d "$TMP" || mkdir -p "$TMP"
 
 if test -d ~/dbx
 then
