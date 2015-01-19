@@ -68,7 +68,7 @@ do
 done
 test -n "$_src_hilite_lp_path" && export LESSOPEN="| $_src_hilite_lp_path %s"
 
-if null type vim
+if which vim >/dev/null
 then
     export EDITOR=vim
 else
@@ -82,8 +82,8 @@ export GIT_EDITOR="$EDITOR"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \
-    expr "$TERM" : screen && \
-    expr "`tmux display -p '#{client_termname}'`" : '.*-256color$'
+    expr "$TERM" : screen >/dev/null && \
+    expr "`tmux display -p '#{client_termname}'`" : '.*-256color$' >/dev/null
 then
     TERM=screen-256color
 fi
