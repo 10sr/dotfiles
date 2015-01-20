@@ -152,16 +152,6 @@ endif
 	$(git_conf) alias.clean-p "diff --quiet"
 	$(git_conf) alias.echo-ref "for-each-ref --format='%(refname:short)'"
 
-	# alias open-branch and close-branch, which will be useful for topic branch
-	# workflow
-	_git_open_branch="checkout -b"
-	_git_close_branch="!sh -cx 'git stash && \
-git checkout master && git merge --no-ff --stat --verbose -'"
-	$(git_conf) alias.open-branch "$_git_open_branch"
-	$(git_conf) alias.close-branch "$_git_close_branch"
-	$(git_conf) alias.o "$_git_open_branch"
-	$(git_conf) alias.c "$_git_close_branch"
-
 	$(git_conf) alias.todo "grep -nH -E -i 'todo:|note:|fixme:'"
 
 	$(git_conf) alias.snap '! gitdir="`git rev-parse --git-dir`" && : >>"$gitdir"/logs/refs/snapshot && cmt=`git stash create` && test -n "$cmt" && git update-ref refs/snapshot $cmt && echo Snapshot created: $cmt'
