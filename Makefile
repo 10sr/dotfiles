@@ -1,3 +1,5 @@
+# Variable definitions
+
 home ?= $(HOME)
 
 dotfiles_dir ?= $(home)/10sr_dotfiles
@@ -13,15 +15,12 @@ ostype = $(shell uname)
 shrc_loadables = sh bash zsh
 shrc_common_tpl =
 
-emacs ?= emacs
+emacs ?= $(shell which emacs 2>/dev/null)
+git ?= $(shell which git 2>/dev/null)
+
+# Targets
 
 all: default
-
-# `make check` is just an alias for `make test`
-check: test
-
-# Similarly, check-syntax is test-syntax
-check-syntax: test-syntax
 
 tests = test-el
 test: test-syntax $(tests)
@@ -29,8 +28,16 @@ test: test-syntax $(tests)
 test_syntaxes = test-syntax-el test-syntax-sh
 test-syntax: $(test_syntaxes)
 
-setups = setup-darwin setup-directories setup-emacs
+setups = setup-darwin setup-directories setup-emacs setup-gitconf
 setup: $(setups)
+
+
+
+# `make check` is just an alias for `make test`
+check: test
+
+# Similarly, check-syntax is test-syntax
+check-syntax: test-syntax
 
 .PHONY: all default \
 	test check $(tests) \
@@ -40,8 +47,11 @@ setup: $(setups)
 
 
 
+
 # setups
 # ======
+
+
 
 # create directories
 # ------------------
@@ -51,6 +61,8 @@ setup-directory: $(setup_directories)
 
 $(localdir) $(vardir) $(bindir):
 	mkdir -vp $@
+
+
 
 # darwin
 # ------
@@ -82,11 +94,84 @@ setup-darwin-daemon:
 		sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist ;\
 	fi
 
+
+
 # emacs setup
 # -----------
 
 setup-emacs: emacs.el
 	$(emacs) -q --debug-init --batch --load $< -f my-auto-install-package
+
+
+
+# git config setup
+# ----------------
+
+ifneq (,$(git))
+git_conf = $(git) config --global
+endif
+
+xz = $(shell which xz 2>/dev/null)
+
+setup-gitconf:
+ifeq (,$(git))
+$(warnning "Git program not found")
+else
+	$(git_conf) user.name '10sr'
+	$(git_conf) user.email '8slashes+git@gmail.com'
+
+	$(git_conf) core.autocrlf false
+	$(git_conf) core.excludesfile '~/.gitignore'
+	$(git_conf) color.ui auto
+	$(git_conf) status.relativePaths false
+	$(git_conf) status.showUntrackedFiles normal
+	$(git_conf) log.date iso
+	$(git_conf) push.default current
+ifneq (,$(xz))
+	$(git_conf) tar.txz.command "xz -c"
+endif
+	$(git_conf) alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --date=short -n 499"
+	$(git_conf) alias.st "status -s -b"
+	$(git_conf) alias.b "branch"
+	$(git_conf) alias.sb "show-branch"
+	$(git_conf) alias.ci "commit --verbose"
+	$(git_conf) alias.co "checkout"
+	$(git_conf) alias.cim "commit --verbose -m"
+	$(git_conf) alias.di "diff --color"
+	$(git_conf) alias.me "merge --no-ff --stat --verbose"
+	$(git_conf) alias.ffme "merge --ff-only --stat --verbose"
+	$(git_conf) alias.gr "grep -n"
+	$(git_conf) alias.ls "ls-files"
+	# $(git_conf) alias.ls "ls-files -v --full-name"
+	# $(git_conf) alias.ls "status -u -s ."
+	$(git_conf) alias.sl "!sl"
+	# $(git_conf) alias.my-ls "ls-files | xargs ls"
+	# $(git_conf) alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
+	$(git_conf) alias.addi "add -i"
+	$(git_conf) alias.clean-p "diff --quiet"
+	$(git_conf) alias.echo-ref "for-each-ref --format='%(refname:short)'"
+
+	# alias open-branch and close-branch, which will be useful for topic branch
+	# workflow
+	_git_open_branch="checkout -b"
+	_git_close_branch="!sh -cx 'git stash && \
+git checkout master && git merge --no-ff --stat --verbose -'"
+	$(git_conf) alias.open-branch "$_git_open_branch"
+	$(git_conf) alias.close-branch "$_git_close_branch"
+	$(git_conf) alias.o "$_git_open_branch"
+	$(git_conf) alias.c "$_git_close_branch"
+
+	$(git_conf) alias.todo "grep -nH -E -i 'todo:|note:|fixme:'"
+
+	$(git_conf) alias.snap '! gitdir="`git rev-parse --git-dir`" && : >>"$gitdir"/logs/refs/snapshot && cmt=`git stash create` && test -n "$cmt" && git update-ref refs/snapshot $cmt && echo Snapshot created: $cmt'
+
+	#$(git_conf) alias.wc "!git ls-files -z | xargs -0 wc"
+	# $(git_conf) push.default "simple"
+ifneq (,$(iswindows))
+	$(git_conf) core.fileMode false
+endif
+endif
+
 
 
 
@@ -105,6 +190,8 @@ $(test_els): test-el-%: %
 
 
 
+
+
 # test syntax
 # ===========
 
@@ -115,6 +202,7 @@ test-syntax-sh: $(test_syntax_shs)
 
 $(test_syntax_shs): test-syntax-%: %
 	sh -ec 'for sh in $(shrc_loadables); do $$sh -n $<; done'
+
 
 
 test_syntax_els = test-syntax-emacs.el
