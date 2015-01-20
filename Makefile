@@ -149,6 +149,8 @@ endif
 	# $(git_conf) alias.my-ls "ls-files | xargs ls"
 	# $(git_conf) alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
 	$(git_conf) alias.addi "add -i"
+	# Add patch to index
+	$(git_conf) alias.ap "apply --cached"
 	$(git_conf) alias.clean-p "diff --quiet"
 	$(git_conf) alias.echo-ref "for-each-ref --format='%(refname:short)'"
 
