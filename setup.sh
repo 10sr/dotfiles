@@ -235,6 +235,7 @@ setup_gitconf(){
     # $_gc alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
     $_gc alias.addi "add -i"
     $_gc alias.clean-p "diff --quiet"
+    $_gc alias.echo-ref "for-each-ref --format='%(refname:short)'"
 
     # alias open-branch and close-branch, which will be useful for topic branch
     # workflow
