@@ -72,20 +72,21 @@ setup-darwin: $(setup_darwins)
 .PHONY: $(setup_darwins)
 
 setup-darwin-defaults:
-# http://appdrill.net/60641/mac-boot-mute.html
-#sudo nvram SystemAudioVolume=%80
+	# http://appdrill.net/60641/mac-boot-mute.html
+	#sudo nvram SystemAudioVolume=%80
 
-# add quit entry in menu
+	# add quit entry in menu
 	defaults write com.apple.finder QuitMenuItem -bool YES
-# show full path on titlebar
+	# show full path on titlebar
 	defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES
-# do not show desktop icons
+	# do not show desktop icons
 	defaults write com.apple.finder CreateDesktop -boolean false
 
 	killall Finder
 
-# disable dashboard
-#defaults write com.apple.dashboard mcx-disabled -bool YES
+	# disable dashboard
+	#defaults write com.apple.dashboard mcx-disabled -bool YES
+
 
 setup-darwin-daemon:
 	test "`launchctl getenv LC_ALL`" = C || sudo launchctl setenv LC_ALL C
