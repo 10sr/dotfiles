@@ -4,7 +4,7 @@ set -e
 # setup.sh --- 10sr setup script
 # 2014, 10sr. Unlicensed <http://unlicense.org>
 
-__setups="shrc_common gitconf tmux scripts darwin dirs selfupdate windirs dotfiles env"
+__setups="shrc_common tmux scripts darwin dirs selfupdate windirs dotfiles env"
 
 __homelocal="$HOME/.local"
 __homevar="$HOME/.var"
@@ -190,73 +190,6 @@ __homevar="$__homevar"
 __EOC__
 }
 
-################################
-# setup gitconf
-
-setup_gitconf(){
-    _msg "Configure git environment"
-    if ! command -v git >/dev/null
-    then
-        _msg "Git program not found"
-        return 0
-    fi
-
-    _gc="git config --global"
-
-    $_gc user.name '10sr'
-    $_gc user.email '8slashes+git@gmail.com'
-
-    $_gc core.autocrlf false
-    $_gc core.excludesfile '~/.gitignore'
-    $_gc color.ui auto
-    $_gc status.relativePaths false
-    $_gc status.showUntrackedFiles normal
-    $_gc log.date iso
-    $_gc push.default current
-    command -v xz >/dev/null && \
-        $_gc tar.txz.command "xz -c"
-
-    $_gc alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --date=short -n 499"
-    $_gc alias.st "status -s -b"
-    $_gc alias.b "branch"
-    $_gc alias.sb "show-branch"
-    $_gc alias.ci "commit --verbose"
-    $_gc alias.co "checkout"
-    $_gc alias.cim "commit --verbose -m"
-    $_gc alias.di "diff --color"
-    $_gc alias.me "merge --no-ff --stat --verbose"
-    $_gc alias.ffme "merge --ff-only --stat --verbose"
-    $_gc alias.gr "grep -n"
-    $_gc alias.ls "ls-files"
-    # $_gc alias.ls "ls-files -v --full-name"
-    # $_gc alias.ls "status -u -s ."
-    $_gc alias.sl "!sl"
-    # $_gc alias.my-ls "ls-files | xargs ls"
-    # $_gc alias.ll "!git ls-files | xargs ls -l -CFG --color=auto --time-style=long-iso"
-    $_gc alias.addi "add -i"
-    $_gc alias.clean-p "diff --quiet"
-    $_gc alias.echo-ref "for-each-ref --format='%(refname:short)'"
-
-    # alias open-branch and close-branch, which will be useful for topic branch
-    # workflow
-    _git_open_branch="checkout -b"
-    _git_close_branch="!sh -cx 'git stash && \
-git checkout master && git merge --no-ff --stat --verbose -'"
-    $_gc alias.open-branch "$_git_open_branch"
-    $_gc alias.close-branch "$_git_close_branch"
-    $_gc alias.o "$_git_open_branch"
-    $_gc alias.c "$_git_close_branch"
-
-    $_gc alias.todo "grep -nH -E -i 'todo:|note:|fixme:'"
-
-    $_gc alias.snap '! gitdir="`git rev-parse --git-dir`" && : >>"$gitdir"/logs/refs/snapshot && cmt=`git stash create` && test -n "$cmt" && git update-ref refs/snapshot $cmt && echo Snapshot created: $cmt'
-
-#$_gc alias.wc "!git ls-files -z | xargs -0 wc"
-    # $_gc push.default "simple"
-    if $iswindows; then
-        $_gc core.fileMode false
-    fi
-}
 
 #############################
 # setup tmux
@@ -463,7 +396,6 @@ setup_dirs(){
 setup_env(){
     setup_shrc_common
     setup_dirs
-    setup_gitconf
     setup_tmux
     setup_scripts
     setup_dotfiles --git
