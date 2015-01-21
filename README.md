@@ -100,7 +100,8 @@ $HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
 Get Latest Makefile
 -------------------
 
-NOTE: Currently on the way of migration from setup.sh to Makefile.
+NOTE: Currently on the way of migration from `setup.sh` to `Makefile`.
+`setup.sh` is available at `j.mp/10sr_setup`.
 
 Issue
 
