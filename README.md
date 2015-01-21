@@ -54,6 +54,7 @@ Sourcing flow
 
 
 2. $HOME/{.bash_profile,.zprofile}
+
   Sourced if current shell is login shell and shell is bash or zsh.
   Srouce $HOME/.profile .
 
