@@ -1,3 +1,6 @@
+# Makefile --- 10sr make dotfiles
+# 2014, 10sr. Unlicensed <http://unlicense.org>
+
 # Variable definitions
 
 home ?= $(HOME)
