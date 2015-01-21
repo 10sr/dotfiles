@@ -6,7 +6,7 @@
 home ?= $(HOME)
 
 dotfiles_dir ?= $(home)/10sr_dotfiles
-dotfiles_url_base=https://raw.githubusercontent.com/10sr/dotfiles/master/
+dotfiles_url_base = https://raw.githubusercontent.com/10sr/dotfiles/master/
 dotfiles_git = git@github.com:10sr/dotfiles.git
 dotfiles_git_pub = http://github.com/10sr/dotfiles.git
 
