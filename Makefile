@@ -7,6 +7,8 @@ home ?= $(HOME)
 
 dotfiles_dir ?= $(home)/10sr_dotfiles
 dotfiles_url_base=https://raw.githubusercontent.com/10sr/dotfiles/master/
+dotfiles_git = git@github.com:10sr/dotfiles.git
+dotfiles_git_pub = http://github.com/10sr/dotfiles.git
 
 localdir = $(home)/.local
 vardir = $(home)/.var
@@ -20,6 +22,7 @@ shrc_common_tpl =
 
 emacs ?= $(shell which emacs 2>/dev/null)
 git ?= $(shell which git 2>/dev/null)
+curl ?= $(shell which curl 2>/dev/null)
 
 # Targets
 
@@ -31,7 +34,8 @@ test: test-syntax $(tests)
 test_syntaxes = test-syntax-el test-syntax-sh
 test-syntax: $(test_syntaxes)
 
-setups = setup-darwin setup-directories setup-emacs setup-gitconf
+setups = setup-darwin setup-directories setup-emacs setup-gitconf \
+	setup-repository setup-util
 setup: $(setups)
 
 
@@ -56,6 +60,47 @@ check-syntax: test-syntax
 
 
 
+# setup repository
+# ----------------
+
+setup-repository:
+ifeq (,$(git))
+	false "Git not installed"
+endif
+	if ssh git@github.com 2>&1 | grep 'successfully authenticated'; \
+	then \
+		echo "Using $(dotfiles_git)"; \
+		$(git) clone $(dotfiles_git) $(dotfiles_dir); \
+	else \
+		echo "Using $(dotfiles_git_pub)"; \
+		$(git) clone $(dotfiles_git_pub) $(dotfiles_dir); \
+	fi
+
+
+
+# utils
+# -----
+
+setup_utils = colortable16.sh 256colors2.pl pacapt ack-2.12
+setup-util: $(setup_utils)
+.PHONY: $(setup_utils)
+
+setup_utils_path = $(setup_utils:%=$(bindir)/%)
+
+$(setup_utils): %: $(bindir)/%
+
+$(setup_utils_path):
+	$(curl) -L --url "$(util_url)" --output "$@"
+	chmod +x "$@"
+
+colortable16.sh: \
+	util_url = https://gist.github.com/10sr/6852317/raw/colortable16.sh
+256colors2.pl: util_url = https://gist.github.com/10sr/6852331/raw/256colors2.pl
+pacapt: util_url = https://github.com/icy/pacapt/raw/ng/pacapt
+ack-2.12: util_url = http://beyondgrep.com/ack-2.12-single-file
+
+
+
 # create directories
 # ------------------
 
@@ -67,8 +112,8 @@ $(localdir) $(vardir) $(bindir):
 
 
 
-# darwin
-# ------
+# darwin setup
+# ------------
 
 setup_darwins = setup-darwin-defaults setup-darwin-daemon
 setup-darwin: $(setup_darwins)
