@@ -188,7 +188,7 @@ $(test_els): test-el-%: %
 # test syntax
 # ===========
 
-test_syntax_shs = test-syntax-shrc test-syntax-profile test-syntax-setup.sh \
+test_syntax_shs = test-syntax-shrc test-syntax-profile \
 	test-syntax-xinitrc test-syntax-xprograms
 test-syntax-sh: $(test_syntax_shs)
 .PHONY: $(test_syntax_shs)
