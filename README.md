@@ -100,6 +100,8 @@ $HOME/{.bash_profile,.zprofile}  <= login with bash/zsh
 Get Latest Makefile
 -------------------
 
+NOTE: Currently on the way of migration from setup.sh to Makefile.
+
 Issue
 
     curl -L j.mp/10sr_make | make -f -
