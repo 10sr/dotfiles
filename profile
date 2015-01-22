@@ -112,3 +112,9 @@ then
     export CHIT_PATH="$HOME/dbx/.chit"
 fi
 
+
+###########################################
+# Host colors
+
+export _COLOR_FOREGROUND=
+export _COLOR_BACKGROUND=
