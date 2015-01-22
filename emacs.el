@@ -1666,9 +1666,16 @@ found, otherwise returns nil."
   (add-to-list 'recentf-exclude
                (regexp-quote (expand-file-name user-emacs-directory)))
   (define-key ctl-x-map (kbd "C-r") 'recentf-open-files)
+  (remove-hook 'find-file-hook
+               'recentf-track-opened-file)
+  (defun my-recentf-load-track-save-list ()
+    "Load current recentf list from file, track current visiting file, then save
+the list."
+    (recentf-load-list)
+    (recentf-track-opened-file)
+    (recentf-save-list))
   (add-hook 'find-file-hook
-            'recentf-save-list
-            t)   ; save to file immediately after adding file to recentf list
+            'my-recentf-load-track-save-list)
   (add-hook 'kill-emacs-hook
             'recentf-load-list)
   ;;(run-with-idle-timer 5 t 'recentf-save-list)
