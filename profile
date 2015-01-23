@@ -88,6 +88,12 @@ then
     TERM=screen-256color
 fi
 
+if test '!' -v USER -a -v USERNAME
+then
+    export USER=$USERNAME
+fi
+
+
 # set TMP, TEMP, TMPDIR
 
 if test -z "$TMP"

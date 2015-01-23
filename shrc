@@ -71,10 +71,6 @@ else
     return
 fi
 
-if $iswindows
-then
-    export USER=$USERNAME
-fi
 $ismsys && export HOSTNAME
 
 # adhoc fix for ansible on cygwin
