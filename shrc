@@ -28,6 +28,9 @@ __match(){
 __ln=$'\n'
 __cr=$'\r'
 
+test -n "$TMP" || export TMP=/tmp/yuk-tmp
+mkdir -p "$TMP"
+
 ##########################
 # system type
 
@@ -58,17 +61,52 @@ then
 fi
 
 #########################
-# shrc.common
-# this variable must consistent with setup.sh
-__shrc_common="$HOME/.shrc.common"
+# system detection
+__system_shrc="$TMP/system.shrc"
 
-if test -f "$__shrc_common"
+if test -f "$__system_shrc"
 then
-    . "$__shrc_common"
+    . "$__system_shrc"
 else
-    echo "$__shrc_common not found."
-    echo "Run setup.sh first."
-    return
+    ismsys=false
+    iscygwin=false
+    iswindows=false
+
+    isdarwin=false
+    isfreebsd=false
+    isbsd=false
+
+    islinux=false
+
+    # $OSTYPE is another choice. which is better?
+    # NOTE: sh on FreeBSD does not define OSTYPE
+    case `uname` in
+        MINGW*) ismsys=true ;;
+        CYGWIN*) iscygwin=true ;;
+        Darwin*) isdarwin=true ;;
+        FreeBSD*) isfreebsd=true ;;
+        Linux*) islinux=true ;;
+    esac
+    ($ismsys || $iscygwin) && iswindows=true
+    # is this true?
+    ($isdarwin || $isfreebsd) && isbsd=true
+
+    # dump system detection result
+    cat <<__EOC__ >"$__system_shrc"
+#!/bin/sh
+
+# $__system_shrc
+
+ismsys=$ismsys
+iscygwin=$iscygwin
+iswindows=$iswindows
+
+isdarwin=$isdarwin
+isfreebsd=$isfreebsd
+isbsd=$isbsd
+
+islinux=$islinux
+__EOC__
 fi
 
 $ismsys && export HOSTNAME
