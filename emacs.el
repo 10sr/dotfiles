@@ -928,6 +928,10 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
+(add-to-list 'safe-local-variable-values
+             '(encoding utf-8))
+(setq enable-local-variables :safe)
+
 (when (autoload-eval-lazily 'dirtree nil
         (defun my-dirtree-current-line-directory-p ()
           "Return nil if element on current line is not a directory."
