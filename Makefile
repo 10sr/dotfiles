@@ -35,7 +35,7 @@ test_syntaxes = test-syntax-el test-syntax-sh
 test-syntax: $(test_syntaxes)
 
 setups = setup-darwin setup-directories setup-emacs setup-gitconf \
-	setup-repository setup-util
+	setup-repository setup-util setup-tmux
 setup: $(setups)
 
 
@@ -212,6 +212,13 @@ ifneq (,$(iswindows))
 	$(git_conf) core.fileMode false
 endif
 endif
+
+
+
+# tmux setup
+# ----------
+
+setup-tmux:
 
 
 

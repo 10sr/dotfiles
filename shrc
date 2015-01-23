@@ -1068,29 +1068,29 @@ then
     __color_black="${__attr_beg}0;30${__attr_end}"
     __color_red="${__attr_beg}0;31${__attr_end}"
     __color_green="${__attr_beg}0;32${__attr_end}"
-    __color_brown="${__attr_beg}0;33${__attr_end}"
+    __color_yellow="${__attr_beg}0;33${__attr_end}"
     __color_blue="${__attr_beg}0;34${__attr_end}"
-    __color_purple="${__attr_beg}0;35${__attr_end}"
+    __color_magenta="${__attr_beg}0;35${__attr_end}"
     __color_cyan="${__attr_beg}0;36${__attr_end}"
-    __color_light_gray="${__attr_beg}0;37${__attr_end}"
+    __color_white="${__attr_beg}0;37${__attr_end}"
 
-    __color_dark_gray="${__attr_beg}1;30${__attr_end}"
+    __color_light_black="${__attr_beg}1;30${__attr_end}"
     __color_light_red="${__attr_beg}1;31${__attr_end}"
     __color_light_green="${__attr_beg}1;32${__attr_end}"
-    __color_yellow="${__attr_beg}1;33${__attr_end}"
+    __color_light_yellow="${__attr_beg}1;33${__attr_end}"
     __color_light_blue="${__attr_beg}1;34${__attr_end}"
-    __color_light_purple="${__attr_beg}1;35${__attr_end}"
+    __color_light_magenta="${__attr_beg}1;35${__attr_end}"
     __color_light_cyan="${__attr_beg}1;36${__attr_end}"
-    __color_white="${__attr_beg}1;37${__attr_end}"
+    __color_light_white="${__attr_beg}1;37${__attr_end}"
 
     __color_bg_black="${__attr_beg}40${__attr_end}"
     __color_bg_red="${__attr_beg}41${__attr_end}"
     __color_bg_green="${__attr_beg}42${__attr_end}"
-    __color_bg_brown="${__attr_beg}43${__attr_end}"
+    __color_bg_yellow="${__attr_beg}43${__attr_end}"
     __color_bg_blue="${__attr_beg}44${__attr_end}"
-    __color_bg_purple="${__attr_beg}45${__attr_end}"
+    __color_bg_magenta="${__attr_beg}45${__attr_end}"
     __color_bg_cyan="${__attr_beg}46${__attr_end}"
-    __color_bg_light_gray="${__attr_beg}47${__attr_end}"
+    __color_bg_white="${__attr_beg}47${__attr_end}"
 
     __attr_underline="${__attr_beg}4${__attr_end}"
     __attr_reverse="${__attr_beg}7${__attr_end}"
@@ -1107,24 +1107,8 @@ then
     __my_c1="$__attr_bold$__attr_underline"      # color for PWD
     __my_c2="$__attr_bold$__attr_underline"       # color for user and hostname
     # color for ::
-    case "`hostname`" in
-        arch-aspireone)
-            __my_c4="$__color_yellow"
-            ;;
-        arch-mba)
-            __my_c4="$__color_light_cyan"
-            ;;
-        newkiwi)
-            __my_c4="$__color_light_purple"
-            ;;
-        debian-vb-win7-opti)
-            __my_c4="$__color_light_red"
-            ;;
-        *)
-            __my_c4="$__color_light_green"
-            ;;
-    esac
-    __my_c5="$__color_black$__color_bg_light_gray"        # color for SCR
+    eval "__my_c4=\${__color_light_${_HOSTCOLOR_1}}"
+    __my_c5="$__color_black$__color_bg_white"        # color for SCR
     __my_cdef="$__color_default"
 fi
 

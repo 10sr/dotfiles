@@ -118,3 +118,32 @@ then
     export CHIT_PATH="$HOME/dbx/.chit"
 fi
 
+
+###########################################
+# Host colors
+
+export _HOSTCOLOR_1=
+export _HOSTCOLOR_2=
+# black red green yellow blue magenta cyan white
+case "`hostname`" in
+    arch-aspireone)
+        _HOSTCOLOR_1=yellow
+        _HOSTCOLOR_2=black
+        ;;
+    arch-mba)
+        _HOSTCOLOR_1=cyan
+        _HOSTCOLOR_2=black
+        ;;
+    newkiwi)
+        _HOSTCOLOR_1=magenta
+        _HOSTCOLOR_2=white
+        ;;
+    debian-vb-win7-opti)
+        _HOSTCOLOR_1=red
+        _HOSTCOLOR_2=white
+        ;;
+    *)
+        _HOSTCOLOR_1=green
+        _HOSTCOLOR_2=black
+        ;;
+esac
