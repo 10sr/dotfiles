@@ -15,7 +15,7 @@ vardir = $(home)/.var
 bindir = $(localdir)/bin
 
 current = $(shell date)
-ostype = $(shell uname)
+uname = $(shell uname)
 
 shrc_loadables = sh bash zsh
 shrc_common_tpl =
@@ -52,6 +52,46 @@ check-syntax: test-syntax
 	setup $(setups)
 
 
+
+
+# System detection
+# ================
+
+# Is this usefull? Just checking uname is not enough?
+
+ismsys =
+iscygwin =
+iswindows =
+
+isdarwin =
+isfreebsd =
+isbsd =
+
+islinux =
+
+ifneq (,$(findstring MINGW,$(uname)))
+ismsys = t
+endif
+ifneq (,$(findstring CYGWIN,$(uname)))
+iscygwin = t
+endif
+ifneq (,$(ismsys)$(iscygwin))
+iswindows = t
+endif
+
+ifneq (,$(findstring Darwin,$(uname)))
+isdarwin = t
+endif
+ifneq (,$(findstring FreeBSD,$(uname)))
+isfreebsd = t
+endif
+ifneq (,$(isdarwin)$(isfreebsd))
+isbsd = t
+endif
+
+ifneq (,$(findstring Linux,$(uname)))
+islinux = t
+endif
 
 
 
