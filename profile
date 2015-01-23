@@ -88,7 +88,7 @@ then
     TERM=screen-256color
 fi
 
-if test '!' -v USER -a -v USERNAME
+if test -z "$USER" -a -n "$USERNAME"
 then
     export USER=$USERNAME
 fi
