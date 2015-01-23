@@ -118,6 +118,7 @@ fi
 
 export _HOSTCOLOR_1=
 export _HOSTCOLOR_2=
+# black red green yellow blue magenta cyan white
 case "`hostname`" in
     arch-aspireone)
         _HOSTCOLOR_1=yellow
