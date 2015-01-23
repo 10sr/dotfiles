@@ -1111,23 +1111,7 @@ then
     __my_c1="$__attr_bold$__attr_underline"      # color for PWD
     __my_c2="$__attr_bold$__attr_underline"       # color for user and hostname
     # color for ::
-    case "`hostname`" in
-        arch-aspireone)
-            __my_c4="$__color_light_yellow"
-            ;;
-        arch-mba)
-            __my_c4="$__color_light_cyan"
-            ;;
-        newkiwi)
-            __my_c4="$__color_light_purple"
-            ;;
-        debian-vb-win7-opti)
-            __my_c4="$__color_light_red"
-            ;;
-        *)
-            __my_c4="$__color_light_green"
-            ;;
-    esac
+    eval "__my_c4=\${__color_light_${_HOSTCOLOR_1}}"
     __my_c5="$__color_black$__color_bg_white"        # color for SCR
     __my_cdef="$__color_default"
 fi
