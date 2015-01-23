@@ -1205,6 +1205,11 @@ found, otherwise returns nil."
                     ;;      (gtags-mode 1))
                     ))))
 
+(when (autoload-eval-lazily 'php-mode)
+  (add-hook 'php-mode-hook
+            (lambda ()
+              (setq c-basic-offset 2))))
+
 (when (autoload-eval-lazily 'js2-mode)
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
