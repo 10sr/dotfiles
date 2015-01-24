@@ -28,7 +28,7 @@ __match(){
 __ln=$'\n'
 __cr=$'\r'
 
-test -n "$TMP" || export TMP=/tmp/yuk-tmp
+test -n "$TMP" || export TMP=/tmp/${USER}-tmp
 mkdir -p "$TMP"
 
 ##########################
