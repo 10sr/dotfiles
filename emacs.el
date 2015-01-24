@@ -19,20 +19,6 @@
 (eval-when-compile
   (require 'cl nil t))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; prepare init.el
-
-(defun prepare-init-el (elfile)
-  "Prepare ~/.emacs/init.el to load ELFILE."
-  (interactive "fFilename to set to be loaded: ")
-  (with-temp-buffer
-    (insert (format "(and (file-readable-p \"%s\")
-     (load-file \"%s\"))"
-                    elfile
-                    elfile))
-    (write-file (expand-file-name (concat user-emacs-directory
-                                          "init.el")))))
-
 
 ;; (add-hook 'after-change-major-mode-hook
 ;;           (lambda ()
