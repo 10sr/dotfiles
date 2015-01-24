@@ -5,10 +5,19 @@
 
 home ?= $(HOME)
 
-dotfiles_dir ?= $(home)/10sr_dotfiles
 dotfiles_url_base = https://raw.githubusercontent.com/10sr/dotfiles/master/
 dotfiles_git = git@github.com:10sr/dotfiles.git
 dotfiles_git_pub = http://github.com/10sr/dotfiles.git
+
+ifeq (,$(DOTFILES_DIR))
+ifeq (,$(dotfiles_dir))
+$(warning "Neigher DOTFILES_DIR nor dotfiles_dir not defined.")
+$(warning "Use $(home)/10sr_dotfiles for default.")
+endif
+endif
+DOTFILES_DIR ?= $(home)/10sr_dotfiles
+dotfiles_dir ?= $(DOTFILES_DIR)
+
 
 localdir = $(home)/.local
 vardir = $(home)/.var
