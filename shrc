@@ -31,6 +31,9 @@ __cr=$'\r'
 test -n "$TMP" || export TMP=/tmp/${USER}-tmp
 mkdir -p "$TMP"
 
+__homerun="$HOME/.var/run"
+mkdir -p "$__homerun"
+
 ##########################
 # system type
 
@@ -62,7 +65,7 @@ fi
 
 #########################
 # system detection
-__system_shrc="$TMP/system.shrc"
+__system_shrc="$__homerun/system.shrc"
 
 if test -f "$__system_shrc"
 then
@@ -1039,7 +1042,7 @@ __my_ps1_ipaddr(){
 }
 
 __my_ps1_bttry(){
-    ___bst="${TMP}/batterystatus"
+    ___bst="$__homerun/batterystatus"
     if test -z "$DISPLAY" && ! $iswindows
     then
         test -f $___bst && ___bstr="$(cat $___bst)"
