@@ -32,6 +32,7 @@ shrc_common_tpl =
 emacs ?= $(shell which emacs 2>/dev/null)
 git ?= $(shell which git 2>/dev/null)
 curl ?= $(shell which curl 2>/dev/null)
+grep ?= GREP_OPTIONS= $(shell which grep 2>/dev/null)
 
 # Targets
 
@@ -44,8 +45,9 @@ test_syntaxes = test-syntax-el test-syntax-sh
 test-syntax: $(test_syntaxes)
 
 setups = setup-darwin setup-directories setup-emacs setup-gitconf \
-	setup-repository setup-util setup-tmux
-setup: $(setups)
+	setup-repository setup-util setup-rc
+# `make setup` to setup these all sounds to be too match
+setup-all: $(setups)
 
 
 
@@ -112,7 +114,9 @@ endif
 # setup repository
 # ----------------
 
-setup-repository:
+setup-repository: $(dotfiles_dir)/.git
+
+$(dotfiles_dir)/.git:
 ifeq (,$(git))
 	false "Git not installed"
 endif
@@ -264,13 +268,29 @@ endif
 
 
 
-# tmux setup
-# ----------
+# setup rc files
+# --------------
 
-setup-tmux:
+setup_rcs = setup-rc-vimrc setup-rc-tmux.conf setup-rc-emacs.el
+setup-rc: $(setup_rcs)
+.PHONY: $(setup_rcs)
 
+command_extract_setup_load = $(grep) -e 'SETUP_LOAD: ' | \
+		sed -e 's/^.*SETUP_LOAD: //' -e 's|DOTFILES_DIR|$(dotfiles_dir)|'
 
+$(setup_rcs): setup-rc-%: $(dotfiles_dir)/%
+ifeq (,$(append_load))
+	@echo "\`append_load' is not defined. Just print load command."
+	cat "$<" | $(command_extract_setup_load)
+else
+	cat "$<" | $(command_extract_setup_load) | tee -a "$(topfile)"
+endif
 
+setup-rc-vimrc: topfile = $(home)/.vimrc
+setup-rc-tmux.conf: topfile = $(home)/.tmux.conf
+setup-rc-emacs.el: topfile = $(home)/.emacs.d/init.el
+
+$(dotfiles_dir)/%: setup-repository
 
 
 # test

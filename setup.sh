@@ -292,6 +292,7 @@ __EOC__
 }
 
 ##############################
+
 # setup scripts
 
 _fetch_script(){

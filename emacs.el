@@ -4,8 +4,8 @@
 
 ;;; Code:
 
-;; (and (file-readable-p "~/.dotfiles/emacs.el")
-;;      (load-file "~/.dotfiles/emacs.el"))
+;; SETUP_LOAD: (and (file-readable-p "DOTFILES_DIR/emacs.el")
+;; SETUP_LOAD:      (load-file "DOTFILES_DIR/emacs.el"))
 
 ;; make directories
 (unless (file-directory-p (expand-file-name user-emacs-directory))

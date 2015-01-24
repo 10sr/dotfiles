@@ -1,7 +1,7 @@
 " "load external file
-" if filereadable(expand('~/.dotfiles/vimrc'))
-"     source ~/.dotfiles/vimrc
-" endif
+" SETUP_LOAD: if filereadable(expand('DOTFILES_DIR/vimrc'))
+" SETUP_LOAD:     source DOTFILES_DIR/vimrc
+" SETUP_LOAD: endif
 if !isdirectory(expand('~/.vim'))
     call mkdir(expand('~/.vim'))
 endif
