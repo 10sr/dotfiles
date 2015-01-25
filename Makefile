@@ -29,7 +29,6 @@ current := $(shell date)
 uname := $(shell uname)
 
 shrc_loadables := sh bash zsh
-shrc_common_tpl :=
 
 emacs ?= $(shell which emacs 2>/dev/null)
 git ?= $(shell which git 2>/dev/null)
