@@ -122,6 +122,9 @@ $(dotfiles_dir)/%: $(dotfiles_dir)/.git
 endif
 
 file-%: $(dotfiles_dir)/%
+	true
+
+.PRECIOUS: $(dotfiles_dir)/%
 
 
 
