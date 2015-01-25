@@ -121,9 +121,14 @@ $(dotfiles_dir)/%: $(dotfiles_dir)/.git
 	test -f "$@"
 endif
 
+# Shortcut target for interactive usage
+# For example, `make file-emacs.el use_git=` will fetch emacs.el from web with
+# curl program.
+# NOTE: Is there any way to make all `file-%` targets phony?
 file-%: $(dotfiles_dir)/%
-	true
+	test -f "$<"
 
+# Make sure $(dotfiles_dir)/% wont be removed as intermidiate files
 .PRECIOUS: $(dotfiles_dir)/%
 
 
