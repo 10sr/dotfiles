@@ -228,7 +228,7 @@ setup-darwin-daemon:
 # emacs setup
 # -----------
 
-setup-emacs: emacs.el
+setup-emacs: $(dotfiles_dir)/emacs.el
 	$(emacs) -q --debug-init --batch --load $< -f my-auto-install-package
 
 
@@ -338,7 +338,7 @@ test_els := test-el-emacs.el
 test-el: $(test_els)
 .PHONY: $(test_els)
 
-$(test_els): test-el-%: %
+$(test_els): test-el-%: $(dotfiles_dir)/%
 	$(emacs) -Q -batch -f batch-byte-compile $<
 	EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \
 		--eval "(setq debug-on-error t)" --load $<c --kill
@@ -355,7 +355,7 @@ test_syntax_shs := test-syntax-shrc test-syntax-profile \
 test-syntax-sh: $(test_syntax_shs)
 .PHONY: $(test_syntax_shs)
 
-$(test_syntax_shs): test-syntax-%: %
+$(test_syntax_shs): test-syntax-%: $(dotfiles_dir)/%
 	sh -ec 'for sh in $(shrc_loadables); do $$sh -n $<; done'
 
 
@@ -376,6 +376,6 @@ sexp_elisp_syntax_check := \
 								(line-number-at-pos) \
 								(- (point) (point-at-bol)))))))
 
-$(test_syntax_els): test-syntax-%: %
+$(test_syntax_els): test-syntax-%: $(dotfiles_dir)/%
 	$(emacs) -Q --debug-init --batch \
 		--eval '(let ((file "$<")) $(sexp_elisp_syntax_check))' --kill
