@@ -5,29 +5,30 @@
 
 home ?= $(HOME)
 
-dotfiles_url_base = https://raw.githubusercontent.com/10sr/dotfiles/master/
-dotfiles_git = git@github.com:10sr/dotfiles.git
-dotfiles_git_pub = http://github.com/10sr/dotfiles.git
+dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master/
+dotfiles_git := git@github.com:10sr/dotfiles.git
+dotfiles_git_pub := http://github.com/10sr/dotfiles.git
 
-ifeq (,$(DOTFILES_DIR))
 ifeq (,$(dotfiles_dir))
+ifeq (,$(DOTFILES_DIR))
 $(warning "Neigher DOTFILES_DIR nor dotfiles_dir not defined.")
 $(warning "Use $(home)/10sr_dotfiles for default.")
+dotfiles_dir := $(home)/10sr_dotfiles
+else
+dotfiles_dir := $(DOTFILES_DIR)
 endif
 endif
-DOTFILES_DIR ?= $(home)/10sr_dotfiles
-dotfiles_dir ?= $(DOTFILES_DIR)
 
 
-localdir = $(home)/.local
-vardir = $(home)/.var
-bindir = $(localdir)/bin
+localdir := $(home)/.local
+vardir := $(home)/.var
+bindir := $(localdir)/bin
 
-current = $(shell date)
-uname = $(shell uname)
+current := $(shell date)
+uname := $(shell uname)
 
-shrc_loadables = sh bash zsh
-shrc_common_tpl =
+shrc_loadables := sh bash zsh
+shrc_common_tpl :=
 
 emacs ?= $(shell which emacs 2>/dev/null)
 git ?= $(shell which git 2>/dev/null)
@@ -38,13 +39,13 @@ grep ?= GREP_OPTIONS= $(shell which grep 2>/dev/null)
 
 all: default
 
-tests = test-el
+tests := test-el
 test: test-syntax $(tests)
 
-test_syntaxes = test-syntax-el test-syntax-sh
+test_syntaxes := test-syntax-el test-syntax-sh
 test-syntax: $(test_syntaxes)
 
-setups = setup-darwin setup-directories setup-emacs setup-gitconf \
+setups := setup-darwin setup-directories setup-emacs setup-gitconf \
 	setup-repository setup-util setup-rc
 # `make setup` to setup these all sounds to be too match
 setup-all: $(setups)
@@ -70,38 +71,38 @@ check-syntax: test-syntax
 
 # Is this usefull? Just checking uname is not enough?
 
-ismsys =
-iscygwin =
-iswindows =
+ismsys :=
+iscygwin :=
+iswindows :=
 
-isdarwin =
-isfreebsd =
-isbsd =
+isdarwin :=
+isfreebsd :=
+isbsd :=
 
-islinux =
+islinux :=
 
 ifneq (,$(findstring MINGW,$(uname)))
-ismsys = t
+ismsys := t
 endif
 ifneq (,$(findstring CYGWIN,$(uname)))
-iscygwin = t
+iscygwin := t
 endif
 ifneq (,$(ismsys)$(iscygwin))
-iswindows = t
+iswindows := t
 endif
 
 ifneq (,$(findstring Darwin,$(uname)))
-isdarwin = t
+isdarwin := t
 endif
 ifneq (,$(findstring FreeBSD,$(uname)))
-isfreebsd = t
+isfreebsd := t
 endif
 ifneq (,$(isdarwin)$(isfreebsd))
-isbsd = t
+isbsd := t
 endif
 
 ifneq (,$(findstring Linux,$(uname)))
-islinux = t
+islinux := t
 endif
 
 
@@ -111,8 +112,8 @@ endif
 
 
 
-# setup repository
-# ----------------
+# setup git repository
+# --------------------
 
 setup-repository: $(dotfiles_dir)/.git
 
@@ -134,11 +135,11 @@ endif
 # utils
 # -----
 
-setup_utils = colortable16.sh 256colors2.pl pacapt ack-2.12
+setup_utils := colortable16.sh 256colors2.pl pacapt ack-2.12
 setup-util: $(setup_utils)
 .PHONY: $(setup_utils)
 
-setup_utils_path = $(setup_utils:%=$(bindir)/%)
+setup_utils_path := $(setup_utils:%=$(bindir)/%)
 
 $(setup_utils): %: $(bindir)/%
 
@@ -147,17 +148,17 @@ $(setup_utils_path):
 	chmod +x "$@"
 
 colortable16.sh: \
-	util_url = https://gist.github.com/10sr/6852317/raw/colortable16.sh
-256colors2.pl: util_url = https://gist.github.com/10sr/6852331/raw/256colors2.pl
-pacapt: util_url = https://github.com/icy/pacapt/raw/ng/pacapt
-ack-2.12: util_url = http://beyondgrep.com/ack-2.12-single-file
+	util_url := https://gist.github.com/10sr/6852317/raw/colortable16.sh
+256colors2.pl: util_url := https://gist.github.com/10sr/6852331/raw/256colors2.pl
+pacapt: util_url := https://github.com/icy/pacapt/raw/ng/pacapt
+ack-2.12: util_url := http://beyondgrep.com/ack-2.12-single-file
 
 
 
 # create directories
 # ------------------
 
-setup_directories = $(localdir) $(vardir) $(bindir)
+setup_directories := $(localdir) $(vardir) $(bindir)
 setup-directory: $(setup_directories)
 
 $(localdir) $(vardir) $(bindir):
@@ -168,7 +169,7 @@ $(localdir) $(vardir) $(bindir):
 # darwin setup
 # ------------
 
-setup_darwins = setup-darwin-defaults setup-darwin-daemon
+setup_darwins := setup-darwin-defaults setup-darwin-daemon
 setup-darwin: $(setup_darwins)
 .PHONY: $(setup_darwins)
 
@@ -210,10 +211,10 @@ setup-emacs: emacs.el
 # ----------------
 
 ifneq (,$(git))
-git_conf = $(git) config --global
+git_conf := $(git) config --global
 endif
 
-xz = $(shell which xz 2>/dev/null)
+xz := $(shell which xz 2>/dev/null)
 
 setup-gitconf:
 ifeq (,$(git))
@@ -271,11 +272,18 @@ endif
 # setup rc files
 # --------------
 
-setup_rcs = setup-rc-vimrc setup-rc-tmux.conf setup-rc-emacs.el
+# Generate load codes from the files themselves.
+# Load codes are defined by following SETUP_LOAD: indicator.
+# String DOTFILES_DIR in the load codes will be replaced into the value of
+# $(dotfiles_dir).
+# If append_load is non-empty, the load codes are appended to $(topfile),
+# otherwise the code will be just printed out to stdout.
+
+setup_rcs := setup-rc-vimrc setup-rc-tmux.conf setup-rc-emacs.el
 setup-rc: $(setup_rcs)
 .PHONY: $(setup_rcs)
 
-command_extract_setup_load = $(grep) -e 'SETUP_LOAD: ' | \
+command_extract_setup_load := $(grep) -e 'SETUP_LOAD: ' | \
 		sed -e 's/^.*SETUP_LOAD: //' -e 's|DOTFILES_DIR|$(dotfiles_dir)|'
 
 $(setup_rcs): setup-rc-%: $(dotfiles_dir)/%
@@ -286,17 +294,21 @@ else
 	cat "$<" | $(command_extract_setup_load) | tee -a "$(topfile)"
 endif
 
-setup-rc-vimrc: topfile = $(home)/.vimrc
-setup-rc-tmux.conf: topfile = $(home)/.tmux.conf
-setup-rc-emacs.el: topfile = $(home)/.emacs.d/init.el
+setup-rc-vimrc: topfile := $(home)/.vimrc
+setup-rc-tmux.conf: topfile := $(home)/.tmux.conf
+setup-rc-emacs.el: topfile := $(home)/.emacs.d/init.el
 
 $(dotfiles_dir)/%: setup-repository
+
+
+
+
 
 
 # test
 # ====
 
-test_els = test-el-emacs.el
+test_els := test-el-emacs.el
 test-el: $(test_els)
 .PHONY: $(test_els)
 
@@ -312,7 +324,7 @@ $(test_els): test-el-%: %
 # test syntax
 # ===========
 
-test_syntax_shs = test-syntax-shrc test-syntax-profile \
+test_syntax_shs := test-syntax-shrc test-syntax-profile \
 	test-syntax-xinitrc test-syntax-xprograms
 test-syntax-sh: $(test_syntax_shs)
 .PHONY: $(test_syntax_shs)
@@ -322,11 +334,11 @@ $(test_syntax_shs): test-syntax-%: %
 
 
 
-test_syntax_els = test-syntax-emacs.el
+test_syntax_els := test-syntax-emacs.el
 test-syntax-el: $(test_syntax_els)
 .PHONY: $(test_syntax_els)
 
-sexp_elisp_syntax_check = \
+sexp_elisp_syntax_check := \
 	(with-temp-buffer \
 		(emacs-lisp-mode) \
 		(insert-file-contents file) \
