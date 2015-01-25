@@ -5,9 +5,10 @@
 
 home ?= $(HOME)
 
-dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master/
+dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master
 dotfiles_git := git@github.com:10sr/dotfiles.git
 dotfiles_git_pub := http://github.com/10sr/dotfiles.git
+use_git ?= t
 
 ifeq (,$(dotfiles_dir))
 ifeq (,$(DOTFILES_DIR))
@@ -103,6 +104,22 @@ endif
 
 ifneq (,$(findstring Linux,$(uname)))
 islinux := t
+endif
+
+
+
+# preparing files
+# ===============
+
+ifeq (,$(use_git))
+$(warning 'use_git' is set to empty. Use curl to fetch files)
+$(dotfiles_dir)/%:
+	mkdir -vp $(dotfiles_dir)
+	curl --url $(dotfiles_url_base)/$* --output $@
+else
+$(warning 'use_git' is set to non-empty. Use git to fetch files)
+$(dotfiles_dir)/%: $(dotfiles_dir)/.git
+	test -f "$@"
 endif
 
 
