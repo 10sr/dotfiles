@@ -122,6 +122,8 @@ $(dotfiles_dir)/%: $(dotfiles_dir)/.git
 	test -f "$@"
 endif
 
+file-%: $(dotfiles_dir)/%
+
 
 
 # setups
