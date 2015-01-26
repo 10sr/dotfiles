@@ -30,9 +30,6 @@ bash prompt.
 Get Latest Makefile
 -------------------
 
-NOTE: Currently on the way of migration from `setup.sh` to `Makefile`.
-`setup.sh` is available at `j.mp/10sr_setup`.
-
 Issue
 
     curl -L j.mp/10sr_make | make -f -
