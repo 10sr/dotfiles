@@ -12,10 +12,11 @@ use_git ?= t
 
 ifeq (,$(dotfiles_dir))
 ifeq (,$(DOTFILES_DIR))
-$(warning "Neigher DOTFILES_DIR nor dotfiles_dir not defined.")
-$(warning "Use $(home)/10sr_dotfiles for default.")
+$(warning Neigher DOTFILES_DIR nor dotfiles_dir not defined.)
+$(warning Use $(home)/10sr_dotfiles for default.)
 dotfiles_dir := $(home)/10sr_dotfiles
 else
+$(warning dotfiles_dir is set from DOTFILES_DIR: $(DOTFILES_DIR))
 dotfiles_dir := $(DOTFILES_DIR)
 endif
 endif
