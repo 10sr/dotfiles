@@ -62,7 +62,7 @@ check-syntax: test-syntax
 .PHONY: all default \
 	test check $(tests) \
 	test-syntax check-syntax $(test_syntaxes)\
-	setup $(setups)
+	setup-all $(setups)
 
 
 
@@ -118,7 +118,7 @@ $(dotfiles_dir)/%:
 	curl --url $(dotfiles_url_base)/$* --output $@
 else
 $(warning 'use_git' is set to non-empty. Use git to fetch files)
-$(dotfiles_dir)/%: $(dotfiles_dir)/.git
+$(dotfiles_dir)/%: setup-repository
 	test -f "$@"
 endif
 
@@ -324,8 +324,6 @@ endif
 setup-rc-vimrc: topfile := $(home)/.vimrc
 setup-rc-tmux.conf: topfile := $(home)/.tmux.conf
 setup-rc-emacs.el: topfile := $(home)/.emacs.d/init.el
-
-$(dotfiles_dir)/%: setup-repository
 
 
 
