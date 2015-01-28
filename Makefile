@@ -6,9 +6,15 @@
 home ?= $(HOME)
 
 dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master
-dotfiles_git := git@github.com:10sr/dotfiles.git
-dotfiles_git_pub := http://github.com/10sr/dotfiles.git
 use_git ?= t
+git_auth ?= t
+
+ifneq (,$(git_auth))
+dotfiles_git := git@github.com:10sr/dotfiles.git
+else
+$(warning 'git_auth' is empty. Use public read-only git repository.)
+dotfiles_git := http://github.com/10sr/dotfiles.git
+endif
 
 ifeq (,$(dotfiles_dir))
 ifeq (,$(DOTFILES_DIR))
@@ -117,7 +123,7 @@ $(dotfiles_dir)/%:
 	mkdir -vp $(dotfiles_dir)
 	curl --url $(dotfiles_url_base)/$* --output $@
 else
-$(warning 'use_git' is set to non-empty. Use git to fetch files)
+$(warning 'use_git' is set to non-empty. Use git to retrieve files)
 $(dotfiles_dir)/%: setup-repository
 	test -f "$@"
 endif
@@ -148,14 +154,7 @@ $(dotfiles_dir)/.git:
 ifeq (,$(git))
 	false "Git not installed"
 endif
-	if ssh git@github.com 2>&1 | grep 'successfully authenticated'; \
-	then \
-		echo "Using $(dotfiles_git)"; \
-		$(git) clone $(dotfiles_git) $(dotfiles_dir); \
-	else \
-		echo "Using $(dotfiles_git_pub)"; \
-		$(git) clone $(dotfiles_git_pub) $(dotfiles_dir); \
-	fi
+	$(git) clone $(dotfiles_git) $(dotfiles_dir)
 
 
 
