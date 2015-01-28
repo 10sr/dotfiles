@@ -1,4 +1,4 @@
-" "load external file
+" vimrc
 " SETUP_LOAD: if filereadable(expand('DOTFILES_DIR/vimrc'))
 " SETUP_LOAD:     source DOTFILES_DIR/vimrc
 " SETUP_LOAD: endif
@@ -8,56 +8,79 @@ endif
 
 """""""""""""""""""""""""""""""""""
 set compatible " vi compatible
-" directory to put backup file
+" Directory to put backup file
 if !isdirectory(expand('~/.vim/backup'))
     call mkdir(expand('~/.vim/backup'))
 endif
-set backup " enable backup
+" Enable backup
+set backup
 set backupdir=$HOME/.vim/backup
-set swapfile " directory for swap file
+" Directory for swap file
+set swapfile
 set directory=$HOME/.vim/backup
-set viminfo+=n~/.vim/viminfo " viminfo
-"set whichwrap=b,s,h,l,<,>,[,] " wrap when moving cursor
+" viminfo
+set viminfo+=n~/.vim/viminfo
+" Wrap when moving cursor
+"set whichwrap=b,s,h,l,<,>,[,]
 set wildmode=longest,list,full
-set hidden " can switch to another buffer even when editting a file
-"set backspace=indent,eol,start " backspace can erase these things
-" automatically change current dir according to current file. cant use with mac
+" Able to switch to another buffer even when editting a file
+set hidden
+" BS can erase these things
+"set backspace=indent,eol,start
+" Automatically change current dir according to current file. cant use with mac
 "set autochdir
-set mouse=h " do not use mouse
-set clipboard+=unnamed " use x clipboard, seems not to work
-set browsedir=buffer " default dir for Explorer
+" Do not use mouse
+set mouse=h
+" Use x clipboard, seems not to work?
+set clipboard+=unnamed
+" Default dir for Explorer
+set browsedir=buffer
 
-" encoding
+" Encoding
 set encoding=utf-8
 set fileencodings=utf-8,shift-jis,euc-jp,latin1
 
-" display
+" Display
 set showmode
-set title " display editting file on titlebar
-set list " display spcial letters such as newline or whitespace
-" set letters for displaying special letter
+" Show editting file on titlebar
+set title
+" Show spcial letters such as newline or whitespace
+set list
+" Change letters for displaying special letter
 set listchars=tab:>-,extends:<,trail:-,eol:$
-set ruler " display current line and column
-set nonumber "  do not show line number at left side
-"set laststatus=2 " always show status line
-set scrolloff=2 " scroll offset
+" Display current line and column
+set ruler
+" Do not show line number at left side
+set nonumber
+" Always show status line
+"set laststatus=2
+" Scroll offset
+set scrolloff=2
 set showcmd
-set visualbell " dont beep
-syntax enable " enable syntax highlight
+" Dont beep
+set visualbell
+" Enable syntax highlight
+syntax enable
+" Highlight matching paren
+set showmatch
 
-" searching
+" Searching
 "set incsearch
-set wrapscan " wrap search
-set showmatch " highlight matching paren
+" Enable wrap search
+set wrapscan
 set ignorecase
-set smartcase " case sensitive only when capital letter is used
+" Case-sensitive only when capital letters appear
+set smartcase
 set incsearch
 
-" tab and indent
-set tabstop=4 " tab width for displaying
+" Tab and Indentation
+" Tab width for displaying
+set tabstop=4
 set softtabstop=4
-set shiftwidth=4 " width of indent
-set expandtab " expand tab to space
+" Width of indent
+set shiftwidth=4
+" Expand tab to space
+set expandtab
 set autoindent
 set smartindent
 set cindent
@@ -66,9 +89,9 @@ filetype plugin indent on
 let g:netrw_liststyle = 1
 let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
-" for gvim
+" For gvim
 if has('gui_running')
-    " hide toolbar and scroll bar
+    " Hide toolbar and scroll bar
     set guioptions-=T
     set guioptions-=r
     set lines=45
@@ -77,11 +100,11 @@ if has('gui_running')
 endif
 
 if has('win32')
-    " prefs for Windows
+    " Prefs for Windows
 endif
 
 """""""""""""""""""""""""""""""""""""""
-" マップ
+" mappings
 " imap <c-j> <esc> でC-Jをescにできる。?
 " nmap
 " vmap
@@ -90,12 +113,12 @@ endif
 " * map はキーシーケンスを展開したあと、さらに別のマップを適用しようとします。
 " * noremap は一度だけ展開します。
 " →マップを再帰的に展開するときはmap、決め打ちはnoremap（キーの入れ替えなど）
-" 割と保存
+" Save file on exiting insert mode
 inoremap <ESC> <ESC>:<C-u>w<CR>
 inoremap <C-c> <ESC>:<C-u>w<CR>
 noremap <C-c> <ESC>:<C-u>w<CR>
 
-" highlight current line
+" Highlight current line
 " set cursorline
 " show cursor line only in current window
 " not work in term-mode of emacs
@@ -108,30 +131,9 @@ noremap <C-c> <ESC>:<C-u>w<CR>
 hi clear CursorLine
 highlight CursorLine term=underline cterm=underline gui=underline
 
-" change status line color when in insert mode
+" Change status line color when in insert mode
 augroup InsertHook
     autocmd!
     autocmd InsertEnter * highlight StatusLine guifg=#ccdc90 guibg=#2E4340
     autocmd InsertLeave * highlight StatusLine guifg=#2E4340 guibg=#ccdc90
 augroup END
-
-" save window position and size
-if has('gui_running')
-    let g:save_window_file = expand('~/.vimwinpos')
-    augroup SaveWindow
-        autocmd!
-        autocmd VimLeavePre * call s:save_window()
-        function! s:save_window()
-            let options = [
-                        \ 'set columns=' . &columns,
-                        \ 'set lines=' . &lines,
-                        \ 'winpos ' . getwinposx() . ' ' . getwinposy(),
-                        \ ]
-            call writefile(options, g:save_window_file)
-        endfunction
-    augroup END
-
-    if filereadable(g:save_window_file)
-        execute 'source' g:save_window_file
-    endif
-endif
