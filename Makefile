@@ -7,14 +7,8 @@ home ?= $(HOME)
 
 dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master
 use_git ?= t
-git_auth ?= t
 
-ifneq (,$(git_auth))
 dotfiles_git := git@github.com:10sr/dotfiles.git
-else
-$(warning 'git_auth' is empty. Use public read-only git repository.)
-dotfiles_git := http://github.com/10sr/dotfiles.git
-endif
 
 ifeq (,$(dotfiles_dir))
 ifeq (,$(DOTFILES_DIR))
