@@ -2150,39 +2150,45 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (setq eshell-prompt-function
         'my-eshell-prompt-function)
 
-  (defun my-eshell-prompt-function ()
-    (with-temp-buffer
-      (let (p1 p2 p3 p4)
-        (insert ":: [")
-        (setq p1 (point))
-        (insert user-login-name
-                "@"
-                (car (split-string system-name
-                                   "\\."))
-                )
-        (setq p2 (point))
-        (insert ":")
-        (setq p3 (point))
-        (insert (abbreviate-file-name default-directory))
-        (setq p4 (point))
-        (insert "]")
-        (insert "\n:: ")
-        (unless (eq 0
+  (defun my-eshell-prompt-function()
+    "Prompt function.
+
+It looks like:
+
+:: [10sr@darwin:~/]
+:: $
+"
+    (concat ":: ["
+            (let ((str (concat user-login-name
+                               "@"
+                               (car (split-string system-name
+                                                  "\\."))
+                               )))
+              (put-text-property 0
+                                 (length str)
+                                 'face
+                                 'underline
+                                 str)
+              str)
+            ":"
+            (let ((str (abbreviate-file-name default-directory)))
+              (put-text-property 0
+                                 (length str)
+                                 'face
+                                 'underline
+                                 str)
+              str)
+            "]\n:: "
+            (if (eq 0
                     eshell-last-command-status)
-          (insert (format "[STATUS:%d] "
-                          eshell-last-command-status)))
-        (insert (if (= (user-uid)
-                       0)
-                    "# "
-                  "$ "))
-        (add-text-properties p1
-                             p2
-                             '(face underline))
-        (add-text-properties p3
-                             p4
-                             '(face underline))
-        (buffer-substring (point-min)
-                          (point-max)))))
+                ""
+              (format "[STATUS:%d] "
+                      eshell-last-command-status))
+            (if (= (user-uid)
+                   0)
+                "# "
+              "$ ")
+            ))
 
   (add-hook 'eshell-mode-hook
             (lambda ()
@@ -2207,10 +2213,10 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
                 'scroll-down-line)
               (define-key eshell-mode-map (kbd "<down>")
                 'scroll-up-line)
-              (define-key eshell-mode-map
-                (kbd "C-p") 'eshell-previous-matching-input-from-input)
-              (define-key eshell-mode-map
-                (kbd "C-n") 'eshell-next-matching-input-from-input)
+              ;; (define-key eshell-mode-map
+              ;;   (kbd "C-p") 'eshell-previous-matching-input-from-input)
+              ;; (define-key eshell-mode-map
+              ;;   (kbd "C-n") 'eshell-next-matching-input-from-input)
 
               (apply 'eshell/addpath exec-path)
               (set (make-local-variable 'scroll-margin) 0)
