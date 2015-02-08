@@ -2155,7 +2155,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 
 It looks like:
 
-:: [10sr@darwin:~/]
+:: [10sr@darwin:~/][ESHELL]
 :: $
 "
     (concat ":: ["
@@ -2178,7 +2178,7 @@ It looks like:
                                  'underline
                                  str)
               str)
-            "]\n:: "
+            "][ESHELL]\n:: "
             (if (eq 0
                     eshell-last-command-status)
                 ""
