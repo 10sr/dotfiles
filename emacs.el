@@ -992,6 +992,8 @@ found, otherwise returns nil."
          (add-to-list 'git-command-view-command-list
                       "graph")
          (add-to-list 'git-command-view-command-list
+                      "blame")
+         (add-to-list 'git-command-view-command-list
                       "help"))
        (when (boundp 'git-command-aliases-alist)
          ;; (message "new version of git-command!")
