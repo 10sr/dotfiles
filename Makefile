@@ -10,16 +10,25 @@ use_git ?= t
 
 dotfiles_git := git@github.com:10sr/dotfiles.git
 
+current_origin_url := $(shell git config remote.origin.url)
+
+ifeq ($(current_origin_url), $(dotfiles_git))
+$(warning Currently in dotfiles repository)
+dotfiles_dir := $(PWD)
+else
 ifeq (,$(dotfiles_dir))
 ifeq (,$(DOTFILES_DIR))
-$(warning Neigher DOTFILES_DIR nor dotfiles_dir not defined.)
-$(warning Use $(home)/10sr_dotfiles for default.)
+$(warning Neigher DOTFILES_DIR nor dotfiles_dir not defined)
+$(warning Use default value)
 dotfiles_dir := $(home)/10sr_dotfiles
 else
-$(warning dotfiles_dir is set from DOTFILES_DIR: $(DOTFILES_DIR))
+$(warning dotfiles_dir is set from DOTFILES_DIR)
 dotfiles_dir := $(DOTFILES_DIR)
 endif
 endif
+endif
+
+$(warning dotfiles_dir: $(dotfiles_dir))
 
 
 localdir := $(home)/.local
