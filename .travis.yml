@@ -3,6 +3,6 @@ before_install:
   - sudo apt-get update
 install:
   - sudo apt-get install zsh
-script: make --debug=b dotfiles_dir=. test
+script: make --debug=b test
 notifications:
   email: 8slashes+travis-ci@gmail.com
