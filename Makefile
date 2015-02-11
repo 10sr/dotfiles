@@ -21,7 +21,7 @@ endif
 
 current_origin_url := $(shell git config remote.origin.url)
 
-ifneq (,$(dotfiles_dir))
+ifeq (,$(dotfiles_dir))
 
   ifneq (,$(findstring $(dotfiles_git_path),$(current_origin_url)))
     $(warning Currently in dotfiles repository)
