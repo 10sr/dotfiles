@@ -21,20 +21,26 @@ endif
 
 current_origin_url := $(shell git config remote.origin.url)
 
-ifneq (,$(findstring $(dotfiles_git_path),$(current_origin_url)))
-$(warning Currently in dotfiles repository)
-dotfiles_dir := $(PWD)
-else
-ifeq (,$(dotfiles_dir))
-ifeq (,$(DOTFILES_DIR))
-$(warning Neigher DOTFILES_DIR nor dotfiles_dir not defined)
-$(warning Use default value)
-dotfiles_dir := $(home)/10sr_dotfiles
-else
-$(warning dotfiles_dir is set from DOTFILES_DIR)
-dotfiles_dir := $(DOTFILES_DIR)
-endif
-endif
+ifneq (,$(dotfiles_dir))
+
+  ifneq (,$(findstring $(dotfiles_git_path),$(current_origin_url)))
+    $(warning Currently in dotfiles repository)
+    dotfiles_dir := $(PWD)
+
+  else
+    # Current directory is not 10sr/dotfiles.git reposioty
+    ifeq (,$(DOTFILES_DIR))
+      $(warning Neigher DOTFILES_DIR nor dotfiles_dir is defined)
+      $(warning Use default value)
+      dotfiles_dir := $(home)/10sr_dotfiles
+    else
+      # dotfiles_dir is empty but DOTFILES_DIR has a value
+      $(warning dotfiles_dir is set from DOTFILES_DIR)
+      dotfiles_dir := $(DOTFILES_DIR)
+    endif
+
+  endif
+
 endif
 
 $(warning dotfiles_dir: $(dotfiles_dir))
