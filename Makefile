@@ -9,16 +9,19 @@ dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master
 use_git ?= t
 git_auth ?= t
 
+dotfiles_git_path := 10sr/dotfiles.git
+
 ifneq (,$(git_auth))
-dotfiles_git := git@github.com:10sr/dotfiles.git
+dotfiles_git := git@github.com:$(dotfiles_git_path)
 else
 $(warning 'git_auth' is empty. Use public read-only git repository.)
-dotfiles_git := http://github.com/10sr/dotfiles.git
+dotfiles_git := http://github.com/$(dotfiles_git_path)
 endif
+
 
 current_origin_url := $(shell git config remote.origin.url)
 
-ifeq ($(current_origin_url), $(dotfiles_git))
+ifneq (,$(findstring $(dotfiles_git_path),$(current_origin_url)))
 $(warning Currently in dotfiles repository)
 dotfiles_dir := $(PWD)
 else
