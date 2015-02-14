@@ -34,7 +34,7 @@
   "Require FEATURE if available.
 
 At compile time the feature will be loaded immediately."
-  `(eval-when-compile
+  `(eval-and-compile
     (require ,feature nil t)))
 
 (defmacro autoload-eval-lazily (feature &optional functions &rest body)
@@ -260,7 +260,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
           'reload-init-file)
 
 (defun my-force-kill-emacs ()
-  "My force kill emacs."
+  "My force kill Emacs."
   (interactive)
   (let ((kill-emacs-hook nil))
     (kill-emacs)))
@@ -387,9 +387,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-(when (fetch-library
-       "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
-       t)
+(when (and (fetch-library
+            "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
+            t)
+           (safe-require-or-eval 'terminal-title))
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
@@ -406,7 +407,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         (setq terminal-title-format
               '((file-name-nondirectory (directory-file-name
                                          default-directory))))
-      ;; seems that TMUX is used by locally and ssh to remote host
+      ;; seems that TMUX is used locally and ssh to remote host
       (setq terminal-title-format
             `("em:"
               ,user-login-name
@@ -415,10 +416,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                   "\\."))
               ":"
               default-directory))
-      ))
-  ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
-  (and (safe-require-or-eval 'terminal-title)
-       (terminal-title-mode)))
+      )
+    )
+  (terminal-title-mode))
 
 (setq eol-mnemonic-dos "\\r\\n")
 (setq eol-mnemonic-mac "\\r")
@@ -633,7 +633,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; fonts
 
 (defun my-set-ascii-and-jp-font (list)
-  "Set font configuration List."
+  "Set font configuration to LIST."
   (let ((fspec1 (if (> emacs-major-version 22)
                     ;; font spec is available in emacs23 and later
                     (font-spec :family (nth 2 list) :size (nth 3 list))
@@ -688,10 +688,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (setq revert-without-query '(".+"))
 
 ;; save cursor position
-(setq save-place-file (concat user-emacs-directory
-                              "places"))
 (when (safe-require-or-eval 'saveplace)
-  (setq-default save-place t))
+  (setq-default save-place t)
+  (setq save-place-file (concat user-emacs-directory
+                                "places")))
 
 ;; http://www.bookshelf.jp/soft/meadow_24.html#SEC260
 (setq make-backup-files t)
@@ -807,7 +807,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (defun my-load-scim ()
   "Use scim-bridge.el as japanese im."
   ;; Load scim-bridge.
-  (when (safe-require-or-eval require 'scim-bridge)
+  (when (safe-require-or-eval 'scim-bridge)
     ;; Turn on scim-mode automatically after loading .emacs
     (add-hook 'after-init-hook 'scim-mode-on)
     (setq scim-cursor-color "red")
@@ -830,9 +830,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; (setq default-input-method "japanese")
 (defun my-load-mozc-el ()
   "Use mozc.el as japanese im."
-  (setq mozc-leim-title "[MZ]")
   (when (safe-require-or-eval 'mozc)
     (setq defauit-input-method "japanese-mozc")
+    (setq mozc-leim-title "[MZ]")
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -884,7 +884,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (not (equal (getenv "DISPLAY") ""))
      (executable-find "xclip")
      ;; (< emacs-major-version 24)
-     (safe-require-or-eval require 'xclip)
+     (safe-require-or-eval 'xclip)
      nil
      (turn-on-xclip))
 
@@ -914,9 +914,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; server
 
-(autoload-eval-lazily 'server nil
-  (setq server-name (concat "server"
-                            (number-to-string (emacs-pid)))))
+(autoload-eval-lazily 'server)
+(setq server-name (concat "server"
+                          (number-to-string (emacs-pid))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
