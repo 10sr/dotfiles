@@ -35,7 +35,7 @@
 
 At compile time the feature will be loaded immediately."
   `(eval-and-compile
-    (require ,feature nil t)))
+     (require ,feature nil t)))
 
 (defmacro autoload-eval-lazily (feature &optional functions &rest body)
   "Define autoloading FEATURE that defines FUNCTIONS.
@@ -1585,7 +1585,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 
 (when (autoload-eval-lazily 'google-translate '(google-translate-translate
-                                          google-translate-at-point))
+                                                google-translate-at-point))
   (setq google-translate-default-source-language "auto")
   (setq google-translate-default-target-language "ja"))
 
@@ -1861,35 +1861,37 @@ the list."
 
   (add-hook 'dired-mode-hook
             (lambda ()
-              (define-key dired-mode-map "o" 'my-dired-x-open)
-              (define-key dired-mode-map "i" 'dired-get-file-info)
-              (define-key dired-mode-map "f" 'find-file)
-              (define-key dired-mode-map "!" 'shell-command)
-              (define-key dired-mode-map "&" 'async-shell-command)
-              (define-key dired-mode-map "X" 'dired-do-async-shell-command)
-              (define-key dired-mode-map "=" 'my-dired-diff)
-              (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
-              (define-key dired-mode-map "b" 'gtkbm)
-              (define-key dired-mode-map "h" 'my-dired-echo-file-head)
-              (define-key dired-mode-map "@" (lambda ()
-                                               (interactive) (my-x-open ".")))
-              (define-key dired-mode-map (kbd "TAB") 'other-window)
-              ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
-              (define-key dired-mode-map "/" 'dired-isearch-filenames)
-              (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
-              (define-key dired-mode-map (kbd "C-h") 'dired-up-directory)
+              (local-set-key "o" 'my-dired-x-open)
+              (local-set-key "i" 'dired-get-file-info)
+              (local-set-key "f" 'find-file)
+              (local-set-key "!" 'shell-command)
+              (local-set-key "&" 'async-shell-command)
+              (local-set-key "X" 'dired-do-async-shell-command)
+              (local-set-key "=" 'my-dired-diff)
+              (local-set-key "B" 'gtkbm-add-current-dir)
+              (local-set-key "b" 'gtkbm)
+              (local-set-key "h" 'my-dired-echo-file-head)
+              (local-set-key "@" (lambda ()
+                                   (interactive) (my-x-open ".")))
+              (local-set-key (kbd "TAB") 'other-window)
+              ;; (local-set-key "P" 'my-dired-do-pack-or-unpack)
+              (local-set-key "/" 'dired-isearch-filenames)
+              (local-set-key (kbd "DEL") 'dired-up-directory)
+              (local-set-key (kbd "C-h") 'dired-up-directory)
               (substitute-key-definition 'dired-next-line
-                                         'my-dired-next-line dired-mode-map)
+                                         'my-dired-next-line
+                                         (current-local-map))
               (substitute-key-definition 'dired-previous-line
-                                         'my-dired-previous-line dired-mode-map)
-              ;; (define-key dired-mode-map (kbd "C-p") 'my-dired-previous-line)
-              ;; (define-key dired-mode-map (kbd "p") 'my-dired-previous-line)
-              ;; (define-key dired-mode-map (kbd "C-n") 'my-dired-next-line)
-              ;; (define-key dired-mode-map (kbd "n") 'my-dired-next-line)
-              (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
-              (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
-              (define-key dired-mode-map (kbd "ESC p") 'my-dired-scroll-up)
-              (define-key dired-mode-map (kbd "ESC n") 'my-dired-scroll-down)
+                                         'my-dired-previous-line
+                                         (current-local-map))
+              ;; (local-set-key (kbd "C-p") 'my-dired-previous-line)
+              ;; (local-set-key (kbd "p") 'my-dired-previous-line)
+              ;; (local-set-key (kbd "C-n") 'my-dired-next-line)
+              ;; (local-set-key (kbd "n") 'my-dired-next-line)
+              (local-set-key (kbd "<left>") 'my-dired-scroll-up)
+              (local-set-key (kbd "<right>") 'my-dired-scroll-down)
+              (local-set-key (kbd "ESC p") 'my-dired-scroll-up)
+              (local-set-key (kbd "ESC n") 'my-dired-scroll-down)
               (dired-hide-details-mode t)
               (let ((file "._Icon\015"))
                 (when  nil (file-readable-p file)
@@ -1900,7 +1902,7 @@ the list."
        (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack))
        (add-hook 'dired-mode-hook
                  (lambda ()
-                   (define-key dired-mode-map "P" 'dired-do-pack-or-unpack))))
+                   (local-set-key "P" 'dired-do-pack-or-unpack))))
 
   (and (fetch-library
         "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
@@ -1909,7 +1911,7 @@ the list."
        (setq dired-listing-switches "-lhF")
        (add-hook 'dired-mode-hook
                  (lambda ()
-                   (define-key dired-mode-map "a" 'dired-list-all-mode)
+                   (local-set-key "a" 'dired-list-all-mode)
                    )))
   )                                       ; when dired locate
 
