@@ -1843,6 +1843,7 @@ the list."
             "%Y-%m-%d      ")))
 
   (setq dired-dwim-target t)
+  (setq dired-hide-details-hide-symlink-targets nil)
 
   ;; (add-hook 'dired-after-readin-hook
   ;;           'my-replace-nasi-none)
@@ -1882,6 +1883,7 @@ the list."
               (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
               (define-key dired-mode-map (kbd "ESC p") 'my-dired-scroll-up)
               (define-key dired-mode-map (kbd "ESC n") 'my-dired-scroll-down)
+              (dired-hide-details-mode t)
               (let ((file "._Icon\015"))
                 (when  nil (file-readable-p file)
                        (delete-file file)))))
