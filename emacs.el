@@ -27,6 +27,52 @@
 ;;                      buffer-file-name)))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Some macros for internals
+
+(defmacro safe-require-or-eval (feature)
+  "Require FEATURE if available.
+
+At compile time the feature will be loaded immediately."
+  `(eval-when-compile
+    (require ,feature nil t)))
+
+(defmacro autoload-eval-lazily (feature &optional functions &rest body)
+  "Define autoloading FEATURE that defines FUNCTIONS.
+FEATURE is a symbol.  FUNCTIONS is a list of symbols.  If FUNCTIONS is nil,
+the function same as FEATURE is defined as autoloaded function.  BODY is passed
+ to `eval-after-load'.
+After this macro is expanded, this returns the path to library if FEATURE
+found, otherwise returns nil."
+  (let* ((libname (symbol-name (eval feature)))
+         (libpath (locate-library libname)))
+    (and libpath
+         `(progn
+            ,@(mapcar (lambda (f)
+                        (unless (fboundp f)
+                          `(progn
+                             (message "Autoloaded function `%S' defined (%s)"
+                                      (quote ,f)
+                                      ,libpath)
+                             (autoload (quote ,f)
+                               ,libname
+                               ,(concat "Autoloaded function defined in \""
+                                        libpath
+                                        "\".")
+                               t))))
+                      (or (eval functions)
+                          `(,(eval feature))))
+            (eval-after-load ,feature
+              (quote (progn
+                       ,@body)))
+            (locate-library ,libname)))))
+
+(put 'autoload-eval-lazily 'lisp-indent-function 2)
+
+(when (autoload-eval-lazily 'tetris nil
+        (message "Tetris loaded!"))
+  (message "Tetris found!"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; download library from web
 
@@ -150,7 +196,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         )
       )
 
-(when (require 'package nil t)
+(when (safe-require-or-eval 'package)
   ;; (add-to-list 'package-archives
   ;;              '("ELPA" . "http://tromey.com/elpa/"))
   (add-to-list 'package-archives
@@ -172,45 +218,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   )
 
 ;; (lazy-load-eval 'sudoku)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; autoload
-
-(defmacro autoload-eval-lazily (feature &optional functions &rest body)
-  "Define autoloading FEATURE that defines FUNCTIONS.
-FEATURE is a symbol.  FUNCTIONS is a list of symbols.  If FUNCTIONS is nil,
-the function same as FEATURE is defined as autoloaded function.  BODY is passed
- to `eval-after-load'.
-After this macro is expanded, this returns the path to library if FEATURE
-found, otherwise returns nil."
-  (let* ((libname (symbol-name (eval feature)))
-         (libpath (locate-library libname)))
-    (and libpath
-         `(progn
-            ,@(mapcar (lambda (f)
-                        (unless (fboundp f)
-                          `(progn
-                             (message "Autoloaded function `%S' defined (%s)"
-                                      (quote ,f)
-                                      ,libpath)
-                             (autoload (quote ,f)
-                               ,libname
-                               ,(concat "Autoloaded function defined in \""
-                                        libpath
-                                        "\".")
-                               t))))
-                      (or (eval functions)
-                          `(,(eval feature))))
-            (eval-after-load ,feature
-              (quote (progn
-                       ,@body)))
-            (locate-library ,libname)))))
-
-(put 'autoload-eval-lazily 'lisp-indent-function 2)
-
-(when (autoload-eval-lazily 'tetris nil
-        (message "Tetris loaded!"))
-  (message "Tetris found!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my-idle-hook
@@ -301,7 +308,7 @@ found, otherwise returns nil."
      (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
       t)
-     (require 'save-window-size nil t))
+     (safe-require-or-eval 'save-window-size))
 
 (defun reload-init-file ()
   "Reload Emacs init file."
@@ -410,7 +417,7 @@ found, otherwise returns nil."
               default-directory))
       ))
   ;; this wont happen? (TMUX is not set, TERM is screen, not ssh-ed)
-  (and (require 'terminal-title nil t)
+  (and (safe-require-or-eval 'terminal-title)
        (terminal-title-mode)))
 
 (setq eol-mnemonic-dos "\\r\\n")
@@ -435,7 +442,7 @@ found, otherwise returns nil."
               (display-time-update))
             ))
 
-(when (require 'time nil t)
+(when (safe-require-or-eval 'time)
   (setq display-time-interval 29)
   (setq display-time-day-and-date t)
   (setq display-time-format "%a, %d %b %Y %T")
@@ -534,7 +541,7 @@ found, otherwise returns nil."
   (add-hook 'input-method-inactivate-hook
             (lambda () (set-cursor-color "black"))))
 
-(when (require 'paren nil t)
+(when (safe-require-or-eval 'paren)
   (show-paren-mode 1)
   (setq show-paren-delay 0.5
         show-paren-style 'parenthesis)    ; mixed is hard to read
@@ -573,7 +580,7 @@ found, otherwise returns nil."
             (font-lock-add-keywords nil my-jspace-face)
             ))
 
-(when (require 'whitespace nil t)
+(when (safe-require-or-eval 'whitespace)
   (add-to-list 'whitespace-display-mappings ; not work
                `(tab-mark ?\t ,(vconcat "^I\t")))
   (add-to-list 'whitespace-display-mappings
@@ -599,7 +606,7 @@ found, otherwise returns nil."
      (fetch-library
       "http://www.emacswiki.org/emacs/download/fill-column-indicator.el"
       t)
-     (require 'fill-column-indicator nil t)
+     (safe-require-or-eval 'fill-column-indicator)
      (setq fill-column-indicator))
 
 ;; highlight current line
@@ -655,7 +662,7 @@ found, otherwise returns nil."
       "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
       t)
      (progn
-       (require 'set-modeline-color nil t)))
+       (safe-require-or-eval 'set-modeline-color)))
 
 (let ((fg (face-foreground 'default))
       (bg (face-background 'default)))
@@ -671,7 +678,7 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://raw.github.com/tarao/elisp/master/end-mark.el"
       t)
-     (require 'end-mark nil t)
+     (safe-require-or-eval 'end-mark)
      (global-end-mark-mode))
 
 
@@ -683,7 +690,7 @@ found, otherwise returns nil."
 ;; save cursor position
 (setq save-place-file (concat user-emacs-directory
                               "places"))
-(when (require 'saveplace nil t)
+(when (safe-require-or-eval 'saveplace)
   (setq-default save-place t))
 
 ;; http://www.bookshelf.jp/soft/meadow_24.html#SEC260
@@ -719,7 +726,7 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
       t)
-     (require 'smart-revert nil t)
+     (safe-require-or-eval 'smart-revert)
      (smart-revert-on))
 
 ;; autosave
@@ -727,7 +734,7 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/autosave.el"
       t)
-     (require 'autosave nil t)
+     (safe-require-or-eval 'autosave)
      (autosave-set 2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -800,7 +807,7 @@ found, otherwise returns nil."
 (defun my-load-scim ()
   "Use scim-bridge.el as japanese im."
   ;; Load scim-bridge.
-  (when (require 'scim-bridge nil t)
+  (when (safe-require-or-eval require 'scim-bridge)
     ;; Turn on scim-mode automatically after loading .emacs
     (add-hook 'after-init-hook 'scim-mode-on)
     (setq scim-cursor-color "red")
@@ -811,7 +818,7 @@ found, otherwise returns nil."
 (defun my-load-anthy ()
   "Use anthy.el as japanese im."
   ;; anthy
-  (when (require 'anthy nil t)
+  (when (safe-require-or-eval 'anthy)
     (global-set-key
      (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
     (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
@@ -824,7 +831,7 @@ found, otherwise returns nil."
 (defun my-load-mozc-el ()
   "Use mozc.el as japanese im."
   (setq mozc-leim-title "[MZ]")
-  (when (require 'mozc nil t)
+  (when (safe-require-or-eval 'mozc)
     (setq defauit-input-method "japanese-mozc")
     ))
 
@@ -877,7 +884,7 @@ found, otherwise returns nil."
      (not (equal (getenv "DISPLAY") ""))
      (executable-find "xclip")
      ;; (< emacs-major-version 24)
-     (require 'xclip nil t)
+     (safe-require-or-eval require 'xclip)
      nil
      (turn-on-xclip))
 
@@ -885,14 +892,14 @@ found, otherwise returns nil."
      (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/pasteboard.el"
       t)
-     (require 'pasteboard nil t)
+     (safe-require-or-eval 'pasteboard)
      (turn-on-pasteboard)
      (getenv "TMUX")
      (pasteboard-enable-rtun))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; https://github.com/lunaryorn/flycheck
-(when (require 'flycheck nil t)
+(when (safe-require-or-eval 'flycheck)
   (add-hook 'after-init-hook 'global-flycheck-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -944,7 +951,7 @@ found, otherwise returns nil."
 (and (fetch-library
       "https://raw.github.com/10sr/emacs-lisp/master/remember-major-modes-mode.el"
       t)
-     (require 'remember-major-modes-mode nil t)
+     (safe-require-or-eval 'remember-major-modes-mode)
      (remember-major-modes-mode 1)
      )
 
@@ -955,16 +962,16 @@ found, otherwise returns nil."
              '("python2" . python-mode))
 
 ;; http://fukuyama.co/foreign-regexp
-'(and (require 'foreign-regexp nil t)
+'(and (safe-require-or-eval 'foreign-regexp)
       (progn
         (setq foreign-regexp/regexp-type 'perl)
         '(setq reb-re-syntax 'foreign-regexp)
         ))
 
-(require 'session nil t)
+(safe-require-or-eval 'session)
 
 (autoload-eval-lazily 'sql '(sql-mode)
-  (require 'sql-indent nil t))
+  (safe-require-or-eval 'sql-indent))
 
 (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
                     t)
@@ -1028,7 +1035,7 @@ found, otherwise returns nil."
 
 (defalias 'qcalc 'quick-calc)
 
-(require 'simple nil t)
+(safe-require-or-eval 'simple)
 
 (add-hook 'makefile-mode-hook
           (lambda ()
@@ -1228,11 +1235,11 @@ found, otherwise returns nil."
     (add-hook 'js-mode-hook
               'flymake-jslint-load)))
 
-(require 'js-doc nil t)
+(safe-require-or-eval 'js-doc)
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
-(when (require 'uniquify nil t)
+(when (safe-require-or-eval 'uniquify)
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
   (setq uniquify-ignore-buffers-re "*[^*]+*")
   (setq uniquify-min-dir-content 1))
@@ -1657,7 +1664,7 @@ found, otherwise returns nil."
       recentf-max-saved-items 30
       recentf-show-file-shortcuts-flag nil)
 
-(when (require 'recentf nil t)
+(when (safe-require-or-eval 'recentf)
   (add-to-list 'recentf-exclude
                (regexp-quote recentf-save-file))
   (add-to-list 'recentf-exclude
@@ -1834,7 +1841,7 @@ the list."
   ;; reuse current dired buffer for the file to open
   (setq dired-ls-F-marks-symlinks t)
 
-  (when (require 'ls-lisp nil t)
+  (when (safe-require-or-eval 'ls-lisp)
     (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
     (setq ls-lisp-dirs-first t)
     (setq ls-lisp-use-localized-time-format t)
@@ -2064,7 +2071,7 @@ C-x t to toggling emacs-text-mode
                                               ,@args)
                                             " "))
       ;; (eshell-git-shell-command-to-string args)
-      (if (require 'git-command nil t)
+      (if (safe-require-or-eval 'git-command)
           (git-command (mapconcat 'shell-quote-argument
                                   args
                                   " "))
