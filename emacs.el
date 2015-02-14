@@ -1851,6 +1851,7 @@ the list."
 
   (setq dired-dwim-target t)
   (setq dired-hide-details-hide-symlink-targets nil)
+  (setq dired-hide-details-hide-information-lines nil)
 
   ;; (add-hook 'dired-after-readin-hook
   ;;           'my-replace-nasi-none)
@@ -1892,7 +1893,9 @@ the list."
               (local-set-key (kbd "<right>") 'my-dired-scroll-down)
               (local-set-key (kbd "ESC p") 'my-dired-scroll-up)
               (local-set-key (kbd "ESC n") 'my-dired-scroll-down)
-              (dired-hide-details-mode t)
+              (when (fboundp 'dired-hide-details-mode)
+                (dired-hide-details-mode t)
+                (local-set-key "l" 'dired-hide-details-mode))
               (let ((file "._Icon\015"))
                 (when  nil (file-readable-p file)
                        (delete-file file)))))
