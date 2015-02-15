@@ -30,7 +30,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
-(defmacro defvar-set (symbol &optional value docstring)
+(defmacro defvar-set (symbol value &optional docstring)
   "Define SYMBOL as a variable and set to VALUE.
 
 Variable will be defined with DOCSTRING."
@@ -395,10 +395,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-(when (and (fetch-library
-            "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
-            t)
-           (safe-require-or-eval 'terminal-title))
+(when (fetch-library
+       "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
+       t)
+  (safe-require-or-eval 'terminal-title)
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
@@ -629,9 +629,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     (t
      (:underline "black")))
   "*Face used by hl-line.")
-(setq hl-line-face 'my-hl-line) ;; (setq hl-line-face nil)
+(defvar-set hl-line-face 'my-hl-line) ;; (setq hl-line-face nil)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
-(setq hl-line-global-modes
+(defvar-set hl-line-global-modes
       '(not
         term-mode))
 
@@ -1047,7 +1047,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (add-hook 'makefile-mode-hook
           (lambda ()
-            (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)
+            (local-set-key (kbd "C-m") 'newline-and-indent)
             ;; this functions is set in write-file-functions, i cannot find any
             ;; good way to remove this.
             (fset 'makefile-warn-suspicious-lines 'ignore)
@@ -1055,7 +1055,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (add-hook 'verilog-mode-hook
           (lambda ()
-            (define-key verilog-mode-map ";" 'self-insert-command)))
+            (local-set-key ";" 'self-insert-command)))
 
 (setq diff-switches "-u")
 (add-hook 'diff-mode-hook
@@ -1101,7 +1101,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (add-hook 'sh-mode-hook
           (lambda ()
-            (define-key sh-mode-map
+            (local-set-key
               (kbd "C-x C-e")
               'my-execute-shell-command-current-line)))
 (setq sh-here-document-word "__EOC__")
@@ -1125,25 +1125,23 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (add-hook 'yaml-mode-hook
           (lambda ()
-            (define-key yaml-mode-map (kbd "C-m")
-              'newline)))
+            (local-set-key(kbd "C-m") 'newline)))
 
 (add-hook 'html-mode-hook
           (lambda ()
-            (define-key html-mode-map (kbd "C-m")
-              'reindent-then-newline-and-indent)))
+            (local-set-key(kbd "C-m") 'reindent-then-newline-and-indent)))
 
 (add-hook 'text-mode-hook
           (lambda ()
-            (define-key text-mode-map (kbd "C-m") 'newline)))
+            (local-set-key (kbd "C-m") 'newline)))
 
 (add-to-list 'Info-default-directory-list
              (expand-file-name "~/.info/emacs-ja"))
 
 (add-hook 'apropos-mode-hook
           (lambda ()
-            (define-key apropos-mode-map "n" 'next-line)
-            (define-key apropos-mode-map "p" 'previous-line)
+            (local-set-key "n" 'next-line)
+            (local-set-key "p" 'previous-line)
             ))
 
 (add-hook 'isearch-mode-hook
@@ -1315,19 +1313,15 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                             7))
   (add-hook 'python-mode-hook
             (lambda ()
-              (define-key python-mode-map
-                (kbd "C-c C-e") 'my-python-run-as-command)
-              (define-key python-mode-map
-                (kbd "C-c C-b") 'my-python-display-python-buffer)
-              (define-key python-mode-map (kbd "C-m") 'newline-and-indent)))
+              (local-set-key (kbd "C-c C-e") 'my-python-run-as-command)
+              (local-set-key (kbd "C-c C-b") 'my-python-display-python-buffer)
+              (local-set-key (kbd "C-m") 'newline-and-indent)))
 
   (add-hook 'inferior-python-mode-hook
             (lambda ()
               (my-python-display-python-buffer)
-              (define-key inferior-python-mode-map
-                (kbd "<up>") 'comint-previous-input)
-              (define-key inferior-python-mode-map
-                (kbd "<down>") 'comint-next-input))))
+              (local-set-key (kbd "<up>") 'comint-previous-input)
+              (local-set-key (kbd "<down>") 'comint-next-input))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GNU GLOBAL(gtags)
@@ -2223,20 +2217,14 @@ It looks like:
               ;;                                           (interactive)
               ;;                                           (eshell-goto-prompt)
               ;;                                           (keyboard-quit)))
-              (define-key eshell-mode-map (kbd "C-x t")
-                'eshell-text-mode-toggle)
-              (define-key eshell-mode-map (kbd "C-u")
-                'eshell-kill-input)
-              (define-key eshell-mode-map (kbd "C-d")
-                'eshell-delete-char-or-logout)
+              (loca-set-key (kbd "C-x t") 'eshell-text-mode-toggle)
+              (local-set-key (kbd "C-u") 'eshell-kill-input)
+              (local-set-key (kbd "C-d") 'eshell-delete-char-or-logout)
               ;; (define-key eshell-mode-map (kbd "C-l")
               ;;   'eshell-clear)
-              (define-key eshell-mode-map (kbd "DEL")
-                'my-eshell-backward-delete-char)
-              (define-key eshell-mode-map (kbd "<up>")
-                'scroll-down-line)
-              (define-key eshell-mode-map (kbd "<down>")
-                'scroll-up-line)
+              (local-set-key (kbd "DEL") 'my-eshell-backward-delete-char)
+              (local-set-key (kbd "<up>") 'scroll-down-line)
+              (local-set-key (kbd "<down>") 'scroll-up-line)
               ;; (define-key eshell-mode-map
               ;;   (kbd "C-p") 'eshell-previous-matching-input-from-input)
               ;; (define-key eshell-mode-map
@@ -2325,7 +2313,7 @@ ARG is ignored."
 (setq my-filer (or (executable-find "pcmanfm")
                    (executable-find "nautilus")))
 (defun my-x-open (file)
-  "open FILE."
+  "Open FILE."
   (interactive "FOpen File: ")
   (setq file (expand-file-name file))
   (message "Opening %s..." file)
@@ -2499,7 +2487,7 @@ Commands are searched from ALIST."
                      (list (read-shell-command "grep command: "
                                                cmd
                                                'grep-find-history))
-                   (error "my-rgrep: Command for rgrep not found")
+                   (error "My-Rgrep: Command for rgrep not found")
                    )))
   (compilation-start command-args
                      'grep-mode))
@@ -2524,7 +2512,7 @@ Commands are searched from ALIST."
      (let ((my-rgrep-default ,name))
        (if (called-interactively-p 'any)
            (call-interactively 'my-rgrep)
-         (error "Not intended to be called noninteractively. Use `my-rgrep'"))))
+         (error "Not intended to be called noninteractively.  Use `my-rgrep'"))))
   )
 
 (define-my-rgrep "ack")
