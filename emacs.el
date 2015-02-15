@@ -30,6 +30,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
+(defmacro defvar-set (symbol &optional value docstring)
+  "Define SYMBOL as a variable and set to VALUE.
+
+Variable will be defined with DOCSTRING."
+  `(set (defvar ,symbol
+          nil
+          ,(or docstring
+               (symbol-name symbol)))
+        ,value))
+
 (defmacro safe-require-or-eval (feature)
   "Require FEATURE if available.
 
@@ -171,30 +181,28 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
 
-(defvar my-package-list nil
+(defvar-set my-package-list
+  '(
+    markdown-mode
+    yaml-mode
+    gnuplot-mode
+    erlang
+    js2-mode
+    git-commit-mode
+    gitignore-mode
+    ;; ack
+    color-moccur
+    gtags
+    flycheck
+    ;; is flymake installs are required?
+    ;;flymake-jshint
+    ;;flymake-python-pyflakes
+    xclip
+    foreign-regexp
+    multi-term
+    dirtree
+    )
   "Package list just for me.")
-(setq my-package-list
-      '(
-        markdown-mode
-        yaml-mode
-        gnuplot-mode
-        erlang
-        js2-mode
-        git-commit-mode
-        gitignore-mode
-        ;; ack
-        color-moccur
-        gtags
-        flycheck
-        ;; is flymake installs are required?
-        ;;flymake-jshint
-        ;;flymake-python-pyflakes
-        xclip
-        foreign-regexp
-        multi-term
-        dirtree
-        )
-      )
 
 (when (safe-require-or-eval 'package)
   ;; (add-to-list 'package-archives
@@ -712,7 +720,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-(setq bookmark-default-file "~/.emacs.d/bmk")
+(defvar-set bookmark-default-file "~/.emacs.d/bmk")
 (add-hook 'recentf-load-hook
           (lambda ()
             (add-to-list 'recentf-exclude
