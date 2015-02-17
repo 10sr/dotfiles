@@ -2217,7 +2217,7 @@ It looks like:
               ;;                                           (interactive)
               ;;                                           (eshell-goto-prompt)
               ;;                                           (keyboard-quit)))
-              (loca-set-key (kbd "C-x t") 'eshell-text-mode-toggle)
+              (local-set-key (kbd "C-x t") 'eshell-text-mode-toggle)
               (local-set-key (kbd "C-u") 'eshell-kill-input)
               (local-set-key (kbd "C-d") 'eshell-delete-char-or-logout)
               ;; (define-key eshell-mode-map (kbd "C-l")
