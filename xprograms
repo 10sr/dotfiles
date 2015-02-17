@@ -100,7 +100,7 @@ _macbook_rightclick(){
         true
     else
         (sleep 2s && \
-            gksudo -- sh -c "sysctl ${_mrc_emutgt}=1 ${_mrc_codetgt}=126 | \
+            gksudo -g -- sh -c "sysctl ${_mrc_emutgt}=1 ${_mrc_codetgt}=126 | \
                              logger -t macbook_rightclick") &
     fi
 }
