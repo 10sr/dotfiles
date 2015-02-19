@@ -922,9 +922,30 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; server
 
-(autoload-eval-lazily 'server)
-(setq server-name (concat "server"
-                          (number-to-string (emacs-pid))))
+(when (safe-require-or-eval 'server)
+  (setq server-name (concat "server"
+                            (number-to-string (emacs-pid))))
+
+  (defun my-construct-emacsclient-editor-command ()
+    "Construct and return command in a string to connect to current Emacs server."
+    (if server-use-tcp
+        (format "%s -f \"%s/%s\""
+                "emacsclient"
+                (expand-file-name server-auth-dir)
+                server-name)
+      (format "%s -s \"%s/%s\""
+              "emacsclient"
+              server-socket-dir
+              server-name)))
+
+  (setq process-environment
+        `(,(concat "EDITOR="
+                   (my-construct-emacsclient-editor-command))
+          ,(concat "GIT_EDITOR="
+                   (my-construct-emacsclient-editor-command))
+          ,@process-environment))
+
+  (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
@@ -2060,45 +2081,6 @@ C-x t to toggling emacs-text-mode
   ;;   (message "%S"
   ;;            args))
 
-  (defvar eshell/git-cat-command
-    nil
-    "List of git commands that cat just return strings as results.")
-  (setq eshell/git-cat-command
-        '("status" "st" "b" "branch" "ls" "ls-files")
-        )
-
-
-  (defun eshell/git (&rest args)
-    (if (member (car args)
-                eshell/git-cat-command)
-        (shell-command-to-string (mapconcat 'shell-quote-argument
-                                            `("git"
-                                              "-c"
-                                              "color.ui=always"
-                                              ,@args)
-                                            " "))
-      ;; (eshell-git-shell-command-to-string args)
-      (if (safe-require-or-eval 'git-command)
-          (git-command (mapconcat 'shell-quote-argument
-                                  args
-                                  " "))
-        (apply 'eshell-exec-visual "git" args))))
-
-  ;; (defun eshell-git-shell-command-to-string (args)
-  ;;   "Return string of output of ARGS."
-  ;;   (let ((sargs (mapconcat 'shell-quote-argument
-  ;;                           args
-  ;;                           " ")))
-  ;;     (if (require 'ansi-color nil t)
-  ;;         (identity
-  ;;          (shell-command-to-string (concat "git "
-  ;;                                           "-c color.ui=always "
-  ;;                                           sargs)))
-  ;;       (shell-command-to-string (concat "git "
-  ;;                                     sargs)))))
-
-  (defalias 'eshell/g 'eshell/git)
-
   (defalias 'eshell/: 'ignore)
   (defalias 'eshell/type 'eshell/which)
   ;; (defalias 'eshell/vim 'eshell/vi)
@@ -2257,17 +2239,19 @@ It looks like:
                         (add-to-list 'eshell-command-aliases-list
                                      alias))
                       '(
-                                        ; ("ll" "ls -l $*")
-                                        ; ("la" "ls -a $*")
-                                        ; ("lla" "ls -al $*")
+                        ;; ("ll" "ls -l $*")
+                        ;; ("la" "ls -a $*")
+                        ;; ("lla" "ls -al $*")
+                        ("git" "git -c color.ui=always $*")
+                        ("g" "git $*")
                         ("eless"
                          (concat "cat >>> (with-current-buffer "
                                  "(get-buffer-create \"*eshell output\") "
                                  "(erase-buffer) "
                                  "(setq buffer-read-only nil) "
                                  "(current-buffer)) "
-                                 "(view-buffer (get-buffer \"*eshell output*\"))")
-                         ))
+                                 "(view-buffer (get-buffer \"*eshell output*\"))"))
+                        )
                       )))
   )                          ; eval after load eshell
 
