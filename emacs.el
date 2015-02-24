@@ -705,12 +705,14 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (setq make-backup-files t)
 ;; (make-directory (expand-file-name "~/.emacsbackup"))
 (setq backup-directory-alist
-      (cons (cons "\\.*$" (expand-file-name "~/.emacs.d/backup"))
+      (cons (cons "\\.*$" (expand-file-name (concat user-emacs-directory
+                                                    "backup")))
             backup-directory-alist))
 (setq version-control 'never)
 (setq delete-old-versions t)
 
-(setq auto-save-list-file-prefix (expand-file-name "~/.emacs.d/auto-save/"))
+(setq auto-save-list-file-prefix (expand-file-name (concat user-emacs-directory
+                                                           "auto-save/")))
 (setq delete-auto-save-files t)
 
 (add-to-list 'completion-ignored-extensions ".bak")
@@ -720,7 +722,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-(defvar-set bookmark-default-file "~/.emacs.d/bmk")
+(defvar-set bookmark-default-file (concat user-emacs-directory
+                                          "bmk"))
 (add-hook 'recentf-load-hook
           (lambda ()
             (add-to-list 'recentf-exclude
@@ -1682,7 +1685,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
 
-(setq recentf-save-file (expand-file-name "~/.emacs.d/recentf")
+(setq recentf-save-file (expand-file-name (concat user-emacs-directory
+                                                  "recentf"))
       recentf-max-menu-items 20
       recentf-max-saved-items 30
       recentf-show-file-shortcuts-flag nil)
@@ -2137,7 +2141,8 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
           (setq eshell-history-index nil))
       ad-do-it))
 
-  (setq eshell-directory-name "~/.emacs.d/eshell/")
+  (setq eshell-directory-name (concat user-emacs-directory
+                                      "eshell/"))
   (setq eshell-term-name "eterm-color")
   (setq eshell-scroll-to-bottom-on-input t)
   (setq eshell-cmpl-ignore-case t)
