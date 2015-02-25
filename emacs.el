@@ -201,6 +201,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     foreign-regexp
     multi-term
     dirtree
+    term-run
     )
   "Package list just for me.")
 
