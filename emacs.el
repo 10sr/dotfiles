@@ -33,11 +33,13 @@
 (defmacro defvar-set (symbol value &optional docstring)
   "Define SYMBOL as a variable and set to VALUE.
 
-Variable will be defined with DOCSTRING."
-  `(set (defvar ,symbol
-          nil
-          ,(or docstring
-               (symbol-name symbol)))
+Variable will be defined with DOCSTRING if given, otherwise do not set even
+VALUE when defining SYMBOL."
+  `(set (if ,docstring
+            (defvar ,symbol
+              nil
+              ,docstring)
+          (defvar ,symbol))
         ,value))
 
 (defmacro safe-require-or-eval (feature)
@@ -362,8 +364,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                           (expand-file-name "~/dbx/apps/bin"))
 
   (when window-system
-    (setq w32-enable-synthesized-fonts t))
-  (setq w32-apps-modifier 'meta)
+    (defvar-set w32-enable-synthesized-fonts t))
+  (defvar-set w32-apps-modifier 'meta)
   (setq file-name-coding-system 'sjis))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -403,9 +405,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
-      (setq terminal-title-format
-            '((file-name-nondirectory (directory-file-name
-                                       default-directory))))
+      (defvar-set terminal-title-format
+        '((file-name-nondirectory (directory-file-name
+                                   default-directory))))
     (if (and (let ((tty-type (frame-parameter nil
                                               'tty-type)))
                (and tty-type
@@ -413,18 +415,18 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                               "-"))
                            "screen")))
              (not (getenv "SSH_CONNECTION")))
-        (setq terminal-title-format
-              '((file-name-nondirectory (directory-file-name
-                                         default-directory))))
+        (defvar-set terminal-title-format
+          '((file-name-nondirectory (directory-file-name
+                                     default-directory))))
       ;; seems that TMUX is used locally and ssh to remote host
-      (setq terminal-title-format
-            `("em:"
-              ,user-login-name
-              "@"
-              ,(car (split-string system-name
-                                  "\\."))
-              ":"
-              default-directory))
+      (defvar-set terminal-title-format
+        `("em:"
+          ,user-login-name
+          "@"
+          ,(car (split-string system-name
+                              "\\."))
+          ":"
+          default-directory))
       )
     )
   (terminal-title-mode))
@@ -633,8 +635,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (defvar-set hl-line-face 'my-hl-line) ;; (setq hl-line-face nil)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
 (defvar-set hl-line-global-modes
-      '(not
-        term-mode))
+  '(not
+    term-mode))
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
@@ -727,6 +729,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                           "bmk"))
 (add-hook 'recentf-load-hook
           (lambda ()
+            (defvar recentf-exclude)
             (add-to-list 'recentf-exclude
                          (regexp-quote bookmark-default-file))))
 
@@ -822,7 +825,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (when (safe-require-or-eval 'scim-bridge)
     ;; Turn on scim-mode automatically after loading .emacs
     (add-hook 'after-init-hook 'scim-mode-on)
-    (setq scim-cursor-color "red")
+    (defvar-set scim-cursor-color "red")
     (scim-define-preedit-key ?\^h t)
     (scim-define-common-key ?\* nil)
     (scim-define-common-key ?\^/ nil)))
@@ -835,7 +838,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
     (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
     (when (>= emacs-major-version 23)
-      (setq anthy-accept-timeout 1))))
+      (defvar-set anthy-accept-timeout 1))))
 
 ;; quail
 ;; aproposs input-method for some information
@@ -843,8 +846,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (defun my-load-mozc-el ()
   "Use mozc.el as japanese im."
   (when (safe-require-or-eval 'mozc)
-    (setq defauit-input-method "japanese-mozc")
-    (setq mozc-leim-title "[MZ]")
+    (defvar-set defauit-input-method "japanese-mozc")
+    (defvar-set mozc-leim-title "[MZ]")
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1127,9 +1130,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (add-hook 'sh-mode-hook
           (lambda ()
             (local-set-key
-              (kbd "C-x C-e")
-              'my-execute-shell-command-current-line)))
-(setq sh-here-document-word "__EOC__")
+             (kbd "C-x C-e")
+             'my-execute-shell-command-current-line)))
+(defvar-set sh-here-document-word "__EOC__")
 
 (defun my-execute-shell-command-current-line ()
   "Run current line as shell command."
@@ -1216,6 +1219,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; http://seesaawiki.jp/whiteflare503/d/Emacs%20%a5%a4%a5%f3%a5%c7%a5%f3%a5%c8
 (when (autoload-eval-lazily 'cc-vars
           nil
+        (defvar c-default-style)
         (add-to-list 'c-default-style
                      '(c-mode . "k&r"))
         (add-to-list 'c-default-style
@@ -1223,8 +1227,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         (add-hook 'c-mode-common-hook
                   (lambda ()
                     ;; why c-basic-offset in k&r style defaults to 5 ???
-                    (setq c-basic-offset 4
-                          indent-tabs-mode nil)
+                    (defvar-set c-basic-offset 4)
+                    (defvar-set indent-tabs-mode nil)
                     ;; (set-face-foreground 'font-lock-keyword-face "blue")
                     (c-toggle-hungry-state -1)
                     ;; (and (require 'gtags nil t)
@@ -1255,7 +1259,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
               )))
 
 (eval-after-load "js"
-  (setq js-indent-level 2))
+  (defvar-set js-indent-level 2))
 
 (add-to-list 'interpreter-mode-alist
              '("node" . js-mode))
@@ -1277,6 +1281,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (add-hook 'view-mode-hook
           (lambda()
+            (defvar view-mode-map)
             (define-key view-mode-map "j" 'scroll-up-line)
             (define-key view-mode-map "k" 'scroll-down-line)
             (define-key view-mode-map "v" 'toggle-read-only)
@@ -1312,11 +1317,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
           (lambda ()
             (view-mode 1)
             (setq truncate-lines nil)))
-(setq Man-notify-method (if window-system
-                            'newframe
-                          'aggressive))
+(defvar-set Man-notify-method (if window-system
+                                  'newframe
+                                'aggressive))
 
-(setq woman-cache-filename (expand-file-name (concat user-emacs-directory
+(defvar-set woman-cache-filename (expand-file-name (concat user-emacs-directory
                                                      "woman_cache.el")))
 (defalias 'man 'woman)
 
@@ -1324,8 +1329,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; python
 
 (when (autoload-eval-lazily 'python '(python-mode))
-  (setq python-python-command (or (executable-find "python3")
-                                  (executable-find "python")))
+  (defvar-set python-python-command (or (executable-find "python3")
+                                        (executable-find "python")))
   ;; (defun my-python-run-as-command ()
   ;;   ""
   ;;   (interactive)
@@ -1333,6 +1338,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (defun my-python-display-python-buffer ()
     ""
     (interactive)
+    (defvar python-buffer)
     (set-window-text-height (display-buffer python-buffer
                                             t)
                             7))
@@ -1404,11 +1410,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; (setq term-ansi-default-program shell-file-name)
   (add-hook 'term-setup-hook
             (lambda ()
-              (setq term-display-table (make-display-table))))
+              (defvar-set term-display-table (make-display-table))))
   (add-hook 'term-mode-hook
             (lambda ()
+              (defvar term-raw-map)
               (unless (memq (current-buffer)
                             (and (featurep 'multi-term)
+                                 (defvar multi-term-buffer-list)
                                  ;; current buffer is not multi-term buffer
                                  multi-term-buffer-list))
                 ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
@@ -1448,7 +1456,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
               ;;      (local-unset-key (kbd "C-c")))
               ;; (define-key cua--prefix-override-keymap
               ;;"\C-c" 'term-interrupt-subjob)
-              (set (make-local-variable 'hl-line-range-function)
+              (set (make-local-variable (defvar hl-line-range-function))
                    (lambda ()
                      '(0 . 0)))
               ))
@@ -1458,6 +1466,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer switching
 
+(defvar bs-configurations)
 (when (autoload-eval-lazily 'bs '(bs-show)
         ;; (add-to-list 'bs-configurations
         ;; '("processes" nil get-buffer-process ".*" nil nil))
@@ -1477,8 +1486,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         )
   ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show)
-  (setq bs-default-configuration "files-and-terminals")
-  (setq bs-default-sort-name "by nothing")
+  (defvar-set bs-default-configuration "files-and-terminals")
+  (defvar-set bs-default-sort-name "by nothing")
   (add-hook 'bs-mode-hook
             (lambda ()
               ;; (setq bs-default-configuration "files")
@@ -1846,7 +1855,7 @@ the list."
       (if (file-executable-p file)
           (start-process file nil file)
         (when (y-or-n-p
-               "this file cant be executed. mark as executable and go? : ")
+               "This file cant be executed.  Mark as executable and go? ")
           (set-file-modes file
                           (file-modes-symbolic-to-number "u+x" (file-modes file)))
           (start-process file nil file)))))
@@ -1867,7 +1876,7 @@ the list."
   (put 'dired-find-alternate-file 'disabled nil)
   ;; when using dired-find-alternate-file
   ;; reuse current dired buffer for the file to open
-  (setq dired-ls-F-marks-symlinks t)
+  (defvar-set dired-ls-F-marks-symlinks t)
 
   (when (safe-require-or-eval 'ls-lisp)
     (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
@@ -1877,9 +1886,9 @@ the list."
           '("%Y-%m-%d %H:%M"
             "%Y-%m-%d      ")))
 
-  (setq dired-dwim-target t)
-  (setq dired-hide-details-hide-symlink-targets nil)
-  (setq dired-hide-details-hide-information-lines nil)
+  (defvar-set dired-dwim-target t)
+  (defvar-set dired-hide-details-hide-symlink-targets nil)
+  (defvar-set dired-hide-details-hide-information-lines nil)
 
   ;; (add-hook 'dired-after-readin-hook
   ;;           'my-replace-nasi-none)
@@ -1925,8 +1934,8 @@ the list."
                 (dired-hide-details-mode t)
                 (local-set-key "l" 'dired-hide-details-mode))
               (let ((file "._Icon\015"))
-                (when  nil (file-readable-p file)
-                       (delete-file file)))))
+                (when nil (file-readable-p file)
+                      (delete-file file)))))
 
   (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
                       t)
@@ -1948,6 +1957,7 @@ the list."
 
 ;; http://blog.livedoor.jp/tek_nishi/archives/4693204.html
 
+(defvar dired-marker-char)
 (defun my-dired-toggle-mark()
   (let ((cur (cond ((eq (following-char) dired-marker-char) ?\040)
                    (t dired-marker-char))))
@@ -1987,7 +1997,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 
 (autoload-eval-lazily 'eshell nil
 
-  (setq eshell-banner-message (format "Welcome to the Emacs shell
+  (defvar-set eshell-banner-message (format "Welcome to the Emacs shell
 %s
 C-x t to toggling emacs-text-mode
 
@@ -2142,20 +2152,21 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
           (setq eshell-history-index nil))
       ad-do-it))
 
-  (setq eshell-directory-name (concat user-emacs-directory
-                                      "eshell/"))
-  (setq eshell-term-name "eterm-color")
-  (setq eshell-scroll-to-bottom-on-input t)
-  (setq eshell-cmpl-ignore-case t)
-  (setq eshell-cmpl-cycle-completions nil)
-  (setq eshell-highlight-prompt nil)
-  (setq eshell-ls-initial-args '("-hCFG"
-                                 "--color=auto"
-                                 "--time-style=long-iso"))     ; "-hF")
+  (defvar-set eshell-directory-name (concat user-emacs-directory
+                                            "eshell/"))
+  (defvar-set eshell-term-name "eterm-color")
+  (defvar-set eshell-scroll-to-bottom-on-input t)
+  (defvar-set eshell-cmpl-ignore-case t)
+  (defvar-set eshell-cmpl-cycle-completions nil)
+  (defvar-set eshell-highlight-prompt nil)
+  (defvar-set eshell-ls-initial-args '("-hCFG"
+                                       "--color=auto"
+                                       "--time-style=long-iso"))     ; "-hF")
 
-  (setq eshell-prompt-function
-        'my-eshell-prompt-function)
+  (defvar-set eshell-prompt-function
+    'my-eshell-prompt-function)
 
+  (defvar eshell-last-command-status)
   (defun my-eshell-prompt-function()
     "Prompt function.
 
@@ -2224,9 +2235,10 @@ It looks like:
               ;; (eshell/export "GIT_EDITOR=")
               (eshell/export "LC_MESSAGES=C")
               (switch-to-buffer (current-buffer)) ; move buffer top of list
-              (set (make-local-variable 'hl-line-range-function)
+              (set (make-local-variable (defvar hl-line-range-function))
                    (lambda ()
                      '(0 . 0)))
+              (defvar eshell-virtual-targets)
               (add-to-list 'eshell-virtual-targets
                            '("/dev/less"
                              (lambda (str)
@@ -2237,6 +2249,9 @@ It looks like:
 
   (add-hook 'eshell-mode-hook
             (lambda ()
+              (defvar eshell-visual-commands)
+              (defvar eshell-output-filter-functions)
+              (defvar eshell-command-aliases-list)
               (add-to-list 'eshell-visual-commands "vim")
               ;; (add-to-list 'eshell-visual-commands "git")
               (add-to-list 'eshell-output-filter-functions
