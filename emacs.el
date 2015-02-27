@@ -2358,60 +2358,6 @@ If ARG is given or called with prefix argument, create new buffer."
                     "--cached"
                     file))))
 
-(defvar term-shell-command-history nil
-  "History for term-shell-command.")
-(defun my-term-shell-command (command &optional new-buffer-p)
-  "Run COMMAND in terminal emulator.
-If NEW-BUFFER-P is given or called with prefix argument, generate new buffer
-and set the buffer the process buffer.  Otherwise, existing buffer will be used."
-  (interactive (list (read-shell-command "Shell Command: "
-                                         nil
-                                         'term-shell-command-history)
-                     current-prefix-arg))
-  (let* ((name (car (split-string command
-                                  " ")))
-         (buf (if new-buffer-p
-                  (generate-new-buffer "*term shell command*")
-                (get-buffer-create "*term shell command*")))
-         (proc (get-buffer-process buf))
-         (dir default-directory))
-    (and proc
-         (delete-process proc))
-    (display-buffer buf)
-    (with-current-buffer buf
-      (cd dir)
-      (set (make-local-variable 'term-scroll-to-bottom-on-output)
-           t)
-      (let ((inhibit-read-only t))
-        (goto-char (point-max))
-        (insert "\n")
-        (insert "Start executing "
-                command)
-        (add-text-properties (point-at-bol)
-                             (point-at-eol)
-                             '(face bold))
-        (insert "\n\n"))
-      (require 'term)
-      (term-mode)
-      (term-exec buf
-                 (concat "term-" name)
-                 shell-file-name
-                 nil
-                 (list shell-command-switch
-                       command))
-      (term-char-mode)
-      (if (ignore-errors (get-buffer-process buf))
-          (set-process-sentinel (get-buffer-process buf)
-                                (lambda (proc change)
-                                  (with-current-buffer (process-buffer proc)
-                                    (term-sentinel proc change)
-                                    (goto-char (point-max))
-                                    (fundamental-mode))))
-        (fundamental-mode)
-        (goto-char (point-max))
-        ))))
-(define-key ctl-x-map ":" 'my-term-shell-command)
-
 (defun memo (&optional dir)
   "Open memo.txt in DIR."
   (interactive)
