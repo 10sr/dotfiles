@@ -2272,9 +2272,11 @@ This function accept no argument and return newly created buffer of terminal.")
 
 (defun my-term (&optional arg)
   "Open terminal buffer and return that buffer.
-ARG is ignored."
+
+If ARG is given or called with prefix argument, create new buffer."
   (interactive "P")
-  (if (and my-term
+  (if (and (not arg)
+           my-term
            (buffer-name my-term))
       (pop-to-buffer my-term)
     (setq my-term
@@ -2292,7 +2294,7 @@ ARG is ignored."
 ;;               (multi-term)
 ;;             (ansi-term shell-file-name)))))
 
-(setq my-term-function 'eshell)
+(setq my-term-function (lambda () (eshell t)))
 ;;(define-key my-prefix-map (kbd "C-s") 'my-term)
 (define-key ctl-x-map "i" 'my-term)
 
