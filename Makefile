@@ -76,6 +76,9 @@ setups := setup-darwin setup-directories setup-emacs setup-gitconf \
 setup-all: $(setups)
 
 
+runs := run-emacs run-bash run-zsh
+
+
 
 # `make check` is just an alias for `make test`
 check: test
@@ -343,6 +346,13 @@ setup-rc-tmux.conf: topfile := $(home)/.tmux.conf
 setup-rc-emacs.el: topfile := $(home)/.emacs.d/init.el
 
 
+# run
+# ===
+
+run-emacs: $(dotfiles_dir)/emacs.el
+	$(emacs) -q --eval "(setq )" --load "$<"
+
+
 
 
 
@@ -395,8 +405,3 @@ sexp_elisp_syntax_check := \
 $(test_syntax_els): test-syntax-%: $(dotfiles_dir)/%
 	$(emacs) -Q --debug-init --batch \
 		--eval '(let ((file "$<")) $(sexp_elisp_syntax_check))' --kill
-
-
-
-run-emacs:
-	$(emacs) -nw
