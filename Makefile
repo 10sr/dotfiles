@@ -60,6 +60,8 @@ git ?= $(shell which git 2>/dev/null)
 curl ?= $(shell which curl 2>/dev/null)
 grep ?= GREP_OPTIONS= $(shell which grep 2>/dev/null)
 
+files := Makefile emacs.el profile shrc tmux.conf vimrc _keysnail.js
+
 # Targets
 
 all: default
@@ -138,26 +140,24 @@ endif
 # preparing files
 # ===============
 
-ifeq (,$(use_git))
-$(warning 'use_git' is set to empty. Use curl to fetch files)
-$(dotfiles_dir)/%:
+files_fullpath := $(files:%=$(dotfiles_dir)/%)
+fetch_files := $(files:%=fetch-%)
+.PHONY: $(fetch_files)
+
+$(fetch_files):
 	mkdir -vp $(dotfiles_dir)
 	curl --url $(dotfiles_url_base)/$* --output $@
+
+
+ifeq (,$(use_git))
+$(files_fullpath): $(dotfiles_dir)/%: fetch-%
+$(warning 'use_git' is empty. Use curl to fetch files)
 else
-$(warning 'use_git' is set to non-empty. Use git to retrieve files)
-$(dotfiles_dir)/%: setup-repository
+$(warning 'use_git' is not empty. Use git to retrieve files)
+$(files_fullpath): setup-repository
 	test -f "$@"
 endif
 
-# Shortcut target for interactive usage
-# For example, `make file-emacs.el use_git=` will fetch emacs.el from web with
-# curl program.
-# NOTE: Is there any way to make all `file-%` targets phony?
-file-%: $(dotfiles_dir)/%
-	test -f "$<"
-
-# Make sure $(dotfiles_dir)/% wont be removed as intermidiate files
-.PRECIOUS: $(dotfiles_dir)/%
 
 
 
