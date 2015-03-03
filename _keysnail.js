@@ -984,35 +984,36 @@ key.suspendKey           = "Not defined";
 
 // ================================= Hooks ================================= //
 
+
 hook.setHook('KeyBoardQuit', function (aEvent) {
-  // ext.exec("hide-sidebar");
-  let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
-  getBrowser().focus();
-  content.focus();
-  command.closeFindBar();
-  if (util.isCaretEnabled()) {
-    command.resetMark(aEvent);
-  } else {
-    goDoCommand("cmd_selectNone");
-  }
-  key.generateKey(aEvent.originalTarget, KeyEvent.DOM_VK_ESCAPE, true);
+    // ext.exec("hide-sidebar");
+    let(elem = document.commandDispatcher.focusedElement) elem && elem.blur();
+    getBrowser().focus();
+    content.focus();
+    command.closeFindBar();
+    if (util.isCaretEnabled()) {
+        command.resetMark(aEvent);
+    } else {
+        goDoCommand("cmd_selectNone");
+    }
+    key.generateKey(aEvent.originalTarget, KeyEvent.DOM_VK_ESCAPE, true);
 });
 
 hook.setHook('Unload', function () {
-  util.getBrowserWindows().some(function (win) {
-    if (win === window) {
-      return false;
-    }
-    const ks = win.KeySnail;
-    share.pluginUpdater = ks.getPluginUpdater(
-      share.pluginUpdater.pluginsWithUpdate);
-    ks.setUpPluginUpdaterDelegator();
-    return true;
-  });
+    util.getBrowserWindows().some(function (win) {
+        if (win === window) {
+            return false;
+        }
+        const ks = win.KeySnail;
+        share.pluginUpdater = ks.getPluginUpdater(
+        share.pluginUpdater.pluginsWithUpdate);
+        ks.setUpPluginUpdaterDelegator();
+        return true;
+    });
 });
 
 hook.setHook('LocationChange', function (aNsURI) {
-  echoTabInfo.echo();
+    echoTabInfo.echo();
 });
 
 // ============================= Key bindings ============================== //
@@ -1230,6 +1231,14 @@ key.setViewKey('k', function (ev) {
   key.generateKey(ev.originalTarget, KeyEvent.DOM_VK_UP, true);
 }, '一行スクロールアップ');
 
+key.setViewKey('p', function (ev, arg) {
+  ext.exec('pocket-add-current', arg, ev);
+}, 'Add current page', true);
+
+key.setViewKey('P', function (ev, arg) {
+  ext.exec('pocket-open-latest', arg, ev);
+}, 'Open last saved page', true);
+
 key.setEditKey('C-<tab>', function (ev) {
   command.walkInputElement(command.elementsRetrieverTextarea, true, true);
 }, '次のテキストエリアへフォーカス');
@@ -1278,10 +1287,10 @@ key.setEditKey('C-o', function (ev) {
   command.openLine(ev);
 }, '行を開く (Open line)');
 
-key.setViewKey('p', function (ev, arg) {
-  ext.exec('pocket-add-current', arg, ev);
-}, 'Add current page', true);
+key.setGlobalKey('C-<right>', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(1, true);
+}, 'ひとつ右のタブへ');
 
-key.setViewKey('P', function (ev, arg) {
-  ext.exec('pocket-open-latest', arg, ev);
-}, 'Open last saved page', true);
+key.setGlobalKey('C-<left>', function (ev) {
+    getBrowser().mTabContainer.advanceSelectedTab(-1, true);
+}, 'ひとつ左のタブへ');
