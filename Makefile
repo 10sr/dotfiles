@@ -32,7 +32,7 @@ ifeq (,$(dotfiles_dir))
     ifeq (,$(DOTFILES_DIR))
       $(warning Neigher DOTFILES_DIR nor dotfiles_dir is defined)
       $(warning Use default value)
-      dotfiles_dir := $(home)/10sr_dotfiles
+      dotfiles_dir := $(HOME)/10sr_dotfiles
     else
       # dotfiles_dir is empty but DOTFILES_DIR has a value
       $(warning dotfiles_dir is set from DOTFILES_DIR)
