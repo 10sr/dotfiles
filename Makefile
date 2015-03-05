@@ -333,23 +333,26 @@ setup_rcs := setup-rc-vimrc setup-rc-tmux.conf setup-rc-emacs.el
 setup-rc: $(setup_rcs)
 .PHONY: $(setup_rcs)
 
+setup-rc-vimrc: $(home)/.vimrc
+setup-rc-tmux.conf: $(home)/.tmux.conf
+setup-rc-emacs.el: $(home)/.emacs.d/init.el
+
+$(home)/.emacs.d/init.el: $(dotfiles_dir)/emacs.el $(home) $(home)/.emacs.d
+$(home)/.vimrc: $(dotfiles_dir)/vimrc $(home)
+$(home)/.tmux.conf: $(dotfiles_dir)/tmux.conf $(home)
+
 command_extract_setup_load := $(grep) -e 'SETUP_LOAD: ' | \
 		sed -e 's/^.*SETUP_LOAD: //' -e 's|DOTFILES_DIR|$(dotfiles_dir)|'
 
-$(setup_rcs): setup-rc-%: $(dotfiles_dir)/% $(home)
-	cat "$<" | $(command_extract_setup_load) | tee -a "$(topfile)"
+$(home)/.emacs.d/init.el $(home)/.vimrc $(home)/.tmux.conf:
+	cat "$<" | $(command_extract_setup_load) | tee -a "$@"
 
-setup-rc-vimrc: topfile := $(home)/.vimrc
-setup-rc-tmux.conf: topfile := $(home)/.tmux.conf
-setup-rc-emacs.el: topfile := $(home)/.emacs.d/init.el
-
-setup-rc-emacs.el: $(home)/.emacs.d
 
 
 # run
 # ===
 
-run-emacs: $(dotfiles_dir)/emacs.el
+run-emacs: $(home)/.emacs.d/init.el
 	$(emacs) -q --eval "(setq )" --load "$<"
 
 
