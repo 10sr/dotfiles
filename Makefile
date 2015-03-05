@@ -333,8 +333,7 @@ endif
 # Load codes are defined by following SETUP_LOAD: indicator.
 # String DOTFILES_DIR in the load codes will be replaced into the value of
 # $(dotfiles_dir).
-# If append_load is non-empty, the load codes are appended to $(topfile),
-# otherwise the code will be just printed out to stdout.
+# The load codes are appended to $(topfile).
 
 setup_rcs := setup-rc-vimrc setup-rc-tmux.conf setup-rc-emacs.el
 setup-rc: $(setup_rcs)
@@ -344,12 +343,7 @@ command_extract_setup_load := $(grep) -e 'SETUP_LOAD: ' | \
 		sed -e 's/^.*SETUP_LOAD: //' -e 's|DOTFILES_DIR|$(dotfiles_dir)|'
 
 $(setup_rcs): setup-rc-%: $(dotfiles_dir)/%
-ifeq (,$(append_load))
-	@echo "\`append_load' is not defined. Just print load command."
-	cat "$<" | $(command_extract_setup_load)
-else
 	cat "$<" | $(command_extract_setup_load) | tee -a "$(topfile)"
-endif
 
 setup-rc-vimrc: topfile := $(home)/.vimrc
 setup-rc-tmux.conf: topfile := $(home)/.tmux.conf
