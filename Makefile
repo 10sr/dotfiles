@@ -59,6 +59,8 @@ $(warning home: $(home))
 localdir := $(home)/.local
 vardir := $(home)/.var
 bindir := $(localdir)/bin
+directories := $(dotfiles_dir) $(home) $(localdir) $(vardir) $(bindir) \
+	$(home)/.emacs.d
 
 current := $(shell date)
 uname := $(shell uname)
@@ -103,6 +105,10 @@ check-syntax: test-syntax
 	test-syntax check-syntax $(test_syntaxes)\
 	setup-all $(setups)
 
+
+
+$(directories):
+	test -d "$@" || mkdir -vp "$@"
 
 
 
@@ -154,8 +160,7 @@ files_fullpath := $(files:%=$(dotfiles_dir)/%)
 fetch_files := $(files:%=fetch-%)
 .PHONY: $(fetch_files)
 
-$(fetch_files):
-	mkdir -vp $(dotfiles_dir)
+$(fetch_files): fetch-%: $(dotfiles_dir)
 	curl --url $(dotfiles_url_base)/$* --output $@
 
 
@@ -209,17 +214,6 @@ colortable16.sh: \
 256colors2.pl: util_url := https://gist.github.com/10sr/6852331/raw/256colors2.pl
 pacapt: util_url := https://github.com/icy/pacapt/raw/ng/pacapt
 ack-2.12: util_url := http://beyondgrep.com/ack-2.12-single-file
-
-
-
-# create directories
-# ------------------
-
-setup_directories := $(localdir) $(vardir) $(bindir)
-setup-directory: $(setup_directories)
-
-$(localdir) $(vardir) $(bindir):
-	mkdir -vp $@
 
 
 
@@ -342,12 +336,14 @@ setup-rc: $(setup_rcs)
 command_extract_setup_load := $(grep) -e 'SETUP_LOAD: ' | \
 		sed -e 's/^.*SETUP_LOAD: //' -e 's|DOTFILES_DIR|$(dotfiles_dir)|'
 
-$(setup_rcs): setup-rc-%: $(dotfiles_dir)/%
+$(setup_rcs): setup-rc-%: $(dotfiles_dir)/% $(home)
 	cat "$<" | $(command_extract_setup_load) | tee -a "$(topfile)"
 
 setup-rc-vimrc: topfile := $(home)/.vimrc
 setup-rc-tmux.conf: topfile := $(home)/.tmux.conf
 setup-rc-emacs.el: topfile := $(home)/.emacs.d/init.el
+
+setup-rc-emacs.el: $(home)/.emacs.d
 
 
 # run
