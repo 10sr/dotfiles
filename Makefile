@@ -3,8 +3,6 @@
 
 # Variable definitions
 
-home ?= $(HOME)
-
 dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master
 use_git ?= t
 git_auth ?= t
@@ -44,6 +42,18 @@ ifeq (,$(dotfiles_dir))
 endif
 
 $(warning dotfiles_dir: $(dotfiles_dir))
+
+
+ifeq ($(home),)
+ifeq ($(global_home),)
+$(warning home not set and global_home is empty)
+# TODO: What this should be?
+home := $(dotfiles_dir)/.home
+else
+home := $(HOME)
+endif
+endif
+$(warning home: $(home))
 
 
 localdir := $(home)/.local
