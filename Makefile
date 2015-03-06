@@ -345,7 +345,7 @@ command_extract_setup_load := $(grep) -e 'SETUP_LOAD: ' | \
 		sed -e 's/^.*SETUP_LOAD: //' -e 's|DOTFILES_DIR|$(dotfiles_dir)|'
 
 $(home)/.emacs.d/init.el $(home)/.vimrc $(home)/.tmux.conf:
-	cat "$<" | $(command_extract_setup_load) | tee -a "$@"
+	test -f "$@" || cat "$<" | $(command_extract_setup_load) | tee -a "$@"
 
 
 
@@ -353,7 +353,7 @@ $(home)/.emacs.d/init.el $(home)/.vimrc $(home)/.tmux.conf:
 # ===
 
 run-emacs: $(home)/.emacs.d/init.el
-	$(emacs) -q --eval "(setq )" --load "$<"
+	$(emacs) -q --eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" --load "$<"
 
 
 

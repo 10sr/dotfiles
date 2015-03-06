@@ -30,6 +30,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
+(defun call-after-init (func)
+  "If `after-init-hook' has been run, call FUNC immediately.
+Otherwize hook it."
+  (if after-init-time
+      (funcall func)
+    (add-hook 'after-init-hook
+              func)))
+
 (defmacro defvar-set (symbol value &optional docstring)
   "Define SYMBOL as a variable and set to VALUE.
 
@@ -276,12 +284,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (let ((kill-emacs-hook nil))
     (kill-emacs)))
 
-(add-hook 'after-init-hook
-          (lambda ()
-            (message "%s %s" invocation-name emacs-version)
-            (message "%s was taken to initialize emacs." (emacs-init-time))
-            (switch-to-buffer "*Messages*")
-            ))
+(call-after-init
+ (lambda ()
+   (message "%s %s" invocation-name emacs-version)
+   (message "%s was taken to initialize emacs." (emacs-init-time))
+   (switch-to-buffer "*Messages*")))
 
 (cd ".")  ; when using windows use / instead of \ in `default-directory'
 
@@ -302,9 +309,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; (comint-show-maximum-output)
 
 ;; kill scratch
-(add-hook 'after-init-hook
-          (lambda ()
-            (kill-buffer "*scratch*")))
+(call-after-init (lambda ()
+                         (kill-buffer "*scratch*")))
 
 ;; modifier keys
 ;; (setq mac-option-modifier 'control)
@@ -447,11 +453,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 ;; display date
-(add-hook 'after-init-hook
-          (lambda ()
-            (when display-time-mode
-              (display-time-update))
-            ))
+(call-after-init (lambda ()
+                   (when display-time-mode
+                     (display-time-update))
+                   ))
 
 (when (safe-require-or-eval 'time)
   (setq display-time-interval 29)
@@ -824,7 +829,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; Load scim-bridge.
   (when (safe-require-or-eval 'scim-bridge)
     ;; Turn on scim-mode automatically after loading .emacs
-    (add-hook 'after-init-hook 'scim-mode-on)
+    (call-after-init 'scim-mode-on)
     (defvar-set scim-cursor-color "red")
     (scim-define-preedit-key ?\^h t)
     (scim-define-common-key ?\* nil)
@@ -915,7 +920,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; https://github.com/lunaryorn/flycheck
 (when (safe-require-or-eval 'flycheck)
-  (add-hook 'after-init-hook 'global-flycheck-mode))
+  (call-after-init 'global-flycheck-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
