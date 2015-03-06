@@ -920,11 +920,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
 
-(and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/window-organizer.el"
-      t)
-     (autoload-eval-lazily 'window-organizer)
-     (define-key ctl-x-map (kbd "w") 'window-organizer))
+'(and (fetch-library
+       "https://raw.github.com/10sr/emacs-lisp/master/window-organizer.el"
+       t)
+      (autoload-eval-lazily 'window-organizer)
+      (define-key ctl-x-map (kbd "w") 'window-organizer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; server
@@ -1009,13 +1009,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (autoload-eval-lazily 'sql '(sql-mode)
   (safe-require-or-eval 'sql-indent))
 
-(and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
-                    t)
-     (autoload-eval-lazily 'gtkbm)
-     (global-set-key (kbd "C-x C-d") 'gtkbm))
+'(and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
+                     t)
+      (autoload-eval-lazily 'gtkbm)
+      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
 (and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/git-command.el"
+      "https://raw.github.com/10sr/git-command-el/master/git-command.el"
       t)
      (autoload-eval-lazily 'git-command
          nil
