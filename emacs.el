@@ -310,7 +310,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; kill scratch
 (call-after-init (lambda ()
-                         (kill-buffer "*scratch*")))
+                   (let ((buf (get-buffer "*scratch*")))
+                     (when buf
+                       (kill-buffer buf)))))
 
 ;; modifier keys
 ;; (setq mac-option-modifier 'control)
@@ -455,8 +457,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; display date
 (call-after-init (lambda ()
                    (when display-time-mode
-                     (display-time-update))
-                   ))
+                     (display-time-update))))
 
 (when (safe-require-or-eval 'time)
   (setq display-time-interval 29)
@@ -1327,7 +1328,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                 'aggressive))
 
 (defvar-set woman-cache-filename (expand-file-name (concat user-emacs-directory
-                                                     "woman_cache.el")))
+                                                           "woman_cache.el")))
 (defalias 'man 'woman)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2007,8 +2008,8 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 C-x t to toggling emacs-text-mode
 
 "
-                                      (shell-command-to-string "uname -a")
-                                      ))
+                                            (shell-command-to-string "uname -a")
+                                            ))
 
   (defvar eshell-text-mode-map
     (let ((map (make-sparse-keymap)))
