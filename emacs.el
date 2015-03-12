@@ -1887,6 +1887,7 @@ the list."
             "%Y-%m-%d      ")))
 
   (defvar-set dired-dwim-target t)
+  (defvar-set dired-isearch-filenames t)
   (defvar-set dired-hide-details-hide-symlink-targets nil)
   (defvar-set dired-hide-details-hide-information-lines nil)
 
