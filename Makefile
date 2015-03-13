@@ -205,7 +205,7 @@ setup_utils_path := $(setup_utils:%=$(bindir)/%)
 
 $(setup_utils): %: $(bindir)/%
 
-$(setup_utils_path):
+$(setup_utils_path): $(bindir)
 	$(curl) -L --url "$(util_url)" --output "$@"
 	chmod +x "$@"
 
