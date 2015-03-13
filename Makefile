@@ -344,8 +344,18 @@ $(home)/.tmux.conf: $(dotfiles_dir)/tmux.conf $(home)
 command_extract_setup_load := $(grep) -e 'SETUP_LOAD: ' | \
 		sed -e 's/^.*SETUP_LOAD: //' -e 's|DOTFILES_DIR|$(dotfiles_dir)|'
 
+setup_rc_marker := ADDED BY 10sr_dotfiles/Makefile
+
 $(home)/.emacs.d/init.el $(home)/.vimrc $(home)/.tmux.conf:
-	test -f "$@" || cat "$<" | $(command_extract_setup_load) | tee -a "$@"
+	set -x; if ! $(grep) "$(setup_rc_marker)" "$@"; \
+	then \
+		(echo '$(line_comment)' $(setup_rc_marker); cat "$<" | $(command_extract_setup_load)) \
+			| tee -a "$@"; \
+	fi
+
+$(home)/.emacs.d/init.el: line_comment := ;;
+$(home)/.vimrc: line_comment := \"
+$(home)/.tmux.conf: line_comment := \#
 
 
 
