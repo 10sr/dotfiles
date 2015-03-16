@@ -90,26 +90,27 @@ style.register(
 ///////////////////////////////////
 //search engine
 plugins.options["search-url-list"] = [
-  ["bing", "http://bing.com/search?q=%q"],
+  ["DuckDuckGo", "https://duckduckgo.com/?q=%q"],
+  ["Bing", "http://bing.com/search?q=%q"],
   ["yatwitter search", "http://yats-data.com/yats/search?query=%q"],
   ["Yahoo Realtime",
    "http://realtime.search.yahoo.co.jp/search?rkf=1&ei=UTF-8&p=%q"],
-  ["twitter search", "http://twitter.com/search?q=%q&lang=all"],
-  ["tospy", "http://topsy.com/s?allow_lang=ja&q=%q"],
+  ["Twitter Search", "http://twitter.com/search?q=%q&lang=all"],
+  ["Tospy", "http://topsy.com/s?allow_lang=ja&q=%q"],
   ["2ch syoboi.jp", "http://ff2ch.syoboi.jp/?q=%q"],
   ["2ch-ranking","http://2ch-ranking.net/search.php?q=%q&imp=and&order=time"],
   ["2ch ttsearch", "http://ttsearch.net/s2.cgi?k=%q&o=r"],
   ["I\'m feelig lucky!", "http://www.google.co.jp/search?q=%q&btnI=kudos"],
-  ["uncyclopedia", "http://ja.uncyclopedia.info/wiki/%q"],
-  ["wikipedia", "http://ja.wikipedia.org/wiki/%q"],
+  ["Uncyclopedia", "http://ja.uncyclopedia.info/wiki/%q"],
+  ["Wikipedia", "http://ja.wikipedia.org/wiki/%q"],
   ["nicovideo.jp", "http://www.nicovideo.jp/search/%q"],
   ["alc", "http://eow.alc.co.jp/%q/UTF-8/"],
   ["google map",
    "http://maps.google.co.jp/maps?hl=ja&q=%q&um=1&ie=UTF-8&sa=N&tab=wl"],
-  ["weblio", "http://www.weblio.jp/content_find?query=%q"],
-  ["shoutcast", "http://www.shoutcast.com/Internet-Radio/%q"],
-  ["delicious 10sr", "http://delicious.com/10sr/%q"],
-  ["open raw", "%r"]
+  ["Weblio", "http://www.weblio.jp/content_find?query=%q"],
+  ["ShoutCast", "http://www.shoutcast.com/Internet-Radio/%q"],
+  ["Delicious 10sr", "http://delicious.com/10sr/%q"],
+  ["Open raw", "%r"]
 ];
 
 plugins.options["my-keysnail-bookmarks"] = [
