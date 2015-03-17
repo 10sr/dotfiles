@@ -204,6 +204,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     multi-term
     dirtree
     term-run
+    editorconfig
     )
   "Package list just for me.")
 
