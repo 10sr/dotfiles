@@ -363,7 +363,8 @@ $(home)/.tmux.conf: line_comment := \#
 # ===
 
 run-emacs: $(home)/.emacs.d/init.el
-	$(emacs) -q --eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" --load "$<"
+	$(emacs) -q \
+		--eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" --load "$<"
 
 
 
