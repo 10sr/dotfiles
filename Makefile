@@ -3,8 +3,6 @@
 
 # Variable definitions
 
-home ?= $(HOME)
-
 dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master
 use_git ?= t
 git_auth ?= t
@@ -32,7 +30,7 @@ ifeq (,$(dotfiles_dir))
     ifeq (,$(DOTFILES_DIR))
       $(warning Neigher DOTFILES_DIR nor dotfiles_dir is defined)
       $(warning Use default value)
-      dotfiles_dir := $(home)/10sr_dotfiles
+      dotfiles_dir := $(HOME)/10sr_dotfiles
     else
       # dotfiles_dir is empty but DOTFILES_DIR has a value
       $(warning dotfiles_dir is set from DOTFILES_DIR)
@@ -46,9 +44,23 @@ endif
 $(warning dotfiles_dir: $(dotfiles_dir))
 
 
+ifeq ($(home),)
+ifeq ($(global_home),)
+$(warning home not set and global_home is empty)
+# TODO: What this should be?
+home := $(dotfiles_dir)/.home
+else
+home := $(HOME)
+endif
+endif
+$(warning home: $(home))
+
+
 localdir := $(home)/.local
 vardir := $(home)/.var
 bindir := $(localdir)/bin
+directories := $(dotfiles_dir) $(home) $(localdir) $(vardir) $(bindir) \
+	$(home)/.emacs.d
 
 current := $(shell date)
 uname := $(shell uname)
@@ -59,6 +71,8 @@ emacs ?= $(shell which emacs 2>/dev/null)
 git ?= $(shell which git 2>/dev/null)
 curl ?= $(shell which curl 2>/dev/null)
 grep ?= GREP_OPTIONS= $(shell which grep 2>/dev/null)
+
+files := Makefile emacs.el profile shrc tmux.conf vimrc _keysnail.js
 
 # Targets
 
@@ -76,6 +90,9 @@ setups := setup-darwin setup-directories setup-emacs setup-gitconf \
 setup-all: $(setups)
 
 
+runs := run-emacs run-bash run-zsh
+
+
 
 # `make check` is just an alias for `make test`
 check: test
@@ -88,6 +105,10 @@ check-syntax: test-syntax
 	test-syntax check-syntax $(test_syntaxes)\
 	setup-all $(setups)
 
+
+
+$(directories):
+	test -d "$@" || mkdir -vp "$@"
 
 
 
@@ -135,26 +156,23 @@ endif
 # preparing files
 # ===============
 
-ifeq (,$(use_git))
-$(warning 'use_git' is set to empty. Use curl to fetch files)
-$(dotfiles_dir)/%:
-	mkdir -vp $(dotfiles_dir)
+files_fullpath := $(files:%=$(dotfiles_dir)/%)
+fetch_files := $(files:%=fetch-%)
+.PHONY: $(fetch_files)
+
+$(fetch_files): fetch-%: $(dotfiles_dir)
 	curl --url $(dotfiles_url_base)/$* --output $@
+
+
+ifeq (,$(use_git))
+$(files_fullpath): $(dotfiles_dir)/%: fetch-%
+$(warning 'use_git' is empty. Use curl to fetch files)
 else
-$(warning 'use_git' is set to non-empty. Use git to retrieve files)
-$(dotfiles_dir)/%: setup-repository
+$(warning 'use_git' is not empty. Use git to retrieve files)
+$(files_fullpath): setup-repository
 	test -f "$@"
 endif
 
-# Shortcut target for interactive usage
-# For example, `make file-emacs.el use_git=` will fetch emacs.el from web with
-# curl program.
-# NOTE: Is there any way to make all `file-%` targets phony?
-file-%: $(dotfiles_dir)/%
-	test -f "$<"
-
-# Make sure $(dotfiles_dir)/% wont be removed as intermidiate files
-.PRECIOUS: $(dotfiles_dir)/%
 
 
 
@@ -187,7 +205,7 @@ setup_utils_path := $(setup_utils:%=$(bindir)/%)
 
 $(setup_utils): %: $(bindir)/%
 
-$(setup_utils_path):
+$(setup_utils_path): $(bindir)
 	$(curl) -L --url "$(util_url)" --output "$@"
 	chmod +x "$@"
 
@@ -196,17 +214,6 @@ colortable16.sh: \
 256colors2.pl: util_url := https://gist.github.com/10sr/6852331/raw/256colors2.pl
 pacapt: util_url := https://github.com/icy/pacapt/raw/ng/pacapt
 ack-2.12: util_url := http://beyondgrep.com/ack-2.12-single-file
-
-
-
-# create directories
-# ------------------
-
-setup_directories := $(localdir) $(vardir) $(bindir)
-setup-directory: $(setup_directories)
-
-$(localdir) $(vardir) $(bindir):
-	mkdir -vp $@
 
 
 
@@ -320,27 +327,43 @@ endif
 # Load codes are defined by following SETUP_LOAD: indicator.
 # String DOTFILES_DIR in the load codes will be replaced into the value of
 # $(dotfiles_dir).
-# If append_load is non-empty, the load codes are appended to $(topfile),
-# otherwise the code will be just printed out to stdout.
+# The load codes are appended to $(topfile).
 
 setup_rcs := setup-rc-vimrc setup-rc-tmux.conf setup-rc-emacs.el
 setup-rc: $(setup_rcs)
 .PHONY: $(setup_rcs)
 
+setup-rc-vimrc: $(home)/.vimrc
+setup-rc-tmux.conf: $(home)/.tmux.conf
+setup-rc-emacs.el: $(home)/.emacs.d/init.el
+
+$(home)/.emacs.d/init.el: $(dotfiles_dir)/emacs.el $(home) $(home)/.emacs.d
+$(home)/.vimrc: $(dotfiles_dir)/vimrc $(home)
+$(home)/.tmux.conf: $(dotfiles_dir)/tmux.conf $(home)
+
 command_extract_setup_load := $(grep) -e 'SETUP_LOAD: ' | \
 		sed -e 's/^.*SETUP_LOAD: //' -e 's|DOTFILES_DIR|$(dotfiles_dir)|'
 
-$(setup_rcs): setup-rc-%: $(dotfiles_dir)/%
-ifeq (,$(append_load))
-	@echo "\`append_load' is not defined. Just print load command."
-	cat "$<" | $(command_extract_setup_load)
-else
-	cat "$<" | $(command_extract_setup_load) | tee -a "$(topfile)"
-endif
+setup_rc_marker := ADDED BY 10sr_dotfiles/Makefile
 
-setup-rc-vimrc: topfile := $(home)/.vimrc
-setup-rc-tmux.conf: topfile := $(home)/.tmux.conf
-setup-rc-emacs.el: topfile := $(home)/.emacs.d/init.el
+$(home)/.emacs.d/init.el $(home)/.vimrc $(home)/.tmux.conf:
+	set -x; if ! $(grep) "$(setup_rc_marker)" "$@"; \
+	then \
+		(echo '$(line_comment)' $(setup_rc_marker); cat "$<" | $(command_extract_setup_load)) \
+			| tee -a "$@"; \
+	fi
+
+$(home)/.emacs.d/init.el: line_comment := ;;
+$(home)/.vimrc: line_comment := \"
+$(home)/.tmux.conf: line_comment := \#
+
+
+
+# run
+# ===
+
+run-emacs: $(home)/.emacs.d/init.el
+	$(emacs) -q --eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" --load "$<"
 
 
 
@@ -395,8 +418,3 @@ sexp_elisp_syntax_check := \
 $(test_syntax_els): test-syntax-%: $(dotfiles_dir)/%
 	$(emacs) -Q --debug-init --batch \
 		--eval '(let ((file "$<")) $(sexp_elisp_syntax_check))' --kill
-
-
-
-run-emacs:
-	$(emacs) -nw
