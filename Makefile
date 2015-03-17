@@ -44,11 +44,12 @@ endif
 $(warning dotfiles_dir: $(dotfiles_dir))
 
 
+dotfiles_home_dir := $(dotfiles_dir)/.home
 ifeq ($(home),)
 ifeq ($(global_home),)
 $(warning home not set and global_home is empty)
 # TODO: What this should be?
-home := $(dotfiles_dir)/.home
+home := $(dotfiles_home_dir)
 else
 home := $(HOME)
 endif
@@ -100,7 +101,7 @@ check: test
 # Similarly, check-syntax is test-syntax
 check-syntax: test-syntax
 
-.PHONY: all default \
+.PHONY: all default clean \
 	test check $(tests) \
 	test-syntax check-syntax $(test_syntaxes)\
 	setup-all $(setups)
@@ -150,6 +151,19 @@ endif
 ifneq (,$(findstring Linux,$(uname)))
 islinux := t
 endif
+
+
+
+# Clean
+# =====
+
+# Usage: Define a target as a dependency for clean and .PHONY
+
+clean: clean-home
+.PHONY: clean-home
+
+clean-home:
+	$(RM) -r $(dotfiles_home_dir)
 
 
 
