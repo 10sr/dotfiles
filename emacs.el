@@ -407,10 +407,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-(when (fetch-library
-       "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
-       t)
-  (safe-require-or-eval 'terminal-title)
+(when (and (fetch-library
+            "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
+            t)
+           (safe-require-or-eval 'terminal-title))
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
