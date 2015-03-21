@@ -940,6 +940,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (setq server-name (concat "server"
                             (number-to-string (emacs-pid))))
 
+  ;; In Cygwin Environment `server-runnning-p' stops when server-use-tcp is nil
+  (when (eq system-type
+            'cygwin)
+    (setq server-use-tcp t))
+
   (defun my-construct-emacsclient-editor-command ()
     "Construct and return command in a string to connect to current Emacs server."
     (if server-use-tcp
