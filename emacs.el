@@ -1640,9 +1640,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vc
-;; (require 'vc)
+(require 'vc)
 
-(setq vc-handled-backends '())
+;;(setq vc-handled-backends '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gauche-mode
@@ -2622,6 +2622,7 @@ this is test, does not rename files."
 ;;                     ".")
 ;;                 " Stupid!")))
 
+;; TODO: make these a library
 (defvar info-in-prompt
   nil
   "System info in the form of \"[user@host] \".")
