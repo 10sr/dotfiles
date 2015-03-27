@@ -323,7 +323,7 @@ endif
 
 	$(git_conf) alias.todo "grep -nH -E -i 'todo:|note:|fixme:'"
 
-	$(git_conf) alias.snap '! gitdir="`git rev-parse --git-dir`" && : >>"$gitdir"/logs/refs/snapshot && cmt=`git stash create` && test -n "$cmt" && git update-ref refs/snapshot $cmt && echo Snapshot created: $cmt'
+	$(git_conf) alias.snap '! gitdir="`git rev-parse --git-dir`" && : >>"$gitdir"/logs/refs/snapshot && cmt=`git stash create` && test -n "$$cmt" && git update-ref refs/snapshot $$cmt && echo Snapshot created: $$cmt'
 
 	#$(git_conf) alias.wc "!git ls-files -z | xargs -0 wc"
 	# $(git_conf) push.default "simple"
