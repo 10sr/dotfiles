@@ -4,8 +4,9 @@
 
 ;;; Code:
 
-;; SETUP_LOAD: (and (file-readable-p "DOTFILES_DIR/emacs.el")
-;; SETUP_LOAD:      (load-file "DOTFILES_DIR/emacs.el"))
+;; SETUP_LOAD: (let ((file "DOTFILES_DIR/emacs.el"))
+;; SETUP_LOAD:   (and (file-readable-p file)
+;; SETUP_LOAD:        (load-file file)))
 
 ;; make directories
 (unless (file-directory-p (expand-file-name user-emacs-directory))
