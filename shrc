@@ -1148,6 +1148,11 @@ then
     __my_c1="$__attr_bold$__attr_underline"      # color for PWD
     __my_c2="$__attr_bold$__attr_underline"       # color for user and hostname
     # color for ::
+    if test -z "$_HOSTCOLOR_1"
+    then
+        # default color used by tmux status line
+        _HOSTCOLOR_1=green
+    fi
     eval "__my_c4=\${__color_light_${_HOSTCOLOR_1}}"
     __my_c5="$__color_black$__color_bg_white"        # color for SCR
     __my_cdef="$__color_default"
