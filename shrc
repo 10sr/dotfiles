@@ -1269,6 +1269,11 @@ then
         eval __my_set_title ${__terminal_title}
     }
 else
-    PROMPT_COMMAND="laststatus=\$?;__my_set_title \"${__terminal_title}\";$PROMPT_COMMAND"
+    if test -n "$PROMPT_COMMAND"
+    then
+        PROMPT_COMMAND="laststatus=\$?;$PROMPT_COMMAND;__my_set_title \"${__terminal_title}\""
+    else
+        PROMPT_COMMAND="laststatus=\$?;__my_set_title \"${__terminal_title}\""
+    fi
 fi
 laststatus=0
