@@ -942,8 +942,12 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                             (number-to-string (emacs-pid))))
 
   ;; In Cygwin Environment `server-runnning-p' stops when server-use-tcp is nil
-  (when (eq system-type
-            'cygwin)
+  ;; In Darwin environment, init fails with message like 'Service name too long'
+  ;; when server-use-tcp is nil
+  (when (or (eq system-type
+                'cygwin)
+            (eq system-type
+                'darwin))
     (setq server-use-tcp t))
 
   (defun my-construct-emacsclient-editor-command ()
