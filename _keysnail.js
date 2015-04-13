@@ -638,6 +638,8 @@ ext.add('my-setpref', function(){
       "extensions.tabutils.styles.unread":
       "{\"bold\":false,\"italic\":false,\"underline\":false,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#CC0000\",\"bgColor\":false,\"bgColorCode\":\"undefined\",\"outline\":false,\"outlineColorCode\":\"undefined\"}",
       "extensions.tabutils.TFS_Enable":false,
+      // Always select right tab on close
+      "extensions.tabutils.selectOnClose":10,
       "extensions.yass.edgetype":0,
       "extensions.yass.selectedpreset":"red",
       "font.default.x-western":"sans-serif",
