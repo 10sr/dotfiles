@@ -1017,11 +1017,13 @@ __my_ps1_moc(){
 }
 
 for f in /usr/share/git/git-prompt.sh \
-    /usr/share/git-core/contrib/completion/git-prompt.sh \
-    /usr/local/share/git-core/contrib/completion/git-prompt.sh \
-    /etc/bash_completion.d/git-prompt \
-    /opt/local/share/git-core/git-prompt.sh \
-    /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
+             /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-prompt.sh \
+             /usr/local/opt/bash-git-prompt/share/gitprompt.sh \
+             /usr/share/git-core/contrib/completion/git-prompt.sh \
+             /usr/local/share/git-core/contrib/completion/git-prompt.sh \
+             /etc/bash_completion.d/git-prompt \
+             /opt/local/share/git-core/git-prompt.sh \
+             /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
     test -r "$f" && ($inbash || $inzsh) && . "$f" && break
 done
