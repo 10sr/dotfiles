@@ -2177,9 +2177,12 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (defvar-set eshell-cmpl-ignore-case t)
   (defvar-set eshell-cmpl-cycle-completions nil)
   (defvar-set eshell-highlight-prompt nil)
-  (defvar-set eshell-ls-initial-args '("-hCFG"
-                                       "--color=auto"
-                                       "--time-style=long-iso"))     ; "-hF")
+  (if (eq system-type 'darwin)
+      (defvar-set eshell-ls-initial-args '("-hCFG")
+        (defvar-set eshell-ls-initial-args '("-hCFG"
+                                             "--color=auto"
+                                             "--time-style=long-iso"))     ; "-hF")
+        ))
 
   (defvar-set eshell-prompt-function
     'my-eshell-prompt-function)
