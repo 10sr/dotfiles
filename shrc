@@ -1027,8 +1027,8 @@ for f in /usr/share/git/git-prompt.sh \
 do
     test -r "$f" && ($inbash || $inzsh) && . "$f" && break
 done
-GIT_PS1_SHOWDIRTYSTATE=t
-GIT_PS1_SHOWUPSTREAM=t
+export GIT_PS1_SHOWDIRTYSTATE=t
+export GIT_PS1_SHOWUPSTREAM=t
 __my_ps1_git(){
     null type __git_ps1 || return $last
     null git rev-parse --git-dir >/dev/null 2>&1 || return $last
