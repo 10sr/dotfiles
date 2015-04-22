@@ -214,6 +214,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     dirtree
     term-run
     editorconfig
+    git-ps1-mode
     )
   "Package list just for me.")
 
