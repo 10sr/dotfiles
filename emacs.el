@@ -456,6 +456,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                       (count-lines (point-max)
                                    (point-min)))))
 
+(when (require 'git-ps1-mode nil t)
+  (git-ps1-mode))
+
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 ;; display date
 (call-after-init (lambda ()
