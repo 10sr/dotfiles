@@ -298,6 +298,7 @@ __safe_alias py2=python2
 __safe_alias ipy=ipython
 __safe_alias ipy3=ipython3
 __safe_alias ipy2=ipython2
+__safe_alias javac="javac -J-Duser.language=en"
 # Sometimes SHELL cannot be used. For example, when running bash inside zsh
 # SHELL is set to be /bin/zsh
 if $inbash
