@@ -978,6 +978,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
+(when (autoload-eval-lazily 'term-run '(term-run-shell-command term-run))
+  (define-key ctl-x-map "t" 'term-run-shell-command))
+
 (add-to-list 'safe-local-variable-values
              '(encoding utf-8))
 (setq enable-local-variables :safe)
