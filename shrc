@@ -223,6 +223,16 @@ __safe_run w yuk
 #     echo
 # fi
 
+i(){
+    w
+    ss -lnp
+    ps aufx
+    df -h
+    top -b -d 1 -n 1
+    top -b -d 1 -n 1 -a
+    dstat -taf 1 10
+}
+
 ###################################
 # some aliases and functions
 
