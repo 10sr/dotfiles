@@ -673,7 +673,7 @@ ext.add('auto-install-plugins', function(ev, arg){
     'https://github.com/mooz/keysnail/raw/master/plugins/builtin-commands-ext.ks.js',
     'https://raw.github.com/azu/KeySnail-Plugins/master/JSReference/js-referrence.ks.js',
     'https://raw.github.com/gongo/keysnail_plugin/master/linksnail.ks.js',
-    'https://raw.github.com/tkosaka/keysnail-plugin/master/nicontroller.ks.js',
+    'https://raw.githubusercontent.com/azu/keysnail-plugin/master/nicontroller.ks.js',
     'https://raw.github.com/10sr/keysnail-plugin/master/shiitake.ks.js',
     'https://raw.github.com/10sr/keysnail-plugin/master/dig-url.ks.js',
     'https://raw.github.com/10sr/keysnail-plugin/master/instapaper.ks.js',
