@@ -185,11 +185,11 @@ local["^https?://(www\.|cloud\.|)feedly\.com/"] = [
 /////////////////////////////////////////
 //nicovideo
 // http://dic.nicovideo.jp/id/4858151
-local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
+local["^http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)"] = [
     // ["i", function(ev, arg){ ext.exec("nicoinfo", arg); }],
-    ["p", function(ev, arg){ ext.exec("nicopause", arg); }]
-    ["f", function(ev, arg){ ext.exec("nicosize", arg); }]
-    ["F", function(ev, arg){ ext.exec("nicosize", arg); }]
+  ["SPC", function(ev, arg){ ext.exec("nicopause", arg); }],
+  ["f", function(ev, arg){ ext.exec("nicosize", arg); }],
+  ["F", function(ev, arg){ ext.exec("nicosize", arg); }],
     // ["o", function(ev, arg){ ext.exec("nicommentvisible", arg); }],
     // ["m", function(ev, arg){ ext.exec("nicomute", arg); }],
     // [".", function(ev, arg){ ext.exec("nicovolumeIncrement", arg); }],
