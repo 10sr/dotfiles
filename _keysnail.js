@@ -184,20 +184,22 @@ local["^https?://(www\.|cloud\.|)feedly\.com/"] = [
 
 /////////////////////////////////////////
 //nicovideo
-// local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
-//     ["i", function(ev, arg){ ext.exec("nicoinfo", arg); }],
-//     ["p", function(ev, arg){ ext.exec("nicopause", arg); }],
-//     // ["o", function(ev, arg){ ext.exec("nicommentvisible", arg); }],
-//     ["m", function(ev, arg){ ext.exec("nicomute", arg); }],
-//     [".", function(ev, arg){ ext.exec("nicovolumeIncrement", arg); }],
-//     [",", function(ev, arg){ ext.exec("nicovolumeDecrement", arg); }],
-//     ['f', function(ev, arg){
-//         curl = window.content.location.href;
-//         kurl = curl.replace(/nicovideo.jp/, "nicovideofire.jp");
-//         window.content.location.href = kurl;
-//     }
-//     ]
-// ];
+// http://dic.nicovideo.jp/id/4858151
+local["http://(www|tw|es|de|)\.nicovideo\.jp\/(watch|playlist)/*"] = [
+    // ["i", function(ev, arg){ ext.exec("nicoinfo", arg); }],
+    ["p", function(ev, arg){ ext.exec("nicopause", arg); }]
+    ["f", function(ev, arg){ ext.exec("nicosize", arg); }]
+    ["F", function(ev, arg){ ext.exec("nicosize", arg); }]
+    // ["o", function(ev, arg){ ext.exec("nicommentvisible", arg); }],
+    // ["m", function(ev, arg){ ext.exec("nicomute", arg); }],
+    // [".", function(ev, arg){ ext.exec("nicovolumeIncrement", arg); }],
+    // [",", function(ev, arg){ ext.exec("nicovolumeDecrement", arg); }],
+    // ['f', function(ev, arg){
+    //     curl = window.content.location.href;
+    //     kurl = curl.replace(/nicovideo.jp/, "nicovideofire.jp");
+    //     window.content.location.href = kurl;
+    // }]
+];
 
 /////////////////////////////////////////
 // tumblr/dashboard
