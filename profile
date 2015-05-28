@@ -125,10 +125,11 @@ fi
 export _HOSTCOLOR_1=
 export _HOSTCOLOR_2=
 # black red green yellow blue magenta cyan white
+# Yellow is hard to read strings...
 case "`hostname`" in
     arch-vb-win8-vaio11)
-        _HOSTCOLOR_1=yellow
-        _HOSTCOLOR_2=black
+        _HOSTCOLOR_1=magenta
+        _HOSTCOLOR_2=white
         ;;
     arch-mba)
         _HOSTCOLOR_1=cyan
