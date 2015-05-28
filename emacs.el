@@ -711,6 +711,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
+(require 'editorconfig nil t)
+
 (setq revert-without-query '(".+"))
 
 ;; save cursor position
