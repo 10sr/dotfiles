@@ -215,6 +215,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     term-run
     editorconfig
     git-ps1-mode
+
+    scala-mode2
+    ensime
     )
   "Package list just for me.")
 
@@ -977,6 +980,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
+
+(when (require 'ensime nil t)
+  (add-hook 'scala-mode-hook
+            'ensime-scala-mode-hook))
 
 (when (autoload-eval-lazily 'term-run '(term-run-shell-command term-run))
   (define-key ctl-x-map "t" 'term-run-shell-command))
