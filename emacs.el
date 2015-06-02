@@ -983,7 +983,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
+(defvar-set ac-ignore-case nil)
+
 (when (require 'ensime nil t)
+  (defvar-set ensime-ac-case-sensitive t)
+  (defvar-set ensime-company-case-sensitive t)
   (add-hook 'scala-mode-hook
             'ensime-scala-mode-hook))
 
