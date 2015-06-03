@@ -985,11 +985,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (defvar-set ac-ignore-case nil)
 
-(when (require 'ensime nil t)
-  (defvar-set ensime-ac-case-sensitive t)
-  (defvar-set ensime-company-case-sensitive t)
-  (add-hook 'scala-mode-hook
-            'ensime-scala-mode-hook))
+;; (when (require 'ensime nil t)
+;;   (defvar-set ensime-ac-case-sensitive t)
+;;   (defvar-set ensime-company-case-sensitive t)
+;;   (add-hook 'scala-mode-hook
+;;             'ensime-scala-mode-hook)
+;;   (add-hook 'ensime-scala-mode-hook
+;;             'ac-stop))
 
 (when (autoload-eval-lazily 'term-run '(term-run-shell-command term-run))
   (define-key ctl-x-map "t" 'term-run-shell-command))
