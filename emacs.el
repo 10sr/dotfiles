@@ -2523,6 +2523,7 @@ Commands are searched from ALIST."
 ;;   (interactive)
 ;;   (compile "make -k"))
 (defalias 'make 'compile)
+(define-key ctl-x-map "c" 'compile)
 
 (defvar sed-in-place-history nil
   "History of `sed-in-place'.")
