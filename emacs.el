@@ -1692,6 +1692,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
   (defun run-gauche ()
     "run gauche"
+    (interactive)
     (run-scheme gauche-program-name)
     )
 
