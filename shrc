@@ -820,13 +820,19 @@ bak(){
 }
 
 di(){
-    if type colordiff >/dev/null 2>&1 && test $TERM != dumb
+    if null type git
     then
-        ___diffcmd=colordiff
+        git --git-dir= diff "$@"
+        ___diffcmd="git --git-dir= diff"
     else
-        ___diffcmd=diff
+        if type colordiff >/dev/null 2>&1 && test $TERM != dumb
+        then
+            ___diffcmd=colordiff
+        else
+            ___diffcmd=diff
+        fi
+        ${___diffcmd} -u "$@" | ${PAGER}
     fi
-    ${___diffcmd} -u "$@" | ${PAGER}
 }
 
 tb(){
