@@ -471,6 +471,8 @@ g(){
         git "$@"
     fi
 }
+
+$isdarwin && . /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-completion.bash
 if null type _git && $inbash
 then
     # enable programmable completion for g
