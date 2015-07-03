@@ -1,6 +1,8 @@
 # Makefile --- 10sr make dotfiles
 # 2014, 10sr. Unlicensed <http://unlicense.org>
 
+# TODO: Add help message
+
 # Variable definitions
 
 dotfiles_url_base := https://raw.githubusercontent.com/10sr/dotfiles/master
