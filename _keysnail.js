@@ -92,6 +92,7 @@ style.register(
 plugins.options["search-url-list"] = [
   ["DuckDuckGo", "https://duckduckgo.com/?q=%q"],
   ["Bing", "http://bing.com/search?q=%q"],
+  ["Google", "http://google.com/search?q=%q"],
   ["yatwitter search", "http://yats-data.com/yats/search?query=%q"],
   ["Yahoo Realtime",
    "http://realtime.search.yahoo.co.jp/search?rkf=1&ei=UTF-8&p=%q"],
