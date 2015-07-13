@@ -2414,7 +2414,7 @@ If ARG is given or called with prefix argument, create new buffer."
     ;; the silver searcher
     ("ag"
      (executable-find "ag")
-     "ag --nocolor --nogroup --nopager ")
+     "ag --nocolor --nogroup --nopager --filename ")
 
     ;; ack
     ("ack"
