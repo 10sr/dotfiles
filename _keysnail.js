@@ -624,6 +624,7 @@ ext.add('my-setpref', function(){
       "browser.tabs.loadDivertedInBackground": true,
       "browser.urlbar.autocomplete.enabled":false,
       "browser.urlbar.trimURLs":false,
+      "browser.fixup.alternate.enabled": false,
       "dom.disable_window_open_feature.location": false,
       "dom.max_script_run_time": 30,
       "extensions.chaika.bbsmenu.open_new_tab":true,
@@ -636,6 +637,7 @@ ext.add('my-setpref', function(){
       "%yyyy%%MM%%dd%-%hh%%mm%%ss%_",
       "extensions.saveimageinfolder.usecache":true,
       "extensions.tabutils.openTabNext":1,
+      "extensions.tabutils.openUrlInTab":false,
       "extensions.tabutils.styles.current":
       "{\"bold\":true,\"italic\":false,\"underline\":true,\"strikethrough\":false,\"color\":true,\"colorCode\":\"#000000\",\"bgColor\":false,\"bgColorCode\":\"#000000\",\"outline\":false,\"outlineColorCode\":\"#000000\"}",
       "extensions.tabutils.styles.unread":
