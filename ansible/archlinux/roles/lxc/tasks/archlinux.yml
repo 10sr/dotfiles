@@ -1,3 +1,0 @@
-- name: Install LXC
-  pacman: name=lxc state=present
-  become: yes

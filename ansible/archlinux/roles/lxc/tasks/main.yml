@@ -1,2 +1,3 @@
-- include: archlinux.yml
-  when: ansible_os_family == "Archlinux"
+- name: Install LXC
+  pacman: name=lxc state=present
+  become: yes
