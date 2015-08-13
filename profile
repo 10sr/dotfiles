@@ -108,7 +108,7 @@ then
         export TMP=/tmp
     fi
 fi
-export TMP="${TMP}/${USER}-tmp"
+expr "$TMP" : ".*$USER-tmp" || export TMP="${TMP}/${USER}-tmp"
 export TEMP=$TMP
 export TMPDIR=$TMP
 test -d "$TMP" || mkdir -p "$TMP"
