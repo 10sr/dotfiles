@@ -223,6 +223,14 @@ __safe_run w yuk
 #     echo
 # fi
 
+if test -n "$__MY_DTACH"
+then
+    echo
+    echo DSession: Current Session: "`basename "$__MY_DTACH"`"
+    echo DSession: Press C-^ to Exit.
+    true
+fi
+
 i(){
     w
     ss -lnp
@@ -640,7 +648,7 @@ tx(){
     tmux start-server
     if test -z "$1"
     then
-        echo "usage: tx <session_name>"
+        echo "usage: tx [<session_name>]"
         tmux list-sessions
     elif test -z "$TMUX"
     then
@@ -655,7 +663,7 @@ tx(){
     fi
 }
 
-dt(){
+__dsession(){
     # dt [-h] [<name>] [<command ...>]
     __dtach_dir="${TMP}/dtach"
     mkdir -p "${__dtach_dir}"
@@ -670,6 +678,7 @@ dt(){
     if test -z "$1"
     then
         # if no arg given show list of sessions
+        echo "Usage: ds [<session>]"
         echo "Sessions:"
         ls "${__dtach_dir}"
         return 0
@@ -704,6 +713,7 @@ dt(){
         __MY_DTACH="$soc_name" dtach -c "$soc_name" -e ^^ "$@"
     fi
 }
+null type dtach && alias ds=__dsession
 
 scr(){
     test -n "$1" && pf="${1}-"
