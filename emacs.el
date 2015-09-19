@@ -1584,6 +1584,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
       '(ilookup-open)
     (setq ilookup-dict-alist
           '(
+            ("sdcv" . (lambda (word)
+                        (shell-command-to-string
+                         (format "sdcv -n '%s'"
+                                 word))))
             ("en" . (lambda (word)
                       (shell-command-to-string
                        (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
