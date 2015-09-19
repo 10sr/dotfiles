@@ -25,7 +25,7 @@ __match(){
     expr "$1" : ".*$2.*" >/dev/null
 }
 
-__ln=$'\n'
+__lf=$'\n'
 __cr=$'\r'
 
 test -n "$TMP" || export TMP=/tmp/${USER}-tmp

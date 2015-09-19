@@ -1249,7 +1249,12 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             (lambda ()
               (outline-minor-mode 1)
               (flyspell-mode)
-              (set (make-local-variable 'comment-start) ";"))))
+              (set (make-local-variable 'comment-start) ";")))
+  (add-hook 'gfm-mode-hook
+            (lambda ()
+              (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline)
+              ;;(electric-indent-mode 0)
+              )))
 
 ;; c-mode
 ;; http://www.emacswiki.org/emacs/IndentingC
