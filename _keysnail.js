@@ -264,9 +264,12 @@ var autoSaveTabList = (function(){
   const PREF_DSTDIR = "dstdir";
   const PREF_ENABLED = "enabled";
   // use plugin option to set
-  var save_interval = 60 * 10;
+  // in sec
+  var default_timer_interval = 60 * 5;
   // "/" for unix system
   const DIR_DELIM = userscript.directoryDelimitter;
+
+  var __timer = null;
 
   function selectDirectory(title){
     // open dialog and return nsILocalFile object
@@ -352,7 +355,7 @@ var autoSaveTabList = (function(){
     var dstdir = util.getUnicharPref(PREF_PREFIX + PREF_DSTDIR);
     if (! dstdir) {
       display.showPopup("AutoSaveTabList",
-                        "Dest dir is not set yet. Run setup first");
+                        "Dest dir is not set yet. Run astl-setup first");
       return;
     }
 
@@ -377,7 +380,7 @@ var autoSaveTabList = (function(){
     openFromLFSplittedString(command.getClipboardText());
   }
 
-  function openFromLFSplittedString(str) {
+  function openFromLFSplittedString(str){
     var urls = str.split("\n");
     for (var i = 0; i < urls.length; i++) {
       if (urls[i].match(/^http/)) {
@@ -386,13 +389,34 @@ var autoSaveTabList = (function(){
     }
   }
 
+  function enableTimer(sec){
+    sec = sec || default_timer_interval;
+    __timer = window.setInterval(saveCurrentList, sec * 1000);
+    display.showPopup("AutoSaveTabList",
+                      "Auto save enabled for every " + sec.toString() + " sec");
+  }
+
+  function disableTimer(){
+    if (__timer) {
+      window.clearInterval(__timer);
+      __timer = null;
+      display.showPopup("AutoSaveTabList",
+                        "Auto save disabled");
+    } else {
+      display.showPopup("AutoSaveTabList",
+                        "Auto save timer is not set yet !");
+    }
+  }
+
   return {
     selectDirectory: selectDirectory,
     setup: setup,
     getTabList: getTabList,
     saveCurrentList: saveCurrentList,
-    openFromClipboard: openFromClipboard
-    openFromFile: openFromFile
+    openFromClipboard: openFromClipboard,
+    openFromFile: openFromFile,
+    enableTimer: enableTimer,
+    disableTimer: disableTimer
   };
 })();
 
@@ -401,6 +425,9 @@ ext.add("astl-open-from-clipboard", autoSaveTabList.openFromClipboard, "Auto sav
 ext.add("astl-open-from-file", autoSaveTabList.openFromFile, "Auto save tab list - Open tabs from local file");
 ext.add("astl-save-current", autoSaveTabList.saveCurrentList,
         "Auto save tab list - Save current list");
+ext.add("astl-enable-timer", autoSaveTabList.enableTimer, "Auto save tab list - Enable periodic timer");
+ext.add("astl-disable-timer", autoSaveTabList.disableTimer, "Auto save tab list - disable periodic timer");
+
 
 var echoTabInfo = (function(){
   var currenttab;
