@@ -271,11 +271,30 @@ var autoSaveTabList = (function(){
   function selectDirectory(title){
     // open dialog and return nsILocalFile object
     // https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsILocalFile
+    // https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIFilePicker
     // this function blocks.
     var nsIFilePicker = Components.interfaces.nsIFilePicker;
     var fp = Components.classes["@mozilla.org/filepicker;1"].
         createInstance(nsIFilePicker);
     fp.init(window, title, nsIFilePicker.modeGetFolder);
+
+    // block
+    var res = fp.show();
+    if (res !== nsIFilePicker.returnOK) {
+      return null;
+    }
+    return fp.file;
+  }
+
+  function selectFile(title){
+    // open dialog and return nsILocalFile object
+    // https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsILocalFile
+    // https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIFilePicker
+    // this function blocks.
+    var nsIFilePicker = Components.interfaces.nsIFilePicker;
+    var fp = Components.classes["@mozilla.org/filepicker;1"].
+        createInstance(nsIFilePicker);
+    fp.init(window, title, nsIFilePicker.modeOpen);
 
     // block
     var res = fp.show();
@@ -349,7 +368,9 @@ var autoSaveTabList = (function(){
 
   function openFromFile(){
     var file = selectFile();
-    openFromLFSplittedString(util.readTextFile(file));
+    if (file) {
+      openFromLFSplittedString(util.readTextFile(file.path));
+    }
   }
 
   function openFromClipboard(){
@@ -371,11 +392,13 @@ var autoSaveTabList = (function(){
     getTabList: getTabList,
     saveCurrentList: saveCurrentList,
     openFromClipboard: openFromClipboard
+    openFromFile: openFromFile
   };
 })();
 
 ext.add("astl-setup", autoSaveTabList.setup, "Auto save tab list - Setup");
 ext.add("astl-open-from-clipboard", autoSaveTabList.openFromClipboard, "Auto save tab list - Open tabs from clipboard");
+ext.add("astl-open-from-file", autoSaveTabList.openFromFile, "Auto save tab list - Open tabs from local file");
 ext.add("astl-save-current", autoSaveTabList.saveCurrentList,
         "Auto save tab list - Save current list");
 
