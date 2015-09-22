@@ -395,6 +395,7 @@ var autoSaveTabList = (function(){
   }
 
   function enableTimer(ev, sec){
+    disableTimer();
     sec = sec || default_timer_interval;
     __timer = window.setInterval(saveCurrentList, sec * 1000);
     display.showPopup("AutoSaveTabList",
