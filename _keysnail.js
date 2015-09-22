@@ -434,6 +434,8 @@ ext.add("astl-save-current", autoSaveTabList.saveCurrentList,
 ext.add("astl-enable-timer", autoSaveTabList.enableTimer, "Auto save tab list - Enable periodic timer");
 ext.add("astl-disable-timer", autoSaveTabList.disableTimer, "Auto save tab list - disable periodic timer");
 
+ext.exec("astl-enable-timer");
+
 
 var echoTabInfo = (function(){
   var currenttab;
