@@ -358,7 +358,7 @@ var autoSaveTabList = (function(){
 
   function openFromLFSplittedString(str) {
     var urls = str.split("\n");
-    for (var i = i; i < urls.length; i++) {
+    for (var i = 0; i < urls.length; i++) {
       if (urls[i].match(/^http/)) {
         window.openUILinkIn(urls[i], "tab");
       }
