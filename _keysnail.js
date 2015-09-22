@@ -347,15 +347,35 @@ var autoSaveTabList = (function(){
                       "Tab List saved: " + filename);
   }
 
+  function openFromFile(){
+    var file = selectFile();
+    openFromLFSplittedString(util.readTextFile(file));
+  }
+
+  function openFromClipboard(){
+    openFromLFSplittedString(command.getClipboardText());
+  }
+
+  function openFromLFSplittedString(str) {
+    var urls = str.split("\n");
+    for (var i = i; i < urls.length; i++) {
+      if (urls[i].match(/^http/)) {
+        window.openUILinkIn(urls[i], "tab");
+      }
+    }
+  }
+
   return {
     selectDirectory: selectDirectory,
     setup: setup,
     getTabList: getTabList,
-    saveCurrentList: saveCurrentList
+    saveCurrentList: saveCurrentList,
+    openFromClipboard: openFromClipboard
   };
 })();
 
 ext.add("astl-setup", autoSaveTabList.setup, "Auto save tab list - Setup");
+ext.add("astl-open-from-clipboard", autoSaveTabList.openFromClipboard, "Auto save tab list - Open tabs from clipboard");
 ext.add("astl-save-current", autoSaveTabList.saveCurrentList,
         "Auto save tab list - Save current list");
 
