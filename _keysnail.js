@@ -270,6 +270,7 @@ var autoSaveTabList = (function(){
   const DIR_DELIM = userscript.directoryDelimitter;
 
   var __timer = null;
+  var __last_tab_list = null;
 
   function selectDirectory(title){
     // open dialog and return nsILocalFile object
@@ -361,12 +362,16 @@ var autoSaveTabList = (function(){
 
     var filename = genFileName();
 
-    util.writeTextFile(
-      getTabList().join("\n") + "\n",
-      dstdir + userscript.directoryDelimiter + filename
-    );
-    display.showPopup("AutoSaveTabList",
-                      "Tab List saved: " + filename);
+    var tab_list = getTabList().join("\n") + "\n"
+    if (tab_list !== __last_tab_list) {
+      util.writeTextFile(
+        tab_list,
+        dstdir + userscript.directoryDelimiter + filename
+      );
+      display.showPopup("AutoSaveTabList",
+                        "Tab List saved: " + filename);
+      __last_tab_list = tab_list;
+    }
   }
 
   function openFromFile(){
