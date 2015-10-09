@@ -18,6 +18,7 @@
   (add-to-list 'load-path d))
 
 (eval-when-compile
+  ;; TODO: Use cl-lib intead
   (require 'cl nil t))
 
 
@@ -1189,6 +1190,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (and (autoload-eval-lazily 'pkgbuild-mode)
      (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
                                    auto-mode-alist)))
+
+(and (autoload-eval-lazily 'groovy-mode)
+     (add-to-list 'auto-mode-alist
+                  '("build.gradle\\'" . groovy-mode)))
 
 (add-hook 'yaml-mode-hook
           (lambda ()
