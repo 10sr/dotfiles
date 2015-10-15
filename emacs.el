@@ -216,6 +216,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     term-run
     editorconfig
     git-ps1-mode
+    restart-emacs
 
     scala-mode2
     ensime
