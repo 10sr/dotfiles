@@ -13,7 +13,7 @@ __safe_add_path_l(){
 
 __safe_add_path_l "$HOME/.cabal/bin"
 __safe_add_path_l "$HOME/.local/lib/gems/bin"
- __safe_add_path_l "$HOME/.local/bin"
+__safe_add_path_l "$HOME/.local/bin"
 __safe_add_path_l "$HOME/.gem/ruby/2.1.0/bin"
 __safe_add_path_r "/c/mingw/bin"
 __safe_add_path_r "/c/mingw/msys/1.0/bin"
@@ -93,7 +93,6 @@ then
     export USER=$USERNAME
 fi
 
-
 # set TMP, TEMP, TMPDIR
 
 if test -z "$TMP"
@@ -108,7 +107,8 @@ then
         export TMP=/tmp
     fi
 fi
-expr "$TMP" : ".*$USER-tmp" || export TMP="${TMP}/${USER}-tmp"
+
+expr "$TMP" : ".*$USER-tmp" >/dev/null || export TMP="${TMP}/${USER}-tmp"
 export TEMP=$TMP
 export TMPDIR=$TMP
 test -d "$TMP" || mkdir -p "$TMP"
