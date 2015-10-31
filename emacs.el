@@ -220,6 +220,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
     scala-mode2
     ensime
+
+    editorconfig
+    editorconfig-core
     )
   "Package list just for me.")
 
@@ -713,7 +716,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
-(require 'editorconfig nil t)
+(when (require 'editorconfig nil t)
+  (defvar-set edconf-get-properties-function
+    'editorconfig-core-get-properties-hash))
 
 (setq revert-without-query '(".+"))
 
