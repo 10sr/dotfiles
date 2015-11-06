@@ -718,7 +718,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (when (require 'editorconfig nil t)
   (defvar-set edconf-get-properties-function
-    'editorconfig-core-get-properties-hash))
+    'editorconfig-core-get-properties-hash)
+  (editorconfig-mode 1))
 
 (setq revert-without-query '(".+"))
 
