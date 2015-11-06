@@ -20,3 +20,9 @@ indent_size = 2
 
 [{{M,m}akefile,*.mk}]
 indent_style = tab
+
+[{shrc,profile,xinitrc,xprograms,*.sh}]
+indent_size = 4
+
+[*.yml]
+indent_size = 2
