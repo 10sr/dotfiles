@@ -717,7 +717,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; file handling
 
 (when (require 'editorconfig nil t)
-  (defvar-set edconf-get-properties-function
+  (defvar-set editorconfig-get-properties-function
     'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1))
 
