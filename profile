@@ -82,8 +82,8 @@ export GIT_EDITOR="$EDITOR"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \
-    expr "$TERM" : screen >/dev/null && \
-    expr "`tmux display -p '#{client_termname}'`" : '.*-256color$' >/dev/null
+        expr "$TERM" : screen >/dev/null && \
+        expr "`tmux display -p '#{client_termname}'`" : '.*-256color$' >/dev/null
 then
     TERM=screen-256color
 fi
