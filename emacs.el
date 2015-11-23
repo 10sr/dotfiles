@@ -329,7 +329,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; (setq mac-option-modifier 'control)
 
 ;; display
-(setq redisplay-dont-pause t)
 (setq visible-bell t)
 (setq ring-bell-function 'ignore)
 (mouse-avoidance-mode 'banish)
