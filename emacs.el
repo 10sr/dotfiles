@@ -56,7 +56,7 @@ VALUE when defining SYMBOL."
   "Require FEATURE if available.
 
 At compile time the feature will be loaded immediately."
-  `(eval-and-compile
+  `(eval-when-compile
      (require ,feature nil t)))
 
 (defmacro autoload-eval-lazily (feature &optional functions &rest body)
@@ -424,7 +424,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
-      (defvar-set terminal-title-format
+      (setq terminal-title-format
         '((file-name-nondirectory (directory-file-name
                                    default-directory))))
     (if (and (let ((tty-type (frame-parameter nil
@@ -434,11 +434,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                               "-"))
                            "screen")))
              (not (getenv "SSH_CONNECTION")))
-        (defvar-set terminal-title-format
+        (setq terminal-title-format
           '((file-name-nondirectory (directory-file-name
                                      default-directory))))
       ;; seems that TMUX is used locally and ssh to remote host
-      (defvar-set terminal-title-format
+      (setq terminal-title-format
         `("em:"
           ,user-login-name
           "@"
@@ -716,9 +716,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
-(when (require 'editorconfig nil t)
-  (defvar-set editorconfig-get-properties-function
-    'editorconfig-core-get-properties-hash)
+(when (safe-require-or-eval 'editorconfig)
+  (setq editorconfig-get-properties-function
+        'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1))
 
 (setq revert-without-query '(".+"))
@@ -850,7 +850,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (when (safe-require-or-eval 'scim-bridge)
     ;; Turn on scim-mode automatically after loading .emacs
     (call-after-init 'scim-mode-on)
-    (defvar-set scim-cursor-color "red")
+    (setq scim-cursor-color "red")
     (scim-define-preedit-key ?\^h t)
     (scim-define-common-key ?\* nil)
     (scim-define-common-key ?\^/ nil)))
@@ -863,7 +863,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
     (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
     (when (>= emacs-major-version 23)
-      (defvar-set anthy-accept-timeout 1))))
+      (setq anthy-accept-timeout 1))))
 
 ;; quail
 ;; aproposs input-method for some information
@@ -871,8 +871,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (defun my-load-mozc-el ()
   "Use mozc.el as japanese im."
   (when (safe-require-or-eval 'mozc)
-    (defvar-set defauit-input-method "japanese-mozc")
-    (defvar-set mozc-leim-title "[MZ]")
+    (setq defauit-input-method "japanese-mozc")
+    (setq mozc-leim-title "[MZ]")
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
