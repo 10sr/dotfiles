@@ -230,7 +230,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; (add-to-list 'package-archives
   ;;              '("ELPA" . "http://tromey.com/elpa/"))
   (add-to-list 'package-archives
-               '("melpa" . "http://melpa.milkbox.net/packages/")
+               '("melpa" . "https://melpa.org/packages/")
                t)
   (add-to-list 'package-archives
                '("marmalade" . "http://marmalade-repo.org/packages/"))
