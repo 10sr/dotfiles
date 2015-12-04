@@ -222,7 +222,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     ensime
 
     editorconfig
-    editorconfig-core
     )
   "Package list just for me.")
 
@@ -716,8 +715,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; file handling
 
 (when (safe-require-or-eval 'editorconfig)
-  (setq editorconfig-get-properties-function
-        'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1))
 
 (setq revert-without-query '(".+"))
