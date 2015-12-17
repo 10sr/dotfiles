@@ -413,6 +413,29 @@ var autoSaveTabList = (function(){
     }
   }
 
+  function isEnabled(){
+    return util.getBoolPref(PREF_PREFIX + PREF_ENABLED, false);
+  }
+
+  function enable(){
+    util.setBoolPref(PREF_PREFIX + PREF_ENABLED, true);
+    enableTimer();
+  }
+
+  function disable(){
+    util.setBoolPref(PREF_PREFIX + PREF_ENABLED, false);
+    disableTimer();
+  }
+
+  function init(){
+    // Intended to be called on startup
+    if (isEnabled()) {
+      enableTimer();
+    } else {
+      disableTimer();
+    }
+  }
+
   return {
     selectDirectory: selectDirectory,
     setup: setup,
@@ -420,8 +443,14 @@ var autoSaveTabList = (function(){
     saveCurrentList: saveCurrentList,
     openFromClipboard: openFromClipboard,
     openFromFile: openFromFile,
+
     enableTimer: enableTimer,
-    disableTimer: disableTimer
+    disableTimer: disableTimer,
+
+    isEnabled: isEnabled,
+    enable: enable,
+    disable: disable,
+    init: init
   };
 })();
 
@@ -430,10 +459,18 @@ ext.add("astl-open-from-clipboard", autoSaveTabList.openFromClipboard, "Auto sav
 ext.add("astl-open-from-file", autoSaveTabList.openFromFile, "Auto save tab list - Open tabs from local file");
 ext.add("astl-save-current", autoSaveTabList.saveCurrentList,
         "Auto save tab list - Save current list");
-ext.add("astl-enable-timer", autoSaveTabList.enableTimer, "Auto save tab list - Enable periodic timer");
-ext.add("astl-disable-timer", autoSaveTabList.disableTimer, "Auto save tab list - disable periodic timer");
+//ext.add("astl-enable-timer", autoSaveTabList.enableTimer, "Auto save tab list - Enable periodic timer");
+//ext.add("astl-disable-timer", autoSaveTabList.disableTimer, "Auto save tab list - Disable periodic timer");
+ext.add("astl-enable", autoSaveTabList.enable, "Auto save tab list - Enable");
+ext.add("astl-disable", autoSaveTabList.disable, "Auto save tab list - Disable");
+ext.add("astl-init", autoSaveTabList.init, "Auto save tab list - Initalize");
 
-ext.exec("astl-enable-timer");
+if (autoSaveTabList.isEnabled()) {
+  //ext.exec("astl-init");
+  // I cannot understand AT ALL but calling init() breaks something only my one
+  // environment: Firefox on Windows7
+  autoSaveTabList.init();
+}
 
 
 var echoTabInfo = (function(){
