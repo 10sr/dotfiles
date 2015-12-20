@@ -594,7 +594,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
       '(not
         help-mode
         eshell-mode
-        term-mode
+        ;;term-mode
         Man-mode))
 
 ;; (standard-display-ascii ?\n "$\n")
