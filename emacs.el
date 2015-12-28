@@ -222,6 +222,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     ensime
 
     editorconfig
+
+    ;; 10sr repository
+    recentf-show
+    ;;dired-list-all-mode
+    pack
     )
   "Package list just for me.")
 
@@ -1104,7 +1109,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                       cmd
                                       `("-nHe" ,@args))))))))
        (setq git-command-use-emacsclient t)
-       (or git-command-prompt-file
+       '(or git-command-prompt-file
            (setq git-command-prompt-file
                  (git-command-find-git-ps1
                   "/usr/share/git-core/contrib/completion/git-prompt.sh"))))
@@ -1783,10 +1788,7 @@ the list."
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
-  (and (fetch-library
-        "https://raw.github.com/10sr/emacs-lisp/master/recentf-show.el"
-        t)
-       (autoload-eval-lazily 'recentf-show)
+  (and (autoload-eval-lazily 'recentf-show)
        (define-key ctl-x-map (kbd "C-r") 'recentf-show)
        (add-hook 'recentf-show-before-listing-hook
                  'recentf-load-list))
@@ -1998,9 +2000,7 @@ the list."
                 (when nil (file-readable-p file)
                       (delete-file file)))))
 
-  (and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/pack.el"
-                      t)
-       (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack))
+  (and (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack))
        (add-hook 'dired-mode-hook
                  (lambda ()
                    (local-set-key "P" 'dired-do-pack-or-unpack))))
