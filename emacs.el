@@ -1109,10 +1109,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                       cmd
                                       `("-nHe" ,@args))))))))
        (setq git-command-use-emacsclient t)
-       '(or git-command-prompt-file
-           (setq git-command-prompt-file
-                 (git-command-find-git-ps1
-                  "/usr/share/git-core/contrib/completion/git-prompt.sh"))))
+       ;; (or git-command-prompt-file
+       ;;     (setq git-command-prompt-file
+       ;;           (git-command-find-git-ps1
+       ;;            "/usr/share/git-core/contrib/completion/git-prompt.sh")))
+       )
      ;; (setq git-command-default-options "-c color.ui=always")
      (define-key ctl-x-map "g" 'git-command))
 
