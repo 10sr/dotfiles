@@ -223,6 +223,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
     editorconfig
 
+    git-command
+
     ;; 10sr repository
     recentf-show
     ;;dired-list-all-mode
@@ -1066,56 +1068,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
       (autoload-eval-lazily 'gtkbm)
       (global-set-key (kbd "C-x C-d") 'gtkbm))
 
-(and (fetch-library
-      "https://raw.github.com/10sr/git-command-el/master/git-command.el"
-      t)
-     (autoload-eval-lazily 'git-command
-         nil
-
-       ;; for git-command old version
-       (when (boundp 'git-command-major-mode-alist)
-         (message "You are using old git-command !  Update it !!!")
-         (add-to-list 'git-command-major-mode-alist
-                      '("di" . diff-mode))
-         (add-to-list 'git-command-major-mode-alist
-                      '("graph" . fundamental-mode))
-         (add-to-list 'git-command-major-mode-alist
-                      '("log" . fundamental-mode)))
-
-       ;; for git-command new version
-       (when (boundp 'git-command-view-command-list)
-         (add-to-list 'git-command-view-command-list
-                      "graph")
-         (add-to-list 'git-command-view-command-list
-                      "blame")
-         (add-to-list 'git-command-view-command-list
-                      "help"))
-       (when (boundp 'git-command-aliases-alist)
-         ;; (message "new version of git-command!")
-         (add-to-list 'git-command-aliases-alist
-                      '("di" . (lambda (options cmd args new-buffer-p)
-                                 (git-command-exec options
-                                                   "diff"
-                                                   args
-                                                   new-buffer-p))))
-         (add-to-list 'git-command-aliases-alist
-                      '("grep" . (lambda (options cmd args new-buffer-p)
-                                   (my-rgrep
-                                    (concat
-                                     "git "
-                                     (git-command-construct-commandline
-                                      `(,@options "--no-pager"
-                                                  "-c" "color.grep=false")
-                                      cmd
-                                      `("-nHe" ,@args))))))))
-       (setq git-command-use-emacsclient t)
-       ;; (or git-command-prompt-file
-       ;;     (setq git-command-prompt-file
-       ;;           (git-command-find-git-ps1
-       ;;            "/usr/share/git-core/contrib/completion/git-prompt.sh")))
-       )
-     ;; (setq git-command-default-options "-c color.ui=always")
-     (define-key ctl-x-map "g" 'git-command))
+(when (autoload-eval-lazily 'git-command)
+  (define-key ctl-x-map "g" 'git-command))
 
 (and (fetch-library
       "http://www.emacswiki.org/emacs/download/sl.el"
