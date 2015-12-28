@@ -56,7 +56,7 @@ VALUE when defining SYMBOL."
   "Require FEATURE if available.
 
 At compile time the feature will be loaded immediately."
-  `(eval-when-compile
+  `(eval-and-compile
      (require ,feature nil t)))
 
 (defmacro autoload-eval-lazily (feature &optional functions &rest body)
