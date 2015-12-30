@@ -200,7 +200,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     gnuplot-mode
     erlang
     js2-mode
-	git-commit
+    git-commit
     gitignore-mode
     ;; ack
     color-moccur
@@ -235,7 +235,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     read-only-only-mode
     smart-revert
     autosave
-	;;window-organizer
+    ;;window-organizer
     remember-major-modes-mode
     ilookup
     pasteboard
@@ -435,8 +435,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
       (setq terminal-title-format
-        '((file-name-nondirectory (directory-file-name
-                                   default-directory))))
+			'((file-name-nondirectory (directory-file-name
+                                       default-directory))))
     (if (and (let ((tty-type (frame-parameter nil
                                               'tty-type)))
                (and tty-type
@@ -445,17 +445,17 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                            "screen")))
              (not (getenv "SSH_CONNECTION")))
         (setq terminal-title-format
-          '((file-name-nondirectory (directory-file-name
-                                     default-directory))))
+              '((file-name-nondirectory (directory-file-name
+                                         default-directory))))
       ;; seems that TMUX is used locally and ssh to remote host
       (setq terminal-title-format
-        `("em:"
-          ,user-login-name
-          "@"
-          ,(car (split-string system-name
-                              "\\."))
-          ":"
-          default-directory))
+            `("em:"
+              ,user-login-name
+              "@"
+              ,(car (split-string system-name
+                                  "\\."))
+              ":"
+              default-directory))
       )
     )
   (terminal-title-mode))
