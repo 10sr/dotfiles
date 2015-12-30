@@ -270,7 +270,10 @@ setup-darwin-daemon:
 # -----------
 
 setup-emacs: $(dotfiles_dir)/emacs.el
-	$(emacs) -q --debug-init --batch --load $< -f my-auto-install-package
+	$(emacs) -q --batch \
+		--eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" \
+		--load $< \
+		-f my-auto-install-package
 
 
 

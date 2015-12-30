@@ -200,11 +200,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     gnuplot-mode
     erlang
     js2-mode
-    git-commit-mode
+	git-commit
     gitignore-mode
     ;; ack
     color-moccur
-    gtags
+    ggtags
     flycheck
     ;; is flymake installs are required?
     ;;flymake-jshint
@@ -229,13 +229,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     ;; 10sr repository
     terminal-title
     recentf-show
-    ;;dired-list-all-mode
+    dired-list-all-mode
     pack
     set-modeline-color
     read-only-only-mode
     smart-revert
     autosave
-    window-organizer
+	;;window-organizer
     remember-major-modes-mode
     ilookup
     pasteboard
