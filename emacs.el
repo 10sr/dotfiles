@@ -217,6 +217,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     editorconfig
     git-ps1-mode
     restart-emacs
+    fill-column-indicator
 
     scala-mode2
     ensime
@@ -226,9 +227,18 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     git-command
 
     ;; 10sr repository
+    terminal-title
     recentf-show
     ;;dired-list-all-mode
     pack
+    set-modeline-color
+    read-only-only-mode
+    smart-revert
+    autosave
+    window-organizer
+    remember-major-modes-mode
+    ilookup
+    pasteboard
     )
   "Package list just for me.")
 
@@ -238,7 +248,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (setq package-archives
         `(,@package-archives
           ("melpa" . "https://melpa.org/packages/")
-          ("10sr-el" . "http://10sr.github.io/emacs-lisp/p/")))
+          ("10sr-el" . "https://10sr.github.io/emacs-lisp/p/")))
   ;; (add-to-list 'package-archives
   ;;              '("melpa" . "https://melpa.org/packages/")
   ;;              t)
@@ -343,12 +353,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (setq ring-bell-function 'ignore)
 (mouse-avoidance-mode 'banish)
 
-(and window-system
-     (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/save-window-size.el"
-      t)
-     (safe-require-or-eval 'save-window-size))
-
 (defun reload-init-file ()
   "Reload Emacs init file."
   (interactive)
@@ -426,10 +430,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-(when (and (fetch-library
-            "https://raw.github.com/10sr/emacs-lisp/master/terminal-title.el"
-            t)
-           (safe-require-or-eval 'terminal-title))
+(when (safe-require-or-eval 'terminal-title)
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
@@ -643,9 +644,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     ;;                      t))
     ))
 (and nil
-     (fetch-library
-      "http://www.emacswiki.org/emacs/download/fill-column-indicator.el"
-      t)
      (safe-require-or-eval 'fill-column-indicator)
      (setq fill-column-indicator))
 
@@ -698,11 +696,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; (my-set-ascii-and-jp-font '("ProggyCleanTTSZ" 120 "takaogothic" 11))
 ;; あ a
 
-(and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/set-modeline-color.el"
-      t)
-     (progn
-       (safe-require-or-eval 'set-modeline-color)))
+(safe-require-or-eval 'set-modeline-color)
 
 (let ((fg (face-foreground 'default))
       (bg (face-background 'default)))
@@ -715,6 +709,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (set-face-underline 'vertical-border
                     nil)
 
+;; Not found in MELPA nor any other package repositories
 (and (fetch-library
       "https://raw.github.com/tarao/elisp/master/end-mark.el"
       t)
@@ -765,24 +760,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             (add-to-list 'recentf-exclude
                          (regexp-quote bookmark-default-file))))
 
-(and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/read-only-only-mode.el"
-      t)
-     (autoload-eval-lazily 'read-only-only-mode))
-
-(and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/smart-revert.el"
-      t)
-     (safe-require-or-eval 'smart-revert)
-     (smart-revert-on))
+(when (safe-require-or-eval 'smart-revert)
+  (smart-revert-on))
 
 ;; autosave
 
-(and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/autosave.el"
-      t)
-     (safe-require-or-eval 'autosave)
-     (autosave-set 2))
+(when (safe-require-or-eval 'autosave)
+  (autosave-set 2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editting
@@ -936,9 +920,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (turn-on-xclip))
 
 (and (eq system-type 'darwin)
-     (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/pasteboard.el"
-      t)
      (safe-require-or-eval 'pasteboard)
      (turn-on-pasteboard)
      (getenv "TMUX")
@@ -952,11 +933,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; window
 
-'(and (fetch-library
-       "https://raw.github.com/10sr/emacs-lisp/master/window-organizer.el"
-       t)
-      (autoload-eval-lazily 'window-organizer)
-      (define-key ctl-x-map (kbd "w") 'window-organizer))
+;; (when (autoload-eval-lazily 'window-organizer)
+;;    (define-key ctl-x-map (kbd "w") 'window-organizer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; server
@@ -1038,12 +1016,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         (define-key dirtree-mode-map "p" 'my-dirtree-previous-node))
   (define-key ctl-x-map "d" 'dirtree))
 
-(and (fetch-library
-      "https://raw.github.com/10sr/emacs-lisp/master/remember-major-modes-mode.el"
-      t)
-     (safe-require-or-eval 'remember-major-modes-mode)
-     (remember-major-modes-mode 1)
-     )
+(when (safe-require-or-eval 'remember-major-modes-mode)
+  (remember-major-modes-mode 1))
 
 ;; Detect file type from shebang and set major-mode.
 (add-to-list 'interpreter-mode-alist
@@ -1062,11 +1036,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (autoload-eval-lazily 'sql '(sql-mode)
   (safe-require-or-eval 'sql-indent))
-
-'(and (fetch-library "https://raw.github.com/10sr/emacs-lisp/master/gtkbm.el"
-                     t)
-      (autoload-eval-lazily 'gtkbm)
-      (global-set-key (kbd "C-x C-d") 'gtkbm))
 
 (when (autoload-eval-lazily 'git-command)
   (define-key ctl-x-map "g" 'git-command))
@@ -1554,90 +1523,87 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ilookup
 
-(when (fetch-library
-       "https://raw.github.com/10sr/emacs-lisp/master/ilookup.el"
-       t)
-  (autoload-eval-lazily 'ilookup
-      '(ilookup-open)
-    (setq ilookup-dict-alist
-          '(
-            ("sdcv" . (lambda (word)
-                        (shell-command-to-string
-                         (format "sdcv -n '%s'"
-                                 word))))
-            ("en" . (lambda (word)
+(autoload-eval-lazily 'ilookup
+    '(ilookup-open)
+  (setq ilookup-dict-alist
+        '(
+          ("sdcv" . (lambda (word)
                       (shell-command-to-string
-                       (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
+                       (format "sdcv -n '%s'"
                                word))))
-            ("ja" . (lambda (word)
-                      (shell-command-to-string
-                       (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
-                               word))))
-            ("jaj" . (lambda (word)
-                       (shell-command-to-string
-                        (format "sdcv -n -u jmdict-en-ja '%s'"
-                                word))))
-            ("jag" .
-             (lambda (word)
-               (with-temp-buffer
-                 (insert (shell-command-to-string
-                          (format "sdcv -n -u 'Genius English-Japanese' '%s'"
-                                  word)))
-                 (html2text)
-                 (buffer-substring (point-min)
-                                   (point-max)))))
-            ("alc" . (lambda (word)
-                       (shell-command-to-string
-                        (format "alc '%s' | head -n 20"
-                                word))))
-            ("app" . (lambda (word)
-                       (shell-command-to-string
-                        (format "dict_app '%s'"
-                                word))))
-            ;; letters broken
-            ("ms" .
-             (lambda (word)
-               (let ((url (concat
-                           "http://api.microsofttranslator.com/V2/Ajax.svc/"
-                           "Translate?appId=%s&text=%s&to=%s"))
-                     (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
-                     (target "ja")
-                     (eword (url-hexify-string word)))
-                 (with-current-buffer (url-retrieve-synchronously
-                                       (format url
-                                               apikey
-                                               eword
-                                               target))
-                   (message "")
-                   (goto-char (point-min))
-                   (search-forward-regexp "^$"
-                                          nil
-                                          t)
-                   (url-unhex-string (buffer-substring-no-properties
-                                      (point)
-                                      (point-max)))))))
-            ))
-    ;; (funcall (cdr (assoc "ms"
-    ;;                      ilookup-alist))
-    ;;          "dictionary")
+          ("en" . (lambda (word)
+                    (shell-command-to-string
+                     (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
+                             word))))
+          ("ja" . (lambda (word)
+                    (shell-command-to-string
+                     (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
+                             word))))
+          ("jaj" . (lambda (word)
+                     (shell-command-to-string
+                      (format "sdcv -n -u jmdict-en-ja '%s'"
+                              word))))
+          ("jag" .
+           (lambda (word)
+             (with-temp-buffer
+               (insert (shell-command-to-string
+                        (format "sdcv -n -u 'Genius English-Japanese' '%s'"
+                                word)))
+               (html2text)
+               (buffer-substring (point-min)
+                                 (point-max)))))
+          ("alc" . (lambda (word)
+                     (shell-command-to-string
+                      (format "alc '%s' | head -n 20"
+                              word))))
+          ("app" . (lambda (word)
+                     (shell-command-to-string
+                      (format "dict_app '%s'"
+                              word))))
+          ;; letters broken
+          ("ms" .
+           (lambda (word)
+             (let ((url (concat
+                         "http://api.microsofttranslator.com/V2/Ajax.svc/"
+                         "Translate?appId=%s&text=%s&to=%s"))
+                   (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
+                   (target "ja")
+                   (eword (url-hexify-string word)))
+               (with-current-buffer (url-retrieve-synchronously
+                                     (format url
+                                             apikey
+                                             eword
+                                             target))
+                 (message "")
+                 (goto-char (point-min))
+                 (search-forward-regexp "^$"
+                                        nil
+                                        t)
+                 (url-unhex-string (buffer-substring-no-properties
+                                    (point)
+                                    (point-max)))))))
+          ))
+  ;; (funcall (cdr (assoc "ms"
+  ;;                      ilookup-alist))
+  ;;          "dictionary")
 
-    ;; (switch-to-buffer (url-retrieve-synchronously "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?appId=3C9778666C5BA4B406FFCBEE64EF478963039C51&text=dictionary&to=ja"))
+  ;; (switch-to-buffer (url-retrieve-synchronously "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?appId=3C9778666C5BA4B406FFCBEE64EF478963039C51&text=dictionary&to=ja"))
 
-    ;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
+  ;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
 
-    (setq ilookup-default "ja")
-    (when (locate-library "google-translate")
-      (add-to-list 'ilookup-dict-alist
-                   '("gt" .
-                     (lambda (word)
-                       (save-excursion
-                         (google-translate-translate "auto"
-                                                     "ja"
-                                                     word))
-                       (with-current-buffer "*Google Translate*"
-                         (buffer-substring-no-properties (point-min)
-                                                         (point-max)))))))
-    ))
+  (setq ilookup-default "ja")
+  (when (locate-library "google-translate")
+    (add-to-list 'ilookup-dict-alist
+                 '("gt" .
+                   (lambda (word)
+                     (save-excursion
+                       (google-translate-translate "auto"
+                                                   "ja"
+                                                   word))
+                     (with-current-buffer "*Google Translate*"
+                       (buffer-substring-no-properties (point-min)
+                                                       (point-max)))))))
+  )
 
 
 (when (autoload-eval-lazily 'google-translate '(google-translate-translate
@@ -1960,10 +1926,7 @@ the list."
                  (lambda ()
                    (local-set-key "P" 'dired-do-pack-or-unpack))))
 
-  (and (fetch-library
-        "https://raw.github.com/10sr/emacs-lisp/master/dired-list-all-mode.el"
-        t)
-       (autoload-eval-lazily 'dired-list-all-mode)
+  (and (autoload-eval-lazily 'dired-list-all-mode)
        (setq dired-listing-switches "-lhF")
        (add-hook 'dired-mode-hook
                  (lambda ()
