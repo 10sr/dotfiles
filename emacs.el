@@ -554,7 +554,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; complete symbol when `eval'
-(define-key read-expression-map (kbd "TAB") 'lisp-complete-symbol)
+(define-key read-expression-map (kbd "TAB") 'completion-at-point)
 
 (define-key minibuffer-local-map (kbd "C-u")
   (lambda () (interactive) (delete-region (point-at-bol) (point))))
