@@ -30,12 +30,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
+
+;; (when (version< emacs-version "24.4")
+;; polyfill for Emacs < 24.4
+;; `emacs --load emacs.el` with Emacs 24.3 requires with-eval-after-load to be
+;; defined at the toplevel (means that it should not be defined inside of some
+;; special forms like `when'. I do not now how to do with about this...)
 (unless (fboundp 'with-eval-after-load)
-  ;; polyfill for Emacs < 24.4
   (defmacro with-eval-after-load (file &rest body)
-    "Execute BODY after FILE is loaded."
-    (declare (indent 1) (debug t))
-    `(eval-after-load ,file (quote (progn ,@body)))))
+  "After FILE is loaded execute BODY."
+  (declare (indent 1) (debug t))
+  `(eval-after-load ,file (quote (progn ,@body)))))
 
 (defun call-after-init (func)
   "If `after-init-hook' has been run, call FUNC immediately.
@@ -1010,22 +1015,22 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; http://en.wikipedia.org/wiki/Indent_style
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; http://seesaawiki.jp/whiteflare503/d/Emacs%20%a5%a4%a5%f3%a5%c7%a5%f3%a5%c8
-;; (with-eval-after-load 'cc-vars
-;;   (defvar c-default-style nil)
-;;   (add-to-list 'c-default-style
-;;                '(c-mode . "k&r"))
-;;   (add-to-list 'c-default-style
-;;                '(c++-mode . "k&r"))
-;;   (add-hook 'c-mode-common-hook
-;;             (lambda ()
-;;               ;; why c-basic-offset in k&r style defaults to 5 ???
-;;               (set-variable 'c-basic-offset 4)
-;;               (set-variable 'indent-tabs-mode nil)
-;;               ;; (set-face-foreground 'font-lock-keyword-face "blue")
-;;               (c-toggle-hungry-state -1)
-;;               ;; (and (require 'gtags nil t)
-;;               ;;      (gtags-mode 1))
-;;               )))
+(with-eval-after-load 'cc-vars
+  (defvar c-default-style nil)
+  (add-to-list 'c-default-style
+               '(c-mode . "k&r"))
+  (add-to-list 'c-default-style
+               '(c++-mode . "k&r"))
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              ;; why c-basic-offset in k&r style defaults to 5 ???
+              (set-variable 'c-basic-offset 4)
+              (set-variable 'indent-tabs-mode nil)
+              ;; (set-face-foreground 'font-lock-keyword-face "blue")
+              (c-toggle-hungry-state -1)
+              ;; (and (require 'gtags nil t)
+              ;;      (gtags-mode 1))
+              )))
 
 (when (autoload-eval-lazily 'php-mode)
   (add-hook 'php-mode-hook

@@ -402,10 +402,10 @@ test-el: $(test_els)
 
 $(test_els): test-el-%: $(dotfiles_dir)/% $(home)
 	$(emacs) -Q -batch -f batch-byte-compile $<
-	EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \
-		--eval "(setq debug-on-error t)" \
-		--eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" \
-		--load $<c --kill
+	# EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \
+	# 	--eval "(setq debug-on-error t)" \
+	# 	--eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" \
+	# 	--load $<c --kill
 
 
 
