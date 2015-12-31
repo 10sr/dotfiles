@@ -441,7 +441,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                       (count-lines (point-max)
                                    (point-min)))))
 
-(when (require 'git-ps1-mode nil t)
+(when (safe-require-or-eval 'git-ps1-mode)
   (git-ps1-mode))
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
@@ -615,7 +615,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
-(defface my-hl-line
+(defface 10sr-hl-line
   '((((min-colors 256)
       (background dark))
      (:background "color-234"))
@@ -624,9 +624,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (:background "color-234"))
     (t
      (:underline "black")))
-  "*Face used by hl-line.")
-(set-variable 'hl-line-face 'my-hl-line) ;; (setq hl-line-face nil)
+  "*Face used by hl-line."
+  :group '10sr)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
+(set-variable 'hl-line-face '10sr-hl-line) ;; (setq hl-line-face nil)
 (set-variable 'hl-line-global-modes
               '(not
                 term-mode))
@@ -1554,7 +1555,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (when (autoload-eval-lazily 'google-translate '(google-translate-translate
                                                 google-translate-at-point))
-  (set-varlable 'google-translate-default-source-language "auto")
+  (set-variable 'google-translate-default-source-language "auto")
   (set-variable 'google-translate-default-target-language "ja"))
 
 
