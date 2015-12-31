@@ -18,6 +18,7 @@
   (add-to-list 'load-path d))
 
 (require 'cl-lib)
+(require 'simple)
 
 
 ;; (add-hook 'after-change-major-mode-hook
@@ -31,12 +32,11 @@
 ;; Some macros for internals
 
 
-;; (when (version< emacs-version "24.4")
-;; polyfill for Emacs < 24.4
 ;; `emacs --load emacs.el` with Emacs 24.3 requires with-eval-after-load to be
 ;; defined at the toplevel (means that it should not be defined inside of some
 ;; special forms like `when'. I do not now how to do with about this...)
 (unless (fboundp 'with-eval-after-load)
+  ;; polyfill for Emacs < 24.4
   (defmacro with-eval-after-load (file &rest body)
   "After FILE is loaded execute BODY."
   (declare (indent 1) (debug t))
@@ -214,6 +214,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        git-ps1-mode
        restart-emacs
        fill-column-indicator
+       pkgbuild-mode
 
        scala-mode2
        ensime
@@ -660,11 +661,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (set (defvar bookmark-default-file)
      (expand-file-name (concat user-emacs-directory
                                "bmk")))
-(add-hook 'recentf-load-hook
-          (lambda ()
-            (defvar recentf-exclude)
-            (add-to-list 'recentf-exclude
-                         (regexp-quote bookmark-default-file))))
+(with-eval-after-load 'recentf
+  (defvar recentf-exclude)
+  (add-to-list 'recentf-exclude
+               (regexp-quote bookmark-default-file)))
 
 (when (safe-require-or-eval 'smart-revert)
   (smart-revert-on))
@@ -855,81 +855,66 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (autoload-eval-lazily 'git-command)
   (define-key ctl-x-map "g" 'git-command))
 
-(and (fetch-library
-      "http://www.emacswiki.org/emacs/download/sl.el"
-      t)
-     (autoload-eval-lazily 'sl))
+(when (fetch-library
+       "http://www.emacswiki.org/emacs/download/sl.el"
+       t)
+  (autoload-eval-lazily 'sl))
 
 (defalias 'qcalc 'quick-calc)
 
-(safe-require-or-eval 'simple)
+(with-eval-after-load 'make-mode
+  (defvar makefile-mode-map)
+  (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)
+  ;; this functions is set in write-file-functions, i cannot find any
+  ;; good way to remove this.
+  (fset 'makefile-warn-suspicious-lines 'ignore))
 
-(add-hook 'makefile-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-m") 'newline-and-indent)
-            ;; this functions is set in write-file-functions, i cannot find any
-            ;; good way to remove this.
-            (fset 'makefile-warn-suspicious-lines 'ignore)
-            ))
-
-(add-hook 'verilog-mode-hook
-          (lambda ()
-            (local-set-key ";" 'self-insert-command)))
+(with-eval-after-load 'verilog-mode
+  (defvar verilog-mode-map)
+  (define-key verilog-mode-map ";" 'self-insert-command))
 
 (setq diff-switches "-u")
-(add-hook 'diff-mode-hook
-          (lambda ()
-            ;; (when (and (eq major-mode
-            ;;                'diff-mode)
-            ;;            (not buffer-file-name))
-            ;;   ;; do not pass when major-mode is derived mode of diff-mode
-            ;;   (view-mode 1))
-            (set-face-attribute 'diff-header nil
-                                :foreground nil
-                                :background nil
-                                :weight 'bold)
-            (set-face-attribute 'diff-file-header nil
-                                :foreground nil
-                                :background nil
-                                :weight 'bold)
-            (set-face-foreground 'diff-index-face "blue")
-            (set-face-attribute 'diff-hunk-header nil
-                                :foreground "cyan"
-                                :weight 'normal)
-            (set-face-attribute 'diff-context nil
-                                ;; :foreground "white"
-                                :foreground nil
-                                :weight 'normal)
-            (set-face-foreground 'diff-removed-face "red")
-            (set-face-foreground 'diff-added-face "green")
-            (set-face-background 'diff-removed-face nil)
-            (set-face-background 'diff-added-face nil)
-            (set-face-attribute 'diff-changed nil
-                                :foreground "magenta"
-                                :weight 'normal)
-            (set-face-attribute 'diff-refine-change nil
-                                :foreground nil
-                                :background nil
-                                :weight 'bold
-                                :inverse-video t)
-            ;; Annoying !
-            ;;(diff-auto-refine-mode)
-            ))
+(with-eval-after-load 'diff-mode
+  ;; (when (and (eq major-mode
+  ;;                'diff-mode)
+  ;;            (not buffer-file-name))
+  ;;   ;; do not pass when major-mode is derived mode of diff-mode
+  ;;   (view-mode 1))
+  (set-face-attribute 'diff-header nil
+                      :foreground nil
+                      :background nil
+                      :weight 'bold)
+  (set-face-attribute 'diff-file-header nil
+                      :foreground nil
+                      :background nil
+                      :weight 'bold)
+  (set-face-foreground 'diff-index-face "blue")
+  (set-face-attribute 'diff-hunk-header nil
+                      :foreground "cyan"
+                      :weight 'normal)
+  (set-face-attribute 'diff-context nil
+                      ;; :foreground "white"
+                      :foreground nil
+                      :weight 'normal)
+  (set-face-foreground 'diff-removed-face "red")
+  (set-face-foreground 'diff-added-face "green")
+  (set-face-background 'diff-removed-face nil)
+  (set-face-background 'diff-added-face nil)
+  (set-face-attribute 'diff-changed nil
+                      :foreground "magenta"
+                      :weight 'normal)
+  (set-face-attribute 'diff-refine-change nil
+                      :foreground nil
+                      :background nil
+                      :weight 'bold
+                      :inverse-video t)
+  ;; Annoying !
+  ;;(diff-auto-refine-mode)
+  )
 
 ;; (ffap-bindings)
 
-(add-hook 'sh-mode-hook
-          (lambda ()
-            (local-set-key
-             (kbd "C-x C-e")
-             'my-execute-shell-command-current-line)))
 (set-variable 'sh-here-document-word "__EOC__")
-
-(defun my-execute-shell-command-current-line ()
-  "Run current line as shell command."
-  (interactive)
-  (shell-command (buffer-substring-no-properties (point-at-bol)
-                                                 (point))))
 
 (setq auto-mode-alist
       `(("autostart\\'" . sh-mode)
@@ -938,46 +923,40 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         ("PKGBUILD\\'" . sh-mode)
         ,@auto-mode-alist))
 
-(and (autoload-eval-lazily 'pkgbuild-mode)
-     (setq auto-mode-alist (append '(("PKGBUILD\\'" . pkgbuild-mode))
-                                   auto-mode-alist)))
-
+;; TODO: check if this is required
 (and (autoload-eval-lazily 'groovy-mode)
      (add-to-list 'auto-mode-alist
                   '("build.gradle\\'" . groovy-mode)))
 
-(add-hook 'yaml-mode-hook
-          (lambda ()
-            (local-set-key(kbd "C-m") 'newline)))
+(with-eval-after-load 'yaml-mode
+  (defvar yaml-mode-map)
+  (define-key yaml-mode-map (kbd "C-m") 'newline))
 
-(add-hook 'html-mode-hook
-          (lambda ()
-            (local-set-key(kbd "C-m") 'reindent-then-newline-and-indent)))
+(with-eval-after-load 'html-mode
+  (defvar html-mode-map)
+  (define-key html-mode-map (kbd "C-m") 'reindent-then-newline-and-indent))
 
-(add-hook 'text-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-m") 'newline)))
+(with-eval-after-load 'text-mode
+  (define-key text-mode-map (kbd "C-m") 'newline))
 
 (add-to-list 'Info-default-directory-list
              (expand-file-name "~/.info/emacs-ja"))
 
-(add-hook 'apropos-mode-hook
-          (lambda ()
-            (local-set-key "n" 'next-line)
-            (local-set-key "p" 'previous-line)
-            ))
+(with-eval-after-load 'apropos
+  (defvar apropos-mode-map)
+  (define-key apropos-mode-map "n" 'next-line)
+  (define-key apropos-mode-map "p" 'previous-line))
 
-(add-hook 'isearch-mode-hook
-          (lambda ()
-            ;; (define-key isearch-mode-map
-            ;;   (kbd "C-j") 'isearch-other-control-char)
-            ;; (define-key isearch-mode-map
-            ;;   (kbd "C-k") 'isearch-other-control-char)
-            ;; (define-key isearch-mode-map
-            ;;   (kbd "C-h") 'isearch-other-control-char)
-            (define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
-            (define-key isearch-mode-map (kbd "M-r")
-              'isearch-query-replace-regexp)))
+(with-eval-after-load 'isearch
+  ;; (define-key isearch-mode-map
+  ;;   (kbd "C-j") 'isearch-other-control-char)
+  ;; (define-key isearch-mode-map
+  ;;   (kbd "C-k") 'isearch-other-control-char)
+  ;; (define-key isearch-mode-map
+  ;;   (kbd "C-h") 'isearch-other-control-char)
+  (define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
+  (define-key isearch-mode-map (kbd "M-r")
+    'isearch-query-replace-regexp))
 ;; do not cleanup isearch highlight: use `lazy-highlight-cleanup' to remove
 (setq lazy-highlight-cleanup nil)
 ;; face for isearch highlighing
@@ -1037,24 +1016,22 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             (lambda ()
               (set-variable 'c-basic-offset 2))))
 
-(when (autoload-eval-lazily 'js2-mode)
+(autoload-eval-lazily 'js2-mode nil
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
-  (add-hook 'js2-mode-hook
-            (lambda ()
-              (defvar js2-mode-map)
-              (define-key js2-mode-map (kbd "C-m") (lambda ()
-                                                     (interactive)
-                                                     (js2-enter-key)
-                                                     (indent-for-tab-command)))
-              ;; (add-hook (kill-local-variable 'before-save-hook)
-              ;;           'js2-before-save)
-              ;; (add-hook 'before-save-hook
-              ;;           'my-indent-buffer
-              ;;           nil
-              ;;           t)
-              )))
+  (defvar js2-mode-map)
+  (define-key js2-mode-map (kbd "C-m") (lambda ()
+                                         (interactive)
+                                         (js2-enter-key)
+                                         (indent-for-tab-command)))
+  ;; (add-hook (kill-local-variable 'before-save-hook)
+  ;;           'js2-before-save)
+  ;; (add-hook 'before-save-hook
+  ;;           'my-indent-buffer
+  ;;           nil
+  ;;           t)
+  )
 
 (eval-after-load "js"
   (set-variable 'js-indent-level 2))
@@ -1077,25 +1054,23 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (setq uniquify-ignore-buffers-re "*[^*]+*")
   (setq uniquify-min-dir-content 1))
 
-(add-hook 'view-mode-hook
-          (lambda()
-            (defvar view-mode-map)
-            (define-key view-mode-map "j" 'scroll-up-line)
-            (define-key view-mode-map "k" 'scroll-down-line)
-            (define-key view-mode-map "v" 'toggle-read-only)
-            (define-key view-mode-map "q" 'bury-buffer)
-            ;; (define-key view-mode-map "/" 'nonincremental-re-search-forward)
-            ;; (define-key view-mode-map "?" 'nonincremental-re-search-backward)
-            ;; (define-key view-mode-map
-            ;;   "n" 'nonincremental-repeat-search-forward)
-            ;; (define-key view-mode-map
-            ;;   "N" 'nonincremental-repeat-search-backward)
-            (define-key view-mode-map "/" 'isearch-forward-regexp)
-            (define-key view-mode-map "?" 'isearch-backward-regexp)
-            (define-key view-mode-map "n" 'isearch-repeat-forward)
-            (define-key view-mode-map "N" 'isearch-repeat-backward)
-            (define-key view-mode-map (kbd "C-m") 'my-rgrep-symbol-at-point)
-            ))
+(with-eval-after-load 'view
+  (defvar view-mode-map)
+  (define-key view-mode-map "j" 'scroll-up-line)
+  (define-key view-mode-map "k" 'scroll-down-line)
+  (define-key view-mode-map "v" 'toggle-read-only)
+  (define-key view-mode-map "q" 'bury-buffer)
+  ;; (define-key view-mode-map "/" 'nonincremental-re-search-forward)
+  ;; (define-key view-mode-map "?" 'nonincremental-re-search-backward)
+  ;; (define-key view-mode-map
+  ;;   "n" 'nonincremental-repeat-search-forward)
+  ;; (define-key view-mode-map
+  ;;   "N" 'nonincremental-repeat-search-backward)
+  (define-key view-mode-map "/" 'isearch-forward-regexp)
+  (define-key view-mode-map "?" 'isearch-backward-regexp)
+  (define-key view-mode-map "n" 'isearch-repeat-forward)
+  (define-key view-mode-map "N" 'isearch-repeat-backward)
+  (define-key view-mode-map (kbd "C-m") 'my-rgrep-symbol-at-point))
 (global-set-key "\M-r" 'view-mode)
 ;; (setq view-read-only t)
 
@@ -1126,7 +1101,16 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
 
-(when (autoload-eval-lazily 'python '(python-mode))
+(when (autoload-eval-lazily 'python '(python-mode)
+        (defvar python-mode-map)
+        (define-key python-mode-map (kbd "C-c C-e") 'my-python-run-as-command)
+        (define-key python-mode-map (kbd "C-c C-b") 'my-python-display-python-buffer)
+        (define-key python-mode-map (kbd "C-m") 'newline-and-indent)
+
+        (defvar inferior-python-mode-map)
+        (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
+        (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)
+        )
   (set-variable 'python-python-command (or (executable-find "python3")
                                            (executable-find "python")))
   ;; (defun my-python-run-as-command ()
@@ -1140,17 +1124,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     (set-window-text-height (display-buffer python-buffer
                                             t)
                             7))
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (local-set-key (kbd "C-c C-e") 'my-python-run-as-command)
-              (local-set-key (kbd "C-c C-b") 'my-python-display-python-buffer)
-              (local-set-key (kbd "C-m") 'newline-and-indent)))
-
   (add-hook 'inferior-python-mode-hook
             (lambda ()
-              (my-python-display-python-buffer)
-              (local-set-key (kbd "<up>") 'comint-previous-input)
-              (local-set-key (kbd "<down>") 'comint-next-input))))
+              (my-python-display-python-buffer))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GNU GLOBAL(gtags)
@@ -1163,31 +1139,29 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        (add-to-list 'load-path
                     d)))
 
-(when (autoload-eval-lazily 'gtags '(gtags-mode))
+(when (autoload-eval-lazily 'gtags '(gtags-mode)
+        ;; (local-set-key "\M-t" 'gtags-find-tag)
+        ;; (local-set-key "\M-r" 'gtags-find-rtag)
+        ;; (local-set-key "\M-s" 'gtags-find-symbol)
+        ;; (local-set-key "\C-t" 'gtags-pop-stack)
+        (defvar gtags-mode-map)
+        (define-key gtags-mode-map (kbd "C-x t h")
+          'gtags-find-tag-from-here)
+        (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
+        (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
+        (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
+        (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
+        (define-key gtags-mode-map (kbd "C-x t f") 'gtags-find-file)
+        (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
+
+        (defvar gtags-select-mode-map)
+        (define-key gtags-select-mode-map (kbd "C-m") 'gtags-select-tag)
+        )
   (add-hook 'gtags-mode-hook
             (lambda ()
               (view-mode 1)
               (set-variable 'gtags-select-buffer-single t)
-              ;; (local-set-key "\M-t" 'gtags-find-tag)
-              ;; (local-set-key "\M-r" 'gtags-find-rtag)
-              ;; (local-set-key "\M-s" 'gtags-find-symbol)
-              ;; (local-set-key "\C-t" 'gtags-pop-stack)
-              (defvar gtags-mode-map)
-              (define-key gtags-mode-map (kbd "C-x t h")
-                'gtags-find-tag-from-here)
-              (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
-              (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
-              (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
-              (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
-              (define-key gtags-mode-map (kbd "C-x t f") 'gtags-find-file)
-              (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
-              ))
-  (add-hook 'gtags-select-mode-hook
-            (lambda ()
-              (defvar gtags-select-mode-map)
-              (define-key gtags-select-mode-map (kbd "C-m") 'gtags-select-tag)
-              ))
-  )
+              )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
@@ -1198,7 +1172,28 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (set-variable 'multi-term-dedicated-select-after-open-p t)
   (set-variable 'multi-term-dedicated-window-height 20))
 
-(when (autoload-eval-lazily 'term '(term ansi-term))
+(when (autoload-eval-lazily 'term '(term ansi-term)
+        (defvar term-raw-map)
+        ;; (define-key term-raw-map "\C-xl" 'term-line-mode)
+        ;; (define-key term-mode-map "\C-xc" 'term-char-mode)
+        (define-key term-raw-map (kbd "<up>") 'scroll-down-line)
+        (define-key term-raw-map (kbd "<down>") 'scroll-up-line)
+        (define-key term-raw-map (kbd "<right>") 'scroll-up)
+        (define-key term-raw-map (kbd "<left>") 'scroll-down)
+        (define-key term-raw-map (kbd "C-p") 'term-send-raw)
+        (define-key term-raw-map (kbd "C-n") 'term-send-raw)
+        (define-key term-raw-map "q" 'my-term-quit-or-send-raw)
+        ;; (define-key term-raw-map (kbd "ESC") 'term-send-raw)
+        (define-key term-raw-map [delete] 'term-send-raw)
+        (define-key term-raw-map (kbd "DEL") 'term-send-backspace)
+        (define-key term-raw-map "\C-y" 'term-paste)
+        (define-key term-raw-map
+          "\C-c" 'term-send-raw) ;; 'term-interrupt-subjob)
+        '(define-key term-mode-map (kbd "C-x C-q") 'term-pager-toggle)
+        ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
+        ;;   (define-key term-raw-map (read-kbd-macro key) 'term-send-raw))
+        ;; (define-key term-raw-map "\C-d" 'delete-char)
+        )
   (defun my-term-quit-or-send-raw ()
     ""
     (interactive)
@@ -1213,7 +1208,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
               (set-variable 'term-display-table (make-display-table))))
   (add-hook 'term-mode-hook
             (lambda ()
-              (defvar term-raw-map)
               (unless (memq (current-buffer)
                             (and (featurep 'multi-term)
                                  (defvar multi-term-buffer-list)
@@ -1230,25 +1224,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                 (define-key term-raw-map
                   "\C-z" (lookup-key (current-global-map) "\C-z"))
                 )
-              ;; (define-key term-raw-map "\C-xl" 'term-line-mode)
-              ;; (define-key term-mode-map "\C-xc" 'term-char-mode)
-              (define-key term-raw-map (kbd "<up>") 'scroll-down-line)
-              (define-key term-raw-map (kbd "<down>") 'scroll-up-line)
-              (define-key term-raw-map (kbd "<right>") 'scroll-up)
-              (define-key term-raw-map (kbd "<left>") 'scroll-down)
-              (define-key term-raw-map (kbd "C-p") 'term-send-raw)
-              (define-key term-raw-map (kbd "C-n") 'term-send-raw)
-              (define-key term-raw-map "q" 'my-term-quit-or-send-raw)
-              ;; (define-key term-raw-map (kbd "ESC") 'term-send-raw)
-              (define-key term-raw-map [delete] 'term-send-raw)
-              (define-key term-raw-map (kbd "DEL") 'term-send-backspace)
-              (define-key term-raw-map "\C-y" 'term-paste)
-              (define-key term-raw-map
-                "\C-c" 'term-send-raw) ;; 'term-interrupt-subjob)
-              '(define-key term-mode-map (kbd "C-x C-q") 'term-pager-toggle)
-              ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
-              ;;   (define-key term-raw-map (read-kbd-macro key) 'term-send-raw))
-              ;; (define-key term-raw-map "\C-d" 'delete-char)
               (set (make-local-variable 'scroll-margin) 0)
               ;; (set (make-local-variable 'cua-enable-cua-keys) nil)
               ;; (cua-mode 0)
