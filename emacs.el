@@ -1010,22 +1010,22 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; http://en.wikipedia.org/wiki/Indent_style
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; http://seesaawiki.jp/whiteflare503/d/Emacs%20%a5%a4%a5%f3%a5%c7%a5%f3%a5%c8
-(with-eval-after-load 'cc-vars
-  (defvar c-default-style nil)
-  (add-to-list 'c-default-style
-               '(c-mode . "k&r"))
-  (add-to-list 'c-default-style
-               '(c++-mode . "k&r"))
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              ;; why c-basic-offset in k&r style defaults to 5 ???
-              (set-variable 'c-basic-offset 4)
-              (set-variable 'indent-tabs-mode nil)
-              ;; (set-face-foreground 'font-lock-keyword-face "blue")
-              (c-toggle-hungry-state -1)
-              ;; (and (require 'gtags nil t)
-              ;;      (gtags-mode 1))
-              )))
+;; (with-eval-after-load 'cc-vars
+;;   (defvar c-default-style nil)
+;;   (add-to-list 'c-default-style
+;;                '(c-mode . "k&r"))
+;;   (add-to-list 'c-default-style
+;;                '(c++-mode . "k&r"))
+;;   (add-hook 'c-mode-common-hook
+;;             (lambda ()
+;;               ;; why c-basic-offset in k&r style defaults to 5 ???
+;;               (set-variable 'c-basic-offset 4)
+;;               (set-variable 'indent-tabs-mode nil)
+;;               ;; (set-face-foreground 'font-lock-keyword-face "blue")
+;;               (c-toggle-hungry-state -1)
+;;               ;; (and (require 'gtags nil t)
+;;               ;;      (gtags-mode 1))
+;;               )))
 
 (when (autoload-eval-lazily 'php-mode)
   (add-hook 'php-mode-hook
