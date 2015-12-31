@@ -34,7 +34,7 @@
   ;; polyfill for Emacs < 24.4
   (defmacro with-eval-after-load (file &rest body)
     "Execute BODY after FILE is loaded."
-    (declare (indent 1))
+    (declare (indent 1) (debug t))
     `(eval-after-load ,file (quote (progn ,@body)))))
 
 (defun call-after-init (func)
