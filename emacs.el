@@ -52,6 +52,7 @@ the function same as FEATURE is defined as autoloaded function.  BODY is passed
  to `eval-after-load'.
 After this macro is expanded, this returns the path to library if FEATURE
 found, otherwise returns nil."
+  (declare (indent 2) (debug t))
   (let* ((libname (symbol-name (eval feature)))
          (libpath (locate-library libname)))
     `(progn
@@ -74,7 +75,6 @@ found, otherwise returns nil."
          (quote (progn
                   ,@body)))
        (locate-library ,libname))))
-(put 'autoload-eval-lazily 'lisp-indent-function 2)
 
 (when (autoload-eval-lazily 'tetris nil
         (message "Tetris loaded!"))
