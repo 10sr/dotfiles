@@ -1874,7 +1874,7 @@ the list."
                 (when nil (file-readable-p file)
                       (delete-file file)))))
 
-  (and (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack))
+  (and (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack))
        (add-hook 'dired-mode-hook
                  (lambda ()
                    (local-set-key "P" 'dired-do-pack-or-unpack))))
