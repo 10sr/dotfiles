@@ -339,15 +339,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; for windows
 
-(defun start-ckw-bash ()
-  "Start ckw in windows."
-  (interactive)
-  (start-process
-   "ckw_bash"
-   nil
-   "C:/Documents and Settings/sr/Application Data/dbx/apps/ckw/ckw.exe"))
-;; command seems to have to be in c drive
-
 (defun my-w32-add-export-path (&rest args)
   "Add pathes ARGS for windows."
   (mapc (lambda (path)
