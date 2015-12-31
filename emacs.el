@@ -1153,22 +1153,23 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; http://en.wikipedia.org/wiki/Indent_style
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; http://seesaawiki.jp/whiteflare503/d/Emacs%20%a5%a4%a5%f3%a5%c7%a5%f3%a5%c8
-(with-eval-after-load 'cc-vars
-  (defvar c-default-style nil)
-  (add-to-list 'c-default-style
-               '(c-mode . "k&r"))
-  (add-to-list 'c-default-style
-               '(c++-mode . "k&r"))
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              ;; why c-basic-offset in k&r style defaults to 5 ???
-              (set-variable 'c-basic-offset 4)
-              (set-variable 'indent-tabs-mode nil)
-              ;; (set-face-foreground 'font-lock-keyword-face "blue")
-              (c-toggle-hungry-state -1)
-              ;; (and (require 'gtags nil t)
-              ;;      (gtags-mode 1))
-              )))
+(eval-after-load 'cc-vars
+  `(progn
+     (defvar c-default-style nil)
+     (add-to-list 'c-default-style
+                  '(c-mode . "k&r"))
+     (add-to-list 'c-default-style
+                  '(c++-mode . "k&r"))
+     (add-hook 'c-mode-common-hook
+               (lambda ()
+                 ;; why c-basic-offset in k&r style defaults to 5 ???
+                 (set-variable 'c-basic-offset 4)
+                 (set-variable 'indent-tabs-mode nil)
+                 ;; (set-face-foreground 'font-lock-keyword-face "blue")
+                 (c-toggle-hungry-state -1)
+                 ;; (and (require 'gtags nil t)
+                 ;;      (gtags-mode 1))
+                 ))))
 
 (when (autoload-eval-lazily 'php-mode)
   (add-hook 'php-mode-hook
@@ -1476,87 +1477,88 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ilookup
 
-(with-eval-after-load 'ilookup
-  (set-variable 'ilookup-dict-alist
-                '(
-                  ("sdcv" . (lambda (word)
-                              (shell-command-to-string
-                               (format "sdcv -n '%s'"
-                                       word))))
-                  ("en" . (lambda (word)
-                            (shell-command-to-string
-                             (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
-                                     word))))
-                  ("ja" . (lambda (word)
-                            (shell-command-to-string
-                             (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
-                                     word))))
-                  ("jaj" . (lambda (word)
-                             (shell-command-to-string
-                              (format "sdcv -n -u jmdict-en-ja '%s'"
-                                      word))))
-                  ("jag" .
-                   (lambda (word)
-                     (with-temp-buffer
-                       (insert (shell-command-to-string
-                                (format "sdcv -n -u 'Genius English-Japanese' '%s'"
-                                        word)))
-                       (html2text)
-                       (buffer-substring (point-min)
-                                         (point-max)))))
-                  ("alc" . (lambda (word)
-                             (shell-command-to-string
-                              (format "alc '%s' | head -n 20"
-                                      word))))
-                  ("app" . (lambda (word)
-                             (shell-command-to-string
-                              (format "dict_app '%s'"
-                                      word))))
-                  ;; letters broken
-                  ("ms" .
-                   (lambda (word)
-                     (let ((url (concat
-                                 "http://api.microsofttranslator.com/V2/Ajax.svc/"
-                                 "Translate?appId=%s&text=%s&to=%s"))
-                           (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
-                           (target "ja")
-                           (eword (url-hexify-string word)))
-                       (with-current-buffer (url-retrieve-synchronously
-                                             (format url
-                                                     apikey
-                                                     eword
-                                                     target))
-                         (message "")
-                         (goto-char (point-min))
-                         (search-forward-regexp "^$"
-                                                nil
-                                                t)
-                         (url-unhex-string (buffer-substring-no-properties
-                                            (point)
-                                            (point-max)))))))
-                  ))
-  ;; (funcall (cdr (assoc "ms"
-  ;;                      ilookup-alist))
-  ;;          "dictionary")
+(eval-after-load 'ilookup
+  '(progn
+     (set-variable 'ilookup-dict-alist
+                   '(
+                     ("sdcv" . (lambda (word)
+                                 (shell-command-to-string
+                                  (format "sdcv -n '%s'"
+                                          word))))
+                     ("en" . (lambda (word)
+                               (shell-command-to-string
+                                (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
+                                        word))))
+                     ("ja" . (lambda (word)
+                               (shell-command-to-string
+                                (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
+                                        word))))
+                     ("jaj" . (lambda (word)
+                                (shell-command-to-string
+                                 (format "sdcv -n -u jmdict-en-ja '%s'"
+                                         word))))
+                     ("jag" .
+                      (lambda (word)
+                        (with-temp-buffer
+                          (insert (shell-command-to-string
+                                   (format "sdcv -n -u 'Genius English-Japanese' '%s'"
+                                           word)))
+                          (html2text)
+                          (buffer-substring (point-min)
+                                            (point-max)))))
+                     ("alc" . (lambda (word)
+                                (shell-command-to-string
+                                 (format "alc '%s' | head -n 20"
+                                         word))))
+                     ("app" . (lambda (word)
+                                (shell-command-to-string
+                                 (format "dict_app '%s'"
+                                         word))))
+                     ;; letters broken
+                     ("ms" .
+                      (lambda (word)
+                        (let ((url (concat
+                                    "http://api.microsofttranslator.com/V2/Ajax.svc/"
+                                    "Translate?appId=%s&text=%s&to=%s"))
+                              (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
+                              (target "ja")
+                              (eword (url-hexify-string word)))
+                          (with-current-buffer (url-retrieve-synchronously
+                                                (format url
+                                                        apikey
+                                                        eword
+                                                        target))
+                            (message "")
+                            (goto-char (point-min))
+                            (search-forward-regexp "^$"
+                                                   nil
+                                                   t)
+                            (url-unhex-string (buffer-substring-no-properties
+                                               (point)
+                                               (point-max)))))))
+                     ))
+     ;; (funcall (cdr (assoc "ms"
+     ;;                      ilookup-alist))
+     ;;          "dictionary")
 
-  ;; (switch-to-buffer (url-retrieve-synchronously "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?appId=3C9778666C5BA4B406FFCBEE64EF478963039C51&text=dictionary&to=ja"))
+     ;; (switch-to-buffer (url-retrieve-synchronously "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?appId=3C9778666C5BA4B406FFCBEE64EF478963039C51&text=dictionary&to=ja"))
 
-  ;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
+     ;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
 
-  (set-variable 'ilookup-default "ja")
-  (when (locate-library "google-translate")
-    (defvar ilookup-dict-alist)
-    (add-to-list 'ilookup-dict-alist
-                 '("gt" .
-                   (lambda (word)
-                     (save-excursion
-                       (google-translate-translate "auto"
-                                                   "ja"
-                                                   word))
-                     (with-current-buffer "*Google Translate*"
-                       (buffer-substring-no-properties (point-min)
-                                                       (point-max)))))))
-  )
+     (set-variable 'ilookup-default "ja")
+     (when (locate-library "google-translate")
+       (defvar ilookup-dict-alist)
+       (add-to-list 'ilookup-dict-alist
+                    '("gt" .
+                      (lambda (word)
+                        (save-excursion
+                          (google-translate-translate "auto"
+                                                      "ja"
+                                                      word))
+                        (with-current-buffer "*Google Translate*"
+                          (buffer-substring-no-properties (point-min)
+                                                          (point-max)))))))
+     ))
 
 
 (when (autoload-eval-lazily 'google-translate '(google-translate-translate
