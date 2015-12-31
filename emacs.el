@@ -1154,7 +1154,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; http://seesaawiki.jp/whiteflare503/d/Emacs%20%a5%a4%a5%f3%a5%c7%a5%f3%a5%c8
 (with-eval-after-load 'cc-vars
-  (defvar c-default-style)
+  (defvar c-default-style nil)
   (add-to-list 'c-default-style
                '(c-mode . "k&r"))
   (add-to-list 'c-default-style
