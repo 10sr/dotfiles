@@ -17,9 +17,7 @@
     (make-directory d))
   (add-to-list 'load-path d))
 
-(eval-when-compile
-  ;; TODO: Use cl-lib intead
-  (require 'cl nil t))
+(require 'cl-lib)
 
 
 ;; (add-hook 'after-change-major-mode-hook
