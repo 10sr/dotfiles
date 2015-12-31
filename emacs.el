@@ -56,26 +56,26 @@ After this macro is expanded, this returns the path to library if FEATURE
 found, otherwise returns nil."
   (let* ((libname (symbol-name (eval feature)))
          (libpath (locate-library libname)))
-    (and libpath
-         `(progn
-            ,@(mapcar (lambda (f)
-                        (unless (fboundp f)
-                          `(progn
-                             (message "Autoloaded function `%S' defined (%s)"
-                                      (quote ,f)
-                                      ,libpath)
-                             (autoload (quote ,f)
-                               ,libname
-                               ,(concat "Autoloaded function defined in \""
-                                        libpath
-                                        "\".")
-                               t))))
-                      (or (eval functions)
-                          `(,(eval feature))))
-            (eval-after-load ,feature
-              (quote (progn
-                       ,@body)))
-            (locate-library ,libname)))))
+    `(progn
+       (when (locate-library ,libname)
+         ,@(mapcar (lambda (f)
+                     (unless (fboundp f)
+                       `(progn
+                          (message "Autoloaded function `%S' defined (%s)"
+                                   (quote ,f)
+                                   ,libpath)
+                          (autoload (quote ,f)
+                            ,libname
+                            ,(concat "Autoloaded function defined in \""
+                                     libpath
+                                     "\".")
+                            t))))
+                   (or (eval functions)
+                       `(,(eval feature)))))
+       (eval-after-load ,feature
+         (quote (progn
+                  ,@body)))
+       (locate-library ,libname))))
 
 (put 'autoload-eval-lazily 'lisp-indent-function 2)
 
@@ -829,7 +829,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (when (safe-require-or-eval 'scim-bridge)
     ;; Turn on scim-mode automatically after loading .emacs
     (call-after-init 'scim-mode-on)
-    (setq scim-cursor-color "red")
+    (set-variable 'scim-cursor-color "red")
     (scim-define-preedit-key ?\^h t)
     (scim-define-common-key ?\* nil)
     (scim-define-common-key ?\^/ nil)))
@@ -842,7 +842,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
     (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
     (when (>= emacs-major-version 23)
-      (setq anthy-accept-timeout 1))))
+      (set-variable 'anthy-accept-timeout 1))))
 
 ;; quail
 ;; aproposs input-method for some information
@@ -850,8 +850,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (defun my-load-mozc-el ()
   "Use mozc.el as japanese im."
   (when (safe-require-or-eval 'mozc)
-    (setq defauit-input-method "japanese-mozc")
-    (setq mozc-leim-title "[MZ]")
+    (set-variable 'defauit-input-method "japanese-mozc")
+    (set-variable 'mozc-leim-title "[MZ]")
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1190,23 +1190,22 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; http://en.wikipedia.org/wiki/Indent_style
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; http://seesaawiki.jp/whiteflare503/d/Emacs%20%a5%a4%a5%f3%a5%c7%a5%f3%a5%c8
-(when (autoload-eval-lazily 'cc-vars
-          nil
-        (defvar c-default-style)
-        (add-to-list 'c-default-style
-                     '(c-mode . "k&r"))
-        (add-to-list 'c-default-style
-                     '(c++-mode . "k&r"))
-        (add-hook 'c-mode-common-hook
-                  (lambda ()
-                    ;; why c-basic-offset in k&r style defaults to 5 ???
-                    (set-variable 'c-basic-offset 4)
-                    (set-variable 'indent-tabs-mode nil)
-                    ;; (set-face-foreground 'font-lock-keyword-face "blue")
-                    (c-toggle-hungry-state -1)
-                    ;; (and (require 'gtags nil t)
-                    ;;      (gtags-mode 1))
-                    ))))
+(with-eval-after-load 'cc-vars
+  (defvar c-default-style)
+  (add-to-list 'c-default-style
+               '(c-mode . "k&r"))
+  (add-to-list 'c-default-style
+               '(c++-mode . "k&r"))
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              ;; why c-basic-offset in k&r style defaults to 5 ???
+              (set-variable 'c-basic-offset 4)
+              (set-variable 'indent-tabs-mode nil)
+              ;; (set-face-foreground 'font-lock-keyword-face "blue")
+              (c-toggle-hungry-state -1)
+              ;; (and (require 'gtags nil t)
+              ;;      (gtags-mode 1))
+              )))
 
 (when (autoload-eval-lazily 'php-mode)
   (add-hook 'php-mode-hook
@@ -1511,8 +1510,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ilookup
 
-(autoload-eval-lazily 'ilookup
-    '(ilookup-open)
+(with-eval-after-load 'ilookup
   (setq ilookup-dict-alist
         '(
           ("sdcv" . (lambda (word)
