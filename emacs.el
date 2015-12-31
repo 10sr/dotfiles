@@ -59,8 +59,8 @@ found, otherwise returns nil."
     `(progn
        (when (locate-library ,libname)
          ,@(mapcar (lambda (f)
-                     (unless (fboundp f)
-                       `(progn
+                     `(unless (fboundp ',f)
+                        (progn
                           (message "Autoloaded function `%S' defined (%s)"
                                    (quote ,f)
                                    ,libpath)
@@ -76,7 +76,6 @@ found, otherwise returns nil."
          (quote (progn
                   ,@body)))
        (locate-library ,libname))))
-
 (put 'autoload-eval-lazily 'lisp-indent-function 2)
 
 (when (autoload-eval-lazily 'tetris nil
