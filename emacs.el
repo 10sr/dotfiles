@@ -1415,7 +1415,15 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (and (fetch-library
             "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
             t)
-           (autoload-eval-lazily 'gauche-mode '(gauche-mode run-scheme)))
+           (autoload-eval-lazily 'gauche-mode '(gauche-mode run-scheme)
+             (defvar gauche-mode-map)
+             (defvar scheme-mode-map)
+             (define-key gauche-mode-map
+               (kbd "C-c C-z") 'run-gauche-other-window)
+             (define-key scheme-mode-map
+               (kbd "C-c C-c") 'scheme-send-buffer)
+             (define-key scheme-mode-map
+               (kbd "C-c C-b") 'my-scheme-display-scheme-buffer)))
   (let ((s (executable-find "gosh")))
     (set-variable 'scheme-program-name s)
     (set-variable 'gauche-program-name s))
@@ -1462,16 +1470,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
   (setq auto-mode-alist
         (cons '("\.gaucherc\\'" . gauche-mode) auto-mode-alist))
-  (add-hook 'gauche-mode-hook
-            (lambda ()
-              (defvar gauche-mode-map)
-              (defvar scheme-mode-map)
-              (define-key gauche-mode-map
-                (kbd "C-c C-z") 'run-gauche-other-window)
-              (define-key scheme-mode-map
-                (kbd "C-c C-c") 'scheme-send-buffer)
-              (define-key scheme-mode-map
-                (kbd "C-c C-b") 'my-scheme-display-scheme-buffer))))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
@@ -1509,207 +1508,209 @@ the list."
        (add-hook 'recentf-show-before-listing-hook
                  'recentf-load-list))
   (recentf-mode 1)
+  (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
+  (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
+  (define-key recentf-dialog-mode-map "p" 'previous-line)
+  (define-key recentf-dialog-mode-map "n" 'next-line)
   (add-hook 'recentf-dialog-mode-hook
             (lambda ()
               ;; (recentf-save-list)
               ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f")
               ;; 'my-recentf-cd-and-find-file)
-              (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
-              (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
-              (define-key recentf-dialog-mode-map "p" 'previous-line)
-              (define-key recentf-dialog-mode-map "n" 'next-line)
               (cd "~/"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
 
-(when (autoload-eval-lazily 'dired nil)
-  (defun my-dired-echo-file-head (arg)
-    ""
-    (interactive "P")
-    (let ((f (dired-get-filename)))
-      (message "%s"
-               (with-temp-buffer
-                 (insert-file-contents f)
-                 (buffer-substring-no-properties
-                  (point-min)
-                  (progn (goto-char (point-min))
-                         (forward-line (1- (if arg
-                                               (prefix-numeric-value arg)
-                                             7)))
-                         (point-at-eol)))))))
+(defun my-dired-echo-file-head (arg)
+  ""
+  (interactive "P")
+  (let ((f (dired-get-filename)))
+    (message "%s"
+             (with-temp-buffer
+               (insert-file-contents f)
+               (buffer-substring-no-properties
+                (point-min)
+                (progn (goto-char (point-min))
+                       (forward-line (1- (if arg
+                                             (prefix-numeric-value arg)
+                                           7)))
+                       (point-at-eol)))))))
 
-  (defun my-dired-diff ()
-    ""
-    (interactive)
-    (let ((files (dired-get-marked-files nil nil nil t)))
-      (if (eq (car files)
-              t)
-          (diff (cadr files) (dired-get-filename))
-        (message "One files must be marked!"))))
+(defun my-dired-diff ()
+  ""
+  (interactive)
+  (let ((files (dired-get-marked-files nil nil nil t)))
+    (if (eq (car files)
+            t)
+        (diff (cadr files) (dired-get-filename))
+      (message "One files must be marked!"))))
 
-  (defun my-pop-to-buffer-erase-noselect (buffer-or-name)
-    "pop up buffer using `display-buffer' and return that buffer."
-    (let ((bf (get-buffer-create buffer-or-name)))
-      (with-current-buffer bf
-        (cd ".")
-        (erase-buffer))
-      (display-buffer bf)
-      bf))
+(defun my-pop-to-buffer-erase-noselect (buffer-or-name)
+  "pop up buffer using `display-buffer' and return that buffer."
+  (let ((bf (get-buffer-create buffer-or-name)))
+    (with-current-buffer bf
+      (cd ".")
+      (erase-buffer))
+    (display-buffer bf)
+    bf))
 
-  (defun my-replace-nasi-none ()
-    ""
-    (save-excursion
-      (let ((buffer-read-only nil))
-        (goto-char (point-min))
-        (while (search-forward "なし" nil t)
-          (replace-match "none")))))
+(defun my-replace-nasi-none ()
+  ""
+  (save-excursion
+    (let ((buffer-read-only nil))
+      (goto-char (point-min))
+      (while (search-forward "なし" nil t)
+        (replace-match "none")))))
 
-  (defun dired-get-file-info ()
-    "dired get file info"
-    (interactive)
-    (let ((f (shell-quote-argument (dired-get-filename t))))
-      (if (file-directory-p f)
-          (progn
-            (message "Calculating disk usage...")
-            (shell-command (concat "du -hsD "
-                                   f)))
-        (shell-command (concat "file "
-                               f)))))
-
-  (defun my-dired-scroll-up ()
-    ""
-    (interactive)
-    (my-dired-previous-line (- (window-height) 1)))
-
-  (defun my-dired-scroll-down ()
-    ""
-    (interactive)
-    (my-dired-next-line (- (window-height) 1)))
-
-  ;; (defun my-dired-forward-line (arg)
-  ;;   ""
-  ;;   (interactive "p"))
-
-  (defun my-dired-previous-line (arg)
-    ""
-    (interactive "p")
-    (if (> arg 0)
+(defun dired-get-file-info ()
+  "dired get file info"
+  (interactive)
+  (let ((f (shell-quote-argument (dired-get-filename t))))
+    (if (file-directory-p f)
         (progn
-          (if (eq (line-number-at-pos)
-                  1)
-              (goto-char (point-max))
-            (forward-line -1))
-          (my-dired-previous-line (if (or (dired-get-filename nil t)
-                                          (dired-get-subdir))
-                                      (- arg 1)
-                                    arg)))
-      (dired-move-to-filename)))
+          (message "Calculating disk usage...")
+          (shell-command (concat "du -hsD "
+                                 f)))
+      (shell-command (concat "file "
+                             f)))))
 
-  (defun my-dired-next-line (arg)
-    ""
-    (interactive "p")
-    (if (> arg 0)
-        (progn
-          (if (eq (point)
-                  (point-max))
-              (goto-char (point-min))
-            (forward-line 1))
-          (my-dired-next-line (if (or (dired-get-filename nil t)
-                                      (dired-get-subdir))
-                                  (- arg 1)
-                                arg)))
-      (dired-move-to-filename)))
+(defun my-dired-scroll-up ()
+  ""
+  (interactive)
+  (my-dired-previous-line (- (window-height) 1)))
 
-  (defun my-dired-print-current-dir-and-file ()
-    (message "%s  %s"
-             default-directory
-             (buffer-substring-no-properties (point-at-bol)
-                                             (point-at-eol))))
+(defun my-dired-scroll-down ()
+  ""
+  (interactive)
+  (my-dired-next-line (- (window-height) 1)))
 
-  (defun dired-do-execute-as-command ()
-    ""
-    (interactive)
-    (let ((file (dired-get-filename t)))
-      (if (file-executable-p file)
-          (start-process file nil file)
-        (when (y-or-n-p
-               "This file cant be executed.  Mark as executable and go? ")
-          (set-file-modes file
-                          (file-modes-symbolic-to-number "u+x" (file-modes file)))
-          (start-process file nil file)))))
+;; (defun my-dired-forward-line (arg)
+;;   ""
+;;   (interactive "p"))
 
-  ;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
+(defun my-dired-previous-line (arg)
+  ""
+  (interactive "p")
+  (if (> arg 0)
+      (progn
+        (if (eq (line-number-at-pos)
+                1)
+            (goto-char (point-max))
+          (forward-line -1))
+        (my-dired-previous-line (if (or (dired-get-filename nil t)
+                                        (dired-get-subdir))
+                                    (- arg 1)
+                                  arg)))
+    (dired-move-to-filename)))
 
-  (defun my-dired-x-open ()
-    ""
-    (interactive)
-    (my-x-open (dired-get-filename t t)))
+(defun my-dired-next-line (arg)
+  ""
+  (interactive "p")
+  (if (> arg 0)
+      (progn
+        (if (eq (point)
+                (point-max))
+            (goto-char (point-min))
+          (forward-line 1))
+        (my-dired-next-line (if (or (dired-get-filename nil t)
+                                    (dired-get-subdir))
+                                (- arg 1)
+                              arg)))
+    (dired-move-to-filename)))
 
-  (if (eq window-system 'mac)
-      (setq dired-listing-switches "-lhF")
-    (setq dired-listing-switches "-lhF --time-style=long-iso")
-    )
-  (setq dired-listing-switches "-lhF")
+(defun my-dired-print-current-dir-and-file ()
+  (message "%s  %s"
+           default-directory
+           (buffer-substring-no-properties (point-at-bol)
+                                           (point-at-eol))))
 
-  (put 'dired-find-alternate-file 'disabled nil)
-  ;; when using dired-find-alternate-file
-  ;; reuse current dired buffer for the file to open
-  (set-variable 'dired-ls-F-marks-symlinks t)
+(defun dired-do-execute-as-command ()
+  ""
+  (interactive)
+  (let ((file (dired-get-filename t)))
+    (if (file-executable-p file)
+        (start-process file nil file)
+      (when (y-or-n-p
+             "This file cant be executed.  Mark as executable and go? ")
+        (set-file-modes file
+                        (file-modes-symbolic-to-number "u+x" (file-modes file)))
+        (start-process file nil file)))))
 
-  (when (safe-require-or-eval 'ls-lisp)
-    (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
-    (setq ls-lisp-dirs-first t)
-    (setq ls-lisp-use-localized-time-format t)
-    (setq ls-lisp-format-time-list
-          '("%Y-%m-%d %H:%M"
-            "%Y-%m-%d      ")))
+;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
 
-  (set-variable 'dired-dwim-target t)
-  (set-variable 'dired-isearch-filenames t)
-  (set-variable 'dired-hide-details-hide-symlink-targets nil)
-  (set-variable 'dired-hide-details-hide-information-lines nil)
+(defun my-dired-x-open ()
+  ""
+  (interactive)
+  (my-x-open (dired-get-filename t t)))
 
-  ;; (add-hook 'dired-after-readin-hook
-  ;;           'my-replace-nasi-none)
+(if (eq window-system 'mac)
+    (setq dired-listing-switches "-lhF")
+  (setq dired-listing-switches "-lhF --time-style=long-iso")
+  )
+(setq dired-listing-switches "-lhF")
 
-  ;; (add-hook 'after-init-hook
-  ;;           (lambda ()
-  ;;             (dired ".")))
+(put 'dired-find-alternate-file 'disabled nil)
+;; when using dired-find-alternate-file
+;; reuse current dired buffer for the file to open
+(set-variable 'dired-ls-F-marks-symlinks t)
+
+(when (safe-require-or-eval 'ls-lisp)
+  (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
+  (setq ls-lisp-dirs-first t)
+  (setq ls-lisp-use-localized-time-format t)
+  (setq ls-lisp-format-time-list
+        '("%Y-%m-%d %H:%M"
+          "%Y-%m-%d      ")))
+
+(set-variable 'dired-dwim-target t)
+(set-variable 'dired-isearch-filenames t)
+(set-variable 'dired-hide-details-hide-symlink-targets nil)
+(set-variable 'dired-hide-details-hide-information-lines nil)
+
+;; (add-hook 'dired-after-readin-hook
+;;           'my-replace-nasi-none)
+
+;; (add-hook 'after-init-hook
+;;           (lambda ()
+;;             (dired ".")))
+
+(with-eval-after-load 'dired
+  (defvar dired-mode-map)
+  (define-key dired-mode-map "o" 'my-dired-x-open)
+  (define-key dired-mode-map "i" 'dired-get-file-info)
+  (define-key dired-mode-map "f" 'find-file)
+  (define-key dired-mode-map "!" 'shell-command)
+  (define-key dired-mode-map "&" 'async-shell-command)
+  (define-key dired-mode-map "X" 'dired-do-async-shell-command)
+  (define-key dired-mode-map "=" 'my-dired-diff)
+  (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
+  (define-key dired-mode-map "b" 'gtkbm)
+  (define-key dired-mode-map "h" 'my-dired-echo-file-head)
+  (define-key dired-mode-map "@" (lambda ()
+                                   (interactive) (my-x-open ".")))
+  (define-key dired-mode-map (kbd "TAB") 'other-window)
+  ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
+  (define-key dired-mode-map "/" 'dired-isearch-filenames)
+  (define-key dired-mode-map (kbd "DEL") 'dired-up-directory)
+  (define-key dired-mode-map (kbd "C-h") 'dired-up-directory)
+  (substitute-key-definition 'dired-next-line
+                             'my-dired-next-line
+                             dired-mode-map)
+  (substitute-key-definition 'dired-previous-line
+                             'my-dired-previous-line
+                             dired-mode-map)
+  ;; (define-key dired-mode-map (kbd "C-p") 'my-dired-previous-line)
+  ;; (define-key dired-mode-map (kbd "p") 'my-dired-previous-line)
+  ;; (define-key dired-mode-map (kbd "C-n") 'my-dired-next-line)
+  ;; (define-key dired-mode-map (kbd "n") 'my-dired-next-line)
+  (define-key dired-mode-map (kbd "<left>") 'my-dired-scroll-up)
+  (define-key dired-mode-map (kbd "<right>") 'my-dired-scroll-down)
+  (define-key dired-mode-map (kbd "ESC p") 'my-dired-scroll-up)
+  (define-key dired-mode-map (kbd "ESC n") 'my-dired-scroll-down)
 
   (add-hook 'dired-mode-hook
             (lambda ()
-              (local-set-key "o" 'my-dired-x-open)
-              (local-set-key "i" 'dired-get-file-info)
-              (local-set-key "f" 'find-file)
-              (local-set-key "!" 'shell-command)
-              (local-set-key "&" 'async-shell-command)
-              (local-set-key "X" 'dired-do-async-shell-command)
-              (local-set-key "=" 'my-dired-diff)
-              (local-set-key "B" 'gtkbm-add-current-dir)
-              (local-set-key "b" 'gtkbm)
-              (local-set-key "h" 'my-dired-echo-file-head)
-              (local-set-key "@" (lambda ()
-                                   (interactive) (my-x-open ".")))
-              (local-set-key (kbd "TAB") 'other-window)
-              ;; (local-set-key "P" 'my-dired-do-pack-or-unpack)
-              (local-set-key "/" 'dired-isearch-filenames)
-              (local-set-key (kbd "DEL") 'dired-up-directory)
-              (local-set-key (kbd "C-h") 'dired-up-directory)
-              (substitute-key-definition 'dired-next-line
-                                         'my-dired-next-line
-                                         (current-local-map))
-              (substitute-key-definition 'dired-previous-line
-                                         'my-dired-previous-line
-                                         (current-local-map))
-              ;; (local-set-key (kbd "C-p") 'my-dired-previous-line)
-              ;; (local-set-key (kbd "p") 'my-dired-previous-line)
-              ;; (local-set-key (kbd "C-n") 'my-dired-next-line)
-              ;; (local-set-key (kbd "n") 'my-dired-next-line)
-              (local-set-key (kbd "<left>") 'my-dired-scroll-up)
-              (local-set-key (kbd "<right>") 'my-dired-scroll-down)
-              (local-set-key (kbd "ESC p") 'my-dired-scroll-up)
-              (local-set-key (kbd "ESC n") 'my-dired-scroll-down)
               (when (fboundp 'dired-hide-details-mode)
                 (dired-hide-details-mode t)
                 (local-set-key "l" 'dired-hide-details-mode))
@@ -1718,18 +1719,14 @@ the list."
                   '(file-readable-p file)
                   (delete-file file)))))
 
-  (and (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack))
-       (add-hook 'dired-mode-hook
-                 (lambda ()
-                   (local-set-key "P" 'dired-do-pack-or-unpack))))
+  (when (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack))
+    (with-eval-after-load 'dired
+      (define-key dired-mode-map "P" 'dired-do-pack-or-unpack)))
 
-  (and (autoload-eval-lazily 'dired-list-all-mode)
-       (setq dired-listing-switches "-lhF")
-       (add-hook 'dired-mode-hook
-                 (lambda ()
-                   (local-set-key "a" 'dired-list-all-mode)
-                   )))
-  )                                       ; when dired locate
+  (when (autoload-eval-lazily 'dired-list-all-mode)
+    (setq dired-listing-switches "-lhF")
+    (with-eval-after-load 'dired
+      (local-set-key "a" 'dired-list-all-mode))))
 
 ;; http://blog.livedoor.jp/tek_nishi/archives/4693204.html
 
