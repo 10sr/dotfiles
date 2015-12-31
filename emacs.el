@@ -178,53 +178,52 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
 
-(set-variable 'my-package-list
-  '(
-    markdown-mode
-    yaml-mode
-    gnuplot-mode
-    erlang
-    js2-mode
-    git-commit
-    gitignore-mode
-    ;; ack
-    color-moccur
-    ggtags
-    flycheck
-    ;; is flymake installs are required?
-    ;;flymake-jshint
-    ;;flymake-python-pyflakes
-    xclip
-    foreign-regexp
-    multi-term
-    term-run
-    editorconfig
-    git-ps1-mode
-    restart-emacs
-    fill-column-indicator
+(set (defvar 10sr-package-list)
+     '(
+       markdown-mode
+       yaml-mode
+       gnuplot-mode
+       erlang
+       js2-mode
+       git-commit
+       gitignore-mode
+       ;; ack
+       color-moccur
+       ggtags
+       flycheck
+       ;; is flymake installs are required?
+       ;;flymake-jshint
+       ;;flymake-python-pyflakes
+       xclip
+       foreign-regexp
+       multi-term
+       term-run
+       editorconfig
+       git-ps1-mode
+       restart-emacs
+       fill-column-indicator
 
-    scala-mode2
-    ensime
+       scala-mode2
+       ensime
 
-    editorconfig
+       editorconfig
 
-    git-command
+       git-command
 
-    ;; 10sr repository
-    terminal-title
-    recentf-show
-    dired-list-all-mode
-    pack
-    set-modeline-color
-    read-only-only-mode
-    smart-revert
-    autosave
-    ;;window-organizer
-    remember-major-modes-mode
-    ilookup
-    pasteboard
-    )
-  "Package list just for me.")
+       ;; 10sr repository
+       terminal-title
+       recentf-show
+       dired-list-all-mode
+       pack
+       set-modeline-color
+       read-only-only-mode
+       smart-revert
+       autosave
+       ;;window-organizer
+       remember-major-modes-mode
+       ilookup
+       pasteboard
+       ))
 
 (when (safe-require-or-eval 'package)
   (setq package-archives
@@ -241,7 +240,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             (or (package-installed-p pkg)
                 (locate-library (symbol-name pkg))
                 (package-install pkg)))
-          my-package-list))
+          10sr-package-list))
   )
 
 ;; (lazy-load-eval 'sudoku)
@@ -411,9 +410,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
-      (setq terminal-title-format
-			'((file-name-nondirectory (directory-file-name
-                                       default-directory))))
+      (set-variable 'terminal-title-format
+                    '((file-name-nondirectory (directory-file-name
+                                               default-directory))))
     (if (and (let ((tty-type (frame-parameter nil
                                               'tty-type)))
                (and tty-type
@@ -421,18 +420,18 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                               "-"))
                            "screen")))
              (not (getenv "SSH_CONNECTION")))
-        (setq terminal-title-format
-              '((file-name-nondirectory (directory-file-name
-                                         default-directory))))
+        (set-variable 'terminal-title-format
+                      '((file-name-nondirectory (directory-file-name
+                                                 default-directory))))
       ;; seems that TMUX is used locally and ssh to remote host
-      (setq terminal-title-format
-            `("em:"
-              ,user-login-name
-              "@"
-              ,(car (split-string system-name
-                                  "\\."))
-              ":"
-              default-directory))
+      (set-variable 'terminal-title-format
+                    `("em:"
+                      ,user-login-name
+                      "@"
+                      ,(car (split-string system-name
+                                          "\\."))
+                      ":"
+                      default-directory))
       )
     )
   (terminal-title-mode))
@@ -456,9 +455,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 ;; display date
-(call-after-init (lambda ()
-                   (when display-time-mode
-                     (display-time-update))))
 
 (when (safe-require-or-eval 'time)
   (setq display-time-interval 29)
@@ -466,7 +462,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (setq display-time-format "%a, %d %b %Y %T")
   (if window-system
       (display-time-mode 0)
-    (display-time-mode 1)))
+    (display-time-mode 1))
+  (when display-time-mode
+    (display-time-update)))
 
 ;; ;; current directory
 ;; (let ((ls (member 'mode-line-buffer-identification
@@ -639,8 +637,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (set-variable 'hl-line-face 'my-hl-line) ;; (setq hl-line-face nil)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
 (set-variable 'hl-line-global-modes
-  '(not
-    term-mode))
+              '(not
+                term-mode))
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
@@ -729,8 +727,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-(set-variable 'bookmark-default-file (concat user-emacs-directory
-                                             "bmk"))
+(set (defvar bookmark-default-file)
+     (expand-file-name (concat user-emacs-directory
+                               "bmk")))
 (add-hook 'recentf-load-hook
           (lambda ()
             (defvar recentf-exclude)
@@ -849,14 +848,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (setq mail-interactive t
       send-mail-function 'smtpmail-send-it)
 ;; message-send-mail-function 'smtpmail-send-it
-(with-eval-after-load 'smtpmail
-  (setq smtpmail-smtp-server "smtp.gmail.com"
-        smtpmail-smtp-service 587
-        smtpmail-starttls-credentials '(("smtp.gmail.com" 587
-                                         "8.slashes@gmail.com" nil))
-        smtpmail-auth-credentials '(("smtp.gmail.com" 587
-                                     "8.slashes@gmail.com" nil))
-        user-mail-address "8.slashes@gmail.com"))
+(set-variable 'smtpmail-smtp-server "smtp.gmail.com")
+(set-variable 'smtpmail-smtp-service 587)
+(set-variable 'smtpmail-starttls-credentials '(("smtp.gmail.com" 587
+                                                "8.slashes@gmail.com" nil)))
+(set-variable 'smtpmail-auth-credentials '(("smtp.gmail.com" 587
+                                            "8.slashes@gmail.com" nil)))
+(set-variable 'user-mail-address "8.slashes@gmail.com")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
@@ -1137,20 +1135,18 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (when (autoload-eval-lazily 'markdown-mode
-          '(markdown-mode gfm-mode))
+          '(markdown-mode gfm-mode)
+        (defvar gfm-mode-map)
+        (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline))
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'gfm-mode))
-  (setq markdown-command (or (executable-find "markdown")
-                             (executable-find "markdown.pl")))
+  (set-variable 'markdown-command (or (executable-find "markdown")
+                                      (executable-find "markdown.pl")))
   (add-hook 'markdown-mode-hook
             (lambda ()
               (outline-minor-mode 1)
               (flyspell-mode)
               (set (make-local-variable 'comment-start) ";")))
-  (add-hook 'gfm-mode-hook
-            (lambda ()
-              (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline)
-              ;;(electric-indent-mode 0)
-              )))
+  )
 
 ;; c-mode
 ;; http://www.emacswiki.org/emacs/IndentingC
@@ -1177,7 +1173,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (autoload-eval-lazily 'php-mode)
   (add-hook 'php-mode-hook
             (lambda ()
-              (setq c-basic-offset 2))))
+              (set-variable 'c-basic-offset 2))))
 
 (when (autoload-eval-lazily 'js2-mode)
   ;; currently do not use js2-mode
@@ -1185,6 +1181,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
   (add-hook 'js2-mode-hook
             (lambda ()
+              (defvar js2-mode-map)
               (define-key js2-mode-map (kbd "C-m") (lambda ()
                                                      (interactive)
                                                      (js2-enter-key)
@@ -1307,12 +1304,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (autoload-eval-lazily 'gtags '(gtags-mode))
   (add-hook 'gtags-mode-hook
             (lambda ()
-              (view-mode gtags-mode)
-              (setq gtags-select-buffer-single t)
+              (view-mode 1)
+              (set-variable 'gtags-select-buffer-single t)
               ;; (local-set-key "\M-t" 'gtags-find-tag)
               ;; (local-set-key "\M-r" 'gtags-find-rtag)
               ;; (local-set-key "\M-s" 'gtags-find-symbol)
               ;; (local-set-key "\C-t" 'gtags-pop-stack)
+              (defvar gtags-mode-map)
               (define-key gtags-mode-map (kbd "C-x t h")
                 'gtags-find-tag-from-here)
               (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
@@ -1324,6 +1322,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
               ))
   (add-hook 'gtags-select-mode-hook
             (lambda ()
+              (defvar gtags-select-mode-map)
               (define-key gtags-select-mode-map (kbd "C-m") 'gtags-select-tag)
               ))
   )
@@ -1333,9 +1332,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; (setq multi-term-program shell-file-name)
 (when (autoload-eval-lazily 'multi-term)
-  (setq multi-term-switch-after-close nil)
-  (setq multi-term-dedicated-select-after-open-p t)
-  (setq multi-term-dedicated-window-height 20))
+  (set-variable 'multi-term-switch-after-close nil)
+  (set-variable 'multi-term-dedicated-select-after-open-p t)
+  (set-variable 'multi-term-dedicated-window-height 20))
 
 (when (autoload-eval-lazily 'term '(term ansi-term))
   (defun my-term-quit-or-send-raw ()
@@ -1449,93 +1448,93 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (when (autoload-eval-lazily 'sdic '(sdic-describe-word-at-point))
   ;; (define-key my-prefix-map "\C-w" 'sdic-describe-word)
+  (defvar sdic-buffer-name)
   (define-key my-prefix-map "\C-t" 'sdic-describe-word-at-point-echo)
   (defun sdic-describe-word-at-point-echo ()
     ""
     (interactive)
     (save-window-excursion
       (sdic-describe-word-at-point))
-    (save-excursion
-      (set-buffer sdic-buffer-name)
+    (with-current-buffer sdic-buffer-name
       (message (buffer-substring (point-min)
                                  (progn (goto-char (point-min))
                                         (or (and (re-search-forward "^\\w"
                                                                     nil
                                                                     t
                                                                     4)
-                                                 (progn (previous-line) t)
+                                                 (progn (forward-line -1) t)
                                                  (point-at-eol))
                                             (point-max)))))))
 
-  (setq sdic-eiwa-dictionary-list '((sdicf-client "/usr/share/dict/gene.sdic")))
-  (setq sdic-waei-dictionary-list
-        '((sdicf-client "/usr/share/dict/jedict.sdic" (add-keys-to-headword t))))
-  (setq sdic-disable-select-window t)
-  (setq sdic-window-height 7))
+  (set-variable 'sdic-eiwa-dictionary-list '((sdicf-client "/usr/share/dict/gene.sdic")))
+  (set-variable ' sdic-waei-dictionary-list
+                  '((sdicf-client "/usr/share/dict/jedict.sdic" (add-keys-to-headword t))))
+  (set-variable 'sdic-disable-select-window t)
+  (set-variable ' sdic-window-height 7))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ilookup
 
 (with-eval-after-load 'ilookup
-  (setq ilookup-dict-alist
-        '(
-          ("sdcv" . (lambda (word)
-                      (shell-command-to-string
-                       (format "sdcv -n '%s'"
-                               word))))
-          ("en" . (lambda (word)
-                    (shell-command-to-string
-                     (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
-                             word))))
-          ("ja" . (lambda (word)
-                    (shell-command-to-string
-                     (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
-                             word))))
-          ("jaj" . (lambda (word)
-                     (shell-command-to-string
-                      (format "sdcv -n -u jmdict-en-ja '%s'"
-                              word))))
-          ("jag" .
-           (lambda (word)
-             (with-temp-buffer
-               (insert (shell-command-to-string
-                        (format "sdcv -n -u 'Genius English-Japanese' '%s'"
-                                word)))
-               (html2text)
-               (buffer-substring (point-min)
-                                 (point-max)))))
-          ("alc" . (lambda (word)
-                     (shell-command-to-string
-                      (format "alc '%s' | head -n 20"
-                              word))))
-          ("app" . (lambda (word)
-                     (shell-command-to-string
-                      (format "dict_app '%s'"
-                              word))))
-          ;; letters broken
-          ("ms" .
-           (lambda (word)
-             (let ((url (concat
-                         "http://api.microsofttranslator.com/V2/Ajax.svc/"
-                         "Translate?appId=%s&text=%s&to=%s"))
-                   (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
-                   (target "ja")
-                   (eword (url-hexify-string word)))
-               (with-current-buffer (url-retrieve-synchronously
-                                     (format url
-                                             apikey
-                                             eword
-                                             target))
-                 (message "")
-                 (goto-char (point-min))
-                 (search-forward-regexp "^$"
-                                        nil
-                                        t)
-                 (url-unhex-string (buffer-substring-no-properties
-                                    (point)
-                                    (point-max)))))))
-          ))
+  (set-variable 'ilookup-dict-alist
+                '(
+                  ("sdcv" . (lambda (word)
+                              (shell-command-to-string
+                               (format "sdcv -n '%s'"
+                                       word))))
+                  ("en" . (lambda (word)
+                            (shell-command-to-string
+                             (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
+                                     word))))
+                  ("ja" . (lambda (word)
+                            (shell-command-to-string
+                             (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
+                                     word))))
+                  ("jaj" . (lambda (word)
+                             (shell-command-to-string
+                              (format "sdcv -n -u jmdict-en-ja '%s'"
+                                      word))))
+                  ("jag" .
+                   (lambda (word)
+                     (with-temp-buffer
+                       (insert (shell-command-to-string
+                                (format "sdcv -n -u 'Genius English-Japanese' '%s'"
+                                        word)))
+                       (html2text)
+                       (buffer-substring (point-min)
+                                         (point-max)))))
+                  ("alc" . (lambda (word)
+                             (shell-command-to-string
+                              (format "alc '%s' | head -n 20"
+                                      word))))
+                  ("app" . (lambda (word)
+                             (shell-command-to-string
+                              (format "dict_app '%s'"
+                                      word))))
+                  ;; letters broken
+                  ("ms" .
+                   (lambda (word)
+                     (let ((url (concat
+                                 "http://api.microsofttranslator.com/V2/Ajax.svc/"
+                                 "Translate?appId=%s&text=%s&to=%s"))
+                           (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
+                           (target "ja")
+                           (eword (url-hexify-string word)))
+                       (with-current-buffer (url-retrieve-synchronously
+                                             (format url
+                                                     apikey
+                                                     eword
+                                                     target))
+                         (message "")
+                         (goto-char (point-min))
+                         (search-forward-regexp "^$"
+                                                nil
+                                                t)
+                         (url-unhex-string (buffer-substring-no-properties
+                                            (point)
+                                            (point-max)))))))
+                  ))
   ;; (funcall (cdr (assoc "ms"
   ;;                      ilookup-alist))
   ;;          "dictionary")
@@ -1544,8 +1543,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
   ;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
 
-  (setq ilookup-default "ja")
+  (set-variable 'ilookup-default "ja")
   (when (locate-library "google-translate")
+    (defvar ilookup-dict-alist)
     (add-to-list 'ilookup-dict-alist
                  '("gt" .
                    (lambda (word)
@@ -1561,8 +1561,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (when (autoload-eval-lazily 'google-translate '(google-translate-translate
                                                 google-translate-at-point))
-  (setq google-translate-default-source-language "auto")
-  (setq google-translate-default-target-language "ja"))
+  (set-varlable 'google-translate-default-source-language "auto")
+  (set-variable 'google-translate-default-target-language "ja"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1580,8 +1580,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             t)
            (autoload-eval-lazily 'gauche-mode '(gauche-mode run-scheme)))
   (let ((s (executable-find "gosh")))
-    (setq scheme-program-name s
-          gauche-program-name s))
+    (set-variable 'scheme-program-name s)
+    (set-variable 'gauche-program-name s))
+
+  (defvar gauche-program-name)
+  (defvar scheme-buffer)
 
   (defun run-gauche-other-window ()
     "Run gauche on other window"
@@ -1624,6 +1627,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         (cons '("\.gaucherc\\'" . gauche-mode) auto-mode-alist))
   (add-hook 'gauche-mode-hook
             (lambda ()
+              (defvar gauche-mode-map)
+              (defvar scheme-mode-map)
               (define-key gauche-mode-map
                 (kbd "C-c C-z") 'run-gauche-other-window)
               (define-key scheme-mode-map
@@ -1634,11 +1639,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
 
-(setq recentf-save-file (expand-file-name (concat user-emacs-directory
-                                                  "recentf"))
-      recentf-max-menu-items 20
-      recentf-max-saved-items 30
-      recentf-show-file-shortcuts-flag nil)
+(set-variable 'recentf-save-file (expand-file-name (concat user-emacs-directory
+                                                           "recentf")))
+(set-variable 'recentf-max-menu-items 20)
+(set-variable 'recentf-max-saved-items 30)
+(set-variable 'recentf-show-file-shortcuts-flag nil)
 
 (when (safe-require-or-eval 'recentf)
   (add-to-list 'recentf-exclude
@@ -1691,9 +1696,10 @@ the list."
                  (insert-file-contents f)
                  (buffer-substring-no-properties
                   (point-min)
-                  (progn (goto-line (if arg
-                                        (prefix-numeric-value arg)
-                                      7))
+                  (progn (goto-char (point-min))
+                         (forward-line (1- (if arg
+                                               (prefix-numeric-value arg)
+                                             7)))
                          (point-at-eol)))))))
 
   (defun my-dired-diff ()
@@ -1871,8 +1877,9 @@ the list."
                 (dired-hide-details-mode t)
                 (local-set-key "l" 'dired-hide-details-mode))
               (let ((file "._Icon\015"))
-                (when nil (file-readable-p file)
-                      (delete-file file)))))
+                (when nil
+                  '(file-readable-p file)
+                  (delete-file file)))))
 
   (and (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack))
        (add-hook 'dired-mode-hook
@@ -1934,8 +1941,8 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 C-x t to toggling emacs-text-mode
 
 "
-                                            (shell-command-to-string "uname -a")
-                                            ))
+                                               (shell-command-to-string "uname -a")
+                                               ))
 
   (defvar eshell-text-mode-map
     (let ((map (make-sparse-keymap)))
@@ -2011,6 +2018,7 @@ C-x t to toggling emacs-text-mode
     (let ((inhibit-read-only t))
       (erase-buffer)))
 
+  (defvar eshell-prompt-function)
   (defun eshell-clear ()
     (interactive)
     (let ((inhibit-read-only t))
@@ -2085,7 +2093,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
       ad-do-it))
 
   (set-variable 'eshell-directory-name (concat user-emacs-directory
-                                            "eshell/"))
+                                               "eshell/"))
   (set-variable 'eshell-term-name "eterm-color")
   (set-variable 'eshell-scroll-to-bottom-on-input t)
   (set-variable 'eshell-cmpl-ignore-case t)
@@ -2093,13 +2101,13 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
   (set-variable 'eshell-highlight-prompt nil)
   (if (eq system-type 'darwin)
       (set-variable 'eshell-ls-initial-args '("-hCFG")
-        (set-variable 'eshell-ls-initial-args '("-hCFG"
-                                             "--color=auto"
-                                             "--time-style=long-iso"))     ; "-hF")
-        ))
+                    (set-variable 'eshell-ls-initial-args '("-hCFG"
+                                                            "--color=auto"
+                                                            "--time-style=long-iso"))     ; "-hF")
+                    ))
 
-  (set-variable 'eshell-prompt-function
-    'my-eshell-prompt-function)
+  (set (defvar eshell-prompt-function)
+       'my-eshell-prompt-function)
 
   (defvar eshell-last-command-status)
   (defun my-eshell-prompt-function()
