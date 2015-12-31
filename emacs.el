@@ -230,17 +230,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   "Package list just for me.")
 
 (when (safe-require-or-eval 'package)
-  ;; (add-to-list 'package-archives
-  ;;              '("ELPA" . "http://tromey.com/elpa/"))
   (setq package-archives
         `(,@package-archives
           ("melpa" . "https://melpa.org/packages/")
           ("10sr-el" . "https://10sr.github.io/emacs-lisp/p/")))
-  ;; (add-to-list 'package-archives
-  ;;              '("melpa" . "https://melpa.org/packages/")
-  ;;              t)
-  ;; (add-to-list 'package-archives
-  ;;              '("marmalade" . "http://marmalade-repo.org/packages/"))
   (package-initialize)
 
   (defun my-auto-install-package ()
