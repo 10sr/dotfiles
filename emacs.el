@@ -35,7 +35,7 @@
   (defmacro with-eval-after-load (file &rest body)
     "Execute BODY after FILE is loaded."
     (declare (indent 1))
-    `(eval-after-load ,file '(progn ,@body))))
+    `(eval-after-load ,file (quote (progn ,@body)))))
 
 (defun call-after-init (func)
   "If `after-init-hook' has been run, call FUNC immediately.
