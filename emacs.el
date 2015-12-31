@@ -200,7 +200,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     xclip
     foreign-regexp
     multi-term
-    dirtree
     term-run
     editorconfig
     git-ps1-mode
@@ -858,15 +857,16 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; gmail
 
 (setq mail-interactive t
-      send-mail-function 'smtpmail-send-it
-      ;; message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587
-                                       "8.slashes@gmail.com" nil))
-      smtpmail-auth-credentials '(("smtp.gmail.com" 587
-                                   "8.slashes@gmail.com" nil))
-      user-mail-address "8.slashes@gmail.com")
+      send-mail-function 'smtpmail-send-it)
+;; message-send-mail-function 'smtpmail-send-it
+(with-eval-after-load 'smtpmail
+  (setq smtpmail-smtp-server "smtp.gmail.com"
+        smtpmail-smtp-service 587
+        smtpmail-starttls-credentials '(("smtp.gmail.com" 587
+                                         "8.slashes@gmail.com" nil))
+        smtpmail-auth-credentials '(("smtp.gmail.com" 587
+                                     "8.slashes@gmail.com" nil))
+        user-mail-address "8.slashes@gmail.com"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
@@ -980,29 +980,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (add-to-list 'safe-local-variable-values
              '(encoding utf-8))
 (setq enable-local-variables :safe)
-
-(when (autoload-eval-lazily 'dirtree nil
-        (defun my-dirtree-current-line-directory-p ()
-          "Return nil if element on current line is not a directory."
-          (file-directory-p (widget-get (tree-mode-button-current-line)
-                                        :file)))
-
-        ;; This fix is actually a little strange.  Strictly speaking
-        ;; judging tree should be done by whether the widget is a tree one.
-        (defun my-dirtree-next-node (arg)
-          "Fix the problem that `tree-mode-next-node' moves cursor 2 lines."
-          (interactive "p")
-          (if (my-dirtree-current-line-directory-p)
-              (widget-forward (* arg 2))
-            (widget-forward arg)))
-        (defun my-dirtree-previous-node (arg)
-          "Fix the problem that `tree-mode-previous-node' moves cursor 2 lines."
-          (interactive "p")
-          (my-dirtree-next-node (- arg)))
-
-        (define-key dirtree-mode-map "n" 'my-dirtree-next-node)
-        (define-key dirtree-mode-map "p" 'my-dirtree-previous-node))
-  (define-key ctl-x-map "d" 'dirtree))
 
 (when (safe-require-or-eval 'remember-major-modes-mode)
   (remember-major-modes-mode 1))
