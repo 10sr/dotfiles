@@ -30,6 +30,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
+(unless (fboundp 'with-eval-after-load)
+  ;; polyfill for Emacs < 24.4
+  (defmacro with-eval-after-load (file &rest body)
+    "Execute BODY after FILE is loaded."
+    (declare (indent 1))
+    `(eval-after-load ,file '(progn ,@body))))
+
 (defun call-after-init (func)
   "If `after-init-hook' has been run, call FUNC immediately.
 Otherwize hook it."
@@ -336,37 +343,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
              (file-readable-p user-init-file))
     (load-file user-init-file)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; for windows
-
-(defun my-w32-add-export-path (&rest args)
-  "Add pathes ARGS for windows."
-  (mapc (lambda (path)
-          (add-to-list 'exec-path (expand-file-name path)))
-        (reverse args))
-  (setenv "PATH"
-          (mapconcat 'convert-standard-filename
-                     exec-path
-                     ";")))
-
-(when (eq system-type 'windows-nt)
-  ;; (setq scheme-program-name "\"c:/Program Files/Gauche/bin/gosh.exe\" -i")
-  ;; (setq python-python-command "c:/Python26/python.exe")
-
-  ;; (define-key my-prefix-map (kbd "C-c") 'start-ckw-bash)
-  (my-w32-add-export-path "c:/Windows/system"
-                          "c:/Windows/System32"
-                          "c:/Program Files/Git/bin"
-                          "c:/MinGW/bin"
-                          "c:/MinGW/mingw32/bin"
-                          (expand-file-name "~/.local/bin")
-                          (expand-file-name "~/dbx/apps/bin"))
-
-  (when window-system
-    (set-variable 'w32-enable-synthesized-fonts t))
-  (set-variable 'w32-apps-modifier 'meta)
-  (setq file-name-coding-system 'sjis))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
@@ -491,21 +467,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; (add-to-list 'minor-mode-alist
 ;;              '(global-whitespace-mode ""))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; system info
-
-(defun my-message-current-info ()
-  "Echo current login name, hostname and directory."
-  (interactive)
-  (message "%s@%s:%s"
-           user-login-name
-           system-name
-           (abbreviate-file-name default-directory)))
-
-;; (run-with-idle-timer 3
-;;                      t
-;;                      'my-message-current-info)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; minibuffer
 
@@ -573,11 +534,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; (standard-display-ascii ?\n "$\n")
 
-(defvar my-eol-face
-  '(("\n" . (0 font-lock-comment-face t nil)))
-  )
-(defvar my-tab-face
-  '(("\t" . '(0 highlight t nil))))
+;; (defvar my-eol-face
+;;   '(("\n" . (0 font-lock-comment-face t nil)))
+;;   )
+;; (defvar my-tab-face
+;;   '(("\t" . '(0 highlight t nil))))
 (defvar my-jspace-face
   '(("\u3000" . '(0 highlight t nil))))
 
@@ -634,34 +595,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
-
-;; fonts
-
-(defun my-set-ascii-and-jp-font (list)
-  "Set font configuration to LIST."
-  (let ((fspec1 (if (> emacs-major-version 22)
-                    ;; font spec is available in emacs23 and later
-                    (font-spec :family (nth 2 list) :size (nth 3 list))
-                  (cons (nth 2 list) "jisx0208.*")))
-        (fspec2 (if (> emacs-major-version 22)
-                    (font-spec :family (nth 2 list) :size (nth 3 list))
-                  (cons (nth 2 list) "jisx0201.*"))))
-    (set-face-attribute 'default nil
-                        :family (nth 0 list)
-                        :height (nth 1 list))
-    (set-fontset-font "fontset-default"
-                      'japanese-jisx0208
-                      fspec1)
-    (set-fontset-font "fontset-default"
-                      'katakana-jisx0201
-                      fspec2)))
-;; (my-set-ascii-and-jp-font '("dejavu sans mono" 90 "takaogothic" 13))
-;; (my-set-ascii-and-jp-font '("dejavu sans mono" 100 "takaogothic" 14))
-;; (my-set-ascii-and-jp-font '("dejavu sans mono" 100 "ms gothic" 14))
-;; (my-set-ascii-and-jp-font '("monaco" 75 "takaogothic" 11))
-;; (my-set-ascii-and-jp-font '("monaco" 90 "takaogothic" 13))
-;; (my-set-ascii-and-jp-font '("ProggyCleanTTSZ" 120 "takaogothic" 11))
-;; あ a
 
 (safe-require-or-eval 'set-modeline-color)
 
@@ -800,40 +733,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (define-key my-prefix-map (kbd "C-o") 'occur)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; japanese input method
-
-(defun my-load-scim ()
-  "Use scim-bridge.el as japanese im."
-  ;; Load scim-bridge.
-  (when (safe-require-or-eval 'scim-bridge)
-    ;; Turn on scim-mode automatically after loading .emacs
-    (call-after-init 'scim-mode-on)
-    (set-variable 'scim-cursor-color "red")
-    (scim-define-preedit-key ?\^h t)
-    (scim-define-common-key ?\* nil)
-    (scim-define-common-key ?\^/ nil)))
-
-(defun my-load-anthy ()
-  "Use anthy.el as japanese im."
-  ;; anthy
-  (when (safe-require-or-eval 'anthy)
-    (global-set-key
-     (kbd "<muhenkan>") (lambda () (interactive) (anthy-mode-off)))
-    (global-set-key (kbd "<henkan>") (lambda () (interactive) (anthy-mode-on)))
-    (when (>= emacs-major-version 23)
-      (set-variable 'anthy-accept-timeout 1))))
-
-;; quail
-;; aproposs input-method for some information
-;; (setq default-input-method "japanese")
-(defun my-load-mozc-el ()
-  "Use mozc.el as japanese im."
-  (when (safe-require-or-eval 'mozc)
-    (set-variable 'defauit-input-method "japanese-mozc")
-    (set-variable 'mozc-leim-title "[MZ]")
-    ))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gmail
 
@@ -863,14 +762,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                            global-map)
 ;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
 
-(defun my-kill-buffers ()
-  "Kill buffers that visit files."
-  (interactive)
-  (mapcar (lambda (buf)
-            (when (buffer-file-name buf)
-              (kill-buffer buf)))
-          (buffer-list)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 
@@ -898,12 +789,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (safe-require-or-eval 'flycheck)
   (call-after-init 'global-flycheck-mode))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; window
-
-;; (when (autoload-eval-lazily 'window-organizer)
-;;    (define-key ctl-x-map (kbd "w") 'window-organizer))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; server
 
@@ -919,26 +804,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             (eq system-type
                 'darwin))
     (setq server-use-tcp t))
-
-  (defun my-construct-emacsclient-editor-command ()
-    "Construct and return command in a string to connect to current Emacs server."
-    (if server-use-tcp
-        (format "%s -f \"%s/%s\""
-                "emacsclient"
-                (expand-file-name server-auth-dir)
-                server-name)
-      (format "%s -s \"%s/%s\""
-              "emacsclient"
-              server-socket-dir
-              server-name)))
-
-  (setq process-environment
-        `(,(concat "EDITOR="
-                   (my-construct-emacsclient-editor-command))
-          ,(concat "GIT_EDITOR="
-                   (my-construct-emacsclient-editor-command))
-          ,@process-environment))
-
   (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1145,23 +1010,22 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; http://en.wikipedia.org/wiki/Indent_style
 ;; http://d.hatena.ne.jp/emergent/20070203/1170512717
 ;; http://seesaawiki.jp/whiteflare503/d/Emacs%20%a5%a4%a5%f3%a5%c7%a5%f3%a5%c8
-(eval-after-load 'cc-vars
-  `(progn
-     (defvar c-default-style nil)
-     (add-to-list 'c-default-style
-                  '(c-mode . "k&r"))
-     (add-to-list 'c-default-style
-                  '(c++-mode . "k&r"))
-     (add-hook 'c-mode-common-hook
-               (lambda ()
-                 ;; why c-basic-offset in k&r style defaults to 5 ???
-                 (set-variable 'c-basic-offset 4)
-                 (set-variable 'indent-tabs-mode nil)
-                 ;; (set-face-foreground 'font-lock-keyword-face "blue")
-                 (c-toggle-hungry-state -1)
-                 ;; (and (require 'gtags nil t)
-                 ;;      (gtags-mode 1))
-                 ))))
+(with-eval-after-load 'cc-vars
+  (defvar c-default-style nil)
+  (add-to-list 'c-default-style
+               '(c-mode . "k&r"))
+  (add-to-list 'c-default-style
+               '(c++-mode . "k&r"))
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              ;; why c-basic-offset in k&r style defaults to 5 ???
+              (set-variable 'c-basic-offset 4)
+              (set-variable 'indent-tabs-mode nil)
+              ;; (set-face-foreground 'font-lock-keyword-face "blue")
+              (c-toggle-hungry-state -1)
+              ;; (and (require 'gtags nil t)
+              ;;      (gtags-mode 1))
+              )))
 
 (when (autoload-eval-lazily 'php-mode)
   (add-hook 'php-mode-hook
@@ -1469,88 +1333,87 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ilookup
 
-(eval-after-load 'ilookup
-  '(progn
-     (set-variable 'ilookup-dict-alist
-                   '(
-                     ("sdcv" . (lambda (word)
-                                 (shell-command-to-string
-                                  (format "sdcv -n '%s'"
-                                          word))))
-                     ("en" . (lambda (word)
-                               (shell-command-to-string
-                                (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
-                                        word))))
-                     ("ja" . (lambda (word)
-                               (shell-command-to-string
-                                (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
-                                        word))))
-                     ("jaj" . (lambda (word)
-                                (shell-command-to-string
-                                 (format "sdcv -n -u jmdict-en-ja '%s'"
-                                         word))))
-                     ("jag" .
-                      (lambda (word)
-                        (with-temp-buffer
-                          (insert (shell-command-to-string
-                                   (format "sdcv -n -u 'Genius English-Japanese' '%s'"
-                                           word)))
-                          (html2text)
-                          (buffer-substring (point-min)
-                                            (point-max)))))
-                     ("alc" . (lambda (word)
-                                (shell-command-to-string
-                                 (format "alc '%s' | head -n 20"
-                                         word))))
-                     ("app" . (lambda (word)
-                                (shell-command-to-string
-                                 (format "dict_app '%s'"
-                                         word))))
-                     ;; letters broken
-                     ("ms" .
-                      (lambda (word)
-                        (let ((url (concat
-                                    "http://api.microsofttranslator.com/V2/Ajax.svc/"
-                                    "Translate?appId=%s&text=%s&to=%s"))
-                              (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
-                              (target "ja")
-                              (eword (url-hexify-string word)))
-                          (with-current-buffer (url-retrieve-synchronously
-                                                (format url
-                                                        apikey
-                                                        eword
-                                                        target))
-                            (message "")
-                            (goto-char (point-min))
-                            (search-forward-regexp "^$"
-                                                   nil
-                                                   t)
-                            (url-unhex-string (buffer-substring-no-properties
-                                               (point)
-                                               (point-max)))))))
-                     ))
-     ;; (funcall (cdr (assoc "ms"
-     ;;                      ilookup-alist))
-     ;;          "dictionary")
+(with-eval-after-load 'ilookup
+  (set-variable 'ilookup-dict-alist
+                '(
+                  ("sdcv" . (lambda (word)
+                              (shell-command-to-string
+                               (format "sdcv -n '%s'"
+                                       word))))
+                  ("en" . (lambda (word)
+                            (shell-command-to-string
+                             (format "sdcv -n -u dictd_www.dict.org_gcide '%s'"
+                                     word))))
+                  ("ja" . (lambda (word)
+                            (shell-command-to-string
+                             (format "sdcv -n -u EJ-GENE95 -u jmdict-en-ja '%s'"
+                                     word))))
+                  ("jaj" . (lambda (word)
+                             (shell-command-to-string
+                              (format "sdcv -n -u jmdict-en-ja '%s'"
+                                      word))))
+                  ("jag" .
+                   (lambda (word)
+                     (with-temp-buffer
+                       (insert (shell-command-to-string
+                                (format "sdcv -n -u 'Genius English-Japanese' '%s'"
+                                        word)))
+                       (html2text)
+                       (buffer-substring (point-min)
+                                         (point-max)))))
+                  ("alc" . (lambda (word)
+                             (shell-command-to-string
+                              (format "alc '%s' | head -n 20"
+                                      word))))
+                  ("app" . (lambda (word)
+                             (shell-command-to-string
+                              (format "dict_app '%s'"
+                                      word))))
+                  ;; letters broken
+                  ("ms" .
+                   (lambda (word)
+                     (let ((url (concat
+                                 "http://api.microsofttranslator.com/V2/Ajax.svc/"
+                                 "Translate?appId=%s&text=%s&to=%s"))
+                           (apikey "3C9778666C5BA4B406FFCBEE64EF478963039C51")
+                           (target "ja")
+                           (eword (url-hexify-string word)))
+                       (with-current-buffer (url-retrieve-synchronously
+                                             (format url
+                                                     apikey
+                                                     eword
+                                                     target))
+                         (message "")
+                         (goto-char (point-min))
+                         (search-forward-regexp "^$"
+                                                nil
+                                                t)
+                         (url-unhex-string (buffer-substring-no-properties
+                                            (point)
+                                            (point-max)))))))
+                  ))
+  ;; (funcall (cdr (assoc "ms"
+  ;;                      ilookup-alist))
+  ;;          "dictionary")
 
-     ;; (switch-to-buffer (url-retrieve-synchronously "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?appId=3C9778666C5BA4B406FFCBEE64EF478963039C51&text=dictionary&to=ja"))
+  ;; (switch-to-buffer (url-retrieve-synchronously "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?appId=3C9778666C5BA4B406FFCBEE64EF478963039C51&text=dictionary&to=ja"))
 
-     ;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
+  ;; (switch-to-buffer (url-retrieve-synchronously "http://google.com"))
 
-     (set-variable 'ilookup-default "ja")
-     (when (locate-library "google-translate")
-       (defvar ilookup-dict-alist)
-       (add-to-list 'ilookup-dict-alist
-                    '("gt" .
-                      (lambda (word)
-                        (save-excursion
-                          (google-translate-translate "auto"
-                                                      "ja"
-                                                      word))
-                        (with-current-buffer "*Google Translate*"
-                          (buffer-substring-no-properties (point-min)
-                                                          (point-max)))))))
-     ))
+  (set-variable 'ilookup-default "ja")
+  (when (locate-library "google-translate")
+    (defvar ilookup-dict-alist)
+    (add-to-list 'ilookup-dict-alist
+                 '("gt" .
+                   (lambda (word)
+                     (save-excursion
+                       (google-translate-translate "auto"
+                                                   "ja"
+                                                   word))
+                     (with-current-buffer "*Google Translate*"
+                       (buffer-substring-no-properties (point-min)
+                                                       (point-max)))))))
+  )
 
 
 (when (autoload-eval-lazily 'google-translate '(google-translate-translate
