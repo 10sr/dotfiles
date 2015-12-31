@@ -40,18 +40,6 @@ Otherwize hook it."
     (add-hook 'after-init-hook
               func)))
 
-(defmacro defvar-set (symbol value &optional docstring)
-  "Define SYMBOL as a variable and set to VALUE.
-
-Variable will be defined with DOCSTRING if given, otherwise do not set even
-VALUE when defining SYMBOL."
-  `(set (if ,docstring
-            (defvar ,symbol
-              nil
-              ,docstring)
-          (defvar ,symbol))
-        ,value))
-
 (defmacro safe-require-or-eval (feature)
   "Require FEATURE if available.
 
@@ -193,7 +181,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
 
-(defvar-set my-package-list
+(set-variable 'my-package-list
   '(
     markdown-mode
     yaml-mode
@@ -396,8 +384,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                           (expand-file-name "~/dbx/apps/bin"))
 
   (when window-system
-    (defvar-set w32-enable-synthesized-fonts t))
-  (defvar-set w32-apps-modifier 'meta)
+    (set-variable 'w32-enable-synthesized-fonts t))
+  (set-variable 'w32-apps-modifier 'meta)
   (setq file-name-coding-system 'sjis))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -659,9 +647,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     (t
      (:underline "black")))
   "*Face used by hl-line.")
-(defvar-set hl-line-face 'my-hl-line) ;; (setq hl-line-face nil)
+(set-variable 'hl-line-face 'my-hl-line) ;; (setq hl-line-face nil)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
-(defvar-set hl-line-global-modes
+(set-variable 'hl-line-global-modes
   '(not
     term-mode))
 
@@ -752,8 +740,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-(defvar-set bookmark-default-file (concat user-emacs-directory
-                                          "bmk"))
+(set-variable 'bookmark-default-file (concat user-emacs-directory
+                                             "bmk"))
 (add-hook 'recentf-load-hook
           (lambda ()
             (defvar recentf-exclude)
@@ -976,11 +964,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
-(defvar-set ac-ignore-case nil)
+(set-variable 'ac-ignore-case nil)
 
 ;; (when (require 'ensime nil t)
-;;   (defvar-set ensime-ac-case-sensitive t)
-;;   (defvar-set ensime-company-case-sensitive t)
+;;   (set-variable 'ensime-ac-case-sensitive t)
+;;   (set-variable 'ensime-company-case-sensitive t)
 ;;   (add-hook 'scala-mode-hook
 ;;             'ensime-scala-mode-hook)
 ;;   (add-hook 'ensime-scala-mode-hook
@@ -1108,7 +1096,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             (local-set-key
              (kbd "C-x C-e")
              'my-execute-shell-command-current-line)))
-(defvar-set sh-here-document-word "__EOC__")
+(set-variable 'sh-here-document-word "__EOC__")
 
 (defun my-execute-shell-command-current-line ()
   "Run current line as shell command."
@@ -1212,8 +1200,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         (add-hook 'c-mode-common-hook
                   (lambda ()
                     ;; why c-basic-offset in k&r style defaults to 5 ???
-                    (defvar-set c-basic-offset 4)
-                    (defvar-set indent-tabs-mode nil)
+                    (set-variable 'c-basic-offset 4)
+                    (set-variable 'indent-tabs-mode nil)
                     ;; (set-face-foreground 'font-lock-keyword-face "blue")
                     (c-toggle-hungry-state -1)
                     ;; (and (require 'gtags nil t)
@@ -1244,7 +1232,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
               )))
 
 (eval-after-load "js"
-  (defvar-set js-indent-level 2))
+  (set-variable 'js-indent-level 2))
 
 (add-to-list 'interpreter-mode-alist
              '("node" . js-mode))
@@ -1302,20 +1290,20 @@ IF OK-IF-ALREADY-EXISTS is true force download."
           (lambda ()
             (view-mode 1)
             (setq truncate-lines nil)))
-(defvar-set Man-notify-method (if window-system
-                                  'newframe
-                                'aggressive))
+(set-variable 'Man-notify-method (if window-system
+                                     'newframe
+                                   'aggressive))
 
-(defvar-set woman-cache-filename (expand-file-name (concat user-emacs-directory
-                                                           "woman_cache.el")))
+(set-variable 'woman-cache-filename (expand-file-name (concat user-emacs-directory
+                                                              "woman_cache.el")))
 (defalias 'man 'woman)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
 
 (when (autoload-eval-lazily 'python '(python-mode))
-  (defvar-set python-python-command (or (executable-find "python3")
-                                        (executable-find "python")))
+  (set-variable 'python-python-command (or (executable-find "python3")
+                                           (executable-find "python")))
   ;; (defun my-python-run-as-command ()
   ;;   ""
   ;;   (interactive)
@@ -1395,7 +1383,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; (setq term-ansi-default-program shell-file-name)
   (add-hook 'term-setup-hook
             (lambda ()
-              (defvar-set term-display-table (make-display-table))))
+              (set-variable 'term-display-table (make-display-table))))
   (add-hook 'term-mode-hook
             (lambda ()
               (defvar term-raw-map)
@@ -1471,8 +1459,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         )
   ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show)
-  (defvar-set bs-default-configuration "files-and-terminals")
-  (defvar-set bs-default-sort-name "by nothing")
+  (set-variable 'bs-default-configuration "files-and-terminals")
+  (set-variable 'bs-default-sort-name "by nothing")
   (add-hook 'bs-mode-hook
             (lambda ()
               ;; (setq bs-default-configuration "files")
@@ -1859,7 +1847,7 @@ the list."
   (put 'dired-find-alternate-file 'disabled nil)
   ;; when using dired-find-alternate-file
   ;; reuse current dired buffer for the file to open
-  (defvar-set dired-ls-F-marks-symlinks t)
+  (set-variable 'dired-ls-F-marks-symlinks t)
 
   (when (safe-require-or-eval 'ls-lisp)
     (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
@@ -1869,10 +1857,10 @@ the list."
           '("%Y-%m-%d %H:%M"
             "%Y-%m-%d      ")))
 
-  (defvar-set dired-dwim-target t)
-  (defvar-set dired-isearch-filenames t)
-  (defvar-set dired-hide-details-hide-symlink-targets nil)
-  (defvar-set dired-hide-details-hide-information-lines nil)
+  (set-variable 'dired-dwim-target t)
+  (set-variable 'dired-isearch-filenames t)
+  (set-variable 'dired-hide-details-hide-symlink-targets nil)
+  (set-variable 'dired-hide-details-hide-information-lines nil)
 
   ;; (add-hook 'dired-after-readin-hook
   ;;           'my-replace-nasi-none)
@@ -1976,7 +1964,7 @@ Optional prefix ARG says how many lines to unflag; default is one line."
 
 (autoload-eval-lazily 'eshell nil
 
-  (defvar-set eshell-banner-message (format "Welcome to the Emacs shell
+  (set-variable 'eshell-banner-message (format "Welcome to the Emacs shell
 %s
 C-x t to toggling emacs-text-mode
 
@@ -2131,21 +2119,21 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
           (setq eshell-history-index nil))
       ad-do-it))
 
-  (defvar-set eshell-directory-name (concat user-emacs-directory
+  (set-variable 'eshell-directory-name (concat user-emacs-directory
                                             "eshell/"))
-  (defvar-set eshell-term-name "eterm-color")
-  (defvar-set eshell-scroll-to-bottom-on-input t)
-  (defvar-set eshell-cmpl-ignore-case t)
-  (defvar-set eshell-cmpl-cycle-completions nil)
-  (defvar-set eshell-highlight-prompt nil)
+  (set-variable 'eshell-term-name "eterm-color")
+  (set-variable 'eshell-scroll-to-bottom-on-input t)
+  (set-variable 'eshell-cmpl-ignore-case t)
+  (set-variable 'eshell-cmpl-cycle-completions nil)
+  (set-variable 'eshell-highlight-prompt nil)
   (if (eq system-type 'darwin)
-      (defvar-set eshell-ls-initial-args '("-hCFG")
-        (defvar-set eshell-ls-initial-args '("-hCFG"
+      (set-variable 'eshell-ls-initial-args '("-hCFG")
+        (set-variable 'eshell-ls-initial-args '("-hCFG"
                                              "--color=auto"
                                              "--time-style=long-iso"))     ; "-hF")
         ))
 
-  (defvar-set eshell-prompt-function
+  (set-variable 'eshell-prompt-function
     'my-eshell-prompt-function)
 
   (defvar eshell-last-command-status)
