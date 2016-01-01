@@ -343,6 +343,24 @@ IF OK-IF-ALREADY-EXISTS is true force download."
              (file-readable-p user-init-file))
     (load-file user-init-file)))
 
+(safe-require-or-eval 'session)
+
+;; server
+
+(when (safe-require-or-eval 'server)
+  (setq server-name (concat "server"
+                            (number-to-string (emacs-pid))))
+
+  ;; In Cygwin Environment `server-runnning-p' stops when server-use-tcp is nil
+  ;; In Darwin environment, init fails with message like 'Service name too long'
+  ;; when server-use-tcp is nil
+  (when (or (eq system-type
+                'cygwin)
+            (eq system-type
+                'darwin))
+    (setq server-use-tcp t))
+  (server-start))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
 
@@ -369,6 +387,70 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (global-set-key [mouse-3] 'ignore)
 (global-set-key (kbd "<eisu-toggle>") 'ignore)
 (global-set-key (kbd "C-<eisu-toggle>") 'ignore)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; editting
+
+(defun my-copy-whole-line ()
+  "Copy whole line."
+  (interactive)
+  (kill-new (concat (buffer-substring (point-at-bol)
+                                      (point-at-eol))
+                    "\n")))
+
+(setq require-final-newline t)
+(setq kill-whole-line t)
+(setq scroll-conservatively 35
+      scroll-margin 2
+      scroll-step 0)
+(setq-default major-mode 'text-mode)
+(setq next-line-add-newlines nil)
+(setq kill-read-only-ok t)
+(setq truncate-partial-width-windows nil) ; when splitted horizontally
+;; (setq-default line-spacing 0.2)
+(setq-default indicate-empty-lines t)   ; when using x indicate empty line
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+(setq-default indent-line-function nil)
+;; (pc-selection-mode 1) ; make some already defined keybind back to default
+(delete-selection-mode 1)
+(cua-mode 0)
+(setq line-move-visual nil)
+
+;; key bindings
+;; moving around
+;; (global-set-key (kbd "M-j") 'next-line)
+;; (global-set-key (kbd "M-k") 'previous-line)
+;; (global-set-key (kbd "M-h") 'backward-char)
+;; (global-set-key (kbd "M-l") 'forward-char)
+;;(keyboard-translate ?\M-j ?\C-j)
+;; (global-set-key (kbd "M-p") 'backward-paragraph)
+(define-key esc-map "p" 'backward-paragraph)
+;; (global-set-key (kbd "M-n") 'forward-paragraph)
+(define-key esc-map "n" 'forward-paragraph)
+(global-set-key (kbd "C-<up>") 'scroll-down-line)
+(global-set-key (kbd "C-<down>") 'scroll-up-line)
+(global-set-key (kbd "C-<left>") 'scroll-down)
+(global-set-key (kbd "C-<right>") 'scroll-up)
+(global-set-key (kbd "<select>") 'ignore) ; 'previous-line-mark)
+(define-key ctl-x-map (kbd "ESC x") 'execute-extended-command)
+(define-key ctl-x-map (kbd "ESC :") 'eval-expression)
+
+;; C-h and DEL
+(global-set-key (kbd "C-h") (kbd "DEL"))
+
+(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
+(global-set-key (kbd "C-o") (kbd "C-e C-m"))
+
+(define-key esc-map "k" 'my-copy-whole-line)
+;; (global-set-key "\C-z" 'undo) ; undo is M-u
+(define-key esc-map "u" 'undo)
+(define-key esc-map "i" (kbd "ESC TAB"))
+;; (global-set-key (kbd "C-r") 'query-replace-regexp)
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+
+(define-key my-prefix-map (kbd "C-o") 'occur)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
@@ -668,70 +750,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (safe-require-or-eval 'autosave)
   (autosave-set 2))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; editting
-
-(defun my-copy-whole-line ()
-  "Copy whole line."
-  (interactive)
-  (kill-new (concat (buffer-substring (point-at-bol)
-                                      (point-at-eol))
-                    "\n")))
-
-(setq require-final-newline t)
-(setq kill-whole-line t)
-(setq scroll-conservatively 35
-      scroll-margin 2
-      scroll-step 0)
-(setq-default major-mode 'text-mode)
-(setq next-line-add-newlines nil)
-(setq kill-read-only-ok t)
-(setq truncate-partial-width-windows nil) ; when splitted horizontally
-;; (setq-default line-spacing 0.2)
-(setq-default indicate-empty-lines t)   ; when using x indicate empty line
-(setq-default tab-width 4)
-(setq-default indent-tabs-mode nil)
-(setq-default indent-line-function nil)
-;; (pc-selection-mode 1) ; make some already defined keybind back to default
-(delete-selection-mode 1)
-(cua-mode 0)
-(setq line-move-visual nil)
-
-;; key bindings
-;; moving around
-;; (global-set-key (kbd "M-j") 'next-line)
-;; (global-set-key (kbd "M-k") 'previous-line)
-;; (global-set-key (kbd "M-h") 'backward-char)
-;; (global-set-key (kbd "M-l") 'forward-char)
-;;(keyboard-translate ?\M-j ?\C-j)
-;; (global-set-key (kbd "M-p") 'backward-paragraph)
-(define-key esc-map "p" 'backward-paragraph)
-;; (global-set-key (kbd "M-n") 'forward-paragraph)
-(define-key esc-map "n" 'forward-paragraph)
-(global-set-key (kbd "C-<up>") 'scroll-down-line)
-(global-set-key (kbd "C-<down>") 'scroll-up-line)
-(global-set-key (kbd "C-<left>") 'scroll-down)
-(global-set-key (kbd "C-<right>") 'scroll-up)
-(global-set-key (kbd "<select>") 'ignore) ; 'previous-line-mark)
-(define-key ctl-x-map (kbd "ESC x") 'execute-extended-command)
-(define-key ctl-x-map (kbd "ESC :") 'eval-expression)
-
-;; C-h and DEL
-(global-set-key (kbd "C-h") (kbd "DEL"))
-
-(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
-(global-set-key (kbd "C-o") (kbd "C-e C-m"))
-
-(define-key esc-map "k" 'my-copy-whole-line)
-;; (global-set-key "\C-z" 'undo) ; undo is M-u
-(define-key esc-map "u" 'undo)
-(define-key esc-map "i" (kbd "ESC TAB"))
-;; (global-set-key (kbd "C-r") 'query-replace-regexp)
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "C-r") 'isearch-backward-regexp)
-
-(define-key my-prefix-map (kbd "C-o") 'occur)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
 
@@ -774,35 +792,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (safe-require-or-eval 'flycheck)
   (call-after-init 'global-flycheck-mode))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; server
-
-(when (safe-require-or-eval 'server)
-  (setq server-name (concat "server"
-                            (number-to-string (emacs-pid))))
-
-  ;; In Cygwin Environment `server-runnning-p' stops when server-use-tcp is nil
-  ;; In Darwin environment, init fails with message like 'Service name too long'
-  ;; when server-use-tcp is nil
-  (when (or (eq system-type
-                'cygwin)
-            (eq system-type
-                'darwin))
-    (setq server-use-tcp t))
-  (server-start))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
 (set-variable 'ac-ignore-case nil)
-
-;; (when (require 'ensime nil t)
-;;   (set-variable 'ensime-ac-case-sensitive t)
-;;   (set-variable 'ensime-company-case-sensitive t)
-;;   (add-hook 'scala-mode-hook
-;;             'ensime-scala-mode-hook)
-;;   (add-hook 'ensime-scala-mode-hook
-;;             'ac-stop))
 
 (when (autoload-eval-lazily 'term-run '(term-run-shell-command term-run))
   (define-key ctl-x-map "t" 'term-run-shell-command))
@@ -827,8 +820,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         '(setq reb-re-syntax 'foreign-regexp)
         ))
 
-(safe-require-or-eval 'session)
-
 (autoload-eval-lazily 'sql '(sql-mode)
   (safe-require-or-eval 'sql-indent))
 
@@ -839,8 +830,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        "http://www.emacswiki.org/emacs/download/sl.el"
        t)
   (autoload-eval-lazily 'sl))
-
-(defalias 'qcalc 'quick-calc)
 
 (with-eval-after-load 'make-mode
   (defvar makefile-mode-map)
@@ -1013,7 +1002,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;;           t)
   )
 
-(eval-after-load "js"
+(with-eval-after-load 'js
   (set-variable 'js-indent-level 2))
 
 (add-to-list 'interpreter-mode-alist
@@ -1053,18 +1042,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (define-key view-mode-map (kbd "C-m") 'my-rgrep-symbol-at-point))
 (global-set-key "\M-r" 'view-mode)
 ;; (setq view-read-only t)
-
-;; (defun my-view-mode-search-word (word)
-;;   "Search for word current directory and subdirectories.
-;; If called intearctively, find word at point."
-;;   (interactive (list (thing-at-point 'symbol)))
-;;   (if word
-;;       (if (and (require 'gtags nil t)
-;;                (gtags-get-rootpath))
-;;           (gtags-goto-tag word "s")
-;;         (my-rgrep word))
-;;     (message "No word at point.")
-;;     nil))
 
 (add-hook 'Man-mode-hook
           (lambda ()
@@ -1998,6 +1975,8 @@ If ARG is given or called with prefix argument, create new buffer."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
+
+(defalias 'qcalc 'quick-calc)
 
 (defun memo (&optional dir)
   "Open memo.txt in DIR."
