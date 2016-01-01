@@ -1580,7 +1580,7 @@ the list."
   (when (autoload-eval-lazily 'dired-list-all-mode)
     (setq dired-listing-switches "-lhF")
     (with-eval-after-load 'dired
-      (local-set-key "a" 'dired-list-all-mode))))
+      (define-key dired-mode-map "a" 'dired-list-all-mode))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; eshell
@@ -2071,5 +2071,7 @@ Commands are searched from ALIST."
 (info-in-prompt-set read-from-minibuffer
                     read-string
                     completing-read)
+
+()
 
 ;;; emacs.el ends here
