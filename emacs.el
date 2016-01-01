@@ -217,7 +217,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        git-command
 
        ;; 10sr repository
-       10sr-extras
+       ;; 10sr-extras
        terminal-title
        recentf-show
        dired-list-all-mode
