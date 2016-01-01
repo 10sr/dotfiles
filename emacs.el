@@ -1859,6 +1859,7 @@ It looks like:
 
 (add-hook 'eshell-mode-hook
           (lambda ()
+
             (apply 'eshell/addpath exec-path)
             (set (make-local-variable 'scroll-margin) 0)
             ;; (eshell/export "GIT_PAGER=")
@@ -2040,52 +2041,16 @@ Commands are searched from ALIST."
 (define-key ctl-x-map "c" 'compile)
 
 
-;; TODO: make these a library
-(defvar info-in-prompt
-  nil
-  "System info in the form of \"[user@host] \".")
-(setq info-in-prompt
-      (concat "["
+(set (defvar info-in-prompt-format nil
+       "Format text for minibuffer.")
+     `(,(concat "["
               user-login-name
               "@"
               (car (split-string system-name
                                  "\\."))
-              "]"))
-
-(defun my-real-function-subr-p (function)
-  "Return t if FUNCTION is a built-in function even if it is advised."
-  (let* ((advised (and (symbolp function)
-                       (featurep 'advice)
-                       (ad-get-advice-info function)))
-         (real-function
-          (or (and advised (let ((origname (cdr (assq 'origname advised))))
-                             (and (fboundp origname)
-                                  origname)))
-              function))
-         (def (if (symbolp real-function)
-                  (symbol-function real-function)
-                function)))
-    (subrp def)))
-
-;; (my-real-function-subr-p 'my-real-function-subr-p)
-;; (defadvice read-from-minibuffer (before info-in-prompt activate)
-;;   "Show system info when use `read-from-minibuffer'."
-;;   (ad-set-arg 0
-;;               (concat my-system-info
-;;                       (ad-get-arg 0))))
-
-;; (defadvice read-string (before info-in-prompt activate)
-;;   "Show system info when use `read-string'."
-;;   (ad-set-arg 0
-;;               (concat my-system-info
-;;                       (ad-get-arg 0))))
-
-;; (when (< emacs-major-version 24)
-;;   (defadvice completing-read (before info-in-prompt activate)
-;;     "Show system info when use `completing-read'."
-;;     (ad-set-arg 0
-;;                 (concat my-system-info
-;;                         (ad-get-arg 0)))))
+              "][")
+       (:eval (abbreviate-file-name default-directory))
+       "] "))
 
 (defmacro info-in-prompt-set (&rest functions)
   "Set info-in-prompt advices for FUNCTIONS."
@@ -2093,18 +2058,18 @@ Commands are searched from ALIST."
      ,@(mapcar (lambda (f)
                  `(defadvice ,f (before info-in-prompt activate)
                     "Show info in prompt."
-                    (let ((orig (ad-get-arg 0)))
-                      (unless (string-match-p (regexp-quote info-in-prompt)
+                    (let ((orig (ad-get-arg 0))
+                          (str (format-mode-line info-in-prompt-format)))
+                      (unless (string-match-p (concat "^"
+                                                      (regexp-quote str))
                                               orig)
                         (ad-set-arg 0
-                                    (concat info-in-prompt
-                                            " "
+                                    (concat str
                                             orig))))))
                functions)))
 
 (info-in-prompt-set read-from-minibuffer
                     read-string
                     completing-read)
-
 
 ;;; emacs.el ends here
