@@ -21,13 +21,6 @@
 (require 'simple)
 
 
-;; (add-hook 'after-change-major-mode-hook
-;;           (lambda ()
-;;             (message "cmm: %S %s"
-;;                      major-mode
-;;                      buffer-file-name)))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
@@ -38,9 +31,9 @@
 (unless (fboundp 'with-eval-after-load)
   ;; polyfill for Emacs < 24.4
   (defmacro with-eval-after-load (file &rest body)
-  "After FILE is loaded execute BODY."
-  (declare (indent 1) (debug t))
-  `(eval-after-load ,file (quote (progn ,@body)))))
+    "After FILE is loaded execute BODY."
+    (declare (indent 1) (debug t))
+    `(eval-after-load ,file (quote (progn ,@body)))))
 
 (defun call-after-init (func)
   "If `after-init-hook' has been run, call FUNC immediately.
@@ -224,6 +217,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        git-command
 
        ;; 10sr repository
+       10sr-extras
        terminal-title
        recentf-show
        dired-list-all-mode
@@ -738,20 +732,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (define-key my-prefix-map (kbd "C-o") 'occur)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; gmail
-
-(setq mail-interactive t
-      send-mail-function 'smtpmail-send-it)
-;; message-send-mail-function 'smtpmail-send-it
-(set-variable 'smtpmail-smtp-server "smtp.gmail.com")
-(set-variable 'smtpmail-smtp-service 587)
-(set-variable 'smtpmail-starttls-credentials '(("smtp.gmail.com" 587
-                                                "8.slashes@gmail.com" nil)))
-(set-variable 'smtpmail-auth-credentials '(("smtp.gmail.com" 587
-                                            "8.slashes@gmail.com" nil)))
-(set-variable 'user-mail-address "8.slashes@gmail.com")
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
 
@@ -762,10 +742,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (interactive)
   (if (y-or-n-p (concat "kill current buffer? :"))
       (kill-buffer (current-buffer))))
+;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
 (substitute-key-definition 'kill-buffer
                            'my-query-kill-current-buffer
                            global-map)
-;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
@@ -970,8 +950,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (add-hook 'outline-mode-hook
           (lambda ()
-            (if (string-match "\\.md\\'" buffer-file-name)
-                (set (make-local-variable 'outline-regexp) "#+ "))))
+            (when (string-match "\\.md\\'" buffer-file-name)
+              (set (make-local-variable 'outline-regexp) "#+ "))))
 (add-to-list 'auto-mode-alist (cons "\\.ol\\'" 'outline-mode))
 
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
@@ -1128,6 +1108,71 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             (lambda ()
               (my-python-display-python-buffer))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; gauche-mode
+;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
+;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
+
+(when (and (fetch-library
+            "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
+            t)
+           (autoload-eval-lazily 'gauche-mode '(gauche-mode run-scheme)
+             (defvar gauche-mode-map)
+             (defvar scheme-mode-map)
+             (define-key gauche-mode-map
+               (kbd "C-c C-z") 'run-gauche-other-window)
+             (define-key scheme-mode-map
+               (kbd "C-c C-c") 'scheme-send-buffer)
+             (define-key scheme-mode-map
+               (kbd "C-c C-b") 'my-scheme-display-scheme-buffer)))
+  (let ((s (executable-find "gosh")))
+    (set-variable 'scheme-program-name s)
+    (set-variable 'gauche-program-name s))
+
+  (defvar gauche-program-name)
+  (defvar scheme-buffer)
+
+  (defun run-gauche-other-window ()
+    "Run gauche on other window"
+    (interactive)
+    (switch-to-buffer-other-window
+     (get-buffer-create "*scheme*"))
+    (run-gauche))
+
+  (defun run-gauche ()
+    "run gauche"
+    (interactive)
+    (run-scheme gauche-program-name)
+    )
+
+  (defun scheme-send-buffer ()
+    ""
+    (interactive)
+    (scheme-send-region (point-min) (point-max))
+    (my-scheme-display-scheme-buffer)
+    )
+
+  (defun my-scheme-display-scheme-buffer ()
+    ""
+    (interactive)
+    (set-window-text-height (display-buffer scheme-buffer
+                                            t)
+                            7))
+
+  (add-hook 'scheme-mode-hook
+            (lambda ()
+              nil))
+
+  (add-hook 'inferior-scheme-mode-hook
+            (lambda ()
+              ;; (my-scheme-display-scheme-buffer)
+              ))
+  (setq auto-mode-alist
+        (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
+  (setq auto-mode-alist
+        (cons '("\.gaucherc\\'" . gauche-mode) auto-mode-alist))
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GNU GLOBAL(gtags)
 ;; http://uguisu.skr.jp/Windows/gtags.html
@@ -1193,6 +1238,12 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         ;; (dolist (key '("<up>" "<down>" "<right>" "<left>"))
         ;;   (define-key term-raw-map (read-kbd-macro key) 'term-send-raw))
         ;; (define-key term-raw-map "\C-d" 'delete-char)
+        ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
+        ;; (define-key term-raw-map "\C-r" 'term-send-raw)
+        ;; (define-key term-raw-map "\C-s" 'term-send-raw)
+        ;; (define-key term-raw-map "\C-f" 'forward-char)
+        ;; (define-key term-raw-map "\C-b" 'backward-char)
+        ;; (define-key term-raw-map "\C-t" 'set-mark-command)
         )
   (defun my-term-quit-or-send-raw ()
     ""
@@ -1208,22 +1259,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
               (set-variable 'term-display-table (make-display-table))))
   (add-hook 'term-mode-hook
             (lambda ()
-              (unless (memq (current-buffer)
-                            (and (featurep 'multi-term)
-                                 (defvar multi-term-buffer-list)
-                                 ;; current buffer is not multi-term buffer
-                                 multi-term-buffer-list))
-                ;; (define-key term-raw-map "\C-q" 'move-beginning-of-line)
-                ;; (define-key term-raw-map "\C-r" 'term-send-raw)
-                ;; (define-key term-raw-map "\C-s" 'term-send-raw)
-                ;; (define-key term-raw-map "\C-f" 'forward-char)
-                ;; (define-key term-raw-map "\C-b" 'backward-char)
-                ;; (define-key term-raw-map "\C-t" 'set-mark-command)
-                (define-key term-raw-map
-                  "\C-x" (lookup-key (current-global-map) "\C-x"))
-                (define-key term-raw-map
-                  "\C-z" (lookup-key (current-global-map) "\C-z"))
-                )
+              (defvar term-raw-map)
+              ;; (unless (memq (current-buffer)
+              ;;               (and (featurep 'multi-term)
+              ;;                    (defvar multi-term-buffer-list)
+              ;;                    ;; current buffer is not multi-term buffer
+              ;;                    multi-term-buffer-list))
+              ;;   )
               (set (make-local-variable 'scroll-margin) 0)
               ;; (set (make-local-variable 'cua-enable-cua-keys) nil)
               ;; (cua-mode 0)
@@ -1234,6 +1276,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
               (set (make-local-variable (defvar hl-line-range-function))
                    (lambda ()
                      '(0 . 0)))
+              (define-key term-raw-map
+                "\C-x" (lookup-key (current-global-map) "\C-x"))
+              (define-key term-raw-map
+                "\C-z" (lookup-key (current-global-map) "\C-z"))
               ))
   ;; (add-hook 'term-exec-hook 'forward-char)
   )
@@ -1407,71 +1453,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (require 'vc)
 (setq vc-handled-backends '())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; gauche-mode
-;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
-;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
-
-(when (and (fetch-library
-            "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
-            t)
-           (autoload-eval-lazily 'gauche-mode '(gauche-mode run-scheme)
-             (defvar gauche-mode-map)
-             (defvar scheme-mode-map)
-             (define-key gauche-mode-map
-               (kbd "C-c C-z") 'run-gauche-other-window)
-             (define-key scheme-mode-map
-               (kbd "C-c C-c") 'scheme-send-buffer)
-             (define-key scheme-mode-map
-               (kbd "C-c C-b") 'my-scheme-display-scheme-buffer)))
-  (let ((s (executable-find "gosh")))
-    (set-variable 'scheme-program-name s)
-    (set-variable 'gauche-program-name s))
-
-  (defvar gauche-program-name)
-  (defvar scheme-buffer)
-
-  (defun run-gauche-other-window ()
-    "Run gauche on other window"
-    (interactive)
-    (switch-to-buffer-other-window
-     (get-buffer-create "*scheme*"))
-    (run-gauche))
-
-  (defun run-gauche ()
-    "run gauche"
-    (interactive)
-    (run-scheme gauche-program-name)
-    )
-
-  (defun scheme-send-buffer ()
-    ""
-    (interactive)
-    (scheme-send-region (point-min) (point-max))
-    (my-scheme-display-scheme-buffer)
-    )
-
-  (defun my-scheme-display-scheme-buffer ()
-    ""
-    (interactive)
-    (set-window-text-height (display-buffer scheme-buffer
-                                            t)
-                            7))
-
-  (add-hook 'scheme-mode-hook
-            (lambda ()
-              nil))
-
-  (add-hook 'inferior-scheme-mode-hook
-            (lambda ()
-              ;; (my-scheme-display-scheme-buffer)
-              ))
-  (setq auto-mode-alist
-        (cons '("\.gosh\\'" . gauche-mode) auto-mode-alist))
-  (setq auto-mode-alist
-        (cons '("\.gaucherc\\'" . gauche-mode) auto-mode-alist))
-  )
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
 
@@ -1544,24 +1525,7 @@ the list."
     (if (eq (car files)
             t)
         (diff (cadr files) (dired-get-filename))
-      (message "One files must be marked!"))))
-
-(defun my-pop-to-buffer-erase-noselect (buffer-or-name)
-  "pop up buffer using `display-buffer' and return that buffer."
-  (let ((bf (get-buffer-create buffer-or-name)))
-    (with-current-buffer bf
-      (cd ".")
-      (erase-buffer))
-    (display-buffer bf)
-    bf))
-
-(defun my-replace-nasi-none ()
-  ""
-  (save-excursion
-    (let ((buffer-read-only nil))
-      (goto-char (point-min))
-      (while (search-forward "なし" nil t)
-        (replace-match "none")))))
+      (message "One file must be marked!"))))
 
 (defun dired-get-file-info ()
   "dired get file info"
@@ -1619,30 +1583,7 @@ the list."
                               arg)))
     (dired-move-to-filename)))
 
-(defun my-dired-print-current-dir-and-file ()
-  (message "%s  %s"
-           default-directory
-           (buffer-substring-no-properties (point-at-bol)
-                                           (point-at-eol))))
-
-(defun dired-do-execute-as-command ()
-  ""
-  (interactive)
-  (let ((file (dired-get-filename t)))
-    (if (file-executable-p file)
-        (start-process file nil file)
-      (when (y-or-n-p
-             "This file cant be executed.  Mark as executable and go? ")
-        (set-file-modes file
-                        (file-modes-symbolic-to-number "u+x" (file-modes file)))
-        (start-process file nil file)))))
-
 ;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
-
-(defun my-dired-x-open ()
-  ""
-  (interactive)
-  (my-x-open (dired-get-filename t t)))
 
 (if (eq window-system 'mac)
     (setq dired-listing-switches "-lhF")
@@ -1728,330 +1669,295 @@ the list."
     (with-eval-after-load 'dired
       (local-set-key "a" 'dired-list-all-mode))))
 
-;; http://blog.livedoor.jp/tek_nishi/archives/4693204.html
-
-(defvar dired-marker-char)
-(defun my-dired-toggle-mark()
-  (let ((cur (cond ((eq (following-char) dired-marker-char) ?\040)
-                   (t dired-marker-char))))
-    (delete-char 1)
-    (insert cur)))
-
-(defun my-dired-mark (arg)
-  "Toggle mark the current (or next ARG) files.
-If on a subdir headerline, mark all its files except `.' and `..'.
-
-Use \\[dired-unmark-all-files] to remove all marks
-and \\[dired-unmark] on a subdir to remove the marks in
-this subdir."
-
-  (interactive "P")
-  (if (dired-get-subdir)
-      (save-excursion (dired-mark-subdir-files))
-    (let ((inhibit-read-only t))
-      (dired-repeat-over-lines
-       (prefix-numeric-value arg)
-       'my-dired-toggle-mark))))
-
-(defun my-dired-mark-backward (arg)
-  "In Dired, move up lines and toggle mark there.
-Optional prefix ARG says how many lines to unflag; default is one line."
-  (interactive "p")
-  (my-dired-mark (- arg)))
-
-(add-hook 'dired-mode-hook
-          (lambda ()
-            (local-set-key (kbd "SPC") 'my-dired-mark)
-            (local-set-key (kbd "S-SPC") 'my-dired-mark-backward))
-          )
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; eshell
 
-(autoload-eval-lazily 'eshell nil
 
-  (set-variable 'eshell-banner-message (format "Welcome to the Emacs shell
+(set-variable 'eshell-banner-message (format "Welcome to the Emacs shell
 %s
 C-x t to toggling emacs-text-mode
 
 "
-                                               (shell-command-to-string "uname -a")
-                                               ))
+                                             (shell-command-to-string "uname -a")
+                                             ))
 
-  (defvar eshell-text-mode-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "C-x t") 'eshell-text-mode-toggle)
-      map))
+(defvar eshell-text-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-x t") 'eshell-text-mode-toggle)
+    map))
 
-  (define-derived-mode eshell-text-mode text-mode
-    "Eshell-Text"
-    "Text-mode for Eshell."
-    nil)
+(define-derived-mode eshell-text-mode text-mode
+  "Eshell-Text"
+  "Text-mode for Eshell."
+  nil)
 
-  (defun eshell-text-mode-toggle ()
-    "Toggle eshell-text-mode and eshell-mode."
-    (interactive)
-    (cond ((eq major-mode
-               'eshell-text-mode)
-           (goto-char (point-max))
-           (message "Eshell text mode disabled")
-           (eshell-mode))
-          ((eq major-mode
-               'eshell-mode)
-           (message "Eshell text mode enabled")
-           (eshell-write-history)
-           (eshell-text-mode))
-          (t
-           (message "Not in eshell buffer")
-           nil)))
+(defun eshell-text-mode-toggle ()
+  "Toggle eshell-text-mode and eshell-mode."
+  (interactive)
+  (cond ((eq major-mode
+             'eshell-text-mode)
+         (goto-char (point-max))
+         (message "Eshell text mode disabled")
+         (eshell-mode))
+        ((eq major-mode
+             'eshell-mode)
+         (message "Eshell text mode enabled")
+         (eshell-write-history)
+         (eshell-text-mode))
+        (t
+         (message "Not in eshell buffer")
+         nil)))
 
-  (defun my-eshell-backward-delete-char ()
-    (interactive)
-    (when (< (save-excursion
-               (eshell-bol)
-               (point))
+(defun my-eshell-backward-delete-char ()
+  (interactive)
+  (when (< (save-excursion
+             (eshell-bol)
              (point))
-      (backward-delete-char 1)))
+           (point))
+    (backward-delete-char 1)))
 
-  (defun my-file-owner-p (file)
-    "t if FILE is owned by me."
-    (eq (user-uid) (nth 2 (file-attributes file))))
+(defun my-file-owner-p (file)
+  "t if FILE is owned by me."
+  (eq (user-uid) (nth 2 (file-attributes file))))
 
-  "http://www.bookshelf.jp/pukiwiki/pukiwiki.php\
+"http://www.bookshelf.jp/pukiwiki/pukiwiki.php\
 ?Eshell%A4%F2%BB%C8%A4%A4%A4%B3%A4%CA%A4%B9"
-  ;; ;; written by Stefan Reichoer <reichoer@web.de>
-  ;; (defun eshell/less (&rest args)
-  ;;   "Invoke `view-file' on the file.
-  ;; \"less +42 foo\" also goes to line 42 in the buffer."
-  ;;   (if args
-  ;;       (while args
-  ;;         (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
-  ;;             (let* ((line (string-to-number (match-string 1 (pop args))))
-  ;;                    (file (pop args)))
-  ;;               (view-file file)
-  ;;               (goto-line line))
-  ;;           (view-file (pop args))))))
+;; ;; written by Stefan Reichoer <reichoer@web.de>
+;; (defun eshell/less (&rest args)
+;;   "Invoke `view-file' on the file.
+;; \"less +42 foo\" also goes to line 42 in the buffer."
+;;   (if args
+;;       (while args
+;;         (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
+;;             (let* ((line (string-to-number (match-string 1 (pop args))))
+;;                    (file (pop args)))
+;;               (view-file file)
+;;               (goto-line line))
+;;           (view-file (pop args))))))
 
-  (defun eshell/o (&optional file)
-    (my-x-open (or file ".")))
+(defun eshell/o (&optional file)
+  (my-x-open (or file ".")))
 
-  ;; (defun eshell/vi (&rest args)
-  ;;   "Invoke `find-file' on the file.
-  ;; \"vi +42 foo\" also goes to line 42 in the buffer."
-  ;;   (while args
-  ;;     (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
-  ;;         (let* ((line (string-to-number (match-string 1 (pop args))))
-  ;;                (file (pop args)))
-  ;;           (find-file file)
-  ;;           (goto-line line))
-  ;;       (find-file (pop args)))))
+;; (defun eshell/vi (&rest args)
+;;   "Invoke `find-file' on the file.
+;; \"vi +42 foo\" also goes to line 42 in the buffer."
+;;   (while args
+;;     (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
+;;         (let* ((line (string-to-number (match-string 1 (pop args))))
+;;                (file (pop args)))
+;;           (find-file file)
+;;           (goto-line line))
+;;       (find-file (pop args)))))
 
-  (defun eshell/clear ()
-    "Clear the current buffer, leaving one prompt at the top."
-    (interactive)
-    (let ((inhibit-read-only t))
-      (erase-buffer)))
+(defun eshell/clear ()
+  "Clear the current buffer, leaving one prompt at the top."
+  (interactive)
+  (let ((inhibit-read-only t))
+    (erase-buffer)))
 
-  (defvar eshell-prompt-function)
-  (defun eshell-clear ()
-    (interactive)
-    (let ((inhibit-read-only t))
-      (erase-buffer)
-      (insert (funcall eshell-prompt-function))))
+(defvar eshell-prompt-function)
+(defun eshell-clear ()
+  (interactive)
+  (let ((inhibit-read-only t))
+    (erase-buffer)
+    (insert (funcall eshell-prompt-function))))
 
-  (defun eshell/d (&optional dirname switches)
-    "if first arg is omitted open current directory."
-    (dired (or dirname ".") switches))
+(defun eshell/d (&optional dirname switches)
+  "if first arg is omitted open current directory."
+  (dired (or dirname ".") switches))
 
-  (defun eshell/v ()
-    (view-mode 1))
+(defun eshell/v ()
+  (view-mode 1))
 
-  ;; (defun eshell/aaa (&rest args)
-  ;;   (message "%S"
-  ;;            args))
+;; (defun eshell/aaa (&rest args)
+;;   (message "%S"
+;;            args))
 
-  (defalias 'eshell/: 'ignore)
-  (defalias 'eshell/type 'eshell/which)
-  ;; (defalias 'eshell/vim 'eshell/vi)
-  (defalias 'eshell/ff 'find-file)
-  (defalias 'eshell/q 'eshell/exit)
+(defalias 'eshell/: 'ignore)
+(defalias 'eshell/type 'eshell/which)
+;; (defalias 'eshell/vim 'eshell/vi)
+(defalias 'eshell/ff 'find-file)
+(defalias 'eshell/q 'eshell/exit)
 
-  (defun eshell-goto-prompt ()
-    ""
-    (interactive)
-    (goto-char (point-max)))
+(defun eshell-goto-prompt ()
+  ""
+  (interactive)
+  (goto-char (point-max)))
 
-  (defun eshell-delete-char-or-logout (n)
-    (interactive "p")
-    (if (equal (eshell-get-old-input)
-               "")
-        (progn
-          (insert "exit")
-          (eshell-send-input))
-      (delete-char n)))
+(defun eshell-delete-char-or-logout (n)
+  (interactive "p")
+  (if (equal (eshell-get-old-input)
+             "")
+      (progn
+        (insert "exit")
+        (eshell-send-input))
+    (delete-char n)))
 
-  (defun eshell-kill-input ()
-    (interactive)
-    (delete-region (point)
-                   (progn (eshell-bol)
-                          (point))))
+(defun eshell-kill-input ()
+  (interactive)
+  (delete-region (point)
+                 (progn (eshell-bol)
+                        (point))))
 
-  (defalias 'eshell/logout 'eshell/exit)
+(defalias 'eshell/logout 'eshell/exit)
 
-  (defun eshell-cd-default-directory (&optional eshell-buffer-or-name)
-    "open eshell and change wd
+(defun eshell-cd-default-directory (&optional eshell-buffer-or-name)
+  "open eshell and change wd
 if arg given, use that eshell buffer, otherwise make new eshell buffer."
-    (interactive)
-    (let ((dir (expand-file-name default-directory)))
-      (switch-to-buffer (or eshell-buffer-or-name
-                            (eshell t)))
-      (unless (equal dir (expand-file-name default-directory))
-        ;; (cd dir)
-        ;; (eshell-interactive-print (concat "cd " dir "\n"))
-        ;; (eshell-emit-prompt)
-        (goto-char (point-max))
-        (eshell-kill-input)
-        (insert "cd " dir)
-        (eshell-send-input))))
+  (interactive)
+  (let ((dir (expand-file-name default-directory)))
+    (switch-to-buffer (or eshell-buffer-or-name
+                          (eshell t)))
+    (unless (equal dir (expand-file-name default-directory))
+      ;; (cd dir)
+      ;; (eshell-interactive-print (concat "cd " dir "\n"))
+      ;; (eshell-emit-prompt)
+      (goto-char (point-max))
+      (eshell-kill-input)
+      (insert "cd " dir)
+      (eshell-send-input))))
 
-  (defadvice eshell-next-matching-input-from-input
-      ;; do not cycle history
-      (around eshell-history-do-not-cycle activate)
-    (if (= 0
-           (or eshell-history-index
-               0))
-        (progn
-          (delete-region eshell-last-output-end (point))
-          (insert-and-inherit eshell-matching-input-from-input-string)
-          (setq eshell-history-index nil))
-      ad-do-it))
+(defadvice eshell-next-matching-input-from-input
+    ;; do not cycle history
+    (around eshell-history-do-not-cycle activate)
+  (if (= 0
+         (or eshell-history-index
+             0))
+      (progn
+        (delete-region eshell-last-output-end (point))
+        (insert-and-inherit eshell-matching-input-from-input-string)
+        (setq eshell-history-index nil))
+    ad-do-it))
 
-  (set-variable 'eshell-directory-name (concat user-emacs-directory
-                                               "eshell/"))
-  (set-variable 'eshell-term-name "eterm-color")
-  (set-variable 'eshell-scroll-to-bottom-on-input t)
-  (set-variable 'eshell-cmpl-ignore-case t)
-  (set-variable 'eshell-cmpl-cycle-completions nil)
-  (set-variable 'eshell-highlight-prompt nil)
-  (if (eq system-type 'darwin)
-      (set-variable 'eshell-ls-initial-args '("-hCFG")
-                    (set-variable 'eshell-ls-initial-args '("-hCFG"
-                                                            "--color=auto"
-                                                            "--time-style=long-iso"))     ; "-hF")
-                    ))
+(set-variable 'eshell-directory-name (concat user-emacs-directory
+                                             "eshell/"))
+(set-variable 'eshell-term-name "eterm-color")
+(set-variable 'eshell-scroll-to-bottom-on-input t)
+(set-variable 'eshell-cmpl-ignore-case t)
+(set-variable 'eshell-cmpl-cycle-completions nil)
+(set-variable 'eshell-highlight-prompt nil)
+(if (eq system-type 'darwin)
+    (set-variable 'eshell-ls-initial-args '("-hCFG")
+                  (set-variable 'eshell-ls-initial-args '("-hCFG"
+                                                          "--color=auto"
+                                                          "--time-style=long-iso"))     ; "-hF")
+                  ))
 
-  (set (defvar eshell-prompt-function)
-       'my-eshell-prompt-function)
+(set (defvar eshell-prompt-function)
+     'my-eshell-prompt-function)
 
-  (defvar eshell-last-command-status)
-  (defun my-eshell-prompt-function()
-    "Prompt function.
+(defvar eshell-last-command-status)
+(defun my-eshell-prompt-function()
+  "Prompt function.
 
 It looks like:
 
 :: [10sr@darwin:~/][ESHELL]
 :: $
 "
-    (concat ":: ["
-            (let ((str (concat user-login-name
-                               "@"
-                               (car (split-string system-name
-                                                  "\\."))
-                               )))
-              (put-text-property 0
-                                 (length str)
-                                 'face
-                                 'underline
-                                 str)
-              str)
-            ":"
-            (let ((str (abbreviate-file-name default-directory)))
-              (put-text-property 0
-                                 (length str)
-                                 'face
-                                 'underline
-                                 str)
-              str)
-            "][ESHELL]\n:: "
-            (if (eq 0
-                    eshell-last-command-status)
-                ""
-              (format "[STATUS:%d] "
-                      eshell-last-command-status))
-            (if (= (user-uid)
-                   0)
-                "# "
-              "$ ")
+  (concat ":: ["
+          (let ((str (concat user-login-name
+                             "@"
+                             (car (split-string system-name
+                                                "\\."))
+                             )))
+            (put-text-property 0
+                               (length str)
+                               'face
+                               'underline
+                               str)
+            str)
+          ":"
+          (let ((str (abbreviate-file-name default-directory)))
+            (put-text-property 0
+                               (length str)
+                               'face
+                               'underline
+                               str)
+            str)
+          "][ESHELL]\n:: "
+          (if (eq 0
+                  eshell-last-command-status)
+              ""
+            (format "[STATUS:%d] "
+                    eshell-last-command-status))
+          (if (= (user-uid)
+                 0)
+              "# "
+            "$ ")
+          ))
+
+(with-eval-after-load 'eshell
+  (defvar eshell-mode-map)
+  ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
+  ;;                                               (interactive)
+  ;;                             (switch-to-buffer (other-buffer))))
+  ;; (define-key eshell-mode-map (kbd "C-g") (lambda ()
+  ;;                                           (interactive)
+  ;;                                           (eshell-goto-prompt)
+  ;;                                           (keyboard-quit)))
+  (define-key eshell-mode-map (kbd "C-x t") 'eshell-text-mode-toggle)
+  (define-key eshell-mode-map (kbd "C-u") 'eshell-kill-input)
+  (define-key eshell-mode-map (kbd "C-d") 'eshell-delete-char-or-logout)
+  ;; (define-key eshell-mode-map (kbd "C-l")
+  ;;   'eshell-clear)
+  (define-key eshell-mode-map (kbd "DEL") 'my-eshell-backward-delete-char)
+  (define-key eshell-mode-map (kbd "<up>") 'scroll-down-line)
+  (define-key eshell-mode-map (kbd "<down>") 'scroll-up-line)
+  ;; (define-key eshell-mode-map
+  ;;   (kbd "C-p") 'eshell-previous-matching-input-from-input)
+  ;; (define-key eshell-mode-map
+  ;;   (kbd "C-n") 'eshell-next-matching-input-from-input)
+
+  (defvar eshell-virtual-targets)
+  (add-to-list 'eshell-virtual-targets
+               '("/dev/less"
+                 (lambda (str)
+                   (if str
+                       (with-current-buffer nil)))
+                 nil))
+
+  (defvar eshell-visual-commands)
+  (add-to-list 'eshell-visual-commands "vim")
+
+  (defvar eshell-output-filter-functions)
+  (add-to-list 'eshell-output-filter-functions
+               'eshell-truncate-buffer)
+
+  (defvar eshell-command-aliases-list)
+  (mapcar (lambda (alias)
+            (add-to-list 'eshell-command-aliases-list
+                         alias))
+          '(
+            ;; ("ll" "ls -l $*")
+            ;; ("la" "ls -a $*")
+            ;; ("lla" "ls -al $*")
+            ("git" "git -c color.ui=always $*")
+            ("g" "git $*")
+            ("eless"
+             (concat "cat >>> (with-current-buffer "
+                     "(get-buffer-create \"*eshell output\") "
+                     "(erase-buffer) "
+                     "(setq buffer-read-only nil) "
+                     "(current-buffer)) "
+                     "(view-buffer (get-buffer \"*eshell output*\"))"))
             ))
+  )
 
-  (add-hook 'eshell-mode-hook
-            (lambda ()
-              ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
-              ;;                                               (interactive)
-              ;;                             (switch-to-buffer (other-buffer))))
-              ;; (define-key eshell-mode-map (kbd "C-g") (lambda ()
-              ;;                                           (interactive)
-              ;;                                           (eshell-goto-prompt)
-              ;;                                           (keyboard-quit)))
-              (local-set-key (kbd "C-x t") 'eshell-text-mode-toggle)
-              (local-set-key (kbd "C-u") 'eshell-kill-input)
-              (local-set-key (kbd "C-d") 'eshell-delete-char-or-logout)
-              ;; (define-key eshell-mode-map (kbd "C-l")
-              ;;   'eshell-clear)
-              (local-set-key (kbd "DEL") 'my-eshell-backward-delete-char)
-              (local-set-key (kbd "<up>") 'scroll-down-line)
-              (local-set-key (kbd "<down>") 'scroll-up-line)
-              ;; (define-key eshell-mode-map
-              ;;   (kbd "C-p") 'eshell-previous-matching-input-from-input)
-              ;; (define-key eshell-mode-map
-              ;;   (kbd "C-n") 'eshell-next-matching-input-from-input)
+(add-hook 'eshell-mode-hook
+          (lambda ()
+            (apply 'eshell/addpath exec-path)
+            (set (make-local-variable 'scroll-margin) 0)
+            ;; (eshell/export "GIT_PAGER=")
+            ;; (eshell/export "GIT_EDITOR=")
+            (eshell/export "LC_MESSAGES=C")
+            (switch-to-buffer (current-buffer)) ; move buffer top of list
+            (set (make-local-variable (defvar hl-line-range-function))
+                 (lambda ()
+                   '(0 . 0)))
 
-              (apply 'eshell/addpath exec-path)
-              (set (make-local-variable 'scroll-margin) 0)
-              ;; (eshell/export "GIT_PAGER=")
-              ;; (eshell/export "GIT_EDITOR=")
-              (eshell/export "LC_MESSAGES=C")
-              (switch-to-buffer (current-buffer)) ; move buffer top of list
-              (set (make-local-variable (defvar hl-line-range-function))
-                   (lambda ()
-                     '(0 . 0)))
-              (defvar eshell-virtual-targets)
-              (add-to-list 'eshell-virtual-targets
-                           '("/dev/less"
-                             (lambda (str)
-                               (if str
-                                   (with-current-buffer nil)))
-                             nil))
-              ))
-
-  (add-hook 'eshell-mode-hook
-            (lambda ()
-              (defvar eshell-visual-commands)
-              (defvar eshell-output-filter-functions)
-              (defvar eshell-command-aliases-list)
-              (add-to-list 'eshell-visual-commands "vim")
-              ;; (add-to-list 'eshell-visual-commands "git")
-              (add-to-list 'eshell-output-filter-functions
-                           'eshell-truncate-buffer)
-              (mapcar (lambda (alias)
-                        (add-to-list 'eshell-command-aliases-list
-                                     alias))
-                      '(
-                        ;; ("ll" "ls -l $*")
-                        ;; ("la" "ls -a $*")
-                        ;; ("lla" "ls -al $*")
-                        ("git" "git -c color.ui=always $*")
-                        ("g" "git $*")
-                        ("eless"
-                         (concat "cat >>> (with-current-buffer "
-                                 "(get-buffer-create \"*eshell output\") "
-                                 "(erase-buffer) "
-                                 "(setq buffer-read-only nil) "
-                                 "(current-buffer)) "
-                                 "(view-buffer (get-buffer \"*eshell output*\"))"))
-                        )
-                      )))
-  )                          ; eval after load eshell
+            ;; (add-to-list 'eshell-visual-commands "git")
+            ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my-term
@@ -2090,50 +1996,8 @@ If ARG is given or called with prefix argument, create new buffer."
 ;;(define-key my-prefix-map (kbd "C-s") 'my-term)
 (define-key ctl-x-map "i" 'my-term)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; x open
-
-(defvar my-filer nil)
-(setq my-filer (or (executable-find "pcmanfm")
-                   (executable-find "nautilus")))
-(defun my-x-open (file)
-  "Open FILE."
-  (interactive "FOpen File: ")
-  (setq file (expand-file-name file))
-  (message "Opening %s..." file)
-  (cond ((eq system-type 'windows-nt)
-         (call-process "cmd.exe" nil 0 nil
-                       "/c" "start" "" (convert-standard-filename file)))
-        ((eq system-type 'darwin)
-         (call-process "open" nil 0 nil file))
-        ((getenv "DISPLAY")
-         (call-process (or my-filer "xdg-open") nil 0 nil file))
-        (t
-         (find-file file))
-        )
-  ;; (recentf-add-file file)
-  (message "Opening %s...done" file))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
-
-(defun my-git-apply-index-from-buffer (&optional buf)
-  "Git apply buffer.  BUF is buffer to apply.  nil to use current buffer."
-  (interactive)
-  (let ((buf (or buf
-                 (current-buffer)))
-        (file (make-temp-file "git-apply-diff.emacs")))
-    (with-current-buffer buf
-      (write-region (point-min)
-                    (point-max)
-                    file)
-      (call-process "git"
-                    nil
-                    nil
-                    nil
-                    "apply"
-                    "--cached"
-                    file))))
 
 (defun memo (&optional dir)
   "Open memo.txt in DIR."
@@ -2260,132 +2124,6 @@ Commands are searched from ALIST."
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
 
-(defvar sed-in-place-history nil
-  "History of `sed-in-place'.")
-
-(defvar sed-in-place-command "sed --in-place=.bak -e")
-(defun sed-in-place (command)
-  "Issue sed in place COMMAND."
-  (interactive (list (read-shell-command "sed in place: "
-                                         (concat sed-in-place-command " ")
-                                         'sed-in-place-history)))
-  (shell-command command
-                 "*sed in place*"))
-(defun dired-do-sed-in-place (&optional arg)
-  "Issue sed in place dired.  If ARG is given, use the next ARG files."
-  (interactive "p")
-  (require 'dired-aux)
-  (let* ((files (dired-get-marked-files t arg))
-         (expr (dired-mark-read-string "Run sed-in-place for %s: "
-                                       nil
-                                       'sed-in-place
-                                       arg
-                                       files)))
-    (if (equal expr
-               "")
-        (error "No expression specified")
-      (shell-command (concat sed-in-place-command
-                             " '"
-                             expr
-                             "' "
-                             (mapconcat 'shell-quote-argument
-                                        files
-                                        " "))
-                     "*sed in place*"))))
-
-(defun dir-show (&optional dir)
-  "Show DIR list."
-  (interactive)
-  (let ((bf (get-buffer-create "*dir show*"))
-        (list-directory-brief-switches "-C"))
-    (with-current-buffer bf
-      (list-directory (or nil
-                          default-directory)
-                      nil))
-    ))
-
-(defun my-convmv-sjis2utf8-test ()
-  "Run `convmv -r -f sjis -t utf8 *'.
-this is test, does not rename files."
-  (interactive)
-  (shell-command "convmv -r -f sjis -t utf8 *"))
-
-(defun my-convmv-sjis2utf8-notest ()
-  "Run `convmv -r -f sjis -t utf8 * --notest'."
-  (interactive)
-  (shell-command "convmv -r -f sjis -t utf8 * --notest"))
-
-(defun kill-ring-save-buffer-file-name ()
-  "Get current filename."
-  (interactive)
-  (let ((file buffer-file-name))
-    (if file
-        (progn (kill-new file)
-               (message file))
-      (message "not visiting file."))))
-
-(defvar kill-ring-buffer-name "*kill-ring*"
-  "Buffer name for `kill-ring-buffer'.")
-(defun open-kill-ring-buffer ()
-  "Open kill- ring buffer."
-  (interactive)
-  (pop-to-buffer
-   (with-current-buffer (get-buffer-create kill-ring-buffer-name)
-     (erase-buffer)
-     (yank)
-     (text-mode)
-     (current-local-map)
-     (goto-char (point-min))
-     (yank)
-     (current-buffer))))
-
-(defun set-terminal-header (string)
-  "Set terminal header STRING."
-  (let ((savepos "\033[s")
-        (restorepos "\033[u")
-        (movecursor "\033[0;%dH")
-        (inverse "\033[7m")
-        (restorecolor "\033[0m")
-        (cols (frame-parameter nil 'width))
-        (length (length string)))
-    ;; (redraw-frame (selected-frame))
-    (send-string-to-terminal (concat savepos
-                                     (format movecursor
-                                             (1+ (- cols length)))
-                                     inverse
-                                     string
-                                     restorecolor
-                                     restorepos))
-    ))
-
-(defun my-set-terminal-header ()
-  "Set terminal header."
-  (set-terminal-header (concat " "
-                               user-login-name
-                               "@"
-                               (car (split-string system-name
-                                                  "\\."))
-                               " "
-                               (format-time-string "%Y/%m/%d %T %z")
-                               " ")))
-
-;; (run-with-timer
-;;  0.1
-;;  1
-;;  'my-set-terminal-header)
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; savage emacs
-;; ;; when enabled emacs fails to complete
-;; ;; http://e-arrows.sakura.ne.jp/2010/05/emacs-should-be-more-savage.html
-;; (defadvice message (before message-for-stupid (arg &rest arg2) activate)
-;;   (setq arg
-;;         (concat arg
-;;                 (if (eq nil
-;;                         (string-match "\\. *$"
-;;                                       arg))
-;;                     ".")
-;;                 " Stupid!")))
 
 ;; TODO: make these a library
 (defvar info-in-prompt
