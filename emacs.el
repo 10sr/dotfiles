@@ -738,7 +738,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (expand-file-name (concat user-emacs-directory
                                "bmk")))
 (with-eval-after-load 'recentf
-  (defvar recentf-exclude)
+  (defvar recentf-exclude nil)
   (add-to-list 'recentf-exclude
                (regexp-quote bookmark-default-file)))
 
@@ -832,14 +832,14 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (autoload-eval-lazily 'sl))
 
 (with-eval-after-load 'make-mode
-  (defvar makefile-mode-map)
+  (defvar makefile-mode-map (make-sparse-keymap))
   (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)
   ;; this functions is set in write-file-functions, i cannot find any
   ;; good way to remove this.
   (fset 'makefile-warn-suspicious-lines 'ignore))
 
 (with-eval-after-load 'verilog-mode
-  (defvar verilog-mode-map)
+  (defvar verilog-mode-map (make-sparse-keymap))
   (define-key verilog-mode-map ";" 'self-insert-command))
 
 (setq diff-switches "-u")
@@ -898,11 +898,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                   '("build.gradle\\'" . groovy-mode)))
 
 (with-eval-after-load 'yaml-mode
-  (defvar yaml-mode-map)
+  (defvar yaml-mode-map (make-sparse-keymap))
   (define-key yaml-mode-map (kbd "C-m") 'newline))
 
 (with-eval-after-load 'html-mode
-  (defvar html-mode-map)
+  (defvar html-mode-map (make-sparse-keymap))
   (define-key html-mode-map (kbd "C-m") 'reindent-then-newline-and-indent))
 
 (with-eval-after-load 'text-mode
@@ -912,7 +912,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
              (expand-file-name "~/.info/emacs-ja"))
 
 (with-eval-after-load 'apropos
-  (defvar apropos-mode-map)
+  (defvar apropos-mode-map (make-sparse-keymap))
   (define-key apropos-mode-map "n" 'next-line)
   (define-key apropos-mode-map "p" 'previous-line))
 
@@ -946,7 +946,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (when (autoload-eval-lazily 'markdown-mode
           '(markdown-mode gfm-mode)
-        (defvar gfm-mode-map)
+        (defvar gfm-mode-map (make-sparse-keymap))
         (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline))
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'gfm-mode))
   (set-variable 'markdown-command (or (executable-find "markdown")
@@ -989,7 +989,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
-  (defvar js2-mode-map)
+  (defvar js2-mode-map (make-sparse-keymap))
   (define-key js2-mode-map (kbd "C-m") (lambda ()
                                          (interactive)
                                          (js2-enter-key)
@@ -1024,7 +1024,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (setq uniquify-min-dir-content 1))
 
 (with-eval-after-load 'view
-  (defvar view-mode-map)
+  (defvar view-mode-map (make-sparse-keymap))
   (define-key view-mode-map "j" 'scroll-up-line)
   (define-key view-mode-map "k" 'scroll-down-line)
   (define-key view-mode-map "v" 'toggle-read-only)
@@ -1059,12 +1059,12 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; python
 
 (when (autoload-eval-lazily 'python '(python-mode)
-        (defvar python-mode-map)
+        (defvar python-mode-map (make-sparse-keymap))
         (define-key python-mode-map (kbd "C-c C-e") 'my-python-run-as-command)
         (define-key python-mode-map (kbd "C-c C-b") 'my-python-display-python-buffer)
         (define-key python-mode-map (kbd "C-m") 'newline-and-indent)
 
-        (defvar inferior-python-mode-map)
+        (defvar inferior-python-mode-map (make-sparse-keymap))
         (define-key inferior-python-mode-map (kbd "<up>") 'comint-previous-input)
         (define-key inferior-python-mode-map (kbd "<down>") 'comint-next-input)
         )
@@ -1077,7 +1077,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (defun my-python-display-python-buffer ()
     ""
     (interactive)
-    (defvar python-buffer)
+    (defvar python-buffer nil)
     (set-window-text-height (display-buffer python-buffer
                                             t)
                             7))
@@ -1094,8 +1094,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
             "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
             t)
            (autoload-eval-lazily 'gauche-mode '(gauche-mode run-scheme)
-             (defvar gauche-mode-map)
-             (defvar scheme-mode-map)
+             (defvar gauche-mode-map (make-sparse-keymap))
+             (defvar scheme-mode-map (make-sparse-keymap))
              (define-key gauche-mode-map
                (kbd "C-c C-z") 'run-gauche-other-window)
              (define-key scheme-mode-map
@@ -1106,8 +1106,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     (set-variable 'scheme-program-name s)
     (set-variable 'gauche-program-name s))
 
-  (defvar gauche-program-name)
-  (defvar scheme-buffer)
+  (defvar gauche-program-name nil)
+  (defvar scheme-buffer nil)
 
   (defun run-gauche-other-window ()
     "Run gauche on other window"
@@ -1150,41 +1150,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         (cons '("\.gaucherc\\'" . gauche-mode) auto-mode-alist))
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; GNU GLOBAL(gtags)
-;; http://uguisu.skr.jp/Windows/gtags.html
-;; http://eigyr.dip.jp/gtags.html
-;; http://cha.la.coocan.jp/doc/gnu_global.html
-
-(let ((d "/opt/local/share/gtags/"))
-  (and (file-directory-p d)
-       (add-to-list 'load-path
-                    d)))
-
-(when (autoload-eval-lazily 'gtags '(gtags-mode)
-        ;; (local-set-key "\M-t" 'gtags-find-tag)
-        ;; (local-set-key "\M-r" 'gtags-find-rtag)
-        ;; (local-set-key "\M-s" 'gtags-find-symbol)
-        ;; (local-set-key "\C-t" 'gtags-pop-stack)
-        (defvar gtags-mode-map)
-        (define-key gtags-mode-map (kbd "C-x t h")
-          'gtags-find-tag-from-here)
-        (define-key gtags-mode-map (kbd "C-x t t") 'gtags-find-tag)
-        (define-key gtags-mode-map (kbd "C-x t r") 'gtags-find-rtag)
-        (define-key gtags-mode-map (kbd "C-x t s") 'gtags-find-symbol)
-        (define-key gtags-mode-map (kbd "C-x t p") 'gtags-find-pattern)
-        (define-key gtags-mode-map (kbd "C-x t f") 'gtags-find-file)
-        (define-key gtags-mode-map (kbd "C-x t b") 'gtags-pop-stack) ;back
-
-        (defvar gtags-select-mode-map)
-        (define-key gtags-select-mode-map (kbd "C-m") 'gtags-select-tag)
-        )
-  (add-hook 'gtags-mode-hook
-            (lambda ()
-              (view-mode 1)
-              (set-variable 'gtags-select-buffer-single t)
-              )))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; term mode
 
@@ -1195,7 +1160,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (set-variable 'multi-term-dedicated-window-height 20))
 
 (when (autoload-eval-lazily 'term '(term ansi-term)
-        (defvar term-raw-map)
+        (defvar term-raw-map (make-sparse-keymap))
         ;; (define-key term-raw-map "\C-xl" 'term-line-mode)
         ;; (define-key term-mode-map "\C-xc" 'term-char-mode)
         (define-key term-raw-map (kbd "<up>") 'scroll-down-line)
@@ -1236,7 +1201,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
               (set-variable 'term-display-table (make-display-table))))
   (add-hook 'term-mode-hook
             (lambda ()
-              (defvar term-raw-map)
+              (defvar term-raw-map (make-sparse-keymap))
               ;; (unless (memq (current-buffer)
               ;;               (and (featurep 'multi-term)
               ;;                    (defvar multi-term-buffer-list)
@@ -1302,35 +1267,6 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (let ((iswitchb-default-method 'display))
     (call-interactively 'iswitchb-buffer)))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; sdic
-
-(when (autoload-eval-lazily 'sdic '(sdic-describe-word-at-point))
-  ;; (define-key my-prefix-map "\C-w" 'sdic-describe-word)
-  (defvar sdic-buffer-name)
-  (define-key my-prefix-map "\C-t" 'sdic-describe-word-at-point-echo)
-  (defun sdic-describe-word-at-point-echo ()
-    ""
-    (interactive)
-    (save-window-excursion
-      (sdic-describe-word-at-point))
-    (with-current-buffer sdic-buffer-name
-      (message (buffer-substring (point-min)
-                                 (progn (goto-char (point-min))
-                                        (or (and (re-search-forward "^\\w"
-                                                                    nil
-                                                                    t
-                                                                    4)
-                                                 (progn (forward-line -1) t)
-                                                 (point-at-eol))
-                                            (point-max)))))))
-
-  (set-variable 'sdic-eiwa-dictionary-list '((sdicf-client "/usr/share/dict/gene.sdic")))
-  (set-variable ' sdic-waei-dictionary-list
-                  '((sdicf-client "/usr/share/dict/jedict.sdic" (add-keys-to-headword t))))
-  (set-variable 'sdic-disable-select-window t)
-  (set-variable ' sdic-window-height 7))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1405,7 +1341,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
   (set-variable 'ilookup-default "ja")
   (when (locate-library "google-translate")
-    (defvar ilookup-dict-alist)
+    (defvar ilookup-dict-alist nil)
     (add-to-list 'ilookup-dict-alist
                  '("gt" .
                    (lambda (word)
@@ -1594,7 +1530,7 @@ the list."
 ;;             (dired ".")))
 
 (with-eval-after-load 'dired
-  (defvar dired-mode-map)
+  (defvar dired-mode-map (make-sparse-keymap))
   (define-key dired-mode-map "o" 'my-dired-x-open)
   (define-key dired-mode-map "i" 'dired-get-file-info)
   (define-key dired-mode-map "f" 'find-file)
@@ -1809,7 +1745,7 @@ if arg given, use that eshell buffer, otherwise make new eshell buffer."
 (set-variable 'eshell-directory-name (concat user-emacs-directory
                                              "eshell/"))
 (set-variable 'eshell-term-name "eterm-color")
-(set-variable 'eshell-scroll-to-bottom-on-input t)
+(set-variable 'eshell-scroll-to-bottom-on-input 'this)
 (set-variable 'eshell-cmpl-ignore-case t)
 (set-variable 'eshell-cmpl-cycle-completions nil)
 (set-variable 'eshell-highlight-prompt nil)
@@ -1865,7 +1801,7 @@ It looks like:
           ))
 
 (with-eval-after-load 'eshell
-  (defvar eshell-mode-map)
+  (defvar eshell-mode-map (make-sparse-keymap))
   ;; (define-key eshell-mode-map (kbd "C-x C-x") (lambda ()
   ;;                                               (interactive)
   ;;                             (switch-to-buffer (other-buffer))))
@@ -1886,7 +1822,7 @@ It looks like:
   ;; (define-key eshell-mode-map
   ;;   (kbd "C-n") 'eshell-next-matching-input-from-input)
 
-  (defvar eshell-virtual-targets)
+  (defvar eshell-virtual-targets nil)
   (add-to-list 'eshell-virtual-targets
                '("/dev/less"
                  (lambda (str)
@@ -1894,14 +1830,14 @@ It looks like:
                        (with-current-buffer nil)))
                  nil))
 
-  (defvar eshell-visual-commands)
+  (defvar eshell-visual-commands nil)
   (add-to-list 'eshell-visual-commands "vim")
 
-  (defvar eshell-output-filter-functions)
+  (defvar eshell-output-filter-functions nil)
   (add-to-list 'eshell-output-filter-functions
                'eshell-truncate-buffer)
 
-  (defvar eshell-command-aliases-list)
+  (defvar eshell-command-aliases-list nil)
   (mapcar (lambda (alias)
             (add-to-list 'eshell-command-aliases-list
                          alias))
