@@ -2056,7 +2056,7 @@ Commands are searched from ALIST."
   "Set info-in-prompt advices for FUNCTIONS."
   `(progn
      ,@(mapcar (lambda (f)
-                 `(defadvice ,f (before info-in-prompt activate)
+                 `(defadvice ,f (before info-in-prompt-modify)
                     "Show info in prompt."
                     (let ((orig (ad-get-arg 0))
                           (str (format-mode-line info-in-prompt-format)))
@@ -2072,6 +2072,15 @@ Commands are searched from ALIST."
                     read-string
                     completing-read)
 
-()
+(define-minor-mode info-in-prompt-mode
+  "Prepend some infomation to prompt of minibuffer."
+  :init-value nil
+  :global t
+  :lighter ""
+  (if info-in-prompt-mode
+      (ad-activate-regexp "^info-in-prompt-modify$")
+    (ad-deactivate-regexp "^info-in-prompt-modify$")))
+
+(info-in-prompt-mode 1)
 
 ;;; emacs.el ends here
