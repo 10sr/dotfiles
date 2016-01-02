@@ -2057,7 +2057,7 @@ Commands are searched from ALIST."
 (define-key ctl-x-map "c" 'compile)
 
 
-(set (defvar prompt-line-format nil
+(set (defvar prompt-text-format nil
        "Format text to be prepended to prompt texts of minibuffer.
 The value should be a mode-line format: see `mode-line-fomat' for details.")
      `(,(concat "["
@@ -2072,14 +2072,14 @@ The value should be a mode-line format: see `mode-line-fomat' for details.")
                    (git-ps1-mode-get-current "[GIT:%s]")))
        " "))
 
-(defmacro prompt-line--defadvice (&rest functions)
-  "Set prompt-line advices for FUNCTIONS."
+(defmacro prompt-text--defadvice (&rest functions)
+  "Set prompt-text advices for FUNCTIONS."
   `(progn
      ,@(mapcar (lambda (f)
-                 `(defadvice ,f (before prompt-line-modify)
+                 `(defadvice ,f (before prompt-text-modify)
                     "Show info in prompt."
                     (let ((orig (ad-get-arg 0))
-                          (str (format-mode-line prompt-line-format)))
+                          (str (format-mode-line prompt-text-format)))
                       (unless (string-match-p (concat "^"
                                                       (regexp-quote str))
                                               orig)
@@ -2088,19 +2088,19 @@ The value should be a mode-line format: see `mode-line-fomat' for details.")
                                             orig))))))
                functions)))
 
-(prompt-line--defadvice read-from-minibuffer
+(prompt-text--defadvice read-from-minibuffer
                            read-string
                            completing-read)
 
-(define-minor-mode prompt-line-mode
+(define-minor-mode prompt-text-mode
   "Prepend some infomation to prompt of minibuffer.
-Set `prompt-line-format' to configure what text to prepend."
+Set `prompt-text-format' to configure what text to prepend."
   :init-value nil
   :global t
   :lighter ""
-  (if prompt-line-mode
-      (ad-activate-regexp "^prompt-line-modify$")
-    (ad-deactivate-regexp "^prompt-line-modify$")))
+  (if prompt-text-mode
+      (ad-activate-regexp "^prompt-text-modify$")
+    (ad-deactivate-regexp "^prompt-text-modify$")))
 
 (prompt-line-mode 1)
 
