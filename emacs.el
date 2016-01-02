@@ -208,6 +208,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        restart-emacs
        fill-column-indicator
        pkgbuild-mode
+       minibuffer-line
 
        scala-mode2
        ensime
@@ -570,6 +571,21 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; I dont know these bindings are good
 (define-key minibuffer-local-map (kbd "C-p") (kbd "ESC p"))
 (define-key minibuffer-local-map (kbd "C-n") (kbd "ESC n"))
+
+(when (safe-require-or-eval 'minibuffer-line)
+  (set-face-underline 'minibuffer-line nil)
+  (set-variable 'minibuffer-line-format
+                `(,(concat user-login-name
+                           "@"
+                           (car (split-string system-name
+                                              "\\."))
+                           ":")
+                  (:eval (abbreviate-file-name default-directory))
+                  " "
+                  (:eval (and (fboundp 'git-ps1-mode-get-current)
+                              (git-ps1-mode-get-current "[GIT:%s]")))))
+  (minibuffer-line-mode 1)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
@@ -2041,8 +2057,9 @@ Commands are searched from ALIST."
 (define-key ctl-x-map "c" 'compile)
 
 
-(set (defvar info-in-prompt-format nil
-       "Format text for minibuffer.")
+(set (defvar prompt-line-format nil
+       "Format text to be prepended to prompt texts of minibuffer.
+The value should be a mode-line format: see `mode-line-fomat' for details.")
      `(,(concat "["
               user-login-name
               "@"
@@ -2050,16 +2067,19 @@ Commands are searched from ALIST."
                                  "\\."))
               "][")
        (:eval (abbreviate-file-name default-directory))
-       "] "))
+       "]"
+       (:eval (and (fboundp 'git-ps1-mode-get-current)
+                   (git-ps1-mode-get-current "[GIT:%s]")))
+       " "))
 
-(defmacro info-in-prompt-set (&rest functions)
-  "Set info-in-prompt advices for FUNCTIONS."
+(defmacro prompt-line--defadvice (&rest functions)
+  "Set prompt-line advices for FUNCTIONS."
   `(progn
      ,@(mapcar (lambda (f)
-                 `(defadvice ,f (before info-in-prompt-modify)
+                 `(defadvice ,f (before prompt-line-modify)
                     "Show info in prompt."
                     (let ((orig (ad-get-arg 0))
-                          (str (format-mode-line info-in-prompt-format)))
+                          (str (format-mode-line prompt-line-format)))
                       (unless (string-match-p (concat "^"
                                                       (regexp-quote str))
                                               orig)
@@ -2068,19 +2088,20 @@ Commands are searched from ALIST."
                                             orig))))))
                functions)))
 
-(info-in-prompt-set read-from-minibuffer
-                    read-string
-                    completing-read)
+(prompt-line--defadvice read-from-minibuffer
+                           read-string
+                           completing-read)
 
-(define-minor-mode info-in-prompt-mode
-  "Prepend some infomation to prompt of minibuffer."
+(define-minor-mode prompt-line-mode
+  "Prepend some infomation to prompt of minibuffer.
+Set `prompt-line-format' to configure what text to prepend."
   :init-value nil
   :global t
   :lighter ""
-  (if info-in-prompt-mode
-      (ad-activate-regexp "^info-in-prompt-modify$")
-    (ad-deactivate-regexp "^info-in-prompt-modify$")))
+  (if prompt-line-mode
+      (ad-activate-regexp "^prompt-line-modify$")
+    (ad-deactivate-regexp "^prompt-line-modify$")))
 
-(info-in-prompt-mode 1)
+(prompt-line-mode 1)
 
 ;;; emacs.el ends here
