@@ -2061,11 +2061,11 @@ Commands are searched from ALIST."
        "Format text to be prepended to prompt texts of minibuffer.
 The value should be a mode-line format: see `mode-line-fomat' for details.")
      `(,(concat "["
-              user-login-name
-              "@"
-              (car (split-string system-name
-                                 "\\."))
-              "][")
+                user-login-name
+                "@"
+                (car (split-string system-name
+                                   "\\."))
+                "][")
        (:eval (abbreviate-file-name default-directory))
        "]"
        (:eval (and (fboundp 'git-ps1-mode-get-current)
@@ -2089,8 +2089,8 @@ The value should be a mode-line format: see `mode-line-fomat' for details.")
                functions)))
 
 (prompt-text--defadvice read-from-minibuffer
-                           read-string
-                           completing-read)
+                        read-string
+                        completing-read)
 
 (define-minor-mode prompt-text-mode
   "Prepend some infomation to prompt of minibuffer.
@@ -2102,6 +2102,6 @@ Set `prompt-text-format' to configure what text to prepend."
       (ad-activate-regexp "^prompt-text-modify$")
     (ad-deactivate-regexp "^prompt-text-modify$")))
 
-(prompt-line-mode 1)
+(prompt-text-mode 1)
 
 ;;; emacs.el ends here
