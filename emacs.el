@@ -2070,7 +2070,7 @@ The value should be a mode-line format: see `mode-line-fomat' for details.")
        "]"
        (:eval (and (fboundp 'git-ps1-mode-get-current)
                    (git-ps1-mode-get-current "[GIT:%s]")))
-       " "))
+       "\n"))
 
 (defmacro prompt-text--defadvice (&rest functions)
   "Set prompt-text advices for FUNCTIONS."
