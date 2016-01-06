@@ -966,7 +966,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline))
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'gfm-mode))
   (set-variable 'markdown-command (or (executable-find "markdown")
-                                      (executable-find "markdown.pl")))
+                                      (executable-find "markdown.pl")
+                                      ""))
   (add-hook 'markdown-mode-hook
             (lambda ()
               (outline-minor-mode 1)
