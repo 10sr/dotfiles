@@ -12,10 +12,11 @@ git_auth ?= t
 dotfiles_git_path := 10sr/dotfiles.git
 
 ifneq (,$(git_auth))
+$(warning 'git_auth' is not empty. Use git repository with push right.)
 dotfiles_git := git@github.com:$(dotfiles_git_path)
 else
 $(warning 'git_auth' is empty. Use public read-only git repository.)
-dotfiles_git := http://github.com/$(dotfiles_git_path)
+dotfiles_git := https://github.com/$(dotfiles_git_path)
 endif
 
 
@@ -75,11 +76,15 @@ git ?= $(shell which git 2>/dev/null)
 curl ?= $(shell which curl 2>/dev/null)
 grep ?= GREP_OPTIONS= $(shell which grep 2>/dev/null)
 
+ifeq ($(emacs),)
+$(warning Emacs program not found)
+endif
+
 files := Makefile emacs.el profile shrc tmux.conf vimrc _keysnail.js
 
 # Targets
 
-all: default
+default: help
 
 tests := test-el
 test: test-syntax $(tests)
@@ -153,6 +158,26 @@ endif
 ifneq (,$(findstring Linux,$(uname)))
 islinux := t
 endif
+
+
+# Help
+# ====
+
+help_message := "Available targets are:\
+	setup-repository\
+		Clone git repository"
+
+help:
+	@echo "10sr Makefile Help:"
+	@echo
+	@echo "Some of available targers are:"
+	@echo "    setup-repository    Clone git repository"
+	@echo "    setup-rc            Init rc files"
+	@echo "    setup-gitconf       Run some git config"
+	@echo "    run-emacs           Start Emacs process with dotfiles init file"
+
+
+
 
 
 
@@ -270,7 +295,7 @@ setup-darwin-daemon:
 # -----------
 
 setup-emacs: $(dotfiles_dir)/emacs.el
-	$(emacs) -q --batch \
+	test -n "$(emacs)" && $(emacs) -q --batch \
 		--eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" \
 		--load $< \
 		-f my-auto-install-package
@@ -385,7 +410,7 @@ $(home)/.tmux.conf: line_comment := \#
 # ===
 
 run-emacs: $(home)/.emacs.d/init.el
-	$(emacs) -q \
+	test -n "$(emacs)" && $(emacs) -q \
 		--eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" --load "$<"
 
 
