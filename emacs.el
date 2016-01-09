@@ -8,6 +8,8 @@
 ;; SETUP_LOAD:   (and (file-readable-p file)
 ;; SETUP_LOAD:        (load-file file)))
 
+(setq debug-on-error t)
+
 ;; make directories
 (unless (file-directory-p (expand-file-name user-emacs-directory))
   (make-directory (expand-file-name user-emacs-directory)))
@@ -361,6 +363,21 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                 'darwin))
     (setq server-use-tcp t))
   (server-start))
+
+;; MSYS2 fix
+
+(when (eq system-type
+          'windows-nt)
+  (setq shell-file-name
+        (executable-find "bash"))
+  '(setq function-key-map
+         `(,@function-key-map ([pause] . [?\C-c])
+                             ))
+  (define-key key-translation-map
+    (kbd "<pause>")
+    (kbd "C-c"))
+  '(keyboard-translate [pause]
+                      (kbd "C-c")p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
