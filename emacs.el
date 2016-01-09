@@ -377,7 +377,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
     (kbd "<pause>")
     (kbd "C-c"))
   '(keyboard-translate [pause]
-                      (kbd "C-c")p))
+                       (kbd "C-c")p)
+  ;; TODO: move to other place later
+  (when (not window-system)
+    (setq interprogram-paste-function nil)
+    (setq interprogram-cut-function nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global keys
