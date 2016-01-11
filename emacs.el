@@ -219,6 +219,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
        git-command
 
+       prompt-text
+
        ;; 10sr repository
        ;; 10sr-extras
        terminal-title
@@ -607,6 +609,22 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                               (git-ps1-mode-get-current "[GIT:%s]")))))
   (minibuffer-line-mode 1)
   )
+
+(when (safe-require-or-eval 'prompt-text)
+
+  (set-variable 'prompt-text-format
+                `(,(concat "["
+                           user-login-name
+                           "@"
+                           (car (split-string system-name
+                                              "\\."))
+                           "][")
+                  (:eval (abbreviate-file-name default-directory))
+                  "]"
+                  (:eval (and (fboundp 'git-ps1-mode-get-current)
+                              (git-ps1-mode-get-current "[GIT:%s]")))
+                  "\n"))
+  (prompt-text-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
@@ -2077,53 +2095,5 @@ Commands are searched from ALIST."
 ;;   (compile "make -k"))
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
-
-
-(set (defvar prompt-text-format nil
-       "Format text to be prepended to prompt texts of minibuffer.
-The value should be a mode-line format: see `mode-line-fomat' for details.")
-     `(,(concat "["
-                user-login-name
-                "@"
-                (car (split-string system-name
-                                   "\\."))
-                "][")
-       (:eval (abbreviate-file-name default-directory))
-       "]"
-       (:eval (and (fboundp 'git-ps1-mode-get-current)
-                   (git-ps1-mode-get-current "[GIT:%s]")))
-       "\n"))
-
-(defmacro prompt-text--defadvice (&rest functions)
-  "Set prompt-text advices for FUNCTIONS."
-  `(progn
-     ,@(mapcar (lambda (f)
-                 `(defadvice ,f (before prompt-text-modify)
-                    "Show info in prompt."
-                    (let ((orig (ad-get-arg 0))
-                          (str (format-mode-line prompt-text-format)))
-                      (unless (string-match-p (concat "^"
-                                                      (regexp-quote str))
-                                              orig)
-                        (ad-set-arg 0
-                                    (concat str
-                                            orig))))))
-               functions)))
-
-(prompt-text--defadvice read-from-minibuffer
-                        read-string
-                        completing-read)
-
-(define-minor-mode prompt-text-mode
-  "Prepend some infomation to prompt of minibuffer.
-Set `prompt-text-format' to configure what text to prepend."
-  :init-value nil
-  :global t
-  :lighter ""
-  (if prompt-text-mode
-      (ad-activate-regexp "^prompt-text-modify$")
-    (ad-deactivate-regexp "^prompt-text-modify$")))
-
-(prompt-text-mode 1)
 
 ;;; emacs.el ends here
