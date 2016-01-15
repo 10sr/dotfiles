@@ -340,6 +340,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (setq visible-bell t)
 (setq ring-bell-function 'ignore)
 (mouse-avoidance-mode 'banish)
+(setq echo-keystrokes 0.1)
 
 (defun reload-init-file ()
   "Reload Emacs init file."
