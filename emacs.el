@@ -533,7 +533,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (safe-require-or-eval 'time)
   (setq display-time-interval 29)
   (setq display-time-day-and-date t)
-  (setq display-time-format "%a, %d %b %Y %T")
+  (setq display-time-format "%Y/%m/%d %a %H:%M")
   (if window-system
       (display-time-mode 0)
     (display-time-mode 1))
@@ -598,16 +598,20 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (when (safe-require-or-eval 'minibuffer-line)
   (set-face-underline 'minibuffer-line nil)
+  (set-variable 'minibuffer-line-refresh-interval
+                25)
   (set-variable 'minibuffer-line-format
                 `(,(concat user-login-name
                            "@"
                            (car (split-string system-name
                                               "\\."))
                            ":")
-                  (:eval (abbreviate-file-name default-directory))
-                  " "
+                  (:eval (abbreviate-file-name (or buffer-file-name
+                                                   default-directory)))
                   (:eval (and (fboundp 'git-ps1-mode-get-current)
-                              (git-ps1-mode-get-current "[GIT:%s]")))))
+                              (git-ps1-mode-get-current " [GIT:%s]")))
+                  " "
+                  display-time-string))
   (minibuffer-line-mode 1)
   )
 
