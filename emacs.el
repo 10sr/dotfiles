@@ -765,6 +765,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; file handling
 
 (when (safe-require-or-eval 'editorconfig)
+  (set-variable 'editorconfig-get-properties-function
+                'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1))
 
 (setq revert-without-query '(".+"))
