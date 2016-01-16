@@ -628,7 +628,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                   "]"
                   (:eval (and (fboundp 'git-ps1-mode-get-current)
                               (git-ps1-mode-get-current "[GIT:%s]")))
-                  "\n"))
+                  "\n"
+                  (:eval (symbol-name this-command))
+                  ": "))
   (prompt-text-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
