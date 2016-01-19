@@ -1120,6 +1120,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                                                               "woman_cache.el")))
 (defalias 'man 'woman)
 
+(add-to-list 'auto-mode-alist
+             '("tox\\.ini\\'" . conf-unix-mode))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python
 
