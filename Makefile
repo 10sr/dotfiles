@@ -31,12 +31,12 @@ ifeq (,$(dotfiles_dir))
   else
     # Current directory is not 10sr/dotfiles.git reposioty
     ifeq (,$(DOTFILES_DIR))
-      $(warning Neigher DOTFILES_DIR nor dotfiles_dir is defined)
+      $(warning Neigher 'DOTFILES_DIR' nor 'dotfiles_dir' is defined)
       $(warning Use default value)
       dotfiles_dir := $(HOME)/10sr_dotfiles
     else
       # dotfiles_dir is empty but DOTFILES_DIR has a value
-      $(warning dotfiles_dir is set from DOTFILES_DIR)
+      $(warning 'dotfiles_dir' is set from 'DOTFILES_DIR')
       dotfiles_dir := $(DOTFILES_DIR)
     endif
 
@@ -50,7 +50,7 @@ $(warning dotfiles_dir: $(dotfiles_dir))
 dotfiles_home_dir := $(dotfiles_dir)/.home
 ifeq ($(home),)
 ifeq ($(global_home),)
-$(warning home not set and global_home is empty)
+$(warning 'home' not set and 'global_home' is empty)
 # TODO: What this should be?
 home := $(dotfiles_home_dir)
 else
@@ -168,7 +168,7 @@ help_message := "Available targets are:\
 		Clone git repository"
 
 help:
-	@echo "10sr Makefile Help:"
+	@echo "10sr Makefile Usage:"
 	@echo
 	@echo "Some of available targers are:"
 	@echo "    setup-repository    Clone git repository"
@@ -426,7 +426,8 @@ test-el: $(test_els)
 .PHONY: $(test_els)
 
 $(test_els): test-el-%: $(dotfiles_dir)/% $(home)
-	$(emacs) -Q -batch -f batch-byte-compile $<
+	test -n "$(emacs)" && \
+		$(emacs) -Q -batch -f batch-byte-compile $<
 	# EMACS_EL_DRY_RUN=t $(emacs) -q --debug-init --batch \
 	# 	--eval "(setq debug-on-error t)" \
 	# 	--eval "(setq user-emacs-directory \"$(home)/.emacs.d/\")" \
@@ -466,5 +467,6 @@ sexp_elisp_syntax_check := \
 								(- (point) (point-at-bol)))))))
 
 $(test_syntax_els): test-syntax-%: $(dotfiles_dir)/%
-	$(emacs) -Q --debug-init --batch \
+	test -n "$(emacs)" && \
+		$(emacs) -Q --debug-init --batch \
 		--eval '(let ((file "$<")) $(sexp_elisp_syntax_check))' --kill
