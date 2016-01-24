@@ -851,13 +851,12 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (getenv "TMUX")
      (pasteboard-enable-rtun))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; some modes and hooks
+
 ;; https://github.com/lunaryorn/flycheck
 (when (safe-require-or-eval 'flycheck)
   (call-after-init 'global-flycheck-mode))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; some modes and hooks
 
 (set-variable 'ac-ignore-case nil)
 
