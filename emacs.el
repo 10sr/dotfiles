@@ -959,7 +959,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; TODO: check if this is required
 (and (autoload-eval-lazily 'groovy-mode)
      (add-to-list 'auto-mode-alist
-                  '("build.gradle\\'" . groovy-mode)))
+                  '("build\\.gradle\\'" . groovy-mode)))
 
 (with-eval-after-load 'yaml-mode
   (defvar yaml-mode-map (make-sparse-keymap))
