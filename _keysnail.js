@@ -1109,7 +1109,9 @@ key.suspendKey           = "Not defined";
 
 hook.setHook('KeyBoardQuit', function (aEvent) {
     // ext.exec("hide-sidebar");
-  let(elem = document.commandDispatcher.focusedElement) {elem && elem.blur()};
+    var elem = document.commandDispatcher.focusedElement;
+    elem && elem.blur();
+
     getBrowser().focus();
     content.focus();
     command.closeFindBar();
@@ -1160,7 +1162,9 @@ key.setGlobalKey('C-<down>', function () {
 }, '選択中のタブを左へ');
 
 key.setGlobalKey('<delete>', function (ev, arg) {
-  let (elem = document.commandDispatcher.focusedElement) {elem && elem.blur()};
+  var elem = document.commandDispatcher.focusedElement;
+  elem && elem.blur();
+
   getBrowser().focus();
   content.focus();
 }, 'コンテンツへフォーカス', true);
