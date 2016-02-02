@@ -194,6 +194,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        js2-mode
        git-commit
        gitignore-mode
+       adoc-mode
        ;; ack
        color-moccur
        ggtags
@@ -956,6 +957,12 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; (ffap-bindings)
 
 (set-variable 'sh-here-document-word "__EOC__")
+
+(when (autoload-eval-lazily 'adoc-mode)
+  (setq auto-mode-alist
+        `(("\\.adoc\\'" . adoc-mode)
+          ("\\.asciidoc\\'" . adoc-mode)
+          ,@auto-mode-alist)))
 
 (setq auto-mode-alist
       `(("autostart\\'" . sh-mode)
