@@ -967,6 +967,14 @@ IF OK-IF-ALREADY-EXISTS is true force download."
           ("\\.asciidoc\\'" . adoc-mode)
           ,@auto-mode-alist)))
 
+(with-eval-after-load 'markup-faces
+  ;; (set-face-foreground 'markup-meta-hide-face
+  ;;                      "unspecified-fg")
+  ;; Is this too match ?
+  (set-face-foreground 'markup-meta-face
+                       "unspecified-fg")
+  )
+
 (setq auto-mode-alist
       `(("autostart\\'" . sh-mode)
         ("xinitrc\\'" . sh-mode)
