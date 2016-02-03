@@ -704,7 +704,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                            trailing     ; trailing blanks
                            newline      ; newlines
                            newline-mark ; use display table for newline
-                           ;; tab-mark
+                           tab-mark
                            empty        ; empty lines at beg or end of buffer
                            lines-tail  ; lines over 80
                            ))
@@ -712,7 +712,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (global-whitespace-mode t)
   (if (eq (display-color-cells)
           256)
-      (set-face-foreground 'whitespace-newline "brightblack")
+      (set-face-foreground 'whitespace-newline "color-109")
     ;; (progn
     ;;   (set-face-bold-p 'whitespace-newline
     ;;                      t))
