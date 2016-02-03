@@ -741,6 +741,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
 (set-face-underline 'hl-line t)
 (set-face-background 'hl-line "unspecified-bg")
+(set-face-foreground 'hl-line "unspecified-fg")
 ;; (set-variable 'hl-line-face '10sr-hl-line) ;; (setq hl-line-face nil)
 (set-variable 'hl-line-global-modes
               '(not
