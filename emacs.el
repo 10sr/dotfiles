@@ -723,19 +723,25 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
+;; (defface 10sr-hl-line
+;;   '((((min-colors 256)
+;;       (background dark))
+;;      (:background "color-234"))
+;;     (((min-colors 256)
+;;       (background light))
+;;      (:background "color-234"))
+;;     (t
+;;      (:underline "black")))
+;;   "*Face used by hl-line."
+;;   :group '10sr)
 (defface 10sr-hl-line
-  '((((min-colors 256)
-      (background dark))
-     (:background "color-234"))
-    (((min-colors 256)
-      (background light))
-     (:background "color-234"))
-    (t
-     (:underline "black")))
+  '((t (:underline "black")))
   "*Face used by hl-line."
   :group '10sr)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
-(set-variable 'hl-line-face '10sr-hl-line) ;; (setq hl-line-face nil)
+(set-face-underline 'hl-line t)
+(set-face-background 'hl-line "unspecified-bg")
+;; (set-variable 'hl-line-face '10sr-hl-line) ;; (setq hl-line-face nil)
 (set-variable 'hl-line-global-modes
               '(not
                 term-mode))
@@ -963,6 +969,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
         `(("\\.adoc\\'" . adoc-mode)
           ("\\.asciidoc\\'" . adoc-mode)
           ,@auto-mode-alist)))
+
+;; (require 'markup-faces)
+;; (set-face-foreground 'markup-meta-hide-face
+;;                      "unspecified-fg")
 
 (setq auto-mode-alist
       `(("autostart\\'" . sh-mode)
