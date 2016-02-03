@@ -1309,11 +1309,17 @@ then
         eval __my_set_title ${__terminal_title}
     }
 else
+    #echo "abc${PROMPT_COMMAND}def"
+    if ! expr "$PROMPT_COMMAND" : ".*;$" >/dev/null
+    then
+        $PROMPT_COMMAND="${PROMPT_COMMAND};"
+    fi
+
     if test -n "$PROMPT_COMMAND"
     then
-        PROMPT_COMMAND="laststatus=\$?;$PROMPT_COMMAND;__my_set_title \"${__terminal_title}\""
+        PROMPT_COMMAND="laststatus=\$?;${PROMPT_COMMAND}__my_set_title \"${__terminal_title}\";"
     else
-        PROMPT_COMMAND="laststatus=\$?;__my_set_title \"${__terminal_title}\""
+        PROMPT_COMMAND="laststatus=\$?;__my_set_title \"${__terminal_title}\";"
     fi
 fi
 laststatus=0
