@@ -899,6 +899,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (autoload-eval-lazily 'git-command)
   (define-key ctl-x-map "g" 'git-command))
 
+(when (safe-require-or-eval 'git-commit)
+  (global-git-commit-mode 1))
+
 (when (fetch-library
        "http://www.emacswiki.org/emacs/download/sl.el"
        t)
