@@ -726,7 +726,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (defface 10sr-hl-line
   '((((min-colors 256)
       (background dark))
-     (:background "color-234"))
+     (:background "color-17"))
     (((min-colors 256)
       (background light))
      (:background "color-234"))
@@ -735,7 +735,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   "*Face used by hl-line."
   :group '10sr)
 (global-hl-line-mode 1) ;; (hl-line-mode 1)
-(set-variable 'hl-line-face '10sr-hl-line) ;; (setq hl-line-face nil)
+;;(set-variable 'hl-line-face '10sr-hl-line) ;; (setq hl-line-face nil)
 (set-variable 'hl-line-global-modes
               '(not
                 term-mode))
@@ -743,18 +743,18 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
 
-(safe-require-or-eval 'set-modeline-color)
+;;(safe-require-or-eval 'set-modeline-color)
 
-(let ((fg (face-foreground 'default))
-      (bg (face-background 'default)))
-  (set-face-background 'mode-line-inactive
-                       (if (face-inverse-video-p 'mode-line) fg bg))
-  (set-face-foreground 'mode-line-inactive
-                       (if (face-inverse-video-p 'mode-line) bg fg)))
-(set-face-underline 'mode-line-inactive
-                    t)
-(set-face-underline 'vertical-border
-                    nil)
+;; (let ((fg (face-foreground 'default))
+;;       (bg (face-background 'default)))
+;;   (set-face-background 'mode-line-inactive
+;;                        (if (face-inverse-video-p 'mode-line) fg bg))
+;;   (set-face-foreground 'mode-line-inactive
+;;                        (if (face-inverse-video-p 'mode-line) bg fg)))
+;; (set-face-underline 'mode-line-inactive
+;;                     t)
+;; (set-face-underline 'vertical-border
+;;                     nil)
 
 ;; Not found in MELPA nor any other package repositories
 (and (fetch-library
@@ -763,6 +763,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (safe-require-or-eval 'end-mark)
      (global-end-mark-mode))
 
+(when (safe-require-or-eval 'cyberpunk-theme)
+  (load-theme 'cyberpunk t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
