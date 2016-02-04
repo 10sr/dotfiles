@@ -967,10 +967,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
           ,@auto-mode-alist)))
 
 (with-eval-after-load 'markup-faces
-  ;; (set-face-foreground 'markup-meta-hide-face
-  ;;                      "unspecified-fg")
   ;; Is this too match ?
   (set-face-foreground 'markup-meta-face
+                       "unspecified-fg")
+  (set-face-foreground 'markup-meta-hide-face
                        "unspecified-fg")
   )
 
