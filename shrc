@@ -1309,10 +1309,9 @@ then
         eval __my_set_title ${__terminal_title}
     }
 else
-    #echo "abc${PROMPT_COMMAND}def"
-    if ! expr "$PROMPT_COMMAND" : ".*;$" >/dev/null
+    if test -n "$PROMPT_COMMAND" && ! expr "$PROMPT_COMMAND" : '.*; *$' >/dev/null
     then
-        $PROMPT_COMMAND="${PROMPT_COMMAND};"
+        PROMPT_COMMAND="${PROMPT_COMMAND};"
     fi
 
     if test -n "$PROMPT_COMMAND"
