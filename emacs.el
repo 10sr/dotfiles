@@ -723,22 +723,19 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
-(defface 10sr-hl-line
-  '((((min-colors 256)
-      (background dark))
-     (:background "color-17"))
-    (((min-colors 256)
-      (background light))
-     (:background "color-234"))
-    (t
-     (:underline "black")))
-  "*Face used by hl-line."
-  :group '10sr)
-(global-hl-line-mode 1) ;; (hl-line-mode 1)
-;;(set-variable 'hl-line-face '10sr-hl-line) ;; (setq hl-line-face nil)
+(face-spec-set 'hl-line
+               '((((min-colors 256)
+                   (background dark))
+                  (:background "color-234"))
+                 (((min-colors 256)
+                   (background light))
+                  (:background "color-234"))
+                 (t
+                  (:underline "black"))))
 (set-variable 'hl-line-global-modes
               '(not
                 term-mode))
+(global-hl-line-mode 1) ;; (hl-line-mode 1)
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
