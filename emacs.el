@@ -969,9 +969,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (with-eval-after-load 'markup-faces
   ;; Is this too match ?
   (set-face-foreground 'markup-meta-face
-                       "unspecified-fg")
+                       "brightblack")
   (set-face-foreground 'markup-meta-hide-face
-                       "unspecified-fg")
+                       "brightblack")
   )
 
 (setq auto-mode-alist
