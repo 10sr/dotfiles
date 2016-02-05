@@ -190,6 +190,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        markdown-mode
        yaml-mode
        gnuplot-mode
+       php-mode
        erlang
        js2-mode
        git-commit
