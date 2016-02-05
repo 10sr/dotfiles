@@ -762,7 +762,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (global-end-mark-mode))
 
 (when (safe-require-or-eval 'cyberpunk-theme)
-  (load-theme 'cyberpunk t))
+  (load-theme 'cyberpunk t)
+  (set-face-attribute 'button
+                      nil
+                      :inherit 'highlight))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
