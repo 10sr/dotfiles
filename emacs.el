@@ -1858,4 +1858,13 @@ This mode is a simplified version of `adoc-mode'.")
   (add-to-list 'auto-mode-alist
                '("\\.adoc\\'" . adoc-simple-mode)))
 
+(when (safe-require-or-eval 'google-translate)
+  (add-to-list 'google-translate-translation-directions-alist
+               '("en" . "ja"))
+  (defun translate-popup-at-point ()
+    "Translate popup at point."
+    (interactive)
+    (let ((google-translate-output-destination 'popup))
+      (google-translate-translate "en" "ja" (current-word t t)))))
+
 ;;; emacs.el ends here
