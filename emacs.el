@@ -911,6 +911,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        t)
   (autoload-eval-lazily 'sl))
 
+(with-eval-after-load 'jdee
+  (add-hook 'jdee-mode-hook
+            (lambda ()
+              (make-local-variable 'global-mode-string)
+              (add-to-list 'global-mode-string
+                           mode-line-position))))
+
 (with-eval-after-load 'make-mode
   (defvar makefile-mode-map (make-sparse-keymap))
   (define-key makefile-mode-map (kbd "C-m") 'newline-and-indent)
