@@ -1869,10 +1869,10 @@ This mode is a simplified version of `adoc-mode'."
            (safe-require-or-eval 'google-translate-smooth-ui))
   (add-to-list 'google-translate-translation-directions-alist
                '("en" . "ja"))
-  (defun translate-popup-at-point ()
+  (defun translate-echo-at-point ()
     "Translate popup at point."
     (interactive)
-    (let ((google-translate-output-destination 'popup))
+    (let ((google-translate-output-destination 'echo-area))
       (google-translate-translate "en" "ja" (current-word t t)))))
 
 ;;; emacs.el ends here
