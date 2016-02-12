@@ -1851,10 +1851,17 @@ Commands are searched from ALIST."
 ;; adoc-simple-mode
 
 (when (safe-require-or-eval 'adoc-mode)
+  (defvar adoc-simple-font-lock-keywords
+    nil)
   (define-derived-mode adoc-simple-mode adoc-mode
     "Adoc-Simple"
     "Major mode for editing AsciiDoc text files.
-This mode is a simplified version of `adoc-mode'.")
+This mode is a simplified version of `adoc-mode'."
+    '(set (make-local-variable 'font-lock-defaults)
+         '(adoc-simple-font-lock-keywords
+           nil nil nil nil
+           (font-lock-multiline . t)
+           (font-lock-mark-block-function . adoc-font-lock-mark-block-function))))
   (add-to-list 'auto-mode-alist
                '("\\.adoc\\'" . adoc-simple-mode)))
 
