@@ -861,10 +861,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; some modes and hooks
 
 ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
-(global-company-mode)
-(set-variable 'company-idle-delay 0.5)
-(set-variable 'company-minimum-prefix-length 2)
-(set-variable 'company-selection-wrap-around t)
+(when (safe-require-or-eval 'company)
+  (global-company-mode)
+  (set-variable 'company-idle-delay 0.5)
+  (set-variable 'company-minimum-prefix-length 2)
+  (set-variable 'company-selection-wrap-around t))
 
 
 ;; https://github.com/lunaryorn/flycheck
