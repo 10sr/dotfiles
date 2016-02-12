@@ -699,8 +699,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (safe-require-or-eval 'whitespace)
   (add-to-list 'whitespace-display-mappings ; not work
                `(tab-mark ?\t ,(vconcat "^I\t")))
-  (add-to-list 'whitespace-display-mappings
-               `(newline-mark ?\n ,(vconcat "$\n")))
+  ;; (add-to-list 'whitespace-display-mappings
+  ;;              `(newline-mark ?\n ,(vconcat "$\n")))
   (setq whitespace-style '(face
                            trailing     ; trailing blanks
                            newline      ; newlines
@@ -1865,7 +1865,8 @@ This mode is a simplified version of `adoc-mode'."
   (add-to-list 'auto-mode-alist
                '("\\.adoc\\'" . adoc-simple-mode)))
 
-(when (safe-require-or-eval 'google-translate)
+(when (and (safe-require-or-eval 'google-translate)
+           (safe-require-or-eval 'google-translate-smooth-ui))
   (add-to-list 'google-translate-translation-directions-alist
                '("en" . "ja"))
   (defun translate-popup-at-point ()
