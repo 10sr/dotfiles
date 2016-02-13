@@ -964,7 +964,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (set-variable 'sh-here-document-word "__EOC__")
 
-(when (autoload-eval-lazily 'adoc-mode)
+(when (autoload-eval-lazily 'adoc-mode
+          nil
+        (defvar adoc-mode-map (make-sparse-keymap))
+        (define-key adoc-mode-map (kbd "C-m") 'newline))
   (setq auto-mode-alist
         `(("\\.adoc\\'" . adoc-mode)
           ("\\.asciidoc\\'" . adoc-mode)
