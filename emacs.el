@@ -699,8 +699,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (safe-require-or-eval 'whitespace)
   (add-to-list 'whitespace-display-mappings ; not work
                `(tab-mark ?\t ,(vconcat "^I\t")))
-  (add-to-list 'whitespace-display-mappings
-               `(newline-mark ?\n ,(vconcat "$\n")))
+  ;; (add-to-list 'whitespace-display-mappings
+  ;;              `(newline-mark ?\n ,(vconcat "$\n")))
   (setq whitespace-style '(face
                            trailing     ; trailing blanks
                            newline      ; newlines
@@ -861,10 +861,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; some modes and hooks
 
 ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
-(global-company-mode)
-(set-variable 'company-idle-delay 0.5)
-(set-variable 'company-minimum-prefix-length 2)
-(set-variable 'company-selection-wrap-around t)
+(when (safe-require-or-eval 'company)
+  (global-company-mode)
+  (set-variable 'company-idle-delay 0.5)
+  (set-variable 'company-minimum-prefix-length 2)
+  (set-variable 'company-selection-wrap-around t))
 
 
 ;; https://github.com/lunaryorn/flycheck
@@ -909,6 +910,13 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        "http://www.emacswiki.org/emacs/download/sl.el"
        t)
   (autoload-eval-lazily 'sl))
+
+(with-eval-after-load 'jdee
+  (add-hook 'jdee-mode-hook
+            (lambda ()
+              (make-local-variable 'global-mode-string)
+              (add-to-list 'global-mode-string
+                           mode-line-position))))
 
 (with-eval-after-load 'make-mode
   (defvar makefile-mode-map (make-sparse-keymap))
@@ -1848,5 +1856,38 @@ Commands are searched from ALIST."
 ;;   (compile "make -k"))
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;
+;; adoc-simple-mode
+
+(when (safe-require-or-eval 'adoc-mode)
+  (defvar adoc-simple-font-lock-keywords
+    nil)
+  (define-derived-mode adoc-simple-mode adoc-mode
+    "Adoc-Simple"
+    "Major mode for editing AsciiDoc text files.
+This mode is a simplified version of `adoc-mode'."
+    '(set (make-local-variable 'font-lock-defaults)
+         '(adoc-simple-font-lock-keywords
+           nil nil nil nil
+           (font-lock-multiline . t)
+           (font-lock-mark-block-function . adoc-font-lock-mark-block-function))))
+  (add-to-list 'auto-mode-alist
+               '("\\.adoc\\'" . adoc-simple-mode)))
+
+(when (and (safe-require-or-eval 'google-translate)
+           (safe-require-or-eval 'google-translate-smooth-ui))
+  (add-to-list 'google-translate-translation-directions-alist
+               '("en" . "ja"))
+  (defun translate-echo-at-point ()
+    "Translate popup at point."
+    (interactive)
+    (let ((google-translate-output-destination 'echo-area))
+      (google-translate-translate "en" "ja" (current-word t t))))
+  (define-minor-mode auto-translate-mode
+    "Translate word at point automatically."
+    :global nil
+    :lighter "ATranslate"))
 
 ;;; emacs.el ends here
