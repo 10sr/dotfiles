@@ -763,6 +763,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
      (global-end-mark-mode))
 
 (when (safe-require-or-eval 'auto-highlight-symbol)
+  (set-variable 'ahs-idle-interval 0.6)
   (global-auto-highlight-symbol-mode 1))
 
 (when (safe-require-or-eval 'cyberpunk-theme)
