@@ -1895,4 +1895,24 @@ This mode is a simplified version of `adoc-mode'."
     :global nil
     :lighter "ATranslate"))
 
+(define-derived-mode editorconfig-conf-mode conf-unix-mode "EditorConfig"
+  "Major mode for editing .editorconfig files."
+  (conf-mode-initialize ;;"^#\\|^;\\| #\\| ;"
+   ""
+                        `("indent_size"
+                          "charset"
+                          "indent_style"
+                          "tab_width"
+                          "trim_trailing_whitespace"
+                          "insert_final_newline"
+                          "max_line_length"
+                          "end_of_line"
+                          "root"
+                          ,@conf-font-lock-keywords))
+  (set (make-local-variable 'comment-start-skip)
+       "^#.*\\|^;.*\\| #.*\\| ;.*"))
+
+'(add-to-list 'auto-mode-alist
+             '("/\\.editorconfig\\'" . editorconfig-conf-mode))
+
 ;;; emacs.el ends here

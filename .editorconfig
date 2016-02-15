@@ -9,9 +9,9 @@ end_of_line = lf
 #charset = utf-8
 
 trim_trailing_whitespace = true
-insert_final_newline = true
+insert_final_newline = true#3ab
 max_line_length = 80
-
+;abc
 [*.c]
 indent_size = 4
 
