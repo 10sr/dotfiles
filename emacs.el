@@ -1889,7 +1889,7 @@ This mode is a simplified version of `adoc-mode'."
     "Translate popup at point."
     (interactive)
     (let ((google-translate-output-destination 'echo-area))
-      (google-translate-translate "en" "ja" (current-word t t))))
+      (google-translate-translate "auto" "ja" (current-word t t))))
   (define-minor-mode auto-translate-mode
     "Translate word at point automatically."
     :global nil
