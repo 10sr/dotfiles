@@ -200,6 +200,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        color-moccur
        ggtags
        flycheck
+       auto-highlight-symbol
        ;; is flymake installs are required?
        ;;flymake-jshint
        ;;flymake-python-pyflakes
@@ -760,6 +761,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
       t)
      (safe-require-or-eval 'end-mark)
      (global-end-mark-mode))
+
+(when (safe-require-or-eval 'auto-highlight-symbol)
+  (global-auto-highlight-symbol-mode 1))
 
 (when (safe-require-or-eval 'cyberpunk-theme)
   (load-theme 'cyberpunk t)
