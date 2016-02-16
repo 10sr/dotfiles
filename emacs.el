@@ -1901,15 +1901,23 @@ This mode is a simplified version of `adoc-mode'."
    "#"
    `(
      ("^#.*\\|^;.*\\| #.*\\| ;.*" 0 font-lock-comment-face)
-     ("\\b\\(indent_size\\)[ \t]*=" 1 font-lock-keyword-face)
-     ("\\b\\(charset\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(root\\)[ \t]*=" 1 font-lock-keyword-face)
      ("\\b\\(indent_style\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(indent_size\\)[ \t]*=" 1 font-lock-keyword-face)
      ("\\b\\(tab_width\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(end_of_line\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(charset\\)[ \t]*=" 1 font-lock-keyword-face)
      ("\\b\\(trim_trailing_whitespace\\)[ \t]*=" 1 font-lock-keyword-face)
      ("\\b\\(insert_final_newline\\)[ \t]*=" 1 font-lock-keyword-face)
      ("\\b\\(max_line_length\\)[ \t]*=" 1 font-lock-keyword-face)
-     ("\\b\\(end_of_line\\)[ \t]*=" 1 font-lock-keyword-face)
-     ("\\b\\(root\\)[ \t]*=" 1 font-lock-keyword-face)
+
+     ("=[ \t]*\\(true\\)\\b" 1 font-lock-constant-face)
+     ("=[ \t]*\\(false\\)\\b" 1 font-lock-constant-face)
+     ("=[ \t]*\\(lf\\)\\b" 1 font-lock-constant-face)
+     ("=[ \t]*\\(cr\\)\\b" 1 font-lock-constant-face)
+     ("=[ \t]*\\(crlf\\)\\b" 1 font-lock-constant-face)
+     ("=[ \t]*\\(space\\)\\b" 1 font-lock-constant-face)
+     ("=[ \t]*\\(tab\\)\\b" 1 font-lock-constant-face)
      ,@conf-font-lock-keywords)))
 
 (add-to-list 'auto-mode-alist
