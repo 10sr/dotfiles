@@ -1895,24 +1895,24 @@ This mode is a simplified version of `adoc-mode'."
     :global nil
     :lighter "ATranslate"))
 
-(define-derived-mode editorconfig-conf-mode conf-unix-mode "EditorConfig"
+(define-derived-mode editorconfig-conf-mode conf-mode "EditorConfig"
   "Major mode for editing .editorconfig files."
-  (conf-mode-initialize ;;"^#\\|^;\\| #\\| ;"
-   ""
-                        `("indent_size"
-                          "charset"
-                          "indent_style"
-                          "tab_width"
-                          "trim_trailing_whitespace"
-                          "insert_final_newline"
-                          "max_line_length"
-                          "end_of_line"
-                          "root"
-                          ,@conf-font-lock-keywords))
-  (set (make-local-variable 'comment-start-skip)
-       "^#.*\\|^;.*\\| #.*\\| ;.*"))
+  (conf-mode-initialize
+   "#"
+   `(
+     ("^#.*\\|^;.*\\| #.*\\| ;.*" 0 font-lock-comment-face)
+     ("\\bindent_size\\b" 0 font-lock-keyword-face)
+     ("\\bcharset\\b" 0 font-lock-keyword-face)
+     ("\\bindent_style\\b" 0 font-lock-keyword-face)
+     ("\\btab_width\\b" 0 font-lock-keyword-face)
+     ("\\btrim_trailing_whitespace\\b" 0 font-lock-keyword-face)
+     ("\\binsert_final_newline\\b" 0 font-lock-keyword-face)
+     ("\\bmax_line_length\\b" 0 font-lock-keyword-face)
+     ("\\bend_of_line\\b" 0 font-lock-keyword-face)
+     ("\\broot\\b" 0 font-lock-keyword-face)
+     ,@conf-font-lock-keywords)))
 
-'(add-to-list 'auto-mode-alist
+(add-to-list 'auto-mode-alist
              '("/\\.editorconfig\\'" . editorconfig-conf-mode))
 
 ;;; emacs.el ends here
