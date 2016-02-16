@@ -1901,15 +1901,15 @@ This mode is a simplified version of `adoc-mode'."
    "#"
    `(
      ("^#.*\\|^;.*\\| #.*\\| ;.*" 0 font-lock-comment-face)
-     ("\\bindent_size\\b" 0 font-lock-keyword-face)
-     ("\\bcharset\\b" 0 font-lock-keyword-face)
-     ("\\bindent_style\\b" 0 font-lock-keyword-face)
-     ("\\btab_width\\b" 0 font-lock-keyword-face)
-     ("\\btrim_trailing_whitespace\\b" 0 font-lock-keyword-face)
-     ("\\binsert_final_newline\\b" 0 font-lock-keyword-face)
-     ("\\bmax_line_length\\b" 0 font-lock-keyword-face)
-     ("\\bend_of_line\\b" 0 font-lock-keyword-face)
-     ("\\broot\\b" 0 font-lock-keyword-face)
+     ("\\b\\(indent_size\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(charset\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(indent_style\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(tab_width\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(trim_trailing_whitespace\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(insert_final_newline\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(max_line_length\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(end_of_line\\)[ \t]*=" 1 font-lock-keyword-face)
+     ("\\b\\(root\\)[ \t]*=" 1 font-lock-keyword-face)
      ,@conf-font-lock-keywords)))
 
 (add-to-list 'auto-mode-alist
