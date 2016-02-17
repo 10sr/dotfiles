@@ -1897,8 +1897,6 @@ This mode is a simplified version of `adoc-mode'."
 
 (define-derived-mode editorconfig-conf-mode conf-mode "EditorConfig"
   "Major mode for editing .editorconfig files."
-  ;; TODO: highlight for : separated assgnment
-  (setq conf-assignment-regexp ".+?\\([ \t]*[=:][ \t]*\\)")
   (set-variable 'indent-line-function 'indent-relative)
   (conf-mode-initialize
    "#"
@@ -1924,7 +1922,6 @@ This mode is a simplified version of `adoc-mode'."
 
      ("^[ \t]*\\[\\(.+?\\)\\]" 1 'font-lock-type-face)
      ("^[ \t]*\\(.+?\\)[ \t]*[=:]" 1 'font-lock-variable-name-face)
-     ;;("^[ \t]*\\([^=:\n]+?\\)[ \t\n]*{[^{}]*?$" 1 'font-lock-type-face prepend)
      )))
 
 (add-to-list 'auto-mode-alist
