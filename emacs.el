@@ -1897,27 +1897,29 @@ This mode is a simplified version of `adoc-mode'."
 
 (define-derived-mode editorconfig-conf-mode conf-mode "EditorConfig"
   "Major mode for editing .editorconfig files."
+  ;; TODO: highlight for : separated assgnment
+  (setq conf-assignment-regexp ".+?\\([ \t]*[=:][ \t]*\\)")
   (conf-mode-initialize
    "#"
    `(
      ("^#.*\\|^;.*\\| #.*\\| ;.*" 0 font-lock-comment-face)
-     ("^[ \t]*\\(root\\)[ \t]*=" 1 font-lock-builtin-face)
-     ("^[ \t]*\\(indent_style\\)[ \t]*=" 1 font-lock-builtin-face)
-     ("^[ \t]*\\(indent_size\\)[ \t]*=" 1 font-lock-builtin-face)
-     ("^[ \t]*\\(tab_width\\)[ \t]*=" 1 font-lock-builtin-face)
-     ("^[ \t]*\\(end_of_line\\)[ \t]*=" 1 font-lock-builtin-face)
-     ("^[ \t]*\\(charset\\)[ \t]*=" 1 font-lock-builtin-face)
-     ("^[ \t]*\\(trim_trailing_whitespace\\)[ \t]*=" 1 font-lock-builtin-face)
-     ("^[ \t]*\\(insert_final_newline\\)[ \t]*=" 1 font-lock-builtin-face)
-     ("^[ \t]*\\(max_line_length\\)[ \t]*=" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(root\\)[ \t]*[=:]" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(indent_style\\)[ \t]*[=:]" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(indent_size\\)[ \t]*[=:]" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(tab_width\\)[ \t]*[=:]" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(end_of_line\\)[ \t]*[=:]" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(charset\\)[ \t]*[=:]" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(trim_trailing_whitespace\\)[ \t]*[=:]" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(insert_final_newline\\)[ \t]*[=:]" 1 font-lock-builtin-face)
+     ("^[ \t]*\\(max_line_length\\)[ \t]*[=:]" 1 font-lock-builtin-face)
 
-     ("=[ \t]*\\(true\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
-     ("=[ \t]*\\(false\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
-     ("=[ \t]*\\(lf\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
-     ("=[ \t]*\\(cr\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
-     ("=[ \t]*\\(crlf\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
-     ("=[ \t]*\\(space\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
-     ("=[ \t]*\\(tab\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
+     ("[=:][ \t]*\\(true\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
+     ("[=:][ \t]*\\(false\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
+     ("[=:][ \t]*\\(lf\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
+     ("[=:][ \t]*\\(cr\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
+     ("[=:][ \t]*\\(crlf\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
+     ("[=:][ \t]*\\(space\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
+     ("[=:][ \t]*\\(tab\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
 
      ("^[ \t]*\\[\\(.+?\\)\\]" 1 'font-lock-type-face)
      ,@conf-font-lock-keywords)))
