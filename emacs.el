@@ -1918,6 +1918,8 @@ This mode is a simplified version of `adoc-mode'."
      ("=[ \t]*\\(crlf\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
      ("=[ \t]*\\(space\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
      ("=[ \t]*\\(tab\\)\\([ \t]\\|$\\)" 1 font-lock-constant-face)
+
+     ("^[ \t]*\\[\\(.+?\\)\\]" 1 'font-lock-type-face)
      ,@conf-font-lock-keywords)))
 
 (add-to-list 'auto-mode-alist
