@@ -1476,8 +1476,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; vc
-(require 'vc)
-(setq vc-handled-backends '())
+(set-variable 'vc-handled-backends '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
