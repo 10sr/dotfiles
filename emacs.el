@@ -356,19 +356,17 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 ;; server
 
-(when (safe-require-or-eval 'server)
-  (setq server-name (concat "server"
-                            (number-to-string (emacs-pid))))
+(set-variable 'server-name (concat "server"
+                                   (number-to-string (emacs-pid))))
 
-  ;; In Cygwin Environment `server-runnning-p' stops when server-use-tcp is nil
-  ;; In Darwin environment, init fails with message like 'Service name too long'
-  ;; when server-use-tcp is nil
-  (when (or (eq system-type
-                'cygwin)
-            (eq system-type
-                'darwin))
-    (setq server-use-tcp t))
-  (server-start))
+;; In Cygwin Environment `server-runnning-p' stops when server-use-tcp is nil
+;; In Darwin environment, init fails with message like 'Service name too long'
+;; when server-use-tcp is nil
+(when (or (eq system-type
+              'cygwin)
+          (eq system-type
+              'darwin))
+  (set-variable 'server-use-tcp t))
 
 ;; MSYS2 fix
 
