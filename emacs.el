@@ -220,6 +220,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
        editorconfig
 
+       cyberpunk-theme
+
        git-command
 
        prompt-text
