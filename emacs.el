@@ -311,6 +311,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (call-after-init
  (lambda ()
    (message "%s %s" invocation-name emacs-version)
+   (message "Invocation directory: %s" default-directory)
    (message "%s was taken to initialize emacs." (emacs-init-time))
    (switch-to-buffer "*Messages*")))
 
@@ -974,6 +975,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   )
 
 ;; (ffap-bindings)
+
+(set-variable 'browse-url-browser-function
+              'eww-browse-url)
 
 (set-variable 'sh-here-document-word "__EOC__")
 
