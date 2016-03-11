@@ -1348,31 +1348,30 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 
 (defvar bs-configurations)
 (when (autoload-eval-lazily 'bs '(bs-show)
-        ;; (add-to-list 'bs-configurations
-        ;; '("processes" nil get-buffer-process ".*" nil nil))
         (add-to-list 'bs-configurations
-                     '("files-and-terminals" nil nil nil
-                       (lambda (buf)
-                         (and (bs-visits-non-file buf)
-                              (save-excursion
-                                (set-buffer buf)
-                                (not (memq major-mode
-                                           '(term-mode
-                                             eshell-mode))))))))
+                     '("specials" "^\\*" nil ".*" nil nil))
+        (defvar bs-mode-map)
+        (defvar bs-current-configuration)
+        (define-key bs-mode-map (kbd "t")
+          (lambda ()
+            (interactive)
+            (if (string= "specials"
+                         bs-current-configuration)
+                (bs-set-configuration "files")
+              (bs-set-configuration "specials"))
+            (bs-refresh)
+            (bs-message-without-log "%s"
+                                    (bs--current-config-message))))
         ;; (setq bs-configurations (list
         ;; '("processes" nil get-buffer-process ".*" nil nil)
         ;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
         ;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
         )
-  ;; (global-set-key "\C-x\C-b" 'bs-show)
   (defalias 'list-buffers 'bs-show)
-  (set-variable 'bs-default-configuration "files-and-terminals")
+  (set-variable 'bs-default-configuration "files")
   (set-variable 'bs-default-sort-name "by nothing")
   (add-hook 'bs-mode-hook
             (lambda ()
-              ;; (setq bs-default-configuration "files")
-              ;; (and bs--show-all
-              ;;      (call-interactively 'bs-toggle-show-all))
               (set (make-local-variable 'scroll-margin) 0))))
 
 ;;(iswitchb-mode 1)
