@@ -712,6 +712,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
                            lines-tail  ; lines over 80
                            ))
   ;; (setq whitespace-newline 'font-lock-comment-face)
+  (set-variable 'whitespace-line-column nil)
   (global-whitespace-mode t)
   (if (eq (display-color-cells)
           256)
