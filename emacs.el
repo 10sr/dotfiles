@@ -714,6 +714,9 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; (setq whitespace-newline 'font-lock-comment-face)
   (set-variable 'whitespace-line-column nil)
   (global-whitespace-mode t)
+  (add-hook 'dired-mod-hook
+            (lambda ()
+              (setq whitespace-style nil)))
   (if (eq (display-color-cells)
           256)
       (set-face-foreground 'whitespace-newline "color-109")
