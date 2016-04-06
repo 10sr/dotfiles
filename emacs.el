@@ -442,6 +442,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function nil)
+(setq-default truncate-lines nil)
 ;; (pc-selection-mode 1) ; make some already defined keybind back to default
 (delete-selection-mode 1)
 (cua-mode 0)
