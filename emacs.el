@@ -50,6 +50,7 @@ Otherwize hook it."
 
 At compile time the feature will be loaded immediately."
   `(eval-and-compile
+     (message "safe-require-or-eval: Trying to require %s" ,feature)
      (require ,feature nil t)))
 
 (defmacro autoload-eval-lazily (feature &optional functions &rest body)
@@ -714,7 +715,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   ;; (setq whitespace-newline 'font-lock-comment-face)
   (set-variable 'whitespace-line-column nil)
   (global-whitespace-mode t)
-  (add-hook 'dired-mod-hook
+  (add-hook 'dired-mode-hook
             (lambda ()
               (setq whitespace-style nil)))
   (if (eq (display-color-cells)
@@ -771,11 +772,14 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (set-variable 'ahs-idle-interval 0.6)
   (global-auto-highlight-symbol-mode 1))
 
-(when (safe-require-or-eval 'cyberpunk-theme)
-  (load-theme 'cyberpunk t)
-  (set-face-attribute 'button
-                      nil
-                      :inherit 'highlight))
+;; (when (safe-require-or-eval 'cyberpunk-theme)
+;;   (load-theme 'cyberpunk t)
+;;   (set-face-attribute 'button
+;;                       nil
+;;                       :inherit 'highlight))
+
+(when (safe-require-or-eval 'grandshell-theme)
+  (load-theme 'grandshell t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
