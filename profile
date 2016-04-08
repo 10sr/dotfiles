@@ -68,17 +68,26 @@ do
 done
 test -n "$_src_hilite_lp_path" && export LESSOPEN="| $_src_hilite_lp_path %s"
 
-if which vim >/dev/null
+if which nvim >/dev/null
 then
-    export EDITOR=vim
-else
-    export EDITOR=vi
+    _VI_ALT=nvim
+elif which vim >/dev/null
+then
+    _VI_ALT=vim
+elif which vi >/dev/null
+then
+    _VI_ALT=vi
 fi
-# export CDPATH=".:~"
-export VISUAL="$EDITOR"
 
+if test -n "$_VI_ALT"
+then
+    export EDITOR="$_VI_ALT"
+    export GIT_EDITOR="$EDITOR"
+    export VISUAL="$EDITOR"
+fi
+
+# export CDPATH=".:~"
 export GIT_PAGER="less -F"
-export GIT_EDITOR="$EDITOR"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \

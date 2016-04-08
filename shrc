@@ -275,17 +275,11 @@ _timeformat_rfc2822="%a, %d %b %Y %T %z"
 _timeformat_num="%Y%m%d%H%M%S"
 alias datenum="date +$_timeformat_num"
 
-if null type nvim
+if test -n "$_VI_ALT"
 then
-    export EDITOR=nvim
-elif null type vim
-then
-    export EDITOR=vim
-elif null type vi
-then
-    export EDITOR=vi
+    alias vi=$_VI_ALT
+    export EDITOR=$_VI_ALT
 fi
-test -n "$EDITOR" && alias vi=$EDITOR
 
 # export GREP_OPTIONS=""
 alias gr="grep -n --color=always"
