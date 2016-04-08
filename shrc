@@ -275,17 +275,12 @@ _timeformat_rfc2822="%a, %d %b %Y %T %z"
 _timeformat_num="%Y%m%d%H%M%S"
 alias datenum="date +$_timeformat_num"
 
-if test -n "$_VI_ALT"
-then
-    alias vi=$_VI_ALT
-    export EDITOR=$_VI_ALT
-fi
-
 # export GREP_OPTIONS=""
 alias gr="grep -n --color=always"
 $iswindows && alias gr="grep -n"
 alias less="less -F"
 __safe_alias em="emacs -nw"
+test -n "$_VI_ALT" && alias vi=$_VI_ALT
 alias pstree="LANG=C pstree"
 alias cp="cp -v"
 alias mv="mv -v"
