@@ -222,6 +222,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        editorconfig
 
        cyberpunk-theme
+       grandshell-theme
+       afternoon-theme
 
        git-command
 
@@ -773,14 +775,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (set-variable 'ahs-idle-interval 0.6)
   (global-auto-highlight-symbol-mode 1))
 
-;; (when (safe-require-or-eval 'cyberpunk-theme)
-;;   (load-theme 'cyberpunk t)
-;;   (set-face-attribute 'button
-;;                       nil
-;;                       :inherit 'highlight))
-
-(when (safe-require-or-eval 'grandshell-theme)
-  (load-theme 'grandshell t))
+(when (safe-require-or-eval 'cyberpunk-theme)
+  (load-theme 'cyberpunk t)
+  (set-face-attribute 'button
+                      nil
+                      :inherit 'highlight))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
