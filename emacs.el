@@ -197,6 +197,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        git-commit
        gitignore-mode
        adoc-mode
+       malabar-mode
        ;; ack
        color-moccur
        ggtags
@@ -925,12 +926,21 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        t)
   (autoload-eval-lazily 'sl))
 
+;; jdee is too old! use malabar instead
 (with-eval-after-load 'jdee
   (add-hook 'jdee-mode-hook
             (lambda ()
               (make-local-variable 'global-mode-string)
               (add-to-list 'global-mode-string
                            mode-line-position))))
+
+;; Cannot enable error thrown. Why???
+;; https://github.com/m0smith/malabar-mode#Installation
+;; (when (autoload-eval-lazily 'malabar-mode)
+;;   (add-to-list 'load-path
+;;                (expand-file-name (concat user-emacs-directory "/cedet")))
+;;   (safe-require-or-eval 'cedet-devel-load)
+;;   (call-after-init 'activate-malabar-mode))
 
 (with-eval-after-load 'make-mode
   (defvar makefile-mode-map (make-sparse-keymap))
