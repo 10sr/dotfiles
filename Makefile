@@ -397,13 +397,13 @@ setup_rc_marker := ADDED BY 10sr_dotfiles/Makefile
 $(home)/.emacs.d/init.el $(home)/.vimrc $(home)/.tmux.conf:
 	set -x; if ! $(grep) "$(setup_rc_marker)" "$@"; \
 	then \
-		(echo '$(line_comment)' $(setup_rc_marker); cat "$<" | $(command_extract_setup_load)) \
+		(echo $(line_comment) $(setup_rc_marker); cat "$<" | $(command_extract_setup_load)) \
 			| tee -a "$@"; \
 	fi
 
-$(home)/.emacs.d/init.el: line_comment := ;;
-$(home)/.vimrc: line_comment := \"
-$(home)/.tmux.conf: line_comment := \#
+$(home)/.emacs.d/init.el: line_comment := ';;'
+$(home)/.vimrc: line_comment := '"'
+$(home)/.tmux.conf: line_comment := '#'
 
 
 
