@@ -2,8 +2,6 @@ Dotfiles
 ========
 10sr
 v0.0.1
-:toc:
-:toc-placement: preamble
 :numbered:
 
 image:https://travis-ci.org/10sr/dotfiles.svg?branch=master["Build Status", link="https://travis-ci.org/10sr/dotfiles"]
