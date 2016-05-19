@@ -130,6 +130,8 @@ fi
 
 export JAVA_OPTS="$JAVA_OPTS -Duser.language=en"
 
+export GOPATH="$HOME/my/go"
+
 
 ###########################################
 # Host colors
