@@ -721,7 +721,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
   (global-whitespace-mode t)
   (add-hook 'dired-mode-hook
             (lambda ()
-              (setq whitespace-style nil)))
+              (set (make-local-variable 'whitespace-style) nil)))
   (if (eq (display-color-cells)
           256)
       (set-face-foreground 'whitespace-newline "color-109")
