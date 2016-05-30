@@ -91,56 +91,6 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; download library from web
 
-(defvar fetch-library-enabled-p t
-  "Set nil to skip downloading with `fetch-library'.")
-(defun fetch-library (url &optional byte-compile-p force-download-p)
-  "Download a library from URL and locate it in \"~/emacs.d/lisp/\".
-Return nil if library unfound and failed to download,
-otherwise the path where the library installed.
-If BYTE-COMPILE-P is t byte compile the file after downloading.
-If FORCE-DOWNLOAD-P it t ignore exisiting library and always download.
-
-This function also checks the value of `fetch-library-enabled-p' and do not
-fetch libraries if this value is nil.  In this case all arguments (including
-FORCE-DOWNLOAD-P) will be ignored."
-  (let* ((dir (expand-file-name (concat user-emacs-directory "lisp/")))
-         (lib (file-name-sans-extension (file-name-nondirectory url)))
-         (lpath (concat dir lib ".el"))
-         (locate-p (locate-library lib)))
-    (if (and fetch-library-enabled-p
-             (or force-download-p
-                 (not locate-p)))
-        (if (progn (message "Downloading %s..."
-                            url)
-                   (download-file url
-                                  lpath
-                                  t))
-            (progn (message "Downloading %s...done"
-                            url)
-                   (when (and byte-compile-p
-                              (require 'bytecomp nil t))
-                     (and (file-exists-p (byte-compile-dest-file lpath))
-                          (delete-file (byte-compile-dest-file lpath)))
-                     (message "Byte-compiling %s..."
-                              lpath)
-                     (byte-compile-file lpath)
-                     (message "Byte-compiling %s...done"
-                              lpath)))
-          (progn (and (file-writable-p lpath)
-                      (delete-file lpath))
-                 (message "Downloading %s...failed"
-                          url))))
-    (locate-library lib)))
-;; If EMACS_EL_DRY_RUN is set and it is not an empty string, fetch-library
-;; does not actually fetch library.
-(let ((dryrun (getenv "EMACS_EL_DRY_RUN")))
-  (when (and dryrun
-             (< 0
-                (length dryrun)))
-    (setq fetch-library-enabled-p
-          nil)
-    (message "EMACS_EL_DRY_RUN is set. Skip fetching libraries.")))
-
 (defun download-file (url path &optional ok-if-already-exists)
   "Download file from URL and output to PATH.
 IF OK-IF-ALREADY-EXISTS is true force download."
@@ -244,6 +194,10 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        remember-major-modes-mode
        ilookup
        pasteboard
+
+       end-mark
+       sl
+       gosh-mode
        ))
 
 (when (safe-require-or-eval 'package)
@@ -766,11 +720,8 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;;                     nil)
 
 ;; Not found in MELPA nor any other package repositories
-(and (fetch-library
-      "https://raw.github.com/tarao/elisp/master/end-mark.el"
-      t)
-     (safe-require-or-eval 'end-mark)
-     (global-end-mark-mode))
+(when (safe-require-or-eval 'end-mark)
+  (global-end-mark-mode))
 
 (when (safe-require-or-eval 'auto-highlight-symbol)
   (set-variable 'ahs-idle-interval 0.6)
@@ -921,10 +872,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 (when (safe-require-or-eval 'git-commit)
   (global-git-commit-mode 1))
 
-(when (fetch-library
-       "http://www.emacswiki.org/emacs/download/sl.el"
-       t)
-  (autoload-eval-lazily 'sl))
+(autoload-eval-lazily 'sl)
 
 ;; jdee is too old! use malabar instead
 (with-eval-after-load 'jdee
@@ -1225,7 +1173,11 @@ IF OK-IF-ALREADY-EXISTS is true force download."
 ;; http://d.hatena.ne.jp/kobapan/20090305/1236261804
 ;; http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el
 
-(when (and (fetch-library
+;; NOTE: This gauche-mode returns 404.
+;; There is another gosh-mode, so for now I submitted a recipe for that into
+;; github.com/10sr/emacs-lisp/p.  I'll add setup for that later.
+
+(when nil (and '(fetch-library
             "http://www.katch.ne.jp/~leque/software/repos/gauche-mode/gauche-mode.el"
             t)
            (autoload-eval-lazily 'gauche-mode '(gauche-mode run-scheme)
