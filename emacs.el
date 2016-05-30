@@ -217,7 +217,7 @@ IF OK-IF-ALREADY-EXISTS is true force download."
        pkgbuild-mode
        minibuffer-line
 
-       scala-mode2
+       scala-mode
        ensime
 
        editorconfig
