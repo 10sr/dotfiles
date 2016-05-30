@@ -403,7 +403,7 @@ $(home)/.emacs.d/init.el $(home)/.vimrc $(home)/.tmux.conf:
 
 $(home)/.emacs.d/init.el: line_comment := ';;'
 $(home)/.vimrc: line_comment := '"'
-$(home)/.tmux.conf: line_comment := '#'
+$(home)/.tmux.conf: line_comment := '\#'
 
 
 
