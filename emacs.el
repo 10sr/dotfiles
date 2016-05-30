@@ -1053,7 +1053,7 @@ found, otherwise returns nil."
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
-(when (safe-require-or-eval 'uniquify)
+(with-eval-after-load 'uniquify
   (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
   (setq uniquify-ignore-buffers-re "*[^*]+*")
   (setq uniquify-min-dir-content 1))
@@ -1549,7 +1549,7 @@ the list."
 ;; reuse current dired buffer for the file to open
 (set-variable 'dired-ls-F-marks-symlinks t)
 
-(when (safe-require-or-eval 'ls-lisp)
+(with-eval-after-load 'ls-lisp
   (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
   (setq ls-lisp-dirs-first t)
   (setq ls-lisp-use-localized-time-format t)
