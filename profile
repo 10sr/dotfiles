@@ -146,7 +146,7 @@ case "`hostname`" in
         _HOSTCOLOR_1=magenta
         _HOSTCOLOR_2=white
         ;;
-    arch-mba)
+    darwin-mba.local)
         _HOSTCOLOR_1=cyan
         _HOSTCOLOR_2=black
         ;;
