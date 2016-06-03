@@ -674,7 +674,6 @@ found, otherwise returns nil."
 ;; (set-face-underline 'vertical-border
 ;;                     nil)
 
-;; Not found in MELPA nor any other package repositories
 (when (safe-require-or-eval 'end-mark)
   (global-end-mark-mode))
 
