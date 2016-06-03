@@ -99,6 +99,7 @@ found, otherwise returns nil."
        php-mode
        erlang
        js2-mode
+       js-doc
        git-commit
        gitignore-mode
        adoc-mode
@@ -1042,8 +1043,6 @@ found, otherwise returns nil."
   (autoload-eval-lazily 'js nil
     (add-hook 'js-mode-hook
               'flymake-jslint-load)))
-
-(safe-require-or-eval 'js-doc)
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
