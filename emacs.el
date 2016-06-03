@@ -686,7 +686,10 @@ found, otherwise returns nil."
   (load-theme 'cyberpunk t)
   (set-face-attribute 'button
                       nil
-                      :inherit 'highlight))
+                      :inherit 'highlight)
+  (set-face-foreground 'mode-line-inactive
+                       "white")
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
