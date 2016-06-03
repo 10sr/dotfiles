@@ -1017,11 +1017,6 @@ found, otherwise returns nil."
               ;;      (gtags-mode 1))
               )))
 
-(when (autoload-eval-lazily 'php-mode)
-  (add-hook 'php-mode-hook
-            (lambda ()
-              (set-variable 'c-basic-offset 2))))
-
 (autoload-eval-lazily 'js2-mode nil
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
@@ -1038,9 +1033,6 @@ found, otherwise returns nil."
   ;;           nil
   ;;           t)
   )
-
-(with-eval-after-load 'js
-  (set-variable 'js-indent-level 2))
 
 (add-to-list 'interpreter-mode-alist
              '("node" . js-mode))
