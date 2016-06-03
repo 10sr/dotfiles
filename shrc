@@ -640,9 +640,9 @@ __realpath(){
 if $isdarwin
 then
     # I want to use env -u, but darwin env does not provide this option
-    __safe_alias tmux='SHLVL= tmux'
+    null type tmux && alias tmux='SHLVL= tmux'
 else
-    __safe_alias tmux='env -u SHLVL tmux'
+    null type tmux && alias tmux='env -u SHLVL tmux'
 fi
 tx(){
     tmux start-server
