@@ -122,6 +122,7 @@ found, otherwise returns nil."
        fill-column-indicator
        pkgbuild-mode
        minibuffer-line
+       which-key
 
        scala-mode
        ensime
@@ -330,6 +331,9 @@ found, otherwise returns nil."
 (global-set-key [mouse-3] 'ignore)
 (global-set-key (kbd "<eisu-toggle>") 'ignore)
 (global-set-key (kbd "C-<eisu-toggle>") 'ignore)
+
+(when (safe-require-or-eval 'which-key)
+  (which-key-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editting
