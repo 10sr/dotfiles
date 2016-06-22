@@ -170,7 +170,6 @@ found, otherwise returns nil."
     (package-refresh-contents)
     (mapc (lambda (pkg)
             (or (package-installed-p pkg)
-                (locate-library (symbol-name pkg))
                 (package-install pkg)))
           10sr-package-list))
   )
