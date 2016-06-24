@@ -128,6 +128,7 @@ found, otherwise returns nil."
        ensime
 
        editorconfig
+       editorconfig-custom-majormode
 
        cyberpunk-theme
        grandshell-theme
@@ -701,6 +702,10 @@ found, otherwise returns nil."
   ;; (set-variable 'editorconfig-get-properties-function
   ;;               'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1))
+
+(when (fboundp 'editorconfig-custom-majormode)
+  (add-hook 'editorconfig-custom-hooks
+            'editorconfig-custom-majormode))
 
 (setq revert-without-query '(".+"))
 
