@@ -13,11 +13,6 @@
 ;; make directories
 (unless (file-directory-p (expand-file-name user-emacs-directory))
   (make-directory (expand-file-name user-emacs-directory)))
-(let ((d (expand-file-name (concat user-emacs-directory
-                                   "lisp"))))
-  (unless (file-directory-p d)
-    (make-directory d))
-  (add-to-list 'load-path d))
 
 (require 'cl-lib)
 (require 'simple)
