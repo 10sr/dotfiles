@@ -104,6 +104,7 @@ found, otherwise returns nil."
        ggtags
        flycheck
        auto-highlight-symbol
+       hl-todo
        ;; is flymake installs are required?
        ;;flymake-jshint
        ;;flymake-python-pyflakes
