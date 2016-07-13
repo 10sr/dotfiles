@@ -199,6 +199,11 @@ command -v fortune >/dev/null && {
     fi
 }
 
+if null type figlet && null type lolcat
+then
+    figlet `uname -sm` | lolcat
+fi
+
 uname -a
 $iswindows && alias tty="echo cmd.exe"
 echo TERM $TERM with $(tput colors) colors using $(tty)
