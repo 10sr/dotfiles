@@ -201,7 +201,7 @@ command -v fortune >/dev/null && {
 
 if null type figlet && null type lolcat
 then
-    figlet `uname -sm` | lolcat
+    hostname -s | figlet | lolcat
 fi
 
 uname -a
