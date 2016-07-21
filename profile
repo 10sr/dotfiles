@@ -68,7 +68,7 @@ do
 done
 test -n "$_src_hilite_lp_path" && export LESSOPEN="| $_src_hilite_lp_path %s"
 
-if which nvim >/dev/null
+if false which nvim >/dev/null
 then
     _VI_ALT=nvim
 elif which vim >/dev/null
