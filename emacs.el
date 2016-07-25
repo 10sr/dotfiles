@@ -88,6 +88,7 @@ found, otherwise returns nil."
 
 (set (defvar 10sr-package-list)
      '(
+       vimrc-mode
        markdown-mode
        yaml-mode
        gnuplot-mode
