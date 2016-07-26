@@ -1099,7 +1099,7 @@ __my_ps1_bttry(){
 }
 
 __my_ps1_memo(){
-    test -f memo.txt && echo "m:`du -b memo.txt|cut -f 1`"
+    test -f memo.txt && echo "m:$(echo $(wc -c memo.txt) | cut -f 1 -d " ")"
 }
 
 __my_ps1_dirs(){
