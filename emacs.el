@@ -747,7 +747,7 @@ found, otherwise returns nil."
 ;; autosave
 
 (when (safe-require-or-eval 'autosave)
-  (autosave-set 2))
+  (autosave-set 8))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
