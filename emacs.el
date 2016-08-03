@@ -837,6 +837,9 @@ found, otherwise returns nil."
 
 (autoload-eval-lazily 'sl)
 
+(with-eval-after-load 'rst
+  (define-key rst-mode-map (kbd "C-m") 'newline-and-indent))
+
 ;; jdee is too old! use malabar instead
 (with-eval-after-load 'jdee
   (add-hook 'jdee-mode-hook
