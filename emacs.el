@@ -789,6 +789,9 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
+;; Workaround to avoid ensime error
+(defvar ensime-mode-key-prefix nil)
+
 ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
 (when (safe-require-or-eval 'company)
   (global-company-mode)
@@ -938,9 +941,13 @@ found, otherwise returns nil."
         ,@auto-mode-alist))
 
 ;; TODO: check if this is required
-(and (autoload-eval-lazily 'groovy-mode)
-     (add-to-list 'auto-mode-alist
-                  '("build\\.gradle\\'" . groovy-mode)))
+(when (autoload-eval-lazily 'groovy-mode nil
+        (defvar groovy-mode-map (make-sparse-keymap))
+        (define-key groovy-mode-map "(" 'self-insert-command)
+        (define-key groovy-mode-map ")" 'self-insert-command)
+        )
+  (add-to-list 'auto-mode-alist
+               '("build\\.gradle\\'" . groovy-mode)))
 
 (with-eval-after-load 'yaml-mode
   (defvar yaml-mode-map (make-sparse-keymap))
