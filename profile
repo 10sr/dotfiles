@@ -26,6 +26,8 @@ __safe_add_path_l "/opt/local/libexec/gnubin"
 __safe_add_path_l \
     "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin"
 
+__safe_add_path_l "/usr/local/Homebrew/bin"
+
 test -f "${__dotdir}/rc.py" && export PYTHONSTARTUP="${__dotdir}/rc.py"
 
 test -d "$HOME/.local/lib/python/site-packages" && \
