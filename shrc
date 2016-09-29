@@ -280,9 +280,6 @@ _timeformat_rfc2822="%a, %d %b %Y %T %z"
 _timeformat_num="%Y%m%d%H%M%S"
 alias datenum="date +$_timeformat_num"
 
-# export GREP_OPTIONS=""
-alias gr="grep -n --color=always"
-$iswindows && alias gr="grep -n"
 alias less="less -F"
 __safe_alias em="emacs -nw"
 test -n "$_VI_ALT" && alias vi=$_VI_ALT
@@ -295,26 +292,14 @@ $gnu_coreutils && alias rmdir="rmdir -v"
 alias psaux="ps auxww"
 alias modest="ionice -c 2 -n 7 nice -n 19"
 alias e=exec
-alias q=exit
 __safe_alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
 alias po=popd
 alias pu=pushd
 __safe_alias sudo="sudo "              # use aliases through sudo
 __safe_alias sudoe="sudoedit"
-# __safe_alias halt="sudo halt"
-# __safe_alias reboot="sudo reboot"
-null type dbus-send && {
-    alias suspend="dbus-send --system --print-reply \
-        --dest=org.freedesktop.UPower \
-        /org/freedesktop/UPower org.freedesktop.UPower.Suspend"
-    alias hibernate="dbus-send --system --print-reply \
-        --dest=org.freedesktop.UPower \
-        /org/freedesktop/UPower org.freedesktop.UPower.Hibernate"
-}
+
 alias rand="echo \$RANDOM"
-__safe_alias xunp="file-roller -h"
-__safe_alias pc="sudo \paco -D"
 alias pycalc="python -i -c 'from math import *' "
 __safe_alias py3=python3
 __safe_alias py2=python2
@@ -339,9 +324,7 @@ fi
 alias sh="ENV=$HOME/.shrc PS1=\$\  PROMPT_COMMAND="" sh"
 
 # some extra utilities
-# type trash >/dev/null 2>&1 && alias rm=trash
 __safe_alias mpg123="mpg123 -C -v --title"
-__safe_alias xm="xmms2"
 #export PLAYER="mpg123 -C -v --title"
 
 __safe_alias screen="screen -e^z^z"
@@ -388,12 +371,6 @@ root(){
         cd /
     fi
 }
-
-# pad
-alias pad=notepad
-__safe_alias pad=gedit
-__safe_alias pad=leafpad
-$isdarwin && alias pad="open -e"
 
 __find_latest_vimdir(){
     vimdir=/usr/share/vim
@@ -497,7 +474,7 @@ fi
 
 __safe_alias m=gitmemo
 
-alias setup.py3="sudo python3 setup.py install --record files.txt"
+#alias setup.py3="sudo python3 setup.py install --record files.txt"
 
 randomstr(){
     len=$1
