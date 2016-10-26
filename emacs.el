@@ -122,7 +122,7 @@ found, otherwise returns nil."
        which-key
 
        scala-mode
-       ensime
+       ;;ensime
 
        editorconfig
        editorconfig-custom-majormode
