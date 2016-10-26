@@ -385,7 +385,7 @@ found, otherwise returns nil."
 (global-set-key (kbd "C-h") (kbd "DEL"))
 
 (global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
-(global-set-key (kbd "C-o") (kbd "C-e C-m"))
+;; (global-set-key (kbd "C-o") (kbd "C-e C-m"))
 
 (define-key esc-map "k" 'my-copy-whole-line)
 ;; (global-set-key "\C-z" 'undo) ; undo is M-u
