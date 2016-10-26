@@ -968,16 +968,16 @@ found, otherwise returns nil."
   (define-key apropos-mode-map "n" 'next-line)
   (define-key apropos-mode-map "p" 'previous-line))
 
-(with-eval-after-load 'isearch
-  ;; (define-key isearch-mode-map
-  ;;   (kbd "C-j") 'isearch-other-control-char)
-  ;; (define-key isearch-mode-map
-  ;;   (kbd "C-k") 'isearch-other-control-char)
-  ;; (define-key isearch-mode-map
-  ;;   (kbd "C-h") 'isearch-other-control-char)
-  (define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
-  (define-key isearch-mode-map (kbd "M-r")
-    'isearch-query-replace-regexp))
+;; `isearch' library does not call `provide' so cannot use with-eval-after-load
+;; (define-key isearch-mode-map
+;;   (kbd "C-j") 'isearch-other-control-char)
+;; (define-key isearch-mode-map
+;;   (kbd "C-k") 'isearch-other-control-char)
+;; (define-key isearch-mode-map
+;;   (kbd "C-h") 'isearch-other-control-char)
+(define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
+(define-key isearch-mode-map (kbd "M-r")
+  'isearch-query-replace-regexp)
 ;; do not cleanup isearch highlight: use `lazy-highlight-cleanup' to remove
 (setq lazy-highlight-cleanup nil)
 ;; face for isearch highlighing
