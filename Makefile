@@ -441,8 +441,7 @@ $(test_els): test-el-%: $(dotfiles_dir)/% $(home)
 # test syntax
 # ===========
 
-test_syntax_shs := test-syntax-shrc test-syntax-profile \
-	test-syntax-xinitrc test-syntax-xprograms
+test_syntax_shs := test-syntax-shrc test-syntax-profile
 test-syntax-sh: $(test_syntax_shs)
 .PHONY: $(test_syntax_shs)
 
