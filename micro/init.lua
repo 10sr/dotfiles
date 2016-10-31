@@ -6,8 +6,17 @@ function onViewOpen(view)
    local filename = view.Buf.Path
    -- prop, names = ec.parse(filepath)
    local fullpath = JoinPaths(pwd, filename)
-   messenger:Message("view.Buf.Path: " .. fullpath)
+   local out = getProperties(fullpath)
+   messenger:Message("view.Buf.Path: " .. out)
 end
+
+local function getProperties(fullpath)
+   local file = io.popen("echo fullpath: " .. fullpath, "r")
+   local output = file:read("*all")
+   file:close()
+   return output
+end
+
 
 function onSave(view)
    messenger:Message("Saved!")
