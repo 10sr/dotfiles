@@ -1,6 +1,7 @@
 -- ec = require("editorconfig_core")
 
 local function getProperties(fullpath)
+   -- TODO: Avoid command injection vulnerability
    local file = io.popen("editorconfig '" .. fullpath .. "'", "r")
    local output = file:read("*all")
    file:close()
