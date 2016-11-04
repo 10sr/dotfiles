@@ -2,6 +2,8 @@
 
 local function getProperties(fullpath)
    -- TODO: Avoid command injection vulnerability
+   -- For example, following command will create file b.txt
+   -- $ micro "a.txt'; touch 'b.txt"
    local file = io.popen("editorconfig '" .. fullpath .. "'", "r")
    local output = file:read("*all")
    file:close()
