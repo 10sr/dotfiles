@@ -1,10 +1,22 @@
 -- ec = require("editorconfig_core")
 
-local function GetProperties(fullpath)
-   local file = io.popen("echo fullpath: " .. fullpath, "r")
+local function getProperties(fullpath)
+   local file = io.popen("editorconfig '" .. fullpath .. "'", "r")
    local output = file:read("*all")
    file:close()
-   return output
+
+   local properties = {}
+   -- TODO: Which is better? output:gmatch(), string.gmatch(output, ...)
+   for line in output:gmatch('([^\n]+)') do
+      -- TODO: Fix regex
+      local key, value = line:match('([^=]*)=(.*)')
+      key = key:gsub('^%s(.-)%s*$', '%1')
+      value = value:gsub('^%s(.-)%s*$', '%1')
+      -- TODO: Throw error when key is empty string
+      properties[key] = value
+   end
+
+   return properties
 end
 
 function onViewOpen(view)
@@ -13,11 +25,9 @@ function onViewOpen(view)
    local filename = view.Buf.Path
    -- prop, names = ec.parse(filepath)
    local fullpath = JoinPaths(pwd, filename)
-   local out = GetProperties(fullpath)
-   messenger:Message("view.Buf.Path: " .. out)
+   local out = getProperties(fullpath)
+   messenger:Message("edconf: " .. out["indent_style"])
 end
-
-
 
 function onSave(view)
    messenger:Message("Saved!")
