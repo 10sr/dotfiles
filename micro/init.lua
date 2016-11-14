@@ -27,19 +27,20 @@ local function setIndentation(properties, view)
    local tab_width_str = properties["tab_width"]
    local indent_style = properties["indent_style"]
 
-   local indent_size = tonumber(indent_size, 10)
+   local indent_size = tonumber(indent_size_str, 10)
    if indent_size ~= nil then
+      messenger:Message("set tabsize to " .. indent_size_str)
       SetLocalOption("tabsize", indent_size, view)
    end
 
    if indent_style == "space" then
-      messenger:Message("indent_style to space")
-      SetLocalOption("indentchar", " ", view)
+      -- messenger:Message("indent_style to space")
+      SetLocalOption("tabstospaces", "on", view)
    elseif indent_style == "tab" then
-      messenger:Message("indent_style to tab")
-      SetLocalOption("indentchar", "\t", view)
+      -- messenger:Message("indent_style to tab")
+      SetLocalOption("tabstospaces", "off", view)
    else
-      messenger:Message("unknown indent_style")
+      -- messenger:Message("unknown indent_style")
    end
 end
 
@@ -56,6 +57,8 @@ function onViewOpen(view)
       messenger:Message("edconf: " .. properties["indent_style"])
    end
 
+   -- SetLocalOption("tabsize", 4, view)
+   -- SetLocalOption("tabstospaces", "on", view)
    setIndentation(properties, view)
    -- setCodingSystem(propertieps, view)
 end
