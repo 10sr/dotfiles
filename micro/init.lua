@@ -60,7 +60,14 @@ function onViewOpen(view)
    -- SetLocalOption("tabsize", 4, view)
    -- SetLocalOption("tabstospaces", "on", view)
    setIndentation(properties, view)
-   -- setCodingSystem(propertieps, view)
+   -- Currently micro does not support changing coding-systems
+   -- (Always use utf-8 with LF?)
+   -- setCodingSystem(properties, view)
+   -- `ruler' is not what we want!
+   -- setMaxLineLength(properties, view)
+   -- setTrimTrailingWhitespace(properties, view)
+   -- We have eofnewline! Use this!
+   -- setInsertFinalNewline(properties, view)
 end
 
 function onSave(view)
