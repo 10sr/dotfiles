@@ -93,7 +93,7 @@ test_syntaxes := test-syntax-el test-syntax-sh
 test-syntax: $(test_syntaxes)
 
 setups := setup-darwin setup-directories setup-emacs setup-gitconf \
-	setup-repository setup-util setup-rc
+	setup-repository setup-rc
 # `make setup` to setup these all sounds to be too match
 setup-all: $(setups)
 
@@ -232,29 +232,6 @@ ifeq (,$(git))
 	false "Git not installed"
 endif
 	$(git) clone $(dotfiles_git) $(dotfiles_dir)
-
-
-
-# utils
-# -----
-
-setup_utils := colortable16.sh 256colors2.pl pacapt ack-2.12
-setup-util: $(setup_utils)
-.PHONY: $(setup_utils)
-
-setup_utils_path := $(setup_utils:%=$(bindir)/%)
-
-$(setup_utils): %: $(bindir)/%
-
-$(setup_utils_path): $(bindir)
-	$(curl) -L --url "$(util_url)" --output "$@"
-	chmod +x "$@"
-
-colortable16.sh: \
-	util_url := https://gist.github.com/10sr/6852317/raw/colortable16.sh
-256colors2.pl: util_url := https://gist.github.com/10sr/6852331/raw/256colors2.pl
-pacapt: util_url := https://github.com/icy/pacapt/raw/ng/pacapt
-ack-2.12: util_url := http://beyondgrep.com/ack-2.12-single-file
 
 
 
