@@ -100,6 +100,7 @@ found, otherwise returns nil."
        gitignore-mode
        adoc-mode
        malabar-mode
+
        ;; ack
        color-moccur
        ggtags
@@ -120,6 +121,8 @@ found, otherwise returns nil."
        pkgbuild-mode
        minibuffer-line
        which-key
+       ;; I think this works in place of my autosave lib
+       super-save
 
        scala-mode
        ;;ensime
