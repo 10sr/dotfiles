@@ -280,7 +280,7 @@ _timeformat_rfc2822="%a, %d %b %Y %T %z"
 _timeformat_num="%Y%m%d%H%M%S"
 alias datenum="date +$_timeformat_num"
 
-alias less="less -F"
+alias less="less -FX"
 __safe_alias em="emacs -nw"
 test -n "$_VI_ALT" && alias vi=$_VI_ALT
 alias pstree="LANG=C pstree"
@@ -469,7 +469,11 @@ g(){
     fi
 }
 
-$isdarwin && . /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-completion.bash
+$isdarwin && $inbash && \
+    . /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-completion.bash
+$isdarwin && $inzsh && \
+    . /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-completion.zsh
+
 if null type _git && $inbash
 then
     # enable programmable completion for g
@@ -1036,6 +1040,7 @@ __my_ps1_moc(){
     __my_moc_state "[MOC:%s]"
 }
 
+echo BBB
 for f in /usr/share/git/git-prompt.sh \
              /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-prompt.sh \
              /usr/local/opt/bash-git-prompt/share/gitprompt.sh \
@@ -1046,7 +1051,10 @@ for f in /usr/share/git/git-prompt.sh \
              /opt/local/share/git-core/git-prompt.sh \
              /opt/local/share/doc/git-core/contrib/completion/git-prompt.sh
 do
-    test -r "$f" && ($inbash || $inzsh) && . "$f" && break
+    if test -r "$f" && ($inbash || $inzsh)
+    then
+        echo Srouce $f
+    fi
 done
 export GIT_PS1_SHOWDIRTYSTATE=t
 export GIT_PS1_SHOWUPSTREAM=t

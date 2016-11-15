@@ -58,7 +58,7 @@ export TERMCAP="${TERMCAP}:vb="
 # export ENV=~/.shrc
 
 export PAGER="less"
-export LESS="-iRMX"
+export LESS="-iRM"
 
 # Style for lesspipe is defined in esc.style
 _src_hilite_lp_path="`command -v src-hilite-lesspipe.sh 2>/dev/null`"
@@ -87,7 +87,7 @@ then
 fi
 
 # export CDPATH=".:~"
-export GIT_PAGER="less -F"
+export GIT_PAGER="less -FX"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \

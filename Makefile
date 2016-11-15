@@ -468,5 +468,5 @@ sexp_elisp_syntax_check := \
 
 $(test_syntax_els): test-syntax-%: $(dotfiles_dir)/%
 	test -n "$(emacs)" && \
-		$(emacs) -t $(shell tty) -Q --debug-init --batch \
+		$(emacs) -Q --debug-init --batch \
 		--eval '(let ((file "$<")) $(sexp_elisp_syntax_check))' --kill
