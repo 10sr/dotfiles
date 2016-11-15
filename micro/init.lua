@@ -1,8 +1,8 @@
 -- ec = require("editorconfig_core")
 
 local function getProperties(fullpath)
-   -- TODO: Avoid command injection vulnerability
-   -- For example, following command will create file b.txt
+   -- FIXME: Commands can be injected here!
+   -- For example, issuing this command will create file b.txt
    -- $ micro "a.txt'; touch 'b.txt"
    local file = io.popen("editorconfig '" .. fullpath .. "'", "r")
    local output = file:read("*all")
@@ -34,13 +34,20 @@ local function setIndentation(properties, view)
    end
 
    if indent_style == "space" then
-      -- messenger:Message("indent_style to space")
       SetLocalOption("tabstospaces", "on", view)
    elseif indent_style == "tab" then
-      -- messenger:Message("indent_style to tab")
       SetLocalOption("tabstospaces", "off", view)
    else
-      -- messenger:Message("unknown indent_style")
+      messenger:Message("unknown indent_style")
+   end
+end
+
+local function setInsertFinalNewline(properties, view)
+   local val = properties["insert_final_newline"]
+   if val == "true" then
+      SetLocalOption("eofnewline", true, view)
+   elseif val == "false" then
+      SetLocalOption("eofnewline", false, view)
    end
 end
 
@@ -57,8 +64,6 @@ function onViewOpen(view)
       messenger:Message("edconf: " .. properties["indent_style"])
    end
 
-   -- SetLocalOption("tabsize", 4, view)
-   -- SetLocalOption("tabstospaces", "on", view)
    setIndentation(properties, view)
    -- Currently micro does not support changing coding-systems
    -- (Always use utf-8 with LF?)
@@ -66,12 +71,9 @@ function onViewOpen(view)
    -- `ruler' is not what we want!
    -- setMaxLineLength(properties, view)
    -- setTrimTrailingWhitespace(properties, view)
-   -- We have eofnewline! Use this!
-   -- setInsertFinalNewline(properties, view)
+   setInsertFinalNewline(properties, view)
 end
 
 function onSave(view)
-   messenger:Message("Saved!")
+   -- messenger:Message("Saved!")
 end
-
--- function getindentstyle()
