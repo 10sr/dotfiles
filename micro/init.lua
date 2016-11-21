@@ -30,20 +30,7 @@ local function setInsertFinalNewline(properties, view)
    end
 end
 
-function onEditorConfigExit(output)
-   local properties = {}
-   -- TODO: Which is better? output:gmatch(), string.gmatch(output, ...)
-   for line in output:gmatch('([^\n]+)') do
-      -- TODO: Fix regex
-      local key, value = line:match('([^=]*)=(.*)')
-      key = key:gsub('^%s(.-)%s*$', '%1')
-      value = value:gsub('^%s(.-)%s*$', '%1')
-      -- TODO: Throw error when key is empty string
-      properties[key] = value
-   end
-
-   local view = CurView()
-
+local function applyProperties(properties, view)
    setIndentation(properties, view)
    -- Currently micro does not support changing coding-systems
    -- (Always use utf-8 with LF?)
@@ -52,23 +39,37 @@ function onEditorConfigExit(output)
    -- setMaxLineLength(properties, view)
    -- setTrimTrailingWhitespace(properties, view)
    setInsertFinalNewline(properties, view)
+   -- messenger:Message("ed output: " .. output)
 end
 
-local function applyProperties(view)
-   -- Is this portable? (work on windows?)
-   local pwd = os.getenv("PWD")
-   local filename = view.Buf.Path
-   -- prop, names = ec.parse(filepath)
-   local fullpath = JoinPaths(pwd, filename)
+function onEditorConfigExit(output)
+   -- messenger:Message(output)
+   -- FIXME: messege when editorconfig exit with error
+   local properties = {}
+   -- TODO: Which is better? output:gmatch(), string.gmatch(output, ...)
+   for line in output:gmatch('([^\n]+)') do
+      -- TODO: Fix regex
+      -- TODO: Throw error for invalid output
+      local key, value = line:match('([^=]*)=(.*)')
+      key = key:gsub('^%s(.-)%s*$', '%1')
+      value = value:gsub('^%s(.-)%s*$', '%1')
+      properties[key] = value
+   end
 
-   -- FIXME: Commands can be injected here!
-   -- For example, issuing this command will create file b.txt
-   -- $ micro "a.txt'; touch 'b.txt"
+   local view = CurView()
+   applyProperties(properties, view)
+end
+
+local function getApplyProperties(view)
+   local fullpath = view.Buf.AbsPath
+   messenger:Message("editorconfig " .. fullpath)
+   -- JobSpawn("editorconfig", {fullpath}, "", "", "init.onEditorConfigExit")
    JobStart("editorconfig " .. fullpath, "", "", "init.onEditorConfigExit")
 end
 
 function onViewOpen(view)
-   applyProperties(view)
+   getApplyProperties(view)
+   -- messenger:Message(view.Buf.AbsPath)
 end
 
 function onSave(view)
