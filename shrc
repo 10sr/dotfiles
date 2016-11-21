@@ -460,19 +460,10 @@ __sdcv_less(){
 
 command -v sdcv >/dev/null && alias dict=__sdcv_less
 
-g(){
-    if test $# -eq 0 && null type git-info
-    then
-        git info
-    else
-        git "$@"
-    fi
-}
+__safe_alias g="git "
 
 $isdarwin && $inbash && \
     . /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-completion.bash
-$isdarwin && $inzsh && \
-    . /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-completion.zsh
 
 if null type _git && $inbash
 then
@@ -1053,7 +1044,8 @@ for f in /usr/share/git/git-prompt.sh \
 do
     if test -r "$f" && ($inbash || $inzsh)
     then
-        echo Srouce $f
+        . "$f"
+        break
     fi
 done
 export GIT_PS1_SHOWDIRTYSTATE=t
