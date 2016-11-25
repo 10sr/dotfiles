@@ -1099,6 +1099,7 @@ found, otherwise returns nil."
 
 (set-variable 'woman-cache-filename (expand-file-name (concat user-emacs-directory
                                                               "woman_cache.el")))
+;; not work because man.el will be loaded when man called
 (defalias 'man 'woman)
 
 (add-to-list 'auto-mode-alist
