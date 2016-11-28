@@ -57,13 +57,13 @@ local function applyProperties(properties, view)
 end
 
 function onEditorConfigExit(output)
-   -- FIXME: messege when editorconfig exit with error
    local properties = {}
-   -- TODO: Which is better? output:gmatch(), string.gmatch(output, ...)
    for line in output:gmatch('([^\n]+)') do
-      -- TODO: Fix regex
-      -- TODO: Throw error for invalid output
       local key, value = line:match('([^=]*)=(.*)')
+      if key == nil or value == nil then
+         messenger:Message("Failed to parse editorconfig output: " .. output)
+         return
+      end
       key = key:gsub('^%s(.-)%s*$', '%1')
       value = value:gsub('^%s(.-)%s*$', '%1')
       properties[key] = value
