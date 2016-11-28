@@ -5,7 +5,6 @@ local function setIndentation(properties, view)
    local tab_width_str = properties["tab_width"]
    local indent_style = properties["indent_style"]
 
-   -- TODO: Fix logic to decide indent_size
    local indent_size = tonumber(indent_size_str, 10)
    local tab_width = tonumber(tab_width_str, 10)
    if indent_size_str == "tab" then
@@ -58,7 +57,6 @@ local function applyProperties(properties, view)
 end
 
 function onEditorConfigExit(output)
-   -- messenger:Message(output)
    -- FIXME: messege when editorconfig exit with error
    local properties = {}
    -- TODO: Which is better? output:gmatch(), string.gmatch(output, ...)
@@ -84,7 +82,6 @@ end
 
 function onViewOpen(view)
    getApplyProperties(view)
-   -- messenger:Message(view.Buf.AbsPath)
 end
 
 function onSave(view)
