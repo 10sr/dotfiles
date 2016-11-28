@@ -7,6 +7,13 @@ local function setIndentation(properties, view)
 
    -- TODO: Fix logic to decide indent_size
    local indent_size = tonumber(indent_size_str, 10)
+   local tab_width = tonumber(tab_width_str, 10)
+   if indent_size_str == "tab" then
+      indent_size = tab_width
+   elseif tab_width == nil then
+      tab_width = indent_size
+   end
+
    if indent_size ~= nil then
       messenger:Message("set tabsize to " .. indent_size_str)
       SetLocalOption("tabsize", indent_size, view)
@@ -14,8 +21,16 @@ local function setIndentation(properties, view)
 
    if indent_style == "space" then
       SetLocalOption("tabstospaces", "on", view)
+      if indent_size ~= nil then
+         messenger:Message("set tabsize to " .. tostring(indent_size))
+         SetLocalOption("tabsize", indent_size, view)
+      end
    elseif indent_style == "tab" then
       SetLocalOption("tabstospaces", "off", view)
+      if tab_width ~= nil then
+         messenger:Message("set tabsize to " .. tostring(tab_width))
+         SetLocalOption("tabsize", tab_width, view)
+      end
    else
       messenger:Message("unknown indent_style")
    end
