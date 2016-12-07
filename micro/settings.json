@@ -12,7 +12,8 @@
     "infobar": true,
     "linter": true,
     "pluginchannels": [
-        "https://raw.githubusercontent.com/micro-editor/plugin-channel/master/channel.json"
+        "https://raw.githubusercontent.com/micro-editor/plugin-channel/master/channel.json",
+        "https://github.com/10sr/editorconfig-micro/raw/master/channel.json"
     ],
     "pluginrepos": [],
     "ruler": true,
