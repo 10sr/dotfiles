@@ -27,7 +27,7 @@
     "tabsize": 4,
     "tabstospaces": false,
     "*.json": {
-    	"tabsize": 4,
-    	"indentchar": "\t"
+        "tabsize": 4,
+        "indentchar": "\t"
     }
 }
