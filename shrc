@@ -1031,7 +1031,6 @@ __my_ps1_moc(){
     __my_moc_state "[MOC:%s]"
 }
 
-echo BBB
 for f in /usr/share/git/git-prompt.sh \
              /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-prompt.sh \
              /usr/local/opt/bash-git-prompt/share/gitprompt.sh \
