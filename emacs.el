@@ -937,13 +937,6 @@ found, otherwise returns nil."
                        "color-245")
   )
 
-(setq auto-mode-alist
-      `(("autostart\\'" . sh-mode)
-        ("xinitrc\\'" . sh-mode)
-        ("xprograms\\'" . sh-mode)
-        ("PKGBUILD\\'" . sh-mode)
-        ,@auto-mode-alist))
-
 ;; TODO: check if this is required
 (when (autoload-eval-lazily 'groovy-mode nil
         (defvar groovy-mode-map (make-sparse-keymap))

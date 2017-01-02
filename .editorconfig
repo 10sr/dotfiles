@@ -22,6 +22,7 @@ indent_style = tab
 
 [{shrc,profile,xinitrc,xprograms,*.sh}]
 indent_size = 4
+emacs_mode = sh
 
 [*.yml]
 indent_size = 2
