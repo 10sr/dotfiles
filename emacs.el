@@ -451,51 +451,6 @@ found, otherwise returns nil."
   (git-ps1-mode))
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
-;; display date
-
-(when (safe-require-or-eval 'time)
-  (setq display-time-interval 29)
-  (setq display-time-day-and-date t)
-  (setq display-time-format "%Y/%m/%d %a %H:%M")
-  ;; (if window-system
-  ;;     (display-time-mode 0)
-  ;;   (display-time-mode 1))
-  (when display-time-mode
-    (display-time-update)))
-
-;; ;; current directory
-;; (let ((ls (member 'mode-line-buffer-identification
-;;                   mode-line-format)))
-;;   (setcdr ls
-;;           (cons '(:eval (concat " ("
-;;                                 (abbreviate-file-name default-directory)
-;;                                 ")"))
-;;                 (cdr ls))))
-
-;; ;; display last modified time
-;; (let ((ls (member 'mode-line-buffer-identification
-;;                   mode-line-format)))
-;;   (setcdr ls
-;;           (cons '(:eval (concat " "
-;;                                 my-buffer-file-last-modified-time))
-;;                 (cdr ls))))
-
-(defun buffer-list-not-start-with-space ()
-  "Return a list of buffers that not start with whitespaces."
-  (let ((bl (buffer-list))
-        b nbl)
-    (while bl
-      (setq b (pop bl))
-      (unless (string-equal " "
-                            (substring (buffer-name b)
-                                       0
-                                       1))
-        (add-to-list 'nbl b)))
-    nbl))
-
-;; http://www.masteringemacs.org/articles/2012/09/10/hiding-replacing-modeline-strings/
-;; (add-to-list 'minor-mode-alist
-;;              '(global-whitespace-mode ""))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; minibuffer
@@ -786,9 +741,7 @@ found, otherwise returns nil."
 
 (and (eq system-type 'darwin)
      (safe-require-or-eval 'pasteboard)
-     (turn-on-pasteboard)
-     (getenv "TMUX")
-     (pasteboard-enable-rtun))
+     (turn-on-pasteboard))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
