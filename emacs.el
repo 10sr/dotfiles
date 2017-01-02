@@ -462,6 +462,7 @@ found, otherwise returns nil."
 (setq resize-mini-windows t)
 (temp-buffer-resize-mode 1)
 (savehist-mode 1)
+(defvar display-time-format "%Y/%m/%d %a %H:%M")
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
