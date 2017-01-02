@@ -425,7 +425,7 @@ found, otherwise returns nil."
                     `("em:"
                       ,user-login-name
                       "@"
-                      ,(car (split-string system-name
+                      ,(car (split-string (system-name)
                                           "\\."))
                       ":"
                       default-directory))
@@ -526,7 +526,7 @@ found, otherwise returns nil."
   (set-variable 'minibuffer-line-format
                 `(,(concat user-login-name
                            "@"
-                           (car (split-string system-name
+                           (car (split-string (system-name)
                                               "\\."))
                            ":")
                   (:eval (abbreviate-file-name (or buffer-file-name
@@ -544,7 +544,7 @@ found, otherwise returns nil."
                 `(,(concat ""
                            user-login-name
                            "@"
-                           (car (split-string system-name
+                           (car (split-string (system-name)
                                               "\\."))
                            ":")
                   (:eval (abbreviate-file-name (or buffer-file-name
