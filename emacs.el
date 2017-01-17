@@ -17,7 +17,6 @@
 (require 'cl-lib)
 (require 'simple)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
@@ -107,6 +106,7 @@ found, otherwise returns nil."
        flycheck
        auto-highlight-symbol
        hl-todo
+       pp-c-l
        ;; is flymake installs are required?
        ;;flymake-jshint
        ;;flymake-python-pyflakes
