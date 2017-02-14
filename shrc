@@ -701,7 +701,7 @@ null type dtach && alias ds=__dsession
 scr(){
     test -n "$1" && pf="${1}-"
     ___tformat="%Y%m%d-%H%M%S%z"
-    ___file="${HOME}/${pf}`date +${___tformat}`.script"
+    ___file="${PWD}/${pf}`date +${___tformat}`.script"
     __MY_SCRIPT=${___file} script ${___file} "$@"
 }
 
