@@ -305,6 +305,7 @@ __safe_alias gcc="nice gcc"
 __safe_alias go="nice go"
 __safe_alias git="nice git"
 __safe_alias javac="nice javac -J-Duser.language=en"
+__safe_alias ansible-playbook="nice ansible-playbook"
 
 alias rand="echo \$RANDOM"
 alias pycalc="python -i -c 'from math import *' "
