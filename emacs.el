@@ -779,6 +779,9 @@ found, otherwise returns nil."
              '("python3" . python-mode))
 (add-to-list 'interpreter-mode-alist
              '("python2" . python-mode))
+(with-eval-after-load 'python
+  (defvar python-mode-map (make-sparse-keymap))
+  (define-key python-mode-map (kbd "C-m") 'newline-and-indent))
 
 ;; http://fukuyama.co/foreign-regexp
 '(and (safe-require-or-eval 'foreign-regexp)
