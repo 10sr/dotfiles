@@ -899,6 +899,7 @@ found, otherwise returns nil."
         (defvar groovy-mode-map (make-sparse-keymap))
         (define-key groovy-mode-map "(" 'self-insert-command)
         (define-key groovy-mode-map ")" 'self-insert-command)
+        (define-key groovy-mode-map (kbd "C-m") 'newline-and-indent)
         )
   (add-to-list 'auto-mode-alist
                '("build\\.gradle\\'" . groovy-mode)))
