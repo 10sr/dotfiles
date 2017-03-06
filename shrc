@@ -296,7 +296,6 @@ __safe_alias e3=e3em
 #alias dirs="dirs -v -l | \grep -v \$(printf '%s$' \$PWD)"
 alias po=popd
 alias pu=pushd
-__safe_alias sudo="sudo "              # use aliases through sudo
 __safe_alias sudoe="sudoedit"
 
 __safe_alias make="nice make"
