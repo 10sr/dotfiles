@@ -1041,6 +1041,19 @@ found, otherwise returns nil."
 (global-set-key "\M-r" 'view-mode)
 ;; (setq view-read-only t)
 
+(with-eval-after-load 'term
+  (defvar term-raw-map (make-sparse-keymap))
+  (define-key term-raw-map (kbd "C-x")
+    (lookup-key (current-global-map)
+                (kbd "C-x"))))
+(add-hook 'term-mode-hook
+          (lambda ()
+            ;; Stop current line highlighting
+            (set (make-local-variable (defvar hl-line-range-function))
+                 (lambda () '(0 . 0)))
+            (set (make-local-variable 'scroll-margin)
+                 0)))
+
 (add-hook 'Man-mode-hook
           (lambda ()
             (view-mode 1)
