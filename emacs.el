@@ -1064,9 +1064,12 @@ found, otherwise returns nil."
 (when (autoload-eval-lazily 'bs '(bs-show)
         (add-to-list 'bs-configurations
                      '("specials" "^\\*" nil ".*" nil nil))
+        (add-to-list 'bs-configurations
+                     '("files-and-specials" "^\\*" buffer-file-name ".*" nil nil))
         (defvar bs-mode-map)
         (defvar bs-current-configuration)
         (define-key bs-mode-map (kbd "t")
+          ;; TODO: fix toggle feature
           (lambda ()
             (interactive)
             (if (string= "specials"
@@ -1082,7 +1085,7 @@ found, otherwise returns nil."
         ;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
         )
   (defalias 'list-buffers 'bs-show)
-  (set-variable 'bs-default-configuration "files")
+  (set-variable 'bs-default-configuration "files-and-specials")
   (set-variable 'bs-default-sort-name "by nothing")
   (add-hook 'bs-mode-hook
             (lambda ()
