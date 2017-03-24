@@ -358,7 +358,7 @@ found, otherwise returns nil."
 (setq-default indicate-empty-lines t)   ; when using x indicate empty line
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
-(setq-default indent-line-function nil)
+;; (setq-default indent-line-function nil)
 (setq-default truncate-lines nil)
 ;; (pc-selection-mode 1) ; make some already defined keybind back to default
 (delete-selection-mode 1)
