@@ -664,6 +664,10 @@ found, otherwise returns nil."
   (add-hook 'editorconfig-custom-hooks
             'editorconfig-custom-majormode))
 
+(when (fboundp 'editorconfig-charset-extras)
+  (add-hook 'editorconfig-custom-hooks
+            'editorconfig-charset-extras))
+
 (setq revert-without-query '(".+"))
 
 ;; save cursor position
