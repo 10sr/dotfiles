@@ -1425,7 +1425,7 @@ the list."
 
   (when (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack))
     (with-eval-after-load 'dired
-      (define-key dired-mode-map "P" 'dired-do-pack-or-unpack)))
+      (define-key dired-mode-map "P" 'pack-dired-dwim)))
 
   (when (autoload-eval-lazily 'dired-list-all-mode)
     (setq dired-listing-switches "-lhF")
