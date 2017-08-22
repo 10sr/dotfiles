@@ -650,6 +650,15 @@ found, otherwise returns nil."
                       :inherit 'highlight)
   (set-face-foreground 'mode-line-inactive
                        "white")
+
+  (face-spec-set 'term-color-black (face-default-spec 'term-color-black))
+  (face-spec-set 'term-color-red (face-default-spec 'term-color-red))
+  (face-spec-set 'term-color-green (face-default-spec 'term-color-green))
+  (face-spec-set 'term-color-yellow (face-default-spec 'term-color-yellow))
+  (face-spec-set 'term-color-blue (face-default-spec 'term-color-blue))
+  (face-spec-set 'term-color-magenta (face-default-spec 'term-color-magenta))
+  (face-spec-set 'term-color-cyan (face-default-spec 'term-color-cyan))
+  (face-spec-set 'term-color-white (face-default-spec 'term-color-white))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
