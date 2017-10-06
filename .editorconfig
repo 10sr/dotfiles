@@ -19,6 +19,7 @@ indent_size = 2
 
 [{{M,m}akefile,*.mk}]
 indent_style = tab
+tab_width = 4
 
 [{shrc,profile,xinitrc,xprograms,*.sh}]
 indent_size = 4
