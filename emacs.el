@@ -358,6 +358,7 @@ found, otherwise returns nil."
 (setq-default indicate-empty-lines t)   ; when using x indicate empty line
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
+(setq-default indent-line-function 'indent-to-left-margin)
 ;; (setq-default indent-line-function nil)
 (setq-default truncate-lines nil)
 ;; (pc-selection-mode 1) ; make some already defined keybind back to default
@@ -387,7 +388,8 @@ found, otherwise returns nil."
 ;; C-h and DEL
 (global-set-key (kbd "C-h") (kbd "DEL"))
 
-(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
+;;(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
+(global-set-key (kbd "C-m") 'newline-and-indent)
 ;; (global-set-key (kbd "C-o") (kbd "C-e C-m"))
 
 (define-key esc-map "k" 'my-copy-whole-line)
