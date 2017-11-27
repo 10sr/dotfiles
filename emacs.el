@@ -645,16 +645,25 @@ found, otherwise returns nil."
   (set-variable 'ahs-idle-interval 0.6)
   (global-auto-highlight-symbol-mode 1))
 
-(when (safe-require-or-eval 'cyberpunk-theme)
-  (load-theme 'cyberpunk t)
-  (set-face-attribute 'button
-                      nil
-                      :inherit 'highlight)
-  (set-face-foreground 'mode-line-inactive
-                       "white")
-  )
+;; (when (safe-require-or-eval 'cyberpunk-theme)
+;;   (load-theme 'cyberpunk t)
+;;   (set-face-attribute 'button
+;;                       nil
+;;                       :inherit 'highlight)
+;;   (set-face-foreground 'mode-line-inactive
+;;                        "white")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;   (face-spec-set 'term-color-black (face-default-spec 'term-color-black))
+;;   (face-spec-set 'term-color-red (face-default-spec 'term-color-red))
+;;   (face-spec-set 'term-color-green (face-default-spec 'term-color-green))
+;;   (face-spec-set 'term-color-yellow (face-default-spec 'term-color-yellow))
+;;   (face-spec-set 'term-color-blue (face-default-spec 'term-color-blue))
+;;   (face-spec-set 'term-color-magenta (face-default-spec 'term-color-magenta))
+;;   (face-spec-set 'term-color-cyan (face-default-spec 'term-color-cyan))
+;;   (face-spec-set 'term-color-white (face-default-spec 'term-color-white))
+;;   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
 (when (safe-require-or-eval 'editorconfig)
@@ -665,6 +674,10 @@ found, otherwise returns nil."
 (when (fboundp 'editorconfig-custom-majormode)
   (add-hook 'editorconfig-custom-hooks
             'editorconfig-custom-majormode))
+
+(when (fboundp 'editorconfig-charset-extras)
+  (add-hook 'editorconfig-custom-hooks
+            'editorconfig-charset-extras))
 
 (setq revert-without-query '(".+"))
 
@@ -1423,7 +1436,7 @@ the list."
 
   (when (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack))
     (with-eval-after-load 'dired
-      (define-key dired-mode-map "P" 'dired-do-pack-or-unpack)))
+      (define-key dired-mode-map "P" 'pack-dired-dwim)))
 
   (when (autoload-eval-lazily 'dired-list-all-mode)
     (setq dired-listing-switches "-lhF")
