@@ -1392,7 +1392,6 @@ the list."
 (with-eval-after-load 'dired
   (safe-require-or-eval 'ls-lisp)
   (defvar dired-mode-map (make-sparse-keymap))
-  (define-key dired-mode-map "o" 'my-dired-x-open)
   (define-key dired-mode-map "i" 'dired-get-file-info)
   (define-key dired-mode-map "f" 'find-file)
   (define-key dired-mode-map "!" 'shell-command)
@@ -1402,8 +1401,6 @@ the list."
   (define-key dired-mode-map "B" 'gtkbm-add-current-dir)
   (define-key dired-mode-map "b" 'gtkbm)
   (define-key dired-mode-map "h" 'my-dired-echo-file-head)
-  (define-key dired-mode-map "@" (lambda ()
-                                   (interactive) (my-x-open ".")))
   (define-key dired-mode-map (kbd "TAB") 'other-window)
   ;; (define-key dired-mode-map "P" 'my-dired-do-pack-or-unpack)
   (define-key dired-mode-map "/" 'dired-isearch-filenames)
