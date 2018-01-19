@@ -813,6 +813,9 @@ found, otherwise returns nil."
 
 (when (safe-require-or-eval 'git-commit)
   (global-git-commit-mode 1))
+(with-eval-after-load 'git-commit
+  (add-hook 'git-commit-setup-hook
+            'turn-off-auto-fill t))
 
 (autoload-eval-lazily 'sl)
 
