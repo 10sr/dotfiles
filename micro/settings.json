@@ -1,16 +1,27 @@
 {
+    "*.json": {
+        "indentchar": "\t",
+        "tabsize": 4
+    },
     "autoclose": true,
     "autoindent": true,
     "autosave": false,
     "colorcolumn": 0,
     "colorscheme": "solarized",
     "cursorline": true,
+    "eofnewline": false,
+    "fastdirty": true,
+    "fileformat": "unix",
+    "ftoptions": true,
     "gofmt": true,
     "goimports": false,
     "ignorecase": false,
     "indentchar": " ",
     "infobar": true,
+    "keepautoindent": false,
+    "keymenu": false,
     "linter": true,
+    "mouse": true,
     "pluginchannels": [
         "https://raw.githubusercontent.com/micro-editor/plugin-channel/master/channel.json",
         "https://github.com/10sr/editorconfig-micro/raw/master/channel.json"
@@ -19,16 +30,20 @@
     "rmtrailingws": true,
     "ruler": true,
     "savecursor": false,
+    "savehistory": true,
     "saveundo": false,
+    "scrollbar": false,
     "scrollmargin": 3,
     "scrollspeed": 2,
     "softwrap": false,
+    "splitbottom": true,
+    "splitright": true,
     "statusline": true,
+    "sucmd": "sudo",
     "syntax": true,
+    "tabmovement": false,
     "tabsize": 4,
     "tabstospaces": false,
-    "*.json": {
-        "tabsize": 4,
-        "indentchar": "\t"
-    }
+    "termtitle": false,
+    "useprimary": true
 }
