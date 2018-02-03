@@ -11,9 +11,6 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 max_line_length = 80
 
-[*.c]
-indent_size = 4
-
 [*.js]
 indent_size = 2
 
