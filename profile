@@ -133,6 +133,7 @@ export JAVA_OPTS="$JAVA_OPTS -Duser.language=en"
 export GOPATH="$HOME/my/go"
 export PATH="$GOPATH/bin:$PATH"
 
+export PIPENV_VENV_IN_PROJECT=1
 
 ###########################################
 # Host colors
