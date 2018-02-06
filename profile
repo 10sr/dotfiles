@@ -13,34 +13,13 @@ __safe_add_path_l(){
 
 __safe_add_path_l "$HOME/.cabal/bin"
 __safe_add_path_l "$HOME/.local/lib/gems/bin"
-__safe_add_path_l "$HOME/.local/bin"
 __safe_add_path_l "$HOME/.gem/ruby/2.1.0/bin"
 __safe_add_path_r "/c/mingw/bin"
 __safe_add_path_r "/c/mingw/msys/1.0/bin"
 
-# macports coreutils
-# $isdarwin cannot be used it is not defined yet
-__safe_add_path_l "/opt/local/bin"
-__safe_add_path_l "/opt/local/sbin"
-__safe_add_path_l "/opt/local/libexec/gnubin"
-__safe_add_path_l \
-    "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin"
-
-test -f "${__dotdir}/rc.py" && export PYTHONSTARTUP="${__dotdir}/rc.py"
-
-test -d "$HOME/.local/lib/python/site-packages" && \
-    export PYTHONPATH="${PYTHONPATH}:${HOME}/.local/lib/python/site-packages"
-
 export GEM_HOME="$HOME/.local/lib/gems"
 export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
 
-
-# it is not so good
-# http://archive.linux.or.jp/JF/JFdocs/Program-Library-HOWTO/shared-libraries.html
-# http://superuser.com/questions/324613/installing-a-library-locally-in-home-directory-but-program-doesnt-recognize-it
-# without this ENV i cannot run tmux. another way is to use --disable-shared
-# when building tmux
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.local/lib"
 
 # in my environment powerdown does not work
 test -z "$DISPLAY" && test -z "$SSH_CONNECTION" && \
