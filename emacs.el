@@ -669,7 +669,10 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'editorconfig)
   ;; (set-variable 'editorconfig-get-properties-function
   ;;               'editorconfig-core-get-properties-hash)
-  (editorconfig-mode 1))
+  (editorconfig-mode 1)
+  (with-eval-after-load 'org-src
+    (add-hook 'org-src-mode-hook
+              'editorconfig-mode-apply t)))
 
 (when (fboundp 'editorconfig-custom-majormode)
   (add-hook 'editorconfig-custom-hooks
