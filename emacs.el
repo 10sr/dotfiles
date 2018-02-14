@@ -671,6 +671,7 @@ found, otherwise returns nil."
   ;;               'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1)
   (with-eval-after-load 'org-src
+    ;; [*.org\[\*Org Src*\[ c \]*\]]
     (add-hook 'org-src-mode-hook
               'editorconfig-mode-apply t)))
 
