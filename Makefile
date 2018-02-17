@@ -69,6 +69,9 @@ directories := $(dotfiles_dir) $(home) $(localdir) $(vardir) $(bindir) \
 current := $(shell date)
 uname := $(shell uname)
 
+# Remove zsh from this list because it causes failure of travis test
+# Message:
+# Segmentation fault (core dumped)
 shrc_loadables := sh bash # zsh
 
 emacs ?= $(shell which emacs 2>/dev/null)
