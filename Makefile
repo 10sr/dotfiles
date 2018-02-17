@@ -89,7 +89,7 @@ default: help
 tests := test-el
 test: test-syntax $(tests)
 
-test_syntaxes := test-syntax-el test-syntax-sh
+test_syntaxes := test-syntax-el # test-syntax-sh
 test-syntax: $(test_syntaxes)
 
 setups := setup-darwin setup-directories setup-emacs setup-gitconf \
