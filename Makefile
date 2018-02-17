@@ -69,7 +69,7 @@ directories := $(dotfiles_dir) $(home) $(localdir) $(vardir) $(bindir) \
 current := $(shell date)
 uname := $(shell uname)
 
-shrc_loadables := sh bash zsh
+shrc_loadables := sh bash # zsh
 
 emacs ?= $(shell which emacs 2>/dev/null)
 git ?= $(shell which git 2>/dev/null)
@@ -89,7 +89,7 @@ default: help
 tests := test-el
 test: test-syntax $(tests)
 
-test_syntaxes := test-syntax-el # test-syntax-sh
+test_syntaxes := test-syntax-el test-syntax-sh
 test-syntax: $(test_syntaxes)
 
 setups := setup-darwin setup-directories setup-emacs setup-gitconf \
