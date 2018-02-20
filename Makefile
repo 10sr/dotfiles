@@ -305,6 +305,7 @@ else
 	$(git_conf) status.showUntrackedFiles normal
 	$(git_conf) log.date iso
 	$(git_conf) push.default current
+	$(git_conf) pull.ff only
 ifneq (,$(xz))
 	$(git_conf) tar.txz.command "xz -c"
 endif
