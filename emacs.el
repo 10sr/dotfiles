@@ -1014,11 +1014,11 @@ found, otherwise returns nil."
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
-  (defvar js2-mode-map (make-sparse-keymap))
-  (define-key js2-mode-map (kbd "C-m") (lambda ()
-                                         (interactive)
-                                         (js2-enter-key)
-                                         (indent-for-tab-command)))
+  ;; (defvar js2-mode-map (make-sparse-keymap))
+  ;; (define-key js2-mode-map (kbd "C-m") (lambda ()
+  ;;                                        (interactive)
+  ;;                                        (js2-enter-key)
+  ;;                                        (indent-for-tab-command)))
   ;; (add-hook (kill-local-variable 'before-save-hook)
   ;;           'js2-before-save)
   ;; (add-hook 'before-save-hook
