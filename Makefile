@@ -296,11 +296,10 @@ ifeq (,$(git))
 $(warnning "Git program not found")
 else
 	$(git_conf) user.name '10sr'
-	$(git_conf) user.email '8.slashes@gmail.com'
+	$(git_conf) user.email '8slashes+git@gmail.com'
 
 	$(git_conf) core.autocrlf false
 	$(git_conf) core.excludesfile '~/.gitignore'
-	$(git_conf) core.commentChar ";"
 	$(git_conf) color.ui auto
 	$(git_conf) status.relativePaths false
 	$(git_conf) status.showUntrackedFiles normal
