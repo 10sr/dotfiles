@@ -998,17 +998,7 @@ found, otherwise returns nil."
   (add-to-list 'c-default-style
                '(c-mode . "k&r"))
   (add-to-list 'c-default-style
-               '(c++-mode . "k&r"))
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              ;; why c-basic-offset in k&r style defaults to 5 ???
-              (set-variable 'c-basic-offset 4)
-              (set-variable 'indent-tabs-mode nil)
-              ;; (set-face-foreground 'font-lock-keyword-face "blue")
-              (c-toggle-hungry-state -1)
-              ;; (and (require 'gtags nil t)
-              ;;      (gtags-mode 1))
-              )))
+               '(c++-mode . "k&r")))
 
 (autoload-eval-lazily 'js2-mode nil
   ;; currently do not use js2-mode
