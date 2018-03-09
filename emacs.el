@@ -162,7 +162,8 @@ found, otherwise returns nil."
   (setq package-archives
         `(,@package-archives
           ("melpa" . "https://melpa.org/packages/")
-          ("10sr-el" . "https://10sr.github.io/emacs-lisp/elpa/")))
+          ;; Somehow fails to download via https
+          ("10sr-el" . "http://10sr.github.io/emacs-lisp/elpa/")))
   (package-initialize)
 
   (defun my-auto-install-package ()
