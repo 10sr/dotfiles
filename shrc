@@ -298,6 +298,7 @@ alias po=popd
 alias pu=pushd
 __safe_alias sudoe="sudoedit"
 
+__safe_alias ge="git exec"
 __safe_alias make="nice make"
 __safe_alias brew="nice brew"
 __safe_alias gcc="nice gcc"
