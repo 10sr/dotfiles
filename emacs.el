@@ -98,7 +98,9 @@ found, otherwise returns nil."
        git-commit
        gitignore-mode
        adoc-mode
-       malabar-mode
+       ;; It seems malabar has been merged into jdee and this package
+       ;; already removed
+       ;; malabar-mode
 
        ;; ack
        color-moccur
@@ -106,7 +108,8 @@ found, otherwise returns nil."
        flycheck
        auto-highlight-symbol
        hl-todo
-       pp-c-l
+       ;; Currently not available
+       ;; pp-c-l
        ;; is flymake installs are required?
        ;;flymake-jshint
        ;;flymake-python-pyflakes
@@ -827,7 +830,6 @@ found, otherwise returns nil."
 (with-eval-after-load 'rst
   (define-key rst-mode-map (kbd "C-m") 'newline-and-indent))
 
-;; jdee is too old! use malabar instead
 (with-eval-after-load 'jdee
   (add-hook 'jdee-mode-hook
             (lambda ()
