@@ -1456,6 +1456,12 @@ the list."
 
 (defvar my-rgrep-alist
   `(
+    ;; git grep
+    ("gitgrep"
+     (eq 0
+         (shell-command "git rev-parse --git-dir"))
+     "git --no-pager -c color.grep=false grep -nH -e ")
+
     ;; the silver searcher
     ("ag"
      (executable-find "ag")
@@ -1472,12 +1478,6 @@ the list."
           (executable-find "global")
           (gtags-get-rootpath))
      "global --result grep ")
-
-    ;; git grep
-    ("gitgrep"
-     (eq 0
-         (shell-command "git rev-parse --git-dir"))
-     "git --no-pager -c color.grep=false grep -nH -e ")
 
     ;; grep
     ("grep"
