@@ -466,9 +466,6 @@ command -v sdcv >/dev/null && alias dict=__sdcv_less
 
 __safe_alias g="git "
 
-$isdarwin && $inbash && \
-    . /Applications/Xcode.app/Contents/Developer/usr/share/git-core/git-completion.bash
-
 if null type _git && $inbash
 then
     # enable programmable completion for g
