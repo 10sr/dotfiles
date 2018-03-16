@@ -20,17 +20,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
-
-;; `emacs --load emacs.el` with Emacs 24.3 requires with-eval-after-load to be
-;; defined at the toplevel (means that it should not be defined inside of some
-;; special forms like `when'. I do not now how to do with about this...)
-(unless (fboundp 'with-eval-after-load)
-  ;; polyfill for Emacs < 24.4
-  (defmacro with-eval-after-load (file &rest body)
-    "After FILE is loaded execute BODY."
-    (declare (indent 1) (debug t))
-    `(eval-after-load ,file (quote (progn ,@body)))))
-
 (defun call-after-init (func)
   "If `after-init-hook' has been run, call FUNC immediately.
 Otherwize hook it."
@@ -607,7 +596,7 @@ found, otherwise returns nil."
     ;;                      t))
     ))
 (and nil
-     (safe-require-or-eval 'fill-column-indicator)
+     '(safe-require-or-eval 'fill-column-indicator)
      (setq fill-column-indicator))
 
 ;; highlight current line
@@ -753,13 +742,14 @@ found, otherwise returns nil."
 ;; this page describes this in details, but only these sexps seem to be needed
 ;; http://garin.jp/doc/Linux/xwindow_clipboard
 
-(and (not window-system)
+(and nil
+     (not window-system)
      (not (eq window-system 'mac))
      (getenv "DISPLAY")
      (not (equal (getenv "DISPLAY") ""))
      (executable-find "xclip")
      ;; (< emacs-major-version 24)
-     (safe-require-or-eval 'xclip)
+     '(safe-require-or-eval 'xclip)
      nil
      (turn-on-xclip))
 
@@ -794,8 +784,8 @@ found, otherwise returns nil."
              '(encoding utf-8))
 (setq enable-local-variables :safe)
 
-(when (safe-require-or-eval 'remember-major-modes-mode)
-  (remember-major-modes-mode 1))
+;; (when (safe-require-or-eval 'remember-major-modes-mode)
+;;   (remember-major-modes-mode 1))
 
 ;; Detect file type from shebang and set major-mode.
 (add-to-list 'interpreter-mode-alist
@@ -814,7 +804,7 @@ found, otherwise returns nil."
         ))
 
 (autoload-eval-lazily 'sql '(sql-mode)
-  (safe-require-or-eval 'sql-indent))
+  (require 'sql-indent nil t))
 
 (when (autoload-eval-lazily 'git-command)
   (define-key ctl-x-map "g" 'git-command))
@@ -828,6 +818,7 @@ found, otherwise returns nil."
 (autoload-eval-lazily 'sl)
 
 (with-eval-after-load 'rst
+  (defvar rst-mode-map)
   (define-key rst-mode-map (kbd "C-m") 'newline-and-indent))
 
 (with-eval-after-load 'jdee
