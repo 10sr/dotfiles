@@ -361,10 +361,6 @@ found, otherwise returns nil."
 
 ;; key bindings
 ;; moving around
-;; (global-set-key (kbd "M-j") 'next-line)
-;; (global-set-key (kbd "M-k") 'previous-line)
-;; (global-set-key (kbd "M-h") 'backward-char)
-;; (global-set-key (kbd "M-l") 'forward-char)
 ;;(keyboard-translate ?\M-j ?\C-j)
 ;; (global-set-key (kbd "M-p") 'backward-paragraph)
 (define-key esc-map "p" 'backward-paragraph)
