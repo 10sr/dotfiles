@@ -206,15 +206,6 @@ found, otherwise returns nil."
      (tool-bar-mode 0))
 (and (fboundp 'set-scroll-bar-mode)
      (set-scroll-bar-mode nil))
-(add-hook 'kill-emacs-hook
-          ;; load init file when terminating emacs to ensure file is not broken
-          'reload-init-file)
-
-(defun my-force-kill-emacs ()
-  "My force kill Emacs."
-  (interactive)
-  (let ((kill-emacs-hook nil))
-    (kill-emacs)))
 
 (call-after-init
  (lambda ()
