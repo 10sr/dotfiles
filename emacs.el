@@ -1440,6 +1440,11 @@ the list."
          (shell-command "git rev-parse --git-dir"))
      "git --no-pager -c color.grep=false grep -nH -e ")
 
+    ;; ripgrep
+    ("rg"
+     (executable-find "rg")
+     "rg --no-heading --color=never --smart-case ")
+
     ;; the silver searcher
     ("ag"
      (executable-find "ag")
@@ -1536,6 +1541,7 @@ Commands are searched from ALIST."
 
 (define-my-rgrep "ack")
 (define-my-rgrep "ag")
+(define-my-rgrep "rg")
 (define-my-rgrep "gitgrep")
 (define-my-rgrep "grep")
 (define-my-rgrep "global")
