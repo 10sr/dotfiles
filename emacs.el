@@ -1445,6 +1445,11 @@ the list."
      (executable-find "rg")
      "rg --no-heading --color=never --smart-case ")
 
+    ;; sift
+    ("sift"
+     (executable-find "sift")
+     ("sift --no-color --binary-skip --filename --line-number --git --smart-case "))
+
     ;; the silver searcher
     ("ag"
      (executable-find "ag")
@@ -1542,6 +1547,7 @@ Commands are searched from ALIST."
 (define-my-rgrep "ack")
 (define-my-rgrep "ag")
 (define-my-rgrep "rg")
+(define-my-rgrep "sift")
 (define-my-rgrep "gitgrep")
 (define-my-rgrep "grep")
 (define-my-rgrep "global")
