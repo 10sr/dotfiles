@@ -1363,10 +1363,6 @@ the list."
 ;; (add-hook 'dired-after-readin-hook
 ;;           'my-replace-nasi-none)
 
-;; (add-hook 'after-init-hook
-;;           (lambda ()
-;;             (dired ".")))
-
 (with-eval-after-load 'dired
   (safe-require-or-eval 'ls-lisp)
   (defvar dired-mode-map (make-sparse-keymap))
@@ -1554,10 +1550,6 @@ Commands are searched from ALIST."
 
 (define-key ctl-x-map "s" 'my-rgrep)
 
-;; (defun make ()
-;;   "Run \"make -k\" in current directory."
-;;   (interactive)
-;;   (compile "make -k"))
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
 
