@@ -90,22 +90,21 @@ files := Makefile emacs.el profile shrc tmux.conf vimrc _keysnail.js
 default: help
 
 tests := test-el
-test: test-syntax $(tests)
+test: test-syntax $(tests)  ## Execute some tests
 
 test_syntaxes := test-syntax-el test-syntax-sh
-test-syntax: $(test_syntaxes)
+test-syntax: $(test_syntaxes)  ## Execute syntax check
 
 setups := setup-darwin setup-directories setup-emacs setup-gitconf \
 	setup-repository setup-rc
 # `make setup` to setup these all sounds to be too match
-setup-all: $(setups)
+setup-all: $(setups)  ## Run initialization tasks
 
 
 runs := run-emacs run-bash run-zsh
 
 
-
-# `make check` is just an alias for `make test`
+# Alias for test
 check: test
 
 # Similarly, check-syntax is test-syntax
@@ -166,19 +165,12 @@ endif
 # Help
 # ====
 
-help_message := "Available targets are:\
-	setup-repository\
-		Clone git repository"
+
 
 help:
-	@echo "10sr Makefile Usage:"
-	@echo
-	@echo "Some of available targers are:"
-	@echo "    setup-repository    Clone git repository"
-	@echo "    setup-rc            Init rc files"
-	@echo "    setup-gitconf       Run some git config"
-	@echo "    run-emacs           Start Emacs process with dotfiles init file"
-
+	@echo "10sr Makefile" | (figlet || cat)
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 
 
@@ -291,7 +283,7 @@ endif
 
 xz := $(shell which xz 2>/dev/null)
 
-setup-gitconf:
+setup-gitconf:  ## Set git configurations
 ifeq (,$(git))
 $(warnning "Git program not found")
 else
@@ -360,7 +352,7 @@ endif
 # The load codes are appended to $(topfile).
 
 setup_rcs := setup-rc-vimrc setup-rc-tmux.conf setup-rc-emacs.el
-setup-rc: $(setup_rcs)
+setup-rc: $(setup_rcs)  ## Setup initialize files
 .PHONY: $(setup_rcs)
 
 setup-rc-vimrc: $(home)/.vimrc
