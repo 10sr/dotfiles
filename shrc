@@ -1013,7 +1013,6 @@ __my_battery_status(){
         printf "$1" "${___st}:${___rate}%"
     fi
 }
-alias bat='__my_battery_status %s\\n'
 
 __my_ps1_scale(){
     if null type stty && ! $ismsys
