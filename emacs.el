@@ -834,6 +834,7 @@ found, otherwise returns nil."
   (defvar verilog-mode-map (make-sparse-keymap))
   (define-key verilog-mode-map ";" 'self-insert-command))
 
+
 (setq diff-switches "-u")
 (with-eval-after-load 'diff-mode
   ;; (when (and (eq major-mode
@@ -849,7 +850,7 @@ found, otherwise returns nil."
                       :foreground nil
                       :background nil
                       :weight 'bold)
-  (set-face-foreground 'diff-index-face "blue")
+  (set-face-foreground 'diff-index "blue")
   (set-face-attribute 'diff-hunk-header nil
                       :foreground "cyan"
                       :weight 'normal)
@@ -857,14 +858,14 @@ found, otherwise returns nil."
                       ;; :foreground "white"
                       :foreground nil
                       :weight 'normal)
-  (set-face-foreground 'diff-removed-face "red")
-  (set-face-foreground 'diff-added-face "green")
-  (set-face-background 'diff-removed-face nil)
-  (set-face-background 'diff-added-face nil)
+  (set-face-foreground 'diff-removed "red")
+  (set-face-foreground 'diff-added "green")
+  (set-face-background 'diff-removed nil)
+  (set-face-background 'diff-added nil)
   (set-face-attribute 'diff-changed nil
                       :foreground "magenta"
                       :weight 'normal)
-  (set-face-attribute 'diff-refine-change nil
+  (set-face-attribute 'diff-refine-changed nil
                       :foreground nil
                       :background nil
                       :weight 'bold
