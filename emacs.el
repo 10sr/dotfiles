@@ -650,6 +650,7 @@ found, otherwise returns nil."
   ;; (set-variable 'editorconfig-get-properties-function
   ;;               'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1)
+  (set-variable 'editorconfig-mode-lighter " EC")
   (with-eval-after-load 'org-src
     ;; [*.org\[\*Org Src*\[ c \]*\]]
     (add-hook 'org-src-mode-hook
