@@ -748,6 +748,9 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; some modes and hooks
 
+;; Include some extra modes
+(require 'generic-x)
+
 ;; Workaround to avoid ensime error
 (defvar ensime-mode-key-prefix nil)
 
