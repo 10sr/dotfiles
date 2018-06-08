@@ -1068,6 +1068,14 @@ found, otherwise returns nil."
 (add-to-list 'auto-mode-alist
              '("tox\\.ini\\'" . conf-unix-mode))
 
+(when (autoload-eval-lazily 'toml-mode)
+  (add-to-list 'auto-mode-alist
+               '("/Pipfile\\'" . toml-mode)))
+
+(when (autoload-eval-lazily 'json-mode)
+  (add-to-list 'auto-mode-alist
+               '("/Pipfile\\.lock\\'" . json-mode)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer switching
 
