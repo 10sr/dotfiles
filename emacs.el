@@ -1349,6 +1349,11 @@ ARG is num to show, or defaults to 7."
                               arg)))
     (dired-move-to-filename)))
 
+(defun my-dired-tramp-open (host)
+  "Open HOST home directory."
+  (interactive "sHostname: ")
+  (find-file (format "/scp:%s:" host)))
+
 ;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
 
 (if (eq window-system 'mac)
@@ -1362,13 +1367,12 @@ ARG is num to show, or defaults to 7."
 ;; reuse current dired buffer for the file to open
 (set-variable 'dired-ls-F-marks-symlinks t)
 
-(with-eval-after-load 'ls-lisp
-  (setq ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
-  (setq ls-lisp-dirs-first t)
-  (setq ls-lisp-use-localized-time-format t)
-  (setq ls-lisp-format-time-list
-        '("%Y-%m-%d %H:%M"
-          "%Y-%m-%d      ")))
+(set-variable 'ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
+(set-variable 'ls-lisp-dirs-first t)
+(set-variable 'ls-lisp-use-localized-time-format t)
+(set-variable 'ls-lisp-format-time-list
+              '("%Y-%m-%d %H:%M"
+                "%Y-%m-%d      "))
 
 (set-variable 'dired-dwim-target t)
 (set-variable 'dired-isearch-filenames t)
