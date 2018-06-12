@@ -1268,7 +1268,9 @@ the list."
 ;; dired
 
 (defun my-dired-echo-file-head (arg)
-  ""
+  "Echo head of current file.
+
+ARG is num to show, or defaults to 7."
   (interactive "P")
   (let ((f (dired-get-filename)))
     (message "%s"
@@ -1283,7 +1285,7 @@ the list."
                        (point-at-eol)))))))
 
 (defun my-dired-diff ()
-  ""
+  "Show diff of marked file and file of current line."
   (interactive)
   (let ((files (dired-get-marked-files nil nil nil t)))
     (if (eq (car files)
@@ -1292,7 +1294,7 @@ the list."
       (message "One file must be marked!"))))
 
 (defun dired-get-file-info ()
-  "dired get file info"
+  "Print information of current line file."
   (interactive)
   (let ((f (shell-quote-argument (dired-get-filename t))))
     (if (file-directory-p f)
@@ -1304,12 +1306,12 @@ the list."
                              f)))))
 
 (defun my-dired-scroll-up ()
-  ""
+  "Scroll up."
   (interactive)
   (my-dired-previous-line (- (window-height) 1)))
 
 (defun my-dired-scroll-down ()
-  ""
+  "Scroll down."
   (interactive)
   (my-dired-next-line (- (window-height) 1)))
 
@@ -1318,7 +1320,7 @@ the list."
 ;;   (interactive "p"))
 
 (defun my-dired-previous-line (arg)
-  ""
+  "Move ARG lines up."
   (interactive "p")
   (if (> arg 0)
       (progn
@@ -1333,7 +1335,7 @@ the list."
     (dired-move-to-filename)))
 
 (defun my-dired-next-line (arg)
-  ""
+  "Move ARG lines down."
   (interactive "p")
   (if (> arg 0)
       (progn
