@@ -67,7 +67,7 @@ then
 fi
 
 # export CDPATH=".:~"
-export GIT_PAGER="less -FX"
+export GIT_PAGER="less -FRX"
 export GIT_MERGE_AUTOEDIT=no
 
 if test -n "$TMUX" && \
