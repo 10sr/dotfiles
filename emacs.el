@@ -923,8 +923,10 @@ found, otherwise returns nil."
 (with-eval-after-load 'text-mode
   (define-key text-mode-map (kbd "C-m") 'newline))
 
-(add-to-list 'Info-default-directory-list
-             (expand-file-name "~/.info/emacs-ja"))
+(with-eval-after-load 'info
+  (defvar Info-directory-list nil)
+  (add-to-list 'Info-directory-list
+               (expand-file-name "~/.brew/share/info")))
 
 (with-eval-after-load 'apropos
   (defvar apropos-mode-map (make-sparse-keymap))
