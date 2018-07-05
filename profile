@@ -115,6 +115,8 @@ export PATH="$GOPATH/bin:$PATH"
 
 export PIPENV_VENV_IN_PROJECT=1
 
+export STARDICT_DATA_DIR=$HOME/.brew/share/sdcv-dict-oxford
+
 ###########################################
 # Host colors
 
