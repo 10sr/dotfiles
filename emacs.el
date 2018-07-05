@@ -766,6 +766,9 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'flycheck)
   (call-after-init 'global-flycheck-mode))
 
+(when (autoload-eval-lazily 'ilookup)
+  (define-key ctl-x-map "d" 'ilookup-open-word))
+
 (set-variable 'ac-ignore-case nil)
 
 (when (autoload-eval-lazily 'term-run '(term-run-shell-command term-run))
