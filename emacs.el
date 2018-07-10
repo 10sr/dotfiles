@@ -1292,6 +1292,7 @@ ARG is num to show, or defaults to 7."
 (set-variable 'dired-hide-details-hide-information-lines nil)
 
 (set-variable 'dired-deletion-confirmer 'y-or-n-p)
+(set-variable 'dired-recursive-deletes 'always)
 
 ;; (add-hook 'dired-after-readin-hook
 ;;           'my-replace-nasi-none)
