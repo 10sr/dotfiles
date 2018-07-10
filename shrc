@@ -832,12 +832,15 @@ di(){
     fi
 }
 
-tb(){
+__trash_func(){
     __datenum=`date +%Y%m%d-%H%M%S`
     __tb="$HOME/.var/tb/$__datenum"
     mkdir -p "$__tb"
     mv "$@" "$__tb"
 }
+__safe_alias tb=__trash_func
+__safe_alias tb=trash
+
 
 mkdd(){
     _d=`date +%Y%m%d-%H%M%S` && \
