@@ -687,8 +687,8 @@ found, otherwise returns nil."
 (setq delete-auto-save-files t)
 
 (add-to-list 'completion-ignored-extensions ".bak")
-;; (setq delete-by-moving-to-trash t
-;;       trash-directory "~/.emacs.d/trash")
+(setq delete-by-moving-to-trash t
+      trash-directory "~/.emacs.d/trash")
 
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
