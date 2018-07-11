@@ -1506,4 +1506,53 @@ This mode is a simplified version of `adoc-mode'."
   (add-to-list 'auto-mode-alist
                '("\\.adoc\\'" . adoc-simple-mode)))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; awk-preview
+
+(defgroup awk-preview nil
+  "Awk previewer."
+  :tag "Awk Preview"
+  :prefix "awk-preview-"
+  :group 'tools)
+
+(defcustom awk-preview-program
+  (or (executable-find "gawk")
+      (executable-find "awk")
+      "awk")
+  "Awk program to execute."
+  :type 'string
+  :group 'awk-preview)
+
+(defcustom awk-preview-switches
+  '("--sandbox" "--" "{print}")
+  "String of awk options appended when running awk preview."
+  :type '(repeat string)
+  :group 'awk-preview)
+
+(defun awk-preview--invoke (start end output)
+  "Execute awk process and get result."
+  (let ((proc (apply 'start-process
+                     "awk-preview"
+                     output
+                     awk-preview-program
+                     awk-preview-switches)))
+    (message "%S" proc)
+    (process-send-region proc start end)
+    (process-send-eof proc)
+    (accept-process-output proc)
+    )
+  output)
+
+(defun awk-preview (start end)
+  "Run awk and preview result."
+  (interactive "r")
+  (let ((output (with-current-buffer (get-buffer-create "*awk-preview output*")
+                  (erase-buffer)
+                  (current-buffer))))
+    (awk-preview--invoke start end output)
+    (message "awk-preview: %s" (with-current-buffer output
+                    (buffer-substring-no-properties (point-min) (point-max))))
+    ))
+
 ;;; emacs.el ends here
