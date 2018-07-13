@@ -115,16 +115,13 @@ found, otherwise returns nil."
        which-key
        ;; I think this works in place of my autosave lib
        super-save
+       pipenv
 
        scala-mode
        ;;ensime
 
        editorconfig
        editorconfig-custom-majormode
-
-       cyberpunk-theme
-       grandshell-theme
-       afternoon-theme
 
        git-command
 
