@@ -748,6 +748,17 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
+(autoload-eval-lazily 'compile nil
+  (require 'ansi-color)
+  (add-hook 'compilation-filter-hook
+            (lambda ()
+              (let ((inhibit-read-only t))
+                (ansi-color-apply-on-region compilation-filter-start
+                                            (point)))))
+  (add-to-list 'compilation-error-regexp-alist
+               ;; ansible-lint
+               '("^\\([^ \n]+\\):\\([0-9]+\\)$" 1 2)))
+
 ;; Workaround to avoid ensime error
 (defvar ensime-mode-key-prefix nil)
 
@@ -1552,16 +1563,4 @@ This mode is a simplified version of `adoc-mode'."
                     (buffer-substring-no-properties (point-min) (point-max))))
     ))
 
-
-(require 'ansi-color)
-(require 'compile)
-(add-hook 'compilation-filter-hook
-          (lambda ()
-            (let ((inhibit-read-only t))
-              (ansi-color-apply-on-region compilation-filter-start
-                                          (point)))))
-(autoload-eval-lazily 'compile nil
-  (add-to-list 'compilation-error-regexp-alist
-               ;; ansible-lint
-               '("^\\([^ \n]+\\):\\([0-9]+\\)$" 1 2)))
 ;;; emacs.el ends here
