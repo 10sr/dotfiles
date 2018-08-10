@@ -1560,4 +1560,8 @@ This mode is a simplified version of `adoc-mode'."
             (let ((inhibit-read-only t))
               (ansi-color-apply-on-region compilation-filter-start
                                           (point)))))
+(autoload-eval-lazily 'compile nil
+  (add-to-list 'compilation-error-regexp-alist
+               ;; ansible-lint
+               '("^\\([^ \n]+\\):\\([0-9]+\\)$" 1 2)))
 ;;; emacs.el ends here
