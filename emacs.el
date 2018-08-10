@@ -1552,4 +1552,12 @@ This mode is a simplified version of `adoc-mode'."
                     (buffer-substring-no-properties (point-min) (point-max))))
     ))
 
+
+(require 'ansi-color)
+(require 'compile)
+(add-hook 'compilation-filter-hook
+          (lambda ()
+            (let ((inhibit-read-only t))
+              (ansi-color-apply-on-region compilation-filter-start
+                                          (point)))))
 ;;; emacs.el ends here
