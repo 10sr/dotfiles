@@ -908,42 +908,6 @@ __EOF__
     exec 3<&-
 }
 
-open_file(){
-    if $iscygwin
-    then
-        cygstart "$@"
-    elif $ismsys
-    then
-        cmd.exe //c start "" "$@"
-    elif $isdarwin
-    then
-        touch "$@"
-        open "$@"
-    elif $islinux
-    then
-        touch "$@"
-        if null type pcmanfm; then
-            LC_MESSAGES= pcmanfm "$@"
-        else
-            LC_MESSAGES= xdg-open "$@" &
-        fi
-    else
-        cat "$@"
-    fi
-}
-
-o(){
-    if test $# -eq 0
-    then
-        open_file .
-    else
-        for f in "$@"
-        do
-            open_file "$(realpath "$f")"
-        done
-    fi
-}
-
 convmv_sjis2utf8_test(){
     convmv -r -f sjis -t utf8 *
 }
