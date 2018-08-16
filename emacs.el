@@ -1563,4 +1563,31 @@ This mode is a simplified version of `adoc-mode'."
                     (buffer-substring-no-properties (point-min) (point-max))))
     ))
 
-;;; emacs.el ends here
+(defun my-file-head (filename &optional n)
+  "Return list of first N lines of file FILENAME."
+  (let ((num (or n 10))
+        (size 100)
+        (beg 0)
+        (end 0)
+        (result '()))
+    (with-temp-buffer
+      (while (<= (count-lines (point-min)
+                              (point-max))
+                num)
+        (setq end (+ beg size))
+        (insert-file-contents filename
+                              nil
+                              beg
+                              end)
+        (setq beg end))
+      (goto-char (point-min))
+      (while (< (length result) num)
+        (let ((start (point)))
+          (forward-line 1)
+          (setq result
+                `(,@result ,(buffer-substring-no-properties start
+                                                            (point))))))
+      result)))
+;; (apply 'concat (car (my-file-head "./emacs.el"))
+
+;;; emancs.el ends here
