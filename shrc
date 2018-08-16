@@ -874,7 +874,7 @@ then
     alias pbcopy="reattach-to-user-namespace pbcopy"
 fi
 
-catclip(){
+__catclip(){
     if $iswindows
     then
         cat /dev/clipboard | tr -d \\r
@@ -886,7 +886,7 @@ catclip(){
     fi
 }
 
-setclip(){
+__setclip(){
     if test $# -eq 0
     then
         exec 3<&0
@@ -907,6 +907,11 @@ __EOF__
     fi
     exec 3<&-
 }
+
+# Now Homebrew 10sr/pkg/bin provides these commands:
+# Fallback to aliases if commands are not installed yet
+which catclip >/dev/null || alias catclip=__catclip
+which setclip >/dev/null || alias setclip=__setclip
 
 convmv_sjis2utf8_test(){
     convmv -r -f sjis -t utf8 *
