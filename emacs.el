@@ -1590,4 +1590,9 @@ This mode is a simplified version of `adoc-mode'."
       result)))
 ;; (apply 'concat (car (my-file-head "./emacs.el"))
 
+;; Local Variables:
+;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
+;; flycheck-checker: emacs-lisp
+;; End:
+
 ;;; emancs.el ends here
