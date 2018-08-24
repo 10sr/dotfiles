@@ -414,7 +414,7 @@ found, otherwise returns nil."
 
 (setq eol-mnemonic-dos "\\r\\n")
 (setq eol-mnemonic-mac "\\r")
-(setq eol-mnemonic-unix "\\n")
+(setq eol-mnemonic-unix "")
 
 (which-function-mode 0)
 
