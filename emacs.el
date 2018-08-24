@@ -748,7 +748,9 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
-(autoload-eval-lazily 'compile nil
+(with-eval-after-load 'compile
+  (defvar compilation-filter-start)
+  (defvar compilation-error-regexp-alist)
   (require 'ansi-color)
   (add-hook 'compilation-filter-hook
             (lambda ()
