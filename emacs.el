@@ -426,9 +426,6 @@ found, otherwise returns nil."
                       (count-lines (point-max)
                                    (point-min)))))
 
-(when (safe-require-or-eval 'git-ps1-mode)
-  (git-ps1-mode))
-
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
