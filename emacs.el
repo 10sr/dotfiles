@@ -456,6 +456,22 @@ found, otherwise returns nil."
   (set-face-underline 'minibuffer-line nil)
   (set-variable 'minibuffer-line-refresh-interval
                 25)
+
+  ;; Set idle timer
+  (defvar my-minibuffer-line--idle-timer nil)
+  (defvar minibuffer-line-mode)
+  (add-hook 'minibuffer-line-mode-hook
+            (lambda ()
+              (when my-minibuffer-line--idle-timer
+                (cancel-timer my-minibuffer-line--idle-timer)
+                (setq my-minibuffer-line--idle-timer nil))
+              (when minibuffer-line-mode
+                (setq my-minibuffer-line--idle-timer
+                      (run-with-idle-timer 0.5
+                                           t
+                                           'minibuffer-line--update)))))
+
+
   (set-variable 'minibuffer-line-format
                 `(,(concat user-login-name
                            "@"
