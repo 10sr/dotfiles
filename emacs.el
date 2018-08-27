@@ -116,6 +116,7 @@ found, otherwise returns nil."
        ;; I think this works in place of my autosave lib
        super-save
        pipenv
+       imenu-list
 
        scala-mode
        ;;ensime
@@ -422,7 +423,7 @@ found, otherwise returns nil."
 (column-number-mode 0)
 (size-indication-mode 0)
 (setq mode-line-position
-      '(:eval (format "L%%l/%d,C%%c"
+      '(:eval (format "L%%l/%d:C%%c"
                       (count-lines (point-max)
                                    (point-min)))))
 
