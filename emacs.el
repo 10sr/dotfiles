@@ -320,13 +320,6 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editting
 
-(defun my-copy-whole-line ()
-  "Copy whole line."
-  (interactive)
-  (kill-new (concat (buffer-substring (point-at-bol)
-                                      (point-at-eol))
-                    "\n")))
-
 (setq require-final-newline t)
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
@@ -370,7 +363,6 @@ found, otherwise returns nil."
 (global-set-key (kbd "C-m") 'newline-and-indent)
 ;; (global-set-key (kbd "C-o") (kbd "C-e C-m"))
 
-(define-key esc-map "k" 'my-copy-whole-line)
 ;; (global-set-key "\C-z" 'undo) ; undo is M-u
 (define-key esc-map "u" 'undo)
 (define-key esc-map "i" (kbd "ESC TAB"))
