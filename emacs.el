@@ -337,7 +337,7 @@ found, otherwise returns nil."
 (setq truncate-partial-width-windows nil) ; when splitted horizontally
 ;; (setq-default line-spacing 0.2)
 (setq-default indicate-empty-lines t)   ; when using x indicate empty line
-(setq-default tab-width 4)
+;; (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function 'indent-to-left-margin)
 ;; (setq-default indent-line-function nil)
