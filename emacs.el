@@ -746,7 +746,10 @@ found, otherwise returns nil."
   (add-hook 'c-mode-common-hook
             (lambda ()
               (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-                (ggtags-mode 1)))))
+                (ggtags-mode 1))))
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (ggtags-mode 1))))
 
 (when (autoload-eval-lazily 'imenu-list)
   (set-variable 'imenu-list-auto-resize t)
