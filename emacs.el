@@ -1,7 +1,5 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;;; Commentary:
-
 ;;; Code:
 
 ;; SETUP_LOAD: (let ((file "DOTFILES_DIR/emacs.el"))
