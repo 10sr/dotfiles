@@ -734,6 +734,9 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
+(when (autoload-eval-lazily 'imenu-list)
+  (define-key ctl-x-map "l" 'imenu-list-smart-toggle))
+
 (with-eval-after-load 'compile
   (defvar compilation-filter-start)
   (defvar compilation-error-regexp-alist)
