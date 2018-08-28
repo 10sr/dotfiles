@@ -643,6 +643,13 @@ found, otherwise returns nil."
   (add-hook 'editorconfig-custom-hooks
             'editorconfig-custom-majormode))
 
+(add-hook 'editorconfig-custom-hooks
+          (lambda (props)
+            (let ((r (gethash 'readonly props)))
+              (when (and (string= r "true")
+                         (not buffer-read-only))
+                (read-only-mode 1)))))
+
 ;; (when (fboundp 'editorconfig-charset-extras)
 ;;   (add-hook 'editorconfig-custom-hooks
 ;;             'editorconfig-charset-extras))
