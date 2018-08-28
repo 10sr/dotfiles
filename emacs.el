@@ -1473,16 +1473,6 @@ If prefix argument is given use current symbol as default search target."
   (compilation-start command-args
                      'grep-mode))
 
-;; (defun my-rgrep-symbol-at-point (command-args)
-;;   "My recursive grep. Run COMMAND-ARGS."
-;;   (interactive (list (read-shell-command "grep command: "
-;;                                          (concat (my-rgrep-grep-command)
-;;                                                  " "
-;;                                                  (thing-at-point 'symbol))
-;;                                          'grep-find-history)))
-;;   (compilation-start command-args
-;;                      'grep-mode))
-
 (defmacro define-my-rgrep (name)
   "Define rgrep for NAME."
   `(defun ,(intern (concat "my-rgrep-"
