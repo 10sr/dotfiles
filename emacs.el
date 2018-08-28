@@ -643,6 +643,7 @@ found, otherwise returns nil."
   (add-hook 'editorconfig-custom-hooks
             'editorconfig-custom-majormode))
 
+;; Add readonly=true to set read-only-mode
 (add-hook 'editorconfig-custom-hooks
           (lambda (props)
             (let ((r (gethash 'readonly props)))
