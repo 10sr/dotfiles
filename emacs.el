@@ -1458,7 +1458,8 @@ Commands are searched from ALIST."
 
 (defun my-rgrep (command-args)
   "My recursive grep.  Run COMMAND-ARGS.
-If prefix argument is given use current symbol as default search target."
+If prefix argument is given, use current symbol as default search target
+and search from projectile root (if projectile is available)."
   (interactive (let ((cmd (my-rgrep-grep-command my-rgrep-default
                                                  nil)))
                  (if cmd
@@ -1470,8 +1471,13 @@ If prefix argument is given use current symbol as default search target."
                                                'grep-find-history))
                    (error "My-Rgrep: Command for rgrep not found")
                    )))
-  (compilation-start command-args
-                     'grep-mode))
+  (if (and current-prefix-arg
+           (safe-require-or-eval 'projectile))
+      (projectile-with-default-dir (projectile-project-root)
+        (compilation-start command-args
+                           'grep-mode))
+    (compilation-start command-args
+                       'grep-mode)))
 
 (defmacro define-my-rgrep (name)
   "Define rgrep for NAME."
