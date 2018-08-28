@@ -318,7 +318,6 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editting
 
-(setq require-final-newline t)
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
       scroll-margin 2
