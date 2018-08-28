@@ -1457,15 +1457,16 @@ Commands are searched from ALIST."
     (my-rgrep-grep-command name my-rgrep-alist)))
 
 (defun my-rgrep (command-args)
-  "My recursive grep.  Run COMMAND-ARGS."
+  "My recursive grep.  Run COMMAND-ARGS.
+If prefix argument is given use current symbol as default search target."
   (interactive (let ((cmd (my-rgrep-grep-command my-rgrep-default
                                                  nil)))
                  (if cmd
                      (list (read-shell-command "grep command: "
                                                (concat cmd
-                                                       "\""
-                                                       (thing-at-point 'symbol t)
-                                                       "\"")
+                                                       (if current-prefix-arg
+                                                         (thing-at-point 'symbol t)
+                                                         ""))
                                                'grep-find-history))
                    (error "My-Rgrep: Command for rgrep not found")
                    )))
