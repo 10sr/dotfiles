@@ -742,6 +742,12 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
+(when (autoload-eval-lazily 'ggtags)
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+                (ggtags-mode 1)))))
+
 (when (autoload-eval-lazily 'imenu-list)
   (set-variable 'imenu-list-auto-resize t)
   (set-variable 'imenu-list-focus-after-activation t)
@@ -1453,7 +1459,10 @@ Commands are searched from ALIST."
                                                  nil)))
                  (if cmd
                      (list (read-shell-command "grep command: "
-                                               cmd
+                                               (concat cmd
+                                                       "\""
+                                                       (thing-at-point 'symbol t)
+                                                       "\"")
                                                'grep-find-history))
                    (error "My-Rgrep: Command for rgrep not found")
                    )))
