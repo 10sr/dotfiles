@@ -735,6 +735,8 @@ found, otherwise returns nil."
 (require 'generic-x)
 
 (when (autoload-eval-lazily 'imenu-list)
+  (set-variable 'imenu-list-auto-resize t)
+  (set-variable 'imenu-list-focus-after-activation t)
   (define-key ctl-x-map "l" 'imenu-list-smart-toggle))
 
 (with-eval-after-load 'compile
