@@ -85,6 +85,7 @@ found, otherwise returns nil."
        git-commit
        gitignore-mode
        adoc-mode
+       go-mode
        ;; It seems malabar has been merged into jdee and this package
        ;; already removed
        ;; malabar-mode
@@ -1099,6 +1100,12 @@ found, otherwise returns nil."
   (add-to-list 'auto-mode-alist
                '("/Pipfile\\.lock\\'" . json-mode)))
 
+(add-hook 'go-mode-hook
+          (lambda()
+            (defvar go-mode-map)
+            (add-hook 'before-save-hook' 'gofmt-before-save)
+            (define-key go-mode-map (kbd "M-.") 'godef-jump)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer switching
 
@@ -1599,6 +1606,8 @@ This mode is a simplified version of `adoc-mode'."
                                                             (point))))))
       result)))
 ;; (apply 'concat (car (my-file-head "./emacs.el"))
+
+(set-variable 'dumb-jump-prefer-searcher 'rg)
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
