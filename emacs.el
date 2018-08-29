@@ -1396,27 +1396,27 @@ condition to choose COMMAND when evaluated.")
        ("gitgrep"
         (eq 0
             (shell-command "git rev-parse --git-dir"))
-        "git --no-pager -c color.grep=false grep -nH -e ")
+        "git --no-pager -c color.grep=always grep -nH -e ")
 
        ;; ripgrep
        ("rg"
         (executable-find "rg")
-        "rg --no-heading --color=never --smart-case ")
+        "rg --no-heading --smart-case ")
 
        ;; sift
        ("sift"
         (executable-find "sift")
-        ("sift --no-color --binary-skip --filename --line-number --git --smart-case "))
+        ("sift --binary-skip --filename --line-number --git --smart-case "))
 
        ;; the silver searcher
        ("ag"
         (executable-find "ag")
-        "ag --nocolor --nogroup --nopager --filename ")
+        "ag --nogroup --nopager --filename ")
 
        ;; ack
        ("ack"
         (executable-find "ack")
-        "ack --nocolor --nogroup --nopager --with-filename ")
+        "ack --nogroup --nopager --with-filename ")
 
        ;; gnu global
        ("global"
