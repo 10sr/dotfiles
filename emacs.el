@@ -1486,6 +1486,24 @@ and search from projectile root (if projectile is available)."
     (compilation-start command-args
                        'grep-mode)))
 
+(defun my-rgrep-thing-at-point-projectile-root ()
+  "My recursive grep to find thing at point from project root."
+  (interactive)
+  (let* ((cmd (my-rgrep-grep-command my-rgrep-default
+                                     nil))
+         (command-args
+          (if cmd
+              (concat cmd
+                      (thing-at-point 'symbol t))
+            (error "My-Rgrep: Command for rgrep not found"))))
+    (if (safe-require-or-eval 'projectile)
+        (projectile-with-default-dir (projectile-project-root)
+          (compilation-start command-args
+                             'grep-mode))
+      (compilation-start command-args
+                         'grep-mode))))
+
+
 (defmacro define-my-rgrep (name)
   "Define rgrep for NAME."
   `(defun ,(intern (concat "my-rgrep-"
@@ -1508,6 +1526,7 @@ and search from projectile root (if projectile is available)."
 (define-my-rgrep "global")
 
 (define-key ctl-x-map "s" 'my-rgrep)
+(define-key ctl-x-map "." 'my-rgrep-thing-at-point-projectile-root)
 
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
