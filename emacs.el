@@ -1387,53 +1387,54 @@ ARG is num to show, or defaults to 7."
                                                "")
                                              "memo.txt"))))
 
-(defvar my-rgrep-alist
-  `(
-    ;; git grep
-    ("gitgrep"
-     (eq 0
-         (shell-command "git rev-parse --git-dir"))
-     "git --no-pager -c color.grep=false grep -nH -e ")
-
-    ;; ripgrep
-    ("rg"
-     (executable-find "rg")
-     "rg --no-heading --color=never --smart-case ")
-
-    ;; sift
-    ("sift"
-     (executable-find "sift")
-     ("sift --no-color --binary-skip --filename --line-number --git --smart-case "))
-
-    ;; the silver searcher
-    ("ag"
-     (executable-find "ag")
-     "ag --nocolor --nogroup --nopager --filename ")
-
-    ;; ack
-    ("ack"
-     (executable-find "ack")
-     "ack --nocolor --nogroup --nopager --with-filename ")
-
-    ;; gnu global
-    ("global"
-     (and (require 'gtags nil t)
-          (executable-find "global")
-          (gtags-get-rootpath))
-     "global --result grep ")
-
-    ;; grep
-    ("grep"
-     t
-     ,(concat "find . "
-              "-path '*/.git' -prune -o "
-              "-path '*/.svn' -prune -o "
-              "-type f -print0 | "
-              "xargs -0 grep -nH -e "))
-    )
-  "Alist of rgrep command.
+(set (defvar my-rgrep-alist nil
+       "Alist of rgrep command.
 Each element is in the form like (NAME SEXP COMMAND), where SEXP returns the
 condition to choose COMMAND when evaluated.")
+     `(
+       ;; git grep
+       ("gitgrep"
+        (eq 0
+            (shell-command "git rev-parse --git-dir"))
+        "git --no-pager -c color.grep=false grep -nH -e ")
+
+       ;; ripgrep
+       ("rg"
+        (executable-find "rg")
+        "rg --no-heading --color=never --smart-case ")
+
+       ;; sift
+       ("sift"
+        (executable-find "sift")
+        ("sift --no-color --binary-skip --filename --line-number --git --smart-case "))
+
+       ;; the silver searcher
+       ("ag"
+        (executable-find "ag")
+        "ag --nocolor --nogroup --nopager --filename ")
+
+       ;; ack
+       ("ack"
+        (executable-find "ack")
+        "ack --nocolor --nogroup --nopager --with-filename ")
+
+       ;; gnu global
+       ("global"
+        (and (require 'gtags nil t)
+             (executable-find "global")
+             (gtags-get-rootpath))
+        "global --result grep ")
+
+       ;; grep
+       ("grep"
+        t
+        ,(concat "find . "
+                 "-path '*/.git' -prune -o "
+                 "-path '*/.svn' -prune -o "
+                 "-type f -print0 | "
+                 "xargs -0 grep -nH -e "))
+       )
+     )
 
 (defvar my-rgrep-default nil
   "Default command name for my-rgrep.")
