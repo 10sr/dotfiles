@@ -1420,9 +1420,9 @@ condition to choose COMMAND when evaluated.")
 
        ;; gnu global
        ("global"
-        (and (require 'gtags nil t)
+        (and (require 'ggtags nil t)
              (executable-find "global")
-             (gtags-get-rootpath))
+             (ggtags-current-project-root))
         "global --result grep ")
 
        ;; grep
