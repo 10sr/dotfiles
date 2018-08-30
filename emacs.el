@@ -679,7 +679,7 @@ found, otherwise returns nil."
 (setq delete-auto-save-files t)
 
 (add-to-list 'completion-ignored-extensions ".bak")
-(set-variable completion-cycle-threshold nil)  ;; NEVER use
+(set-variable 'completion-cycle-threshold nil)  ;; NEVER use
 (setq delete-by-moving-to-trash t)
 ;;       trash-directory "~/.emacs.d/trash")
 
