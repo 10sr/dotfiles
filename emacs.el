@@ -1614,7 +1614,7 @@ This mode is a simplified version of `adoc-mode'."
                  'editorconfig-auto-apply-mode--when-save)))
 
 (defun editorconfig-auto-apply-mode--when-save ()
-  "Function run when editorconfig"
+  "When saving .editorconfig file walk all buffers and update configs."
   (when (eq major-mode
             'editorconfig-conf-mode)
     (let ((dir (file-name-directory buffer-file-name)))
@@ -1644,7 +1644,7 @@ This mode is a simplified version of `adoc-mode'."
                               (point-max))
                  num)
         (setq end (+ beg size))
-        (insert-file-contents filename
+        (insert-file-contents-literally filename
                               nil
                               beg
                               end)
