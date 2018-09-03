@@ -1600,6 +1600,36 @@ This mode is a simplified version of `adoc-mode'."
                     (buffer-substring-no-properties (point-min) (point-max))))
     ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; editorconfig-auto-apply
+
+(define-minor-mode editorconfig-auto-apply-mode
+  "When saving .editorconfig file update buffer configs."
+  :global t
+  :lighter ""
+  (if editorconfig-auto-apply-mode
+      (add-hook 'after-save-hook
+                'editorconfig-auto-apply-mode--when-save)
+    (remove-hook 'after-save-hook
+                 'editorconfig-auto-apply-mode--when-save)))
+
+(defun editorconfig-auto-apply-mode--when-save ()
+  "Function run when editorconfig"
+  (when (eq major-mode
+            'editorconfig-conf-mode)
+    (let ((dir (file-name-directory buffer-file-name)))
+      (cl-dolist (buf (buffer-list))
+        (when (and (buffer-file-name buf)
+                   (file-in-directory-p (buffer-file-name buf)
+                                        dir))
+          (with-current-buffer buf
+            (editorconfig-mode-apply)))))))
+
+(editorconfig-auto-apply-mode 1)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun my-file-head (filename &optional n)
   "Return list of first N lines of file FILENAME."
   ;; Work with japanese text?
