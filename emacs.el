@@ -1611,6 +1611,7 @@ This mode is a simplified version of `adoc-mode'."
         (end 0)
         (result '()))
     (with-temp-buffer
+      (erase-buffer)
       (while (<= (count-lines (point-min)
                               (point-max))
                  num)
@@ -1619,7 +1620,8 @@ This mode is a simplified version of `adoc-mode'."
                               nil
                               beg
                               end)
-        (setq beg end))
+        (goto-char (point-max))
+        (setq beg (+ beg size)))
       (goto-char (point-min))
       (while (< (length result) num)
         (let ((start (point)))
@@ -1627,8 +1629,13 @@ This mode is a simplified version of `adoc-mode'."
           (setq result
                 `(,@result ,(buffer-substring-no-properties start
                                                             (point))))))
-      result)))
-;; (apply 'concat (my-file-head "./shrc" 10))
+      result
+      ;; (buffer-substring-no-properties (point-min)
+      ;;                                 (progn
+      ;;                                   (forward-line num)
+      ;;                                   (point)))
+      )))
+;; (apply 'concat (my-file-head "./shrc" 10)
 
 (set-variable 'dumb-jump-prefer-searcher 'rg)
 
