@@ -1481,7 +1481,8 @@ and search from projectile root (if projectile is available)."
                    (error "My-Rgrep: Command for rgrep not found")
                    )))
   (if (and current-prefix-arg
-           (safe-require-or-eval 'projectile))
+           (safe-require-or-eval 'projectile)
+           (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
         (compilation-start command-args
                            'grep-mode))
@@ -1612,7 +1613,7 @@ This mode is a simplified version of `adoc-mode'."
     (with-temp-buffer
       (while (<= (count-lines (point-min)
                               (point-max))
-                num)
+                 num)
         (setq end (+ beg size))
         (insert-file-contents filename
                               nil
@@ -1627,7 +1628,7 @@ This mode is a simplified version of `adoc-mode'."
                 `(,@result ,(buffer-substring-no-properties start
                                                             (point))))))
       result)))
-;; (apply 'concat (my-file-head "./emacs.el" 10))
+;; (apply 'concat (my-file-head "./shrc" 10))
 
 (set-variable 'dumb-jump-prefer-searcher 'rg)
 
