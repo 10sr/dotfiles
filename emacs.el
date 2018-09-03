@@ -432,6 +432,8 @@ found, otherwise returns nil."
 (savehist-mode 1)
 (defvar display-time-format "%Y/%m/%d %a %H:%M")
 
+(set-variable 'help-at-pt-display-when-idle t)
+
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; complete symbol when `eval'
