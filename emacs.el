@@ -1496,7 +1496,8 @@ and search from projectile root (if projectile is available)."
          (command-args
           (if cmd
               (concat cmd
-                      (thing-at-point 'symbol t))
+                      (or (thing-at-point 'symbol t)
+                          (error "No symbol at point")))
             (error "My-Rgrep: Command for rgrep not found"))))
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (projectile-project-root)
@@ -1626,7 +1627,7 @@ This mode is a simplified version of `adoc-mode'."
                 `(,@result ,(buffer-substring-no-properties start
                                                             (point))))))
       result)))
-;; (apply 'concat (car (my-file-head "./emacs.el"))
+;; (apply 'concat (my-file-head "./emacs.el" 10))
 
 (set-variable 'dumb-jump-prefer-searcher 'rg)
 
