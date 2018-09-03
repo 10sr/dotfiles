@@ -1387,16 +1387,16 @@ ARG is num to show, or defaults to 7."
 Each element is in the form like (NAME SEXP COMMAND), where SEXP returns the
 condition to choose COMMAND when evaluated.")
      `(
+       ;; ripgrep
+       ("rg"
+        (executable-find "rg")
+        "rg --no-heading --smart-case ")
+
        ;; git grep
        ("gitgrep"
         (eq 0
             (shell-command "git rev-parse --git-dir"))
         "git --no-pager -c color.grep=always grep -nH -e ")
-
-       ;; ripgrep
-       ("rg"
-        (executable-find "rg")
-        "rg --no-heading --smart-case ")
 
        ;; sift
        ("sift"
