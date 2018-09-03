@@ -1212,15 +1212,9 @@ ARG is num to show, or defaults to 7."
   (interactive "P")
   (let ((f (dired-get-filename)))
     (message "%s"
-             (with-temp-buffer
-               (insert-file-contents f)
-               (buffer-substring-no-properties
-                (point-min)
-                (progn (goto-char (point-min))
-                       (forward-line (1- (if arg
-                                             (prefix-numeric-value arg)
-                                           7)))
-                       (point-at-eol)))))))
+             (apply 'concat
+                    (my-file-head f
+                                  7)))))
 
 (defun my-dired-diff ()
   "Show diff of marked file and file of current line."
@@ -1605,6 +1599,7 @@ This mode is a simplified version of `adoc-mode'."
 
 (defun my-file-head (filename &optional n)
   "Return list of first N lines of file FILENAME."
+  ;; Work with japanese text?
   (let ((num (or n 10))
         (size 100)
         (beg 0)
