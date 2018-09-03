@@ -209,7 +209,8 @@ found, otherwise returns nil."
    (message "%s %s" invocation-name emacs-version)
    (message "Invocation directory: %s" default-directory)
    (message "%s was taken to initialize emacs." (emacs-init-time))
-   (switch-to-buffer "*Messages*")))
+   (view-echo-area-messages)
+   (view-emacs-news)))
 
 (cd ".")  ; when using windows use / instead of \ in `default-directory'
 
