@@ -210,7 +210,8 @@ found, otherwise returns nil."
    (message "Invocation directory: %s" default-directory)
    (message "%s was taken to initialize emacs." (emacs-init-time))
    (view-echo-area-messages)
-   (view-emacs-news)))
+   ;; (view-emacs-news)
+   ))
 
 (cd ".")  ; when using windows use / instead of \ in `default-directory'
 
@@ -812,6 +813,13 @@ found, otherwise returns nil."
 (with-eval-after-load 'python
   (defvar python-mode-map (make-sparse-keymap))
   (define-key python-mode-map (kbd "C-m") 'newline-and-indent))
+
+(when (autoload-eval-lazily 'pipenv)
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (pipenv-mode 1)
+              (pipenv-projectile-after-switch-default)))
+  )
 
 ;; http://fukuyama.co/foreign-regexp
 '(and (safe-require-or-eval 'foreign-regexp)
