@@ -184,17 +184,24 @@ fi
 ######################
 # Print welcome messages
 
+if command -v lolcat >/dev/null
+then
+    alias __safe_lolcat=lolcat
+else
+    alias __safe_lolcat=cat
+fi
+
 command -v fortune >/dev/null && {
     if command -v cowsay >/dev/null
     then
-        fortune | cowsay
+        fortune | cowsay | __safe_lolcat
         echo
-        fortune -o | cowsay
+        fortune -o | cowsay | __safe_lolcat
         echo
     else
-        fortune
+        fortune | __safe_lolcat
         echo
-        fortune -o
+        fortune -o | __safe_lolcat
         echo
     fi
 }

@@ -714,6 +714,11 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'autosave)
   (autosave-set 8))
 
+
+;; bookmarks
+
+(define-key ctl-x-map "m" 'list-bookmarks)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffer killing
 
