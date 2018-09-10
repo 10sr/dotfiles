@@ -15,6 +15,8 @@
 (require 'cl-lib)
 (require 'simple)
 
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
@@ -371,6 +373,8 @@ found, otherwise returns nil."
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
 (define-key my-prefix-map (kbd "C-o") 'occur)
+
+(require 'page-ext nil t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
