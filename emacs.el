@@ -118,6 +118,7 @@ found, otherwise returns nil."
        super-save
        pipenv
        imenu-list
+       page-break-lines
 
        scala-mode
        ;;ensime
@@ -375,6 +376,9 @@ found, otherwise returns nil."
 (define-key my-prefix-map (kbd "C-o") 'occur)
 
 (require 'page-ext nil t)
+
+(when (safe-require-or-eval 'page-break-lines)
+  (global-page-break-lines-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
