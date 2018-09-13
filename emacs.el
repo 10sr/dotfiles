@@ -970,10 +970,19 @@ found, otherwise returns nil."
 (with-eval-after-load 'text-mode
   (define-key text-mode-map (kbd "C-m") 'newline))
 
-(with-eval-after-load 'info
-  (defvar Info-directory-list nil)
-  (add-to-list 'Info-directory-list
-               (expand-file-name "~/.brew/share/info")))
+(autoload-eval-lazily 'info nil
+  (defvar Info-additional-directory-list)
+  (dolist (dir (directory-files (concat user-emacs-directory
+                                        "info")
+                                t
+                                "^[^.].*"))
+    (when (file-directory-p dir)
+      (add-to-list 'Info-additional-directory-list
+                   dir)))
+  (let ((dir (expand-file-name "~/.brew/share/info")))
+    (when (file-directory-p dir)
+      (add-to-list 'Info-additional-directory-list
+                   dir))))
 
 (with-eval-after-load 'apropos
   (defvar apropos-mode-map (make-sparse-keymap))
