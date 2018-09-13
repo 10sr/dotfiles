@@ -4,7 +4,7 @@
 
 ;; SETUP_LOAD: (let ((file "DOTFILES_DIR/emacs.el"))
 ;; SETUP_LOAD:   (and (file-readable-p file)
-;; SETUP_LOAD:        (load-file file)))
+;; SETUP_LOAD:        (byte-recompile-file file nil 0 t)))
 
 (setq debug-on-error t)
 
