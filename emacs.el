@@ -698,11 +698,12 @@ found, otherwise returns nil."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-(set (defvar bookmark-default-file)
-     (expand-file-name (concat user-emacs-directory
-                               "bmk")))
+(set-variable 'bookmark-default-file
+              (expand-file-name (concat user-emacs-directory
+                                        "bmk")))
 (with-eval-after-load 'recentf
-  (defvar recentf-exclude nil)
+  (defvar recentf-exclude)
+  (defvar bookmark-default-file)
   (add-to-list 'recentf-exclude
                (regexp-quote bookmark-default-file)))
 
