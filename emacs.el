@@ -119,6 +119,7 @@ found, otherwise returns nil."
        pipenv
        imenu-list
        page-break-lines
+       sync-recentf
 
        scala-mode
        ;;ensime
@@ -1200,6 +1201,9 @@ found, otherwise returns nil."
 (set-variable 'recentf-max-menu-items 20)
 (set-variable 'recentf-max-saved-items 30)
 (set-variable 'recentf-show-file-shortcuts-flag nil)
+(set-variable 'recentf-auto-cleanup 15)
+
+(safe-require-or-eval 'sync-recentf)
 
 (when (safe-require-or-eval 'recentf)
   (add-to-list 'recentf-exclude
