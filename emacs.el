@@ -1193,7 +1193,7 @@ found, otherwise returns nil."
 (set-variable 'recentf-max-menu-items 20)
 (set-variable 'recentf-max-saved-items 30)
 (set-variable 'recentf-show-file-shortcuts-flag nil)
-(set-variable 'recentf-auto-cleanup 15)
+(set-variable 'recentf-auto-cleanup 3)
 
 (safe-require-or-eval 'sync-recentf)
 
