@@ -835,6 +835,7 @@ found, otherwise returns nil."
               (pipenv-mode 1)
               (pipenv-projectile-after-switch-default)))
   )
+(set-variable 'flycheck-python-pycompile-executable "python3")
 
 ;; http://fukuyama.co/foreign-regexp
 '(and (safe-require-or-eval 'foreign-regexp)
