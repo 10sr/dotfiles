@@ -1202,6 +1202,8 @@ found, otherwise returns nil."
                (regexp-quote recentf-save-file))
   (add-to-list 'recentf-exclude
                (regexp-quote (expand-file-name user-emacs-directory)))
+  (add-to-list 'recentf-exclude
+               "/sync-recentf-marker\\'")
   (define-key ctl-x-map (kbd "C-r") 'recentf-open-files)
   (remove-hook 'find-file-hook
                'recentf-track-opened-file)
