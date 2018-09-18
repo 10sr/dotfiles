@@ -702,6 +702,8 @@ found, otherwise returns nil."
 (set-variable 'bookmark-default-file
               (expand-file-name (concat user-emacs-directory
                                         "bmk")))
+(set-variable 'bookmark-save-flag
+              1)
 (with-eval-after-load 'recentf
   (defvar recentf-exclude)
   (defvar bookmark-default-file)
