@@ -100,9 +100,6 @@ found, otherwise returns nil."
        hl-todo
        ;; Currently not available
        ;; pp-c-l
-       ;; is flymake installs are required?
-       ;;flymake-jshint
-       ;;flymake-python-pyflakes
        xclip
        foreign-regexp
        multi-term
@@ -1068,12 +1065,6 @@ found, otherwise returns nil."
 
 (add-to-list 'interpreter-mode-alist
              '("node" . js-mode))
-
-(when (autoload-eval-lazily 'flymake-jslint
-          '(flymake-jslint-load))
-  (autoload-eval-lazily 'js nil
-    (add-hook 'js-mode-hook
-              'flymake-jslint-load)))
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
