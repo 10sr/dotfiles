@@ -515,6 +515,9 @@ found, otherwise returns nil."
 
 ;; (set-window-margins (selected-window) 1 1)
 
+(unless window-system
+  (setq frame-background-mode 'dark))
+
 (and (or (eq system-type 'Darwin)
          (eq system-type 'darwin))
      (fboundp 'mac-set-input-method-parameter)
