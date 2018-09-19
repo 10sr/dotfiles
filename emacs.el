@@ -117,6 +117,7 @@ found, otherwise returns nil."
        imenu-list
        page-break-lines
        sync-recentf
+       aggressive-indent
 
        scala-mode
        ;;ensime
@@ -763,6 +764,9 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
+(when (safe-require-or-eval 'aggressive-indent)
+  (global-aggressive-indent-mode 1))
+
 (when (autoload-eval-lazily 'ggtags)
   (add-hook 'c-mode-common-hook
             (lambda ()
@@ -1221,10 +1225,11 @@ the list."
   ;; (add-hook 'find-file-hook
   ;;           (lambda ()
   ;;             (recentf-add-file default-directory)))
-  (and (autoload-eval-lazily 'recentf-show)
-       (define-key ctl-x-map (kbd "C-r") 'recentf-show)
-       (add-hook 'recentf-show-before-listing-hook
-                 'recentf-load-list))
+  (when (autoload-eval-lazily 'recentf-show)
+    (define-key ctl-x-map (kbd "C-r") 'recentf-show)
+    ;; (add-hook 'recentf-show-before-listing-hook
+    ;;           'recentf-load-list)
+       )
   (recentf-mode 1)
   (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
   (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
