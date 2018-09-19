@@ -326,8 +326,7 @@ found, otherwise returns nil."
 
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
-      scroll-margin 2
-      scroll-step 0)
+      scroll-margin 2)
 (setq-default major-mode 'text-mode)
 (setq next-line-add-newlines nil)
 (setq kill-read-only-ok t)
