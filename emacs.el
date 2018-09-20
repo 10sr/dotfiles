@@ -578,11 +578,16 @@ found, otherwise returns nil."
   ;;              `(newline-mark ?\n ,(vconcat "$\n")))
   (setq whitespace-style '(face
                            trailing     ; trailing blanks
-                           newline      ; newlines
-                           newline-mark ; use display table for newline
-                           tab-mark
-                           empty        ; empty lines at beg or end of buffer
+                           ;; tabs
+                           ;; spaces
+                           ;; lines
                            lines-tail  ; lines over 80
+                           newline      ; newlines
+                           empty        ; empty lines at beg or end of buffer
+                           ;; big-indent
+                           ;; space-mark
+                           tab-mark
+                           newline-mark ; use display table for newline
                            ))
   ;; (setq whitespace-newline 'font-lock-comment-face)
   ;; (setq whitespace-style (delq 'newline-mark whitespace-style))
