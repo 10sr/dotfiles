@@ -636,6 +636,9 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'end-mark)
   (global-end-mark-mode))
 
+;; M-x highlight-* to highlight things
+(global-hi-lock-mode 1)
+
 (when (safe-require-or-eval 'auto-highlight-symbol)
   (set-variable 'ahs-idle-interval 0.6)
   (global-auto-highlight-symbol-mode 1))
