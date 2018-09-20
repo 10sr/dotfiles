@@ -280,7 +280,7 @@ found, otherwise returns nil."
         (executable-find "bash"))
   '(setq function-key-map
          `(,@function-key-map ([pause] . [?\C-c])
-                             ))
+                              ))
   (define-key key-translation-map
     (kbd "<pause>")
     (kbd "C-c"))
@@ -585,6 +585,14 @@ found, otherwise returns nil."
                            lines-tail  ; lines over 80
                            ))
   ;; (setq whitespace-newline 'font-lock-comment-face)
+  ;; (setq whitespace-style (delq 'newline-mark whitespace-style))
+  (defun my-whitesspace-mode-reload ()
+    "Reload whitespace-mode config."
+    (interactive)
+    (when whitespace-mode
+      (whitespace-mode 0)
+      (whitespace-mode 1)))
+
   (set-variable 'whitespace-line-column nil)
   (global-whitespace-mode t)
   (add-hook 'dired-mode-hook
@@ -1242,7 +1250,7 @@ the list."
     (define-key ctl-x-map (kbd "C-r") 'recentf-show)
     ;; (add-hook 'recentf-show-before-listing-hook
     ;;           'recentf-load-list)
-       )
+    )
   (recentf-mode 1)
   (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
   (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
@@ -1522,7 +1530,7 @@ and search from projectile root (if projectile is available)."
                      (list (read-shell-command "grep command: "
                                                (concat cmd
                                                        (if current-prefix-arg
-                                                         (thing-at-point 'symbol t)
+                                                           (thing-at-point 'symbol t)
                                                          ""))
                                                'grep-find-history))
                    (error "My-Rgrep: Command for rgrep not found")
@@ -1594,10 +1602,10 @@ and search from projectile root (if projectile is available)."
     "Major mode for editing AsciiDoc text files.
 This mode is a simplified version of `adoc-mode'."
     '(set (make-local-variable 'font-lock-defaults)
-         '(adoc-simple-font-lock-keywords
-           nil nil nil nil
-           (font-lock-multiline . t)
-           (font-lock-mark-block-function . adoc-font-lock-mark-block-function))))
+          '(adoc-simple-font-lock-keywords
+            nil nil nil nil
+            (font-lock-multiline . t)
+            (font-lock-mark-block-function . adoc-font-lock-mark-block-function))))
   (add-to-list 'auto-mode-alist
                '("\\.adoc\\'" . adoc-simple-mode)))
 
@@ -1647,7 +1655,7 @@ This mode is a simplified version of `adoc-mode'."
                   (current-buffer))))
     (awk-preview--invoke start end output)
     (message "awk-preview: %s" (with-current-buffer output
-                    (buffer-substring-no-properties (point-min) (point-max))))
+                                 (buffer-substring-no-properties (point-min) (point-max))))
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1695,9 +1703,9 @@ This mode is a simplified version of `adoc-mode'."
                  num)
         (setq end (+ beg size))
         (insert-file-contents-literally filename
-                              nil
-                              beg
-                              end)
+                                        nil
+                                        beg
+                                        end)
         (goto-char (point-max))
         (setq beg (+ beg size)))
       (goto-char (point-min))
