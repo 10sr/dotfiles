@@ -639,6 +639,14 @@ found, otherwise returns nil."
 ;; M-x highlight-* to highlight things
 (global-hi-lock-mode 1)
 
+(unless (fboundp 'highlight-region-text)
+  (defun highlight-region-text (beg end)
+    "Highlight text between BEG and END."
+    (interactive "r")
+    (highlight-regexp (regexp-quote (buffer-substring-no-properties beg
+                                                                    end)))
+    (setq deactivate-mark t)))
+
 (when (safe-require-or-eval 'auto-highlight-symbol)
   (set-variable 'ahs-idle-interval 0.6)
   (global-auto-highlight-symbol-mode 1))
