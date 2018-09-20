@@ -29,3 +29,7 @@ indent_size = 2
 
 [*.diff]
 trim_trailing_whitespace = false
+
+
+[*.hoe]
+file_type_ext = ini
