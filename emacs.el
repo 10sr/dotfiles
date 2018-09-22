@@ -1456,7 +1456,7 @@ condition to choose COMMAND when evaluated.")
        ;; ripgrep
        ("rg"
         (executable-find "rg")
-        "rg --no-heading --smart-case ")
+        "rg --hidden --no-heading --smart-case ")
 
        ;; git grep
        ("gitgrep"
