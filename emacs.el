@@ -511,6 +511,8 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
 
+(setq text-quoting-style 'grave)
+
 ;; (set-face-background 'vertical-border (face-foreground 'mode-line))
 
 ;; (set-window-margins (selected-window) 1 1)
