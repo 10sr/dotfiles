@@ -791,6 +791,9 @@ found, otherwise returns nil."
 (require 'generic-x)
 
 (when (safe-require-or-eval 'aggressive-indent)
+  (defvar aggressive-indent-excluded-modes)
+  (add-to-list 'aggressive-indent-excluded-modes
+               'diff-mode)
   (global-aggressive-indent-mode 1))
 
 (when (autoload-eval-lazily 'ggtags)
