@@ -118,6 +118,7 @@ found, otherwise returns nil."
        page-break-lines
        sync-recentf
        aggressive-indent
+       fancy-narrow
 
        scala-mode
        ;;ensime
@@ -378,6 +379,9 @@ found, otherwise returns nil."
 
 (when (safe-require-or-eval 'page-break-lines)
   (global-page-break-lines-mode 1))
+
+(when (safe-require-or-eval 'fancy-narrow)
+  (fancy-narrow-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
