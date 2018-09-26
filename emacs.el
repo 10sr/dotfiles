@@ -141,7 +141,6 @@ found, otherwise returns nil."
        smart-revert
        autosave
        ;;window-organizer
-       remember-major-modes-mode
        ilookup
        pasteboard
 
@@ -862,9 +861,6 @@ found, otherwise returns nil."
 (add-to-list 'safe-local-variable-values
              '(encoding utf-8))
 (setq enable-local-variables :safe)
-
-;; (when (safe-require-or-eval 'remember-major-modes-mode)
-;;   (remember-major-modes-mode 1))
 
 ;; Detect file type from shebang and set major-mode.
 (add-to-list 'interpreter-mode-alist
