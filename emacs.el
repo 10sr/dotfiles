@@ -557,7 +557,9 @@ found, otherwise returns nil."
         help-mode
         eshell-mode
         ;;term-mode
-        Man-mode))
+        Man-mode
+        magit-diff-mode
+        magit-revision-mode))
 
 ;; (standard-display-ascii ?\n "$\n")
 
