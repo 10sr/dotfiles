@@ -795,6 +795,10 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
+(with-eval-after-load 'remember
+  (defvar remember-mode-map (make-sparse-keymap))
+  (define-key remember-mode-map (kbd "C-x C-s") 'ignore))
+
 (with-eval-after-load 'magit-files
   ;; `global-magit-file-mode' is enabled by default and this mode overwrites
   ;; existing keybindings.
