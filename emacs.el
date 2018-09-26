@@ -796,6 +796,13 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
+(with-eval-after-load 'magit-files
+  ;; `global-magit-file-mode' is enabled by default and this mode overwrites
+  ;; existing keybindings.
+  ;; Apparently it is a HARMFUL behavior and should be fixed, but for now
+  ;; disable this mode here.
+  (global-magit-file-mode -1))
+
 (when (safe-require-or-eval 'aggressive-indent)
   (defvar aggressive-indent-excluded-modes)
   (add-to-list 'aggressive-indent-excluded-modes
