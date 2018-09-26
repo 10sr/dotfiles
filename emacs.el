@@ -191,7 +191,7 @@ found, otherwise returns nil."
 
 (setq inhibit-startup-message t)
 (setq confirm-kill-emacs 'y-or-n-p)
-(setq gc-cons-threshold (* 1024 1024 4))
+(setq gc-cons-threshold (* 1024 1024 16))
 (setq garbage-collection-messages t)
 
 (when window-system
