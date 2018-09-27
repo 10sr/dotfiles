@@ -1293,6 +1293,42 @@ the list."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
 
+(defun my-file-head (filename &optional n)
+  "Return list of first N lines of file FILENAME."
+  ;; Work with japanese text?
+  (let ((num (or n 10))
+        (size 100)
+        (beg 0)
+        (end 0)
+        (result '()))
+    (with-temp-buffer
+      (erase-buffer)
+      (while (<= (count-lines (point-min)
+                              (point-max))
+                 num)
+        (setq end (+ beg size))
+        (insert-file-contents-literally filename
+                                        nil
+                                        beg
+                                        end)
+        (goto-char (point-max))
+        (setq beg (+ beg size)))
+      (goto-char (point-min))
+      (while (< (length result) num)
+        (let ((start (point)))
+          (forward-line 1)
+          (setq result
+                `(,@result ,(buffer-substring-no-properties start
+                                                            (point))))))
+      result
+      ;; (buffer-substring-no-properties (point-min)
+      ;;                                 (progn
+      ;;                                   (forward-line num)
+      ;;                                   (point)))
+      )))
+;; (apply 'concat (my-file-head "./shrc" 10)
+
+
 (defun my-dired-echo-file-head (arg)
   "Echo head of current file.
 
@@ -1717,40 +1753,6 @@ This mode is a simplified version of `adoc-mode'."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun my-file-head (filename &optional n)
-  "Return list of first N lines of file FILENAME."
-  ;; Work with japanese text?
-  (let ((num (or n 10))
-        (size 100)
-        (beg 0)
-        (end 0)
-        (result '()))
-    (with-temp-buffer
-      (erase-buffer)
-      (while (<= (count-lines (point-min)
-                              (point-max))
-                 num)
-        (setq end (+ beg size))
-        (insert-file-contents-literally filename
-                                        nil
-                                        beg
-                                        end)
-        (goto-char (point-max))
-        (setq beg (+ beg size)))
-      (goto-char (point-min))
-      (while (< (length result) num)
-        (let ((start (point)))
-          (forward-line 1)
-          (setq result
-                `(,@result ,(buffer-substring-no-properties start
-                                                            (point))))))
-      result
-      ;; (buffer-substring-no-properties (point-min)
-      ;;                                 (progn
-      ;;                                   (forward-line num)
-      ;;                                   (point)))
-      )))
-;; (apply 'concat (my-file-head "./shrc" 10)
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
