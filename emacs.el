@@ -1614,6 +1614,8 @@ and search from projectile root (if projectile is available)."
 (define-key ctl-x-map "s" 'my-rgrep)
 (define-key ctl-x-map "." 'my-rgrep-thing-at-point-projectile-root)
 
+(set-variable 'dumb-jump-prefer-searcher 'rg)
+
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
 
@@ -1749,8 +1751,6 @@ This mode is a simplified version of `adoc-mode'."
       ;;                                   (point)))
       )))
 ;; (apply 'concat (my-file-head "./shrc" 10)
-
-(set-variable 'dumb-jump-prefer-searcher 'rg)
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
