@@ -228,9 +228,9 @@ found, otherwise returns nil."
 (defvar my-prefix-map nil
   "My prefix map.")
 (define-prefix-command 'my-prefix-map)
-(define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
-(define-key my-prefix-map (kbd "C-q") 'quoted-insert)
-(define-key my-prefix-map (kbd "C-z") 'suspend-frame)
+;; (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
+;; (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
+;; (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
 
 ;; (comint-show-maximum-output)
 
