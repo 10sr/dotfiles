@@ -1051,7 +1051,7 @@ found, otherwise returns nil."
 ;;   (kbd "C-k") 'isearch-other-control-char)
 ;; (define-key isearch-mode-map
 ;;   (kbd "C-h") 'isearch-other-control-char)
-(define-key isearch-mode-map (kbd "C-h") 'isearch-delete-char)
+(define-key isearch-mode-map (kbd "C-h") 'isearch-del-char)
 (define-key isearch-mode-map (kbd "M-r")
   'isearch-query-replace-regexp)
 ;; do not cleanup isearch highlight: use `lazy-highlight-cleanup' to remove
