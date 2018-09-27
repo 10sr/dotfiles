@@ -1752,7 +1752,107 @@ This mode is a simplified version of `adoc-mode'."
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; recently
 
+(defgroup recently nil
+  "Recently visited files"
+  :tag "Recently"
+  :prefix "recently-"
+  :group 'tools)
+
+(defcustom recently-file
+  (concat user-emacs-directory
+          "recently.el")
+  "Recently file."
+  :type 'string
+  :group 'recently)
+
+(defcustom recently-max
+  100
+  "Recently list max length."
+  :type 'int
+  :group 'recently)
+
+(defvar recently-list
+  '()
+  "Recently list.")
+
+(defvar recently-file-mtime
+  nil
+  "Modified time of file when last read file.")
+
+(defun recently-write ()
+  "Write to file."
+  (with-temp-buffer
+    (prin1 recently-list
+           (current-buffer))
+    (write-region (point-min)
+                  (point-max)
+                  recently-file)))
+
+(defun recently-read ()
+  "Read file."
+  (when (file-readable-p recently-file)
+    (with-temp-buffer
+      (insert-file-contents recently-file)
+      (goto-char (point-min))
+      (setq recently-list
+            (read (current-buffer))))
+    (setq recently-file-mtime
+          (nth 5
+               (file-attributes recently-file)))))
+
+(defun recently-reload ()
+  "Reload file."
+  (when (and (file-readable-p recently-file)
+             (not (equal recently-file-mtime
+                         (nth 5
+                              (file-attributes recently-file)))))
+    (recently-read)
+    (cl-assert (equal recently-file-mtime
+                      (nth 5
+                           (file-attributes recently-file))))))
+
+(defun recently-add (path)
+  "Add file to list."
+  (cl-assert (string= path
+                      (expand-file-name path)))
+  (recently-reload)
+  (let* ((l recently-list)
+         (l (delete path
+                    l))
+         (l (cl-loop for e in l
+                     unless (file-in-directory-p path e)
+                     collect e)))
+    (setq recently-list
+          (cons path
+                l)))
+  (recently-truncate)
+  (recently-write))
+
+(defun recently-truncate ()
+  "Truncate list."
+  (when (> (length recently-list)
+           recently-max)
+    (setq recently-list
+          (cl-subseq recently-list
+                     0
+                     recently-max))))
+
+(defun recently-find-file-hook ()
+  "Add current file."
+  (when buffer-file-name
+    (recently-add buffer-file-name)))
+
+(defun recently-dired-mode-hook ()
+  "Add current directory."
+  (recently-add (expand-file-name default-directory)))
+
+(add-hook 'find-file-hook
+          'recently-find-file-hook)
+
+(add-hook 'dired-mode-hook
+          'recently-dired-mode-hook)
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
