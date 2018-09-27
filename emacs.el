@@ -808,6 +808,10 @@ found, otherwise returns nil."
   ;; disable this mode here.
   (global-magit-file-mode -1))
 
+(when (boundp 'git-rebase-filename-regexp)
+  (add-to-list 'auto-mode-alist
+               `(,git-rebase-filename-regexp . text-mode)))
+
 (when (safe-require-or-eval 'aggressive-indent)
   (defvar aggressive-indent-excluded-modes)
   (add-to-list 'aggressive-indent-excluded-modes
