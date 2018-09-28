@@ -425,9 +425,13 @@ found, otherwise returns nil."
 (column-number-mode 0)
 (size-indication-mode 0)
 (setq mode-line-position
-      '(:eval (format "L%%l/%d:C%%c"
+      '(:eval (format "L%%l/%d%s:C%%c"
                       (count-lines (point-max)
-                                   (point-min)))))
+                                   (point-min))
+                      (if (buffer-narrowed-p)
+                          "[N]"
+                        "")
+                      )))
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 
