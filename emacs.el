@@ -1496,6 +1496,8 @@ ARG is num to show, or defaults to 7."
     (with-eval-after-load 'dired
       (define-key dired-mode-map "a" 'dired-list-all-mode))))
 
+(define-key ctl-x-map "f" 'find-dired)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
@@ -1975,6 +1977,16 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                f
              (or (file-name-directory f)
                  ".")))))
+
+;;;;;;;;;;;;;;;;;;;;;;
+
+;; It works!
+;; (pop-to-buffer (dired-noselect '("." "shrc" "emacs.el")))
+
+(defun my-dired-from-git-ls-files ()
+  "Dired from git ls-files."
+  (interactive)
+  (dired "."))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
