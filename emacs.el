@@ -1814,30 +1814,32 @@ This mode is a simplified version of `adoc-mode'."
                            (file-attributes recently-file))))))
 
 (defun recently-add (path)
-  "Add file to list."
+  "Add PATH to list."
   (cl-assert (string= path
                       (expand-file-name path)))
   (recently-reload)
-  (let* ((l recently-list)
+  (let* ((l (copy-list recently-list))
          (l (delete path
                     l))
          (l (cl-loop for e in l
                      unless (file-in-directory-p path e)
-                     collect e)))
-    (setq recently-list
-          (cons path
-                l)))
-  (recently-truncate)
-  (recently-write))
+                     collect e))
+         (l (recently-truncate (cons path
+                                     l)
+                               recently-max)))
+    (unless (equal recently-list
+                   l)
+      (setq recently-list l)
+      (recently-write))))
 
-(defun recently-truncate ()
-  "Truncate list."
-  (when (> (length recently-list)
-           recently-max)
-    (setq recently-list
-          (cl-subseq recently-list
+(defun recently-truncate (list len)
+  "Truncate LIST to LEN."
+  (when (> (length list)
+           len)
+    (setq list
+          (cl-subseq list
                      0
-                     recently-max))))
+                     len))))
 
 (defun recently-find-file-hook ()
   "Add current file."
