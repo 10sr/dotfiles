@@ -1834,12 +1834,12 @@ This mode is a simplified version of `adoc-mode'."
 
 (defun recently-truncate (list len)
   "Truncate LIST to LEN."
-  (when (> (length list)
-           len)
-    (setq list
-          (cl-subseq list
-                     0
-                     len))))
+  (if (> (length list)
+         len)
+      (cl-subseq list
+                 0
+                 len)
+    list))
 
 (defun recently-find-file-hook ()
   "Add current file."
