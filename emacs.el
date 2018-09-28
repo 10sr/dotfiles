@@ -379,8 +379,8 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'page-break-lines)
   (global-page-break-lines-mode 1))
 
-(when (safe-require-or-eval 'fancy-narrow)
-  (fancy-narrow-mode 1))
+;; (when (safe-require-or-eval 'fancy-narrow)
+;;   (fancy-narrow-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
@@ -1853,6 +1853,122 @@ This mode is a simplified version of `adoc-mode'."
 
 (add-hook 'dired-mode-hook
           'recently-dired-mode-hook)
+
+;; recently-show
+
+(defvar recently-show-window-height 10
+  "Max height of window of `recently-show'")
+
+(defvar recently-show-mode-map
+  (let ((map (make-sparse-keymap)))
+    (suppress-keymap map)
+    (define-key map "n" 'next-line)
+    (define-key map "p" 'previous-line)
+    (define-key map (kbd "C-m") 'recently-show-find-file)
+    (define-key map (kbd "SPC") 'recently-show-find-file)
+    (define-key map "v" 'recently-show-view-file)
+    (define-key map "@" 'recently-show-dired)
+    (define-key map "q" 'recently-show-close)
+    (define-key map (kbd "C-g") 'recently-show-close)
+    (define-key map "?" 'describe-mode)
+    (define-key map "/" 'isearch-forward)
+    map))
+
+(defvar recently-show-before-listing-hook nil
+  "Hook run before creating buffer of `recently-show'.")
+
+(defvar recently-show-window-configuration nil
+  "Used for internal")
+
+(defvar recently-show-abbreviate t
+  "Non-nil means use `abbreviate-file-name' when listing recently opened files.")
+
+(define-derived-mode recently-show-mode special-mode "recently-show"
+  "Major mode for `recently-show'."
+  ;; (set (make-local-variable 'scroll-margin)
+  ;;      0)
+  )
+
+;;;###autoload
+(defun recently-show (&optional files buffer-name)
+  "Show simplified list of recently opened files.
+If optional argument FILES is non-nil, it is a list of recently-opened
+files to choose from. It defaults to the whole recent list.
+If optional argument BUFFER-NAME is non-nil, it is a buffer name to
+use for the buffer. It defaults to \"*recetf-show*\"."
+  (interactive)
+  (let ((bf (recently-show-create-buffer files buffer-name)))
+    (if bf
+        (progn
+          ;; (recently-save-list)
+          (setq recently-show-window-configuration (current-window-configuration))
+          ;;(pop-to-buffer bf t t)
+          (display-buffer bf)
+          ;; (set-window-text-height (selected-window)
+          ;;                         recently-show-window-height)
+          (shrink-window-if-larger-than-buffer (selected-window)))
+      (message "No recent file!"))))
+
+(defun recently-show-create-buffer (&optional files buffer-name)
+  "Create buffer listing recently files."
+  (let ((bname (or buffer-name
+                   "*recently-show*"))
+        (list (or files
+                  (progn
+                    (recently-reload)
+                    recently-list))))
+    (when list
+      (and (get-buffer bname)
+           (kill-buffer bname))
+      (let ((bf (get-buffer-create bname)))
+        (with-current-buffer bf
+          (recently-show-mode)
+          (let ((inhibit-read-only t))
+            (mapc (lambda (f)
+                    (insert (if recently-show-abbreviate
+                                (abbreviate-file-name f)
+                              f)
+                            "\n"))
+                  list))
+          (goto-char (point-min))
+          ;; (setq buffer-read-only t)
+          )
+        bf))))
+
+(defun recently-show-close ()
+  "Close recently-show window."
+  (interactive)
+  (kill-buffer (current-buffer))
+  (set-window-configuration recently-show-window-configuration))
+
+(defun recently-show-find-file ()
+  "Fine file of current line."
+  (interactive)
+  (let ((f (recently-show-get-filename)))
+    (recently-show-close)
+    (find-file f)))
+
+(defun recently-show-view-file ()
+  "view file of current line."
+  (interactive)
+  (let ((f (recently-show-get-filename)))
+    (recently-show-close)
+    (view-file f)))
+
+(defun recently-show-get-filename ()
+  "Get filename of current line."
+  (buffer-substring-no-properties (point-at-bol)
+                                  (point-at-eol)))
+
+(defun recently-show-dired()
+  "Open dired buffer of directory containing file of current line."
+  (interactive)
+  (let ((f (recently-show-get-filename)))
+    (recently-show-close)
+    (dired (if (file-directory-p f)
+               f
+             (or (file-name-directory f)
+                 ".")))))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
