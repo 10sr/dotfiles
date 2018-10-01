@@ -119,6 +119,7 @@ found, otherwise returns nil."
        sync-recentf
        aggressive-indent
        fancy-narrow
+       dired-filter
 
        scala-mode
        ;;ensime
@@ -372,7 +373,7 @@ found, otherwise returns nil."
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
-(define-key my-prefix-map (kbd "C-o") 'occur)
+(define-key ctl-x-map (kbd "C-o") 'occur)
 
 (require 'page-ext nil t)
 
