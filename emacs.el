@@ -1608,8 +1608,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-        (compilation-start command-args
-                           'grep-mode))
+                                   (compilation-start command-args
+                                                      'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -1626,8 +1626,8 @@ and search from projectile root (if projectile is available)."
             (error "My-Rgrep: Command for rgrep not found"))))
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (projectile-project-root)
-          (compilation-start command-args
-                             'grep-mode))
+                                     (compilation-start command-args
+                                                        'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
@@ -1983,15 +1983,19 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 ;; It works!
 ;; (pop-to-buffer (dired-noselect '("." "shrc" "emacs.el")))
 
-(defun my-dired-git-ls-files ()
+(defun my-dired-git-ls-files (args)
   "Dired from git ls-files."
-  (interactive)
+  (interactive "sgit ls-files args: ")
   (pop-to-buffer-same-window
    (dired-noselect `(,default-directory
-                      ,@(split-string (shell-command-to-string "git ls-files -z")
+                      ,@(split-string (shell-command-to-string (concat "git ls-files -z " args))
                                       "\0" t))
                    ""))
   )
+
+(define-key ctl-x-map (kbd "C-l") 'my-dired-git-ls-files)
+
+;; (define-minor-mode my-dired-glob-filter)
 
 
 ;; Local Variables:
