@@ -1251,7 +1251,7 @@ found, otherwise returns nil."
 (set-variable 'recentf-show-file-shortcuts-flag nil)
 (set-variable 'recentf-auto-cleanup 3)
 
-(safe-require-or-eval 'sync-recentf)
+;; (safe-require-or-eval 'sync-recentf)
 
 (when (safe-require-or-eval 'recentf)
   (add-to-list 'recentf-exclude
@@ -1422,9 +1422,9 @@ ARG is num to show, or defaults to 7."
   )
 (setq dired-listing-switches "-lhF")
 
-(put 'dired-find-alternate-file 'disabled nil)
 ;; when using dired-find-alternate-file
 ;; reuse current dired buffer for the file to open
+;; (put 'dired-find-alternate-file 'disabled nil)
 (set-variable 'dired-ls-F-marks-symlinks t)
 
 (set-variable 'ls-lisp-use-insert-directory-program nil) ; always use ls-lisp
@@ -1994,6 +1994,9 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   )
 
 (define-key ctl-x-map (kbd "C-l") 'my-dired-git-ls-files)
+(with-eval-after-load 'dired
+  (defvar dired-mode-map (make-sparse-keymap))
+  (define-key dired-mode-map "f" 'my-dired-git-ls-files))
 
 ;; (define-minor-mode my-dired-glob-filter)
 
