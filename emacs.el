@@ -1983,10 +1983,16 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 ;; It works!
 ;; (pop-to-buffer (dired-noselect '("." "shrc" "emacs.el")))
 
-(defun my-dired-from-git-ls-files ()
+(defun my-dired-git-ls-files ()
   "Dired from git ls-files."
   (interactive)
-  (dired "."))
+  (pop-to-buffer-same-window
+   (dired-noselect `(,default-directory
+                      ,@(split-string (shell-command-to-string "git ls-files -z")
+                                      "\0" t))
+                   ""))
+  )
+
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
