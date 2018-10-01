@@ -1993,7 +1993,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                    ""))
   )
 
-(define-key ctl-x-map (kbd "C-l") 'my-dired-git-ls-files)
+(define-key ctl-x-map (kbd "f") 'my-dired-git-ls-files)
 (with-eval-after-load 'dired
   (defvar dired-mode-map (make-sparse-keymap))
   (define-key dired-mode-map "f" 'my-dired-git-ls-files))
