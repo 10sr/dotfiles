@@ -1991,6 +1991,8 @@ use for the buffer. It defaults to \"*recetf-show*\"."
              (or (file-name-directory f)
                  ".")))))
 
+(define-key ctl-x-map (kbd "C-r") 'recently-show)
+
 ;;;;;;;;;;;;;;;;;;;;;;
 
 ;; It works!
