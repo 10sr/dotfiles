@@ -120,6 +120,7 @@ found, otherwise returns nil."
        aggressive-indent
        fancy-narrow
        dired-filter
+       wgrep
 
        scala-mode
        ;;ensime
@@ -801,6 +802,12 @@ found, otherwise returns nil."
 
 ;; Include some extra modes
 (require 'generic-x)
+
+(when (safe-require-or-eval 'wgrep)
+  (defvar grep-mode-map)
+  (define-key grep-mode-map
+    "e"
+    'wgrep-change-to-wgrep-mode))
 
 (with-eval-after-load 'remember
   (defvar remember-mode-map (make-sparse-keymap))
