@@ -1496,6 +1496,10 @@ ARG is num to show, or defaults to 7."
     (with-eval-after-load 'dired
       (define-key dired-mode-map "a" 'dired-list-all-mode))))
 
+(when (autoload-eval-lazily 'dired-filter)
+  (add-hook 'dired-mode-hook
+            'dired-filter-mode))
+
 ;; Currently disabled in favor of dired-from-git-ls-files
 ;; (define-key ctl-x-map "f" 'find-dired)
 
