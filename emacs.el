@@ -1759,20 +1759,18 @@ Used by preview buffer and always same as awk-preview--point-beg.")
 
 (defun awk-preview--invoke-awk (buf beg end output)
   "Execute awk process with BEG and END input and output to OUTPUT buffer."
-  (save-window-excursion
-    (save-excursion
-      (with-current-buffer buf
-        (let ((proc (apply 'start-process
-                           "awk-preview"
-                           output
-                           awk-preview-program
-                           awk-preview-switches)))
-          (message "%S" proc)
-          (process-send-region proc beg end)
-          (process-send-eof proc)
-          (accept-process-output proc)
-          )
-        output))))
+  (with-current-buffer buf
+    (let ((proc (apply 'start-process
+                       "awk-preview"
+                       output
+                       awk-preview-program
+                       awk-preview-switches)))
+      (message "%S" proc)
+      (process-send-region proc beg end)
+      (process-send-eof proc)
+      (accept-process-output proc)
+      )
+    output))
 
 (defvar awk-preview-program-buffer-name
   "*AWK Preview Program<%s>*"
@@ -1801,19 +1799,17 @@ Return that buffer."
 
 (defun awk-preview--create-preview-buffer (source)
   "Create preview buffer of SOURCE buffer and return it."
-  (save-window-excursion
-    (save-excursion
-      (with-current-buffer source
-        (let ((buffer-file-name nil)
-              (beg awk-preview--point-beg)
-              (end awk-preview--point-end))
-          (with-current-buffer (clone-buffer (format awk-preview-preview-buffer-name
-                                                     (buffer-name)))
-            (setq awk-preview--preview-point-beg beg)
-            (setq awk-preview--source-buffer source)
-            (setq awk-preview--preview-buffer (current-buffer))
-            (goto-char end)
-            (current-buffer)))))))
+  (with-current-buffer source
+    (let ((buffer-file-name nil)
+          (beg awk-preview--point-beg)
+          (end awk-preview--point-end))
+      (with-current-buffer (clone-buffer (format awk-preview-preview-buffer-name
+                                                 (buffer-name)))
+        (setq awk-preview--preview-point-beg beg)
+        (setq awk-preview--source-buffer source)
+        (setq awk-preview--preview-buffer (current-buffer))
+        (goto-char end)
+        (current-buffer)))))
 
 ;; (defun awk-preview-with-program (beg end program))
 
@@ -1844,17 +1840,15 @@ Return that buffer."
 
   (switch-to-buffer awk-preview--program-buffer)
 
-  (save-window-excursion
-    (save-excursion
-      (let ((output (with-current-buffer (get-buffer-create " *awk-preview output*")
-                      (erase-buffer)
-                      (current-buffer))))
-        (awk-preview--invoke-awk awk-preview--source-buffer beg end output)
-        (with-current-buffer awk-preview--preview-buffer
-          (delete-region awk-preview--preview-point-beg (point))
-          (insert (with-current-buffer output
-                    (buffer-substring-no-properties (point-min) (point-max)))))
-        ))))
+  (let ((output (with-current-buffer (get-buffer-create " *awk-preview output*")
+                  (erase-buffer)
+                  (current-buffer))))
+    (awk-preview--invoke-awk awk-preview--source-buffer beg end output)
+    (with-current-buffer awk-preview--preview-buffer
+      (delete-region awk-preview--preview-point-beg (point))
+      (insert (with-current-buffer output
+                (buffer-substring-no-properties (point-min) (point-max)))))
+    ))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
