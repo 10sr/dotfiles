@@ -1739,6 +1739,11 @@ This mode is a simplified version of `adoc-mode'."
   "Point of beginning.
 Used by preview buffer and always same as awk-preview--point-beg.")
 (make-variable-buffer-local 'awk-preview--preview-point-beg)
+(defvar awk-preview--preview-point-end
+  nil
+  "Point of beginning.
+Used by preview buffer and may defferent from awk-preview--point-end.")
+(make-variable-buffer-local 'awk-preview--preview-point-end)
 
 (defvar awk-preview--program-filename
   nil
