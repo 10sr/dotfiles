@@ -1719,7 +1719,8 @@ This mode is a simplified version of `adoc-mode'."
   :group 'awk-preview)
 
 (defcustom awk-preview-default-program
-  "{
+  "# C-c C-l to update preview, C-c C-c to commit, C-c C-k to abort.
+{
     print NR, $0
 }
 "
@@ -1910,16 +1911,18 @@ Return that buffer."
   "Discard result and exit awk-preview."
   (interactive))
 
-(define-minor-mode awk-preview-program-mode
-  "Minor mode for awk-preview program buffer."
-  :lighter " AWKPreview")
-
 (defvar awk-preview-program-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-l") 'awk-preview-update-preview)
     (define-key map (kbd "C-c C-k") 'awk-preview-abort)
-    (define-key map (kbd "C-c C-c") 'awk-preview-commit))
+    (define-key map (kbd "C-c C-c") 'awk-preview-commit)
+    map)
   "Keymap for `awk-preview-program-mode'.")
+
+(define-minor-mode awk-preview-program-mode
+  "Minor mode for awk-preview program buffer."
+  :lighter " AWKPreview"
+  :keymap awk-preview-program-mode-map)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
