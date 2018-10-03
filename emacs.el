@@ -1789,6 +1789,8 @@ Used by preview buffer and may defferent from awk-preview--point-end.")
       )
     output))
 
+;; (call-process "awk" "a.js" t t "--sandbox" "-f" "a.awk")
+
 (defvar awk-preview-program-buffer-name
   "*AWK Preview Program<%s>*"
   "Buffer name of awk preview program.")
