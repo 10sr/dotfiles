@@ -1827,6 +1827,7 @@ Return that buffer."
       (with-current-buffer (clone-buffer (format awk-preview-preview-buffer-name
                                                  (buffer-name)))
         (setq awk-preview--preview-point-beg beg)
+        (setq awk-preview--preview-point-end end)
         (setq awk-preview--source-buffer source)
         (setq awk-preview--preview-buffer (current-buffer))
         (goto-char end)
@@ -1884,9 +1885,11 @@ Return that buffer."
                                output)
       (with-current-buffer awk-preview--preview-buffer
         (let ((inhibit-read-only t))
+          (goto-char awk-preview--preview-point-end)
           (delete-region awk-preview--preview-point-beg (point))
           (insert (with-current-buffer output
-                    (buffer-substring-no-properties (point-min) (point-max))))))
+                    (buffer-substring-no-properties (point-min) (point-max))))
+          (setq awk-preview--preview-point-end (point))))
       )))
 
 
