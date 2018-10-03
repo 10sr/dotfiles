@@ -1712,7 +1712,8 @@ This mode is a simplified version of `adoc-mode'."
   :group 'awk-preview)
 
 (defcustom awk-preview-switches
-  '("--sandbox")
+  ;; '("--sandbox")
+  nil
   "String of awk options appended when running awk preview."
   :type '(repeat string)
   :group 'awk-preview)
@@ -1781,11 +1782,11 @@ Used by preview buffer and may defferent from awk-preview--point-end.")
       (process-send-eof proc)
       (accept-process-output proc)
       ;; What should I do if process does not exit yet?
-      (cl-assert (eq (process-status proc)
-                     'exit))
-      (unless (eq (process-exit-status proc)
-                  0)
-        (error "awk-preview: Awk program exited abnormally."))
+      ;; (cl-assert (eq (process-status proc)
+      ;;                'exit))
+      ;; (unless (eq (process-exit-status proc)
+      ;;             0)
+      ;;   (error "awk-preview: Awk program exited abnormally."))
       )
     output))
 
