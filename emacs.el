@@ -1711,7 +1711,7 @@ This mode is a simplified version of `adoc-mode'."
   :group 'awk-preview)
 
 (defcustom awk-preview-switches
-  '("--sandbox" "--" "{print}")
+  '("--sandbox" "--" "{print NR, $0}")
   "String of awk options appended when running awk preview."
   :type '(repeat string)
   :group 'awk-preview)
@@ -1789,13 +1789,14 @@ Return that buffer."
   (let ((source-name (with-current-buffer source (buffer-name))))
     (with-current-buffer (generate-new-buffer (format awk-preview-program-buffer-name
                                                       source-name))
+      (erase-buffer)
+      (insert awk-preview-default-program)
+      (awk-mode)
+
       (setq awk-preview--source-buffer source)
       (setq awk-preview--preview-buffer preview)
       (setq awk-preview--program-buffer (current-buffer))
 
-      (erase-buffer)
-      (insert awk-preview-default-program)
-      (awk-mode)
       (current-buffer))))
 
 (defun awk-preview--create-preview-buffer (source)
