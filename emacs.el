@@ -1718,7 +1718,7 @@ This mode is a simplified version of `adoc-mode'."
 
 (defcustom awk-preview-default-program
   "{
-    print $0
+    print NR, $0
 }
 "
   "Default awk command."
@@ -1739,6 +1739,11 @@ This mode is a simplified version of `adoc-mode'."
   "Point of beginning.
 Used by preview buffer and always same as awk-preview--point-beg.")
 (make-variable-buffer-local 'awk-preview--preview-point-beg)
+
+(defvar awk-preview--program-filename
+  nil
+  "Awk preview program file name.")
+(make-variable-buffer-local 'awk-preview--program-filename)
 
 (defvar awk-preview--source-buffer
   nil
@@ -1794,8 +1799,19 @@ Return that buffer."
       (setq awk-preview--source-buffer source)
       (setq awk-preview--preview-buffer preview)
       (setq awk-preview--program-buffer (current-buffer))
+      (unless buffer-file-name
+        (setq awk-preview--program-filename (make-temp-file "awk-preview-"
+                                                            nil
+                                                            ".awk")))
 
       (current-buffer))))
+
+(defun awk-preview-program-buffer-kill-hook ()
+  "Cleanup for awk-preview program buffer."
+  (when awk-preview--program-filename
+    (delete-file awk-preview--program-filename)))
+(add-hook 'kill-buffer-hook
+          'awk-preview-program-buffer-kill-hook)
 
 (defun awk-preview--create-preview-buffer (source)
   "Create preview buffer of SOURCE buffer and return it."
@@ -1840,15 +1856,24 @@ Return that buffer."
 
   (switch-to-buffer awk-preview--program-buffer)
 
+  )
+
+(defun awk-preview-update ()
+  "Update awk preview."
+  (interactive)
   (let ((output (with-current-buffer (get-buffer-create " *awk-preview output*")
                   (erase-buffer)
                   (current-buffer))))
-    (awk-preview--invoke-awk awk-preview--source-buffer beg end output)
-    (with-current-buffer awk-preview--preview-buffer
-      (delete-region awk-preview--preview-point-beg (point))
-      (insert (with-current-buffer output
-                (buffer-substring-no-properties (point-min) (point-max)))))
-    ))
+    (with-current-buffer awk-preview--source-buffer
+      (awk-preview--invoke-awk (current-buffer)
+                               awk-preview--point-beg
+                               awk-preview--point-end
+                               output)
+      (with-current-buffer awk-preview--preview-buffer
+        (delete-region awk-preview--preview-point-beg (point))
+        (insert (with-current-buffer output
+                  (buffer-substring-no-properties (point-min) (point-max)))))
+      )))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
