@@ -1711,7 +1711,7 @@ This mode is a simplified version of `adoc-mode'."
   :group 'awk-preview)
 
 (defcustom awk-preview-switches
-  '("--sandbox" "--" "{print NR, $0}")
+  '("--sandbox")
   "String of awk options appended when running awk preview."
   :type '(repeat string)
   :group 'awk-preview)
@@ -1762,14 +1762,14 @@ Used by preview buffer and always same as awk-preview--point-beg.")
   nil
   "Awk preview window configuration.")
 
-(defun awk-preview--invoke-awk (buf beg end output)
-  "Execute awk process with BEG and END input and output to OUTPUT buffer."
+(defun awk-preview--invoke-awk (buf beg end progfile output)
+  "Execute PROFILE awk process with BEG and END input and output to OUTPUT buffer."
   (with-current-buffer buf
     (let ((proc (apply 'start-process
                        "awk-preview"
                        output
                        awk-preview-program
-                       awk-preview-switches)))
+                       `(,@awk-preview-switches "-f" ,progfile))))
       (message "%S" proc)
       (process-send-region proc beg end)
       (process-send-eof proc)
@@ -1825,6 +1825,7 @@ Return that buffer."
         (setq awk-preview--source-buffer source)
         (setq awk-preview--preview-buffer (current-buffer))
         (goto-char end)
+        (setq buffer-read-only t)
         (current-buffer)))))
 
 ;; (defun awk-preview-with-program (beg end program))
@@ -1855,24 +1856,32 @@ Return that buffer."
   (pop-to-buffer awk-preview--program-buffer)
 
   (switch-to-buffer awk-preview--program-buffer)
-
+  (awk-preview-update)
   )
 
 (defun awk-preview-update ()
   "Update awk preview."
   (interactive)
+  (with-current-buffer awk-preview--program-buffer
+    (write-region (point-min)
+                  (point-max)
+                  awk-preview--program-filename))
   (let ((output (with-current-buffer (get-buffer-create " *awk-preview output*")
                   (erase-buffer)
-                  (current-buffer))))
+                  (current-buffer)))
+        (progfile (with-current-buffer awk-preview--program-buffer
+                    awk-preview--program-filename)))
     (with-current-buffer awk-preview--source-buffer
       (awk-preview--invoke-awk (current-buffer)
                                awk-preview--point-beg
                                awk-preview--point-end
+                               progfile
                                output)
       (with-current-buffer awk-preview--preview-buffer
-        (delete-region awk-preview--preview-point-beg (point))
-        (insert (with-current-buffer output
-                  (buffer-substring-no-properties (point-min) (point-max)))))
+        (let ((inhibit-read-only t))
+          (delete-region awk-preview--preview-point-beg (point))
+          (insert (with-current-buffer output
+                    (buffer-substring-no-properties (point-min) (point-max))))))
       )))
 
 
