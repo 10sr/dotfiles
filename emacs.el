@@ -121,6 +121,7 @@ found, otherwise returns nil."
        fancy-narrow
        dired-filter
        wgrep
+       magit
 
        scala-mode
        ;;ensime
@@ -1779,6 +1780,12 @@ Used by preview buffer and may defferent from awk-preview--point-end.")
       (process-send-region proc beg end)
       (process-send-eof proc)
       (accept-process-output proc)
+      ;; What should I do if process does not exit yet?
+      (cl-assert (eq (process-status proc)
+                     'exit))
+      (unless (eq (process-exit-status proc)
+                  0)
+        (error "awk-preview: Awk program exited abnormally."))
       )
     output))
 
@@ -1800,6 +1807,7 @@ Return that buffer."
       (erase-buffer)
       (insert awk-preview-default-program)
       (awk-mode)
+      (awk-preview-program-mode 1)
 
       (setq awk-preview--source-buffer source)
       (setq awk-preview--preview-buffer preview)
@@ -1862,11 +1870,11 @@ Return that buffer."
   (pop-to-buffer awk-preview--program-buffer)
 
   (switch-to-buffer awk-preview--program-buffer)
-  (awk-preview-update)
+  (awk-preview-update-preview)
   )
 
-(defun awk-preview-update ()
-  "Update awk preview."
+(defun awk-preview-update-preview ()
+  "Update awk-preview."
   (interactive)
   (with-current-buffer awk-preview--program-buffer
     (write-region (point-min)
@@ -1887,10 +1895,28 @@ Return that buffer."
         (let ((inhibit-read-only t))
           (goto-char awk-preview--preview-point-end)
           (delete-region awk-preview--preview-point-beg (point))
-          (insert (with-current-buffer output
-                    (buffer-substring-no-properties (point-min) (point-max))))
+          (insert-buffer-substring output)
           (setq awk-preview--preview-point-end (point))))
       )))
+
+(defun awk-preview-commit ()
+  "Exit awk-preview and update buffer."
+  (interactive))
+
+(defun awk-preview-abort ()
+  "Discard result and exit awk-preview."
+  (interactive))
+
+(define-minor-mode awk-preview-program-mode
+  "Minor mode for awk-preview program buffer."
+  :lighter " AWKPreview")
+
+(defvar awk-preview-program-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-l") 'awk-preview-update-preview)
+    (define-key map (kbd "C-c C-k") 'awk-preview-abort)
+    (define-key map (kbd "C-c C-c") 'awk-preview-commit))
+  "Keymap for `awk-preview-program-mode'.")
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
