@@ -1674,7 +1674,6 @@ and search from projectile root (if projectile is available)."
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; adoc-simple-mode
 
@@ -1717,30 +1716,145 @@ This mode is a simplified version of `adoc-mode'."
   :type '(repeat string)
   :group 'awk-preview)
 
-(defun awk-preview--invoke (start end output)
-  "Execute awk process and get result."
-  (let ((proc (apply 'start-process
-                     "awk-preview"
-                     output
-                     awk-preview-program
-                     awk-preview-switches)))
-    (message "%S" proc)
-    (process-send-region proc start end)
-    (process-send-eof proc)
-    (accept-process-output proc)
-    )
-  output)
+(defcustom awk-preview-default-program
+  "{
+    print $0
+}
+"
+  "Default awk command."
+  :type 'string
+  :group 'awk-preview)
 
-(defun awk-preview (start end)
+(defvar awk-preview--point-beg
+  nil
+  "Point of beginning.")
+(make-variable-buffer-local 'awk-preview--point-beg)
+(defvar awk-preview--point-end
+  nil
+  "Point of end.")
+(make-variable-buffer-local 'awk-preview--point-end)
+
+(defvar awk-preview--preview-point-beg
+  nil
+  "Point of beginning.
+Used by preview buffer and always same as awk-preview--point-beg.")
+(make-variable-buffer-local 'awk-preview--preview-point-beg)
+
+(defvar awk-preview--source-buffer
+  nil
+  "Awk source buffer.")
+(make-variable-buffer-local 'awk-preview--source-buffer)
+(defvar awk-preview--preview-buffer
+  nil
+  "Awk preview buffer.")
+(make-variable-buffer-local 'awk-preview--preview-buffer)
+(defvar awk-preview--program-buffer
+  nil
+  "Awk program buffer.")
+(make-variable-buffer-local 'awk-preview--program-buffer)
+
+(defvar awk-preview--window-configuration
+  nil
+  "Awk preview window configuration.")
+
+(defun awk-preview--invoke-awk (buf beg end output)
+  "Execute awk process with BEG and END input and output to OUTPUT buffer."
+  (save-window-excursion
+    (save-excursion
+      (with-current-buffer buf
+        (let ((proc (apply 'start-process
+                           "awk-preview"
+                           output
+                           awk-preview-program
+                           awk-preview-switches)))
+          (message "%S" proc)
+          (process-send-region proc beg end)
+          (process-send-eof proc)
+          (accept-process-output proc)
+          )
+        output))))
+
+(defvar awk-preview-program-buffer-name
+  "*AWK Preview Program<%s>*"
+  "Buffer name of awk preview program.")
+
+(defvar awk-preview-preview-buffer-name
+  "*AWK Preview<%s>*"
+  "Buffer name of awk preview.")
+
+(defun awk-preview--create-program-buffer (source preview)
+  "Create and show awk program buffer for SOURCE and PREVIEW buffer.
+
+Return that buffer."
+  (let ((source-name (with-current-buffer source (buffer-name))))
+    (with-current-buffer (generate-new-buffer (format awk-preview-program-buffer-name
+                                                      source-name))
+      (setq awk-preview--source-buffer source)
+      (setq awk-preview--preview-buffer preview)
+      (setq awk-preview--program-buffer (current-buffer))
+
+      (erase-buffer)
+      (insert awk-preview-default-program)
+      (awk-mode)
+      (current-buffer))))
+
+(defun awk-preview--create-preview-buffer (source)
+  "Create preview buffer of SOURCE buffer and return it."
+  (save-window-excursion
+    (save-excursion
+      (with-current-buffer source
+        (let ((buffer-file-name nil)
+              (beg awk-preview--point-beg)
+              (end awk-preview--point-end))
+          (with-current-buffer (clone-buffer (format awk-preview-preview-buffer-name
+                                                     (buffer-name)))
+            (setq awk-preview--preview-point-beg beg)
+            (setq awk-preview--source-buffer source)
+            (setq awk-preview--preview-buffer (current-buffer))
+            (goto-char end)
+            (current-buffer)))))))
+
+;; (defun awk-preview-with-program (beg end program))
+
+(defun awk-preview (beg end)
   "Run awk and preview result."
   (interactive "r")
-  (let ((output (with-current-buffer (get-buffer-create "*awk-preview output*")
-                  (erase-buffer)
-                  (current-buffer))))
-    (awk-preview--invoke start end output)
-    (message "awk-preview: %s" (with-current-buffer output
-                                 (buffer-substring-no-properties (point-min) (point-max))))
-    ))
+  (setq awk-preview--point-beg beg)
+  (setq awk-preview--point-end end)
+
+  (setq awk-preview--source-buffer (current-buffer))
+  (setq awk-preview--preview-buffer
+        (awk-preview--create-preview-buffer (current-buffer)))
+  (setq awk-preview--program-buffer
+        (awk-preview--create-program-buffer (current-buffer)
+                                            awk-preview--preview-buffer))
+  ;; At creation of preview buffer, program buffer is not available so set this
+  ;; here
+  (let ((b awk-preview--program-buffer))
+    (with-current-buffer awk-preview--preview-buffer
+      (setq awk-preview--program-buffer b)))
+
+  (setq awk-preview--window-configuration
+        (current-window-configuration))
+
+  (set-window-buffer (get-buffer-window awk-preview--source-buffer)
+                     awk-preview--preview-buffer)
+  (pop-to-buffer awk-preview--program-buffer)
+
+  (switch-to-buffer awk-preview--program-buffer)
+
+  (save-window-excursion
+    (save-excursion
+      (let ((output (with-current-buffer (get-buffer-create " *awk-preview output*")
+                      (erase-buffer)
+                      (current-buffer))))
+        (awk-preview--invoke-awk awk-preview--source-buffer beg end output)
+        (with-current-buffer awk-preview--preview-buffer
+          (delete-region awk-preview--preview-point-beg (point))
+          (insert (with-current-buffer output
+                    (buffer-substring-no-properties (point-min) (point-max)))))
+        ))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editorconfig-auto-apply

@@ -3,7 +3,7 @@
 " SETUP_LOAD:     source DOTFILES_DIR/vimrc
 " SETUP_LOAD: endif
 if !isdirectory(expand('~/.vim'))
-    call mkdir(expand('~/.vim'))
+call mkdir(expand('~/.vim'))
 endif
 
 """""""""""""""""""""""""""""""""""
