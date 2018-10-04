@@ -1798,7 +1798,7 @@ Used by preview buffer and may defferent from awk-preview--point-end.")
   "Create and show awk program buffer for SOURCE and PREVIEW buffer.
 
 Return that buffer."
-  (let ((source-name (with-current-buffer source (buffer-name))))
+  (let ((source-name (buffer-name source)))
     (with-current-buffer (generate-new-buffer (format awk-preview-program-buffer-name
                                                       source-name))
       (erase-buffer)
