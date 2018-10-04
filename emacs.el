@@ -1773,25 +1773,18 @@ Used by preview buffer and may defferent from awk-preview--point-end.")
 (defun awk-preview--invoke-awk (buf beg end progfile output)
   "Execute PROFILE awk process with BEG and END input and output to OUTPUT buffer."
   (with-current-buffer buf
-    (let ((proc (apply 'start-process
-                       "awk-preview"
-                       output
-                       awk-preview-program
-                       `(,@awk-preview-switches "-f" ,progfile))))
-      (message "%S" proc)
-      (process-send-region proc beg end)
-      (process-send-eof proc)
-      (accept-process-output proc)
-      ;; What should I do if process does not exit yet?
-      ;; (cl-assert (eq (process-status proc)
-      ;;                'exit))
-      ;; (unless (eq (process-exit-status proc)
-      ;;             0)
-      ;;   (error "awk-preview: Awk program exited abnormally."))
-      )
-    output))
-
-;; (call-process "awk" "a.js" t t "--sandbox" "-f" "a.awk")
+    (let ((status (apply 'call-process-region
+                         beg
+                         end
+                         awk-preview-program
+                         nil
+                         output
+                         nil
+                         `(,@awk-preview-switches "-f" ,progfile))))
+      (unless (eq status
+                  0)
+        (error "awk-preview: Awk program exited abnormally."))
+      output)))
 
 (defvar awk-preview-program-buffer-name
   "*AWK Preview Program<%s>*"
@@ -1838,6 +1831,7 @@ Return that buffer."
           (end awk-preview--point-end))
       (with-current-buffer (clone-buffer (format awk-preview-preview-buffer-name
                                                  (buffer-name)))
+        (awk-preview-program-mode 1)
         (setq awk-preview--preview-point-beg beg)
         (setq awk-preview--preview-point-end end)
         (setq awk-preview--source-buffer source)
@@ -1845,8 +1839,6 @@ Return that buffer."
         (goto-char end)
         (setq buffer-read-only t)
         (current-buffer)))))
-
-;; (defun awk-preview-with-program (beg end program))
 
 (defun awk-preview (beg end)
   "Run awk and preview result."
@@ -1910,6 +1902,9 @@ Return that buffer."
 (defun awk-preview-abort ()
   "Discard result and exit awk-preview."
   (interactive))
+
+(defun awk-preview--cleanup()
+  "Cleanup awk preview buffers and variables.")
 
 (defvar awk-preview-program-mode-map
   (let ((map (make-sparse-keymap)))
