@@ -1639,9 +1639,10 @@ and search from projectile root (if projectile is available)."
                           (error "No symbol at point")))
             (error "My-Rgrep: Command for rgrep not found"))))
     (if (safe-require-or-eval 'projectile)
-        (projectile-with-default-dir (projectile-project-root)
-                                     (compilation-start command-args
-                                                        'grep-mode))
+        (projectile-with-default-dir (or (projectile-project-root)
+                                         default-directory)
+          (compilation-start command-args
+                             'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
@@ -1970,6 +1971,14 @@ Return that buffer."
   :type 'int
   :group 'recently)
 
+(defcustom recently-excludes
+  '()
+  "List of regexps for filenames excluded from the recent list."
+  :type '(repeat string)
+  :group 'recently)
+(add-to-list 'recently-excludes
+             (eval-when-compile (rx "/COMMIT_EDITMSG" eot)))
+
 (defvar recently-list
   '()
   "Recently list.")
@@ -2014,20 +2023,23 @@ Return that buffer."
   "Add PATH to list."
   (cl-assert (string= path
                       (expand-file-name path)))
-  (recently-reload)
-  (let* ((l (copy-list recently-list))
-         (l (delete path
-                    l))
-         (l (cl-loop for e in l
-                     unless (file-in-directory-p path e)
-                     collect e))
-         (l (recently-truncate (cons path
-                                     l)
-                               recently-max)))
-    (unless (equal recently-list
-                   l)
-      (setq recently-list l)
-      (recently-write))))
+  (when (cl-loop for re in recently-excludes
+                 if (string-match re path) return t
+                 finally return nil)
+    (recently-reload)
+    (let* ((l (copy-list recently-list))
+           (l (delete path
+                      l))
+           (l (cl-loop for e in l
+                       unless (file-in-directory-p path e)
+                       collect e))
+           (l (recently-truncate (cons path
+                                       l)
+                                 recently-max)))
+      (unless (equal recently-list
+                     l)
+        (setq recently-list l)
+        (recently-write)))))
 
 (defun recently-truncate (list len)
   "Truncate LIST to LEN."
