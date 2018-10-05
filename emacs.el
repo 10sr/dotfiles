@@ -1457,6 +1457,7 @@ ARG is num to show, or defaults to 7."
 (with-eval-after-load 'dired
   (safe-require-or-eval 'ls-lisp)
   (defvar dired-mode-map (make-sparse-keymap))
+  (define-key dired-mode-map "w" 'wdired-change-to-wdired-mode)
   (define-key dired-mode-map "i" 'dired-get-file-info)
   (define-key dired-mode-map "f" 'find-file)
   (define-key dired-mode-map "!" 'shell-command)
