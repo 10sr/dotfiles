@@ -2035,14 +2035,14 @@ Return that buffer."
                        collect e))
            (l (cons path
                     l))
-           (l (recently-truncate l
-                                 recently-max)))
+           (l (recently--truncate l
+                                  recently-max)))
       (unless (equal recently-list
                      l)
         (setq recently-list l)
         (recently-write)))))
 
-(defun recently-truncate (list len)
+(defun recently--truncate (list len)
   "Truncate LIST to LEN."
   (if (> (length list)
          len)
