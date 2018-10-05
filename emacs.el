@@ -2033,8 +2033,9 @@ Return that buffer."
            (l (cl-loop for e in l
                        unless (file-in-directory-p path e)
                        collect e))
-           (l (recently-truncate (cons path
-                                       l)
+           (l (cons path
+                    l))
+           (l (recently-truncate l
                                  recently-max)))
       (unless (equal recently-list
                      l)
