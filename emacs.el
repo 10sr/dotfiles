@@ -1771,14 +1771,17 @@ Used by preview buffer and may defferent from awk-preview--point-end.")
   nil
   "Awk preview window configuration.")
 
-(defun awk-preview--invoke-awk (buf beg end progfile output)
-  "Execute PROFILE awk process with BEG and END input and output to OUTPUT buffer."
+(defun awk-preview--invoke-awk (buf beg end progfile output &optional delete)
+  "Execute PROGFILE awk process with BEG and END input and output to OUTPUT buffer.
+
+When OUTPUT is t the result will be output to BUF.
+Delete the text between BEG and END when DELETE is non-nil."
   (with-current-buffer buf
     (let ((status (apply 'call-process-region
                          beg
                          end
                          awk-preview-program
-                         nil
+                         delete
                          output
                          nil
                          `(,@awk-preview-switches "-f" ,progfile))))
