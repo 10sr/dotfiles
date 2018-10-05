@@ -2024,8 +2024,8 @@ Return that buffer."
   (cl-assert (string= path
                       (expand-file-name path)))
   (when (cl-loop for re in recently-excludes
-                 if (string-match re path) return t
-                 finally return nil)
+                 if (string-match re path) return nil
+                 finally return t)
     (recently-reload)
     (let* ((l (copy-list recently-list))
            (l (delete path
