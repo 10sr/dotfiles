@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-09 15:15:44 JST 10sr>
+;; Time-stamp: <2018-10-09 16:36:20 JST 10sr>
 
 ;;; Code:
 
@@ -1324,22 +1324,25 @@ found, otherwise returns nil."
 
 (defun my-file-head (filename &optional n)
   "Return list of first N lines of file FILENAME."
-  ;; Work with japanese text?
+  ;; TODO: Fix for janapese text
+  ;; TODO: Fix for short text
   (let ((num (or n 10))
         (size 100)
         (beg 0)
         (end 0)
-        (result '()))
+        (result '())
+        (read -1))
     (with-temp-buffer
       (erase-buffer)
-      (while (<= (count-lines (point-min)
-                              (point-max))
-                 num)
+      (while (or (<= (count-lines (point-min)
+                                  (point-max))
+                     num)
+                 (eq read 0))
         (setq end (+ beg size))
-        (insert-file-contents-literally filename
-                                        nil
-                                        beg
-                                        end)
+        (setq read (nth 1 (insert-file-contents-literally filename
+                                                          nil
+                                                          beg
+                                                          end)))
         (goto-char (point-max))
         (setq beg (+ beg size)))
       (goto-char (point-min))
