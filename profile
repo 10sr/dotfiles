@@ -97,11 +97,12 @@ then
     fi
 fi
 
-__user_uuid=$(perl -e "use Digest::MD5 qw(md5_hex); print md5_hex('$USER$HOSTNAME')")
-expr "$TMP" : ".*${__user_uuid}-tmp" >/dev/null || export TMP="${TMP}/${__user_uuid}-tmp"
+__user_md5=$(perl -e "use Digest::MD5 qw(md5_hex); print md5_hex('$USER$HOSTNAME')")
+expr "$TMP" : ".*${__user_md5}.*" >/dev/null || export TMP="${TMP}/${__user_md5}-tmp"
+test -d "$TMP" || mkdir -p "$TMP"
+TMP="$(cd "$TMP" && pwd)"/
 export TEMP=$TMP
 export TMPDIR=$TMP
-test -d "$TMP" || mkdir -p "$TMP"
 
 if test -d ~/dbx
 then
