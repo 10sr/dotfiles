@@ -720,7 +720,7 @@ found, otherwise returns nil."
 (setq make-backup-files t)
 ;; (make-directory (expand-file-name "~/.emacsbackup"))
 (setq backup-directory-alist
-      (cons (cons "\\.*$" (expand-file-name (concat user-emacs-directory
+      (cons (cons "." (expand-file-name (concat user-emacs-directory
                                                     "backup")))
             backup-directory-alist))
 (setq version-control 'never)
