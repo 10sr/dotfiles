@@ -345,6 +345,7 @@ found, otherwise returns nil."
 (delete-selection-mode 1)
 (cua-mode 0)
 (setq line-move-visual nil)
+(setq create-lockfiles nil)
 
 ;; key bindings
 ;; moving around
