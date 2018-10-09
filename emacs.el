@@ -1,5 +1,7 @@
 ;;; emacs.el --- 10sr emacs initialization
 
+;; Time-stamp: <2018-10-09 14:29:40 JST 10sr>
+
 ;;; Code:
 
 ;; SETUP_LOAD: (let ((file "DOTFILES_DIR/emacs.el"))
@@ -325,7 +327,7 @@ found, otherwise returns nil."
   (which-key-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; editting
+;; editor
 
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
@@ -346,6 +348,11 @@ found, otherwise returns nil."
 (cua-mode 0)
 (setq line-move-visual nil)
 (setq create-lockfiles nil)
+
+(add-hook 'before-save-hook
+          'time-stamp)
+(set-variable 'time-stamp-format
+              "%:y-%02m-%02d %02H:%02M:%02S %Z 10sr")
 
 ;; key bindings
 ;; moving around
@@ -2218,7 +2225,6 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   (define-key dired-mode-map "f" 'my-dired-git-ls-files))
 
 ;; (define-minor-mode my-dired-glob-filter)
-
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
