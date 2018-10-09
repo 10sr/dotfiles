@@ -112,6 +112,8 @@ fi
 export JAVA_OPTS="$JAVA_OPTS -Duser.language=en"
 
 export GOPATH="$HOME/my/go"
+# TODO:
+# export GOPATH="$HOME/.golang"
 export PATH="$GOPATH/bin:$PATH"
 
 export PIPENV_VENV_IN_PROJECT=1
