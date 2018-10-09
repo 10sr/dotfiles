@@ -848,6 +848,12 @@ found, otherwise returns nil."
   (set-variable 'imenu-list-focus-after-activation t)
   (define-key ctl-x-map "l" 'imenu-list-smart-toggle))
 
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (setq imenu-generic-expression
+                  `(("Sections" ";;;\+\n;; \\(.*\\)\n" 1)
+                    ,@imenu-generic-expression))))
+
 (with-eval-after-load 'compile
   (defvar compilation-filter-start)
   (defvar compilation-error-regexp-alist)
