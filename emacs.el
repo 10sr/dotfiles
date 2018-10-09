@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-09 14:29:40 JST 10sr>
+;; Time-stamp: <2018-10-09 15:05:52 JST 10sr>
 
 ;;; Code:
 
@@ -1830,10 +1830,9 @@ Return that buffer."
       (setq awk-preview--source-buffer source)
       (setq awk-preview--preview-buffer preview)
       (setq awk-preview--program-buffer (current-buffer))
-      (unless buffer-file-name
-        (setq awk-preview--program-filename (make-temp-file "awk-preview-"
-                                                            nil
-                                                            ".awk")))
+      (setq awk-preview--program-filename (make-temp-file "awk-preview-"
+                                                          nil
+                                                          ".awk"))
 
       (current-buffer))))
 
