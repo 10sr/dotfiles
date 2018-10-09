@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-09 16:36:20 JST 10sr>
+;; Time-stamp: <2018-10-09 19:28:35 JST 10sr>
 
 ;;; Code:
 
@@ -1205,6 +1205,8 @@ found, otherwise returns nil."
              '("tox\\.ini\\'" . conf-unix-mode))
 
 (when (autoload-eval-lazily 'toml-mode)
+  (add-to-list 'auto-mode-alist
+               '("/tox\\.ini\\'" . toml-mode))
   (add-to-list 'auto-mode-alist
                '("/Pipfile\\'" . toml-mode)))
 
