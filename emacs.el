@@ -718,13 +718,15 @@ found, otherwise returns nil."
 
 ;; http://www.bookshelf.jp/soft/meadow_24.html#SEC260
 (setq make-backup-files t)
+(setq vc-make-backup-files t)
 ;; (make-directory (expand-file-name "~/.emacsbackup"))
 (setq backup-directory-alist
       (cons (cons "." (expand-file-name (concat user-emacs-directory
-                                                    "backup")))
+                                                "backup")))
             backup-directory-alist))
-(setq version-control 'never)
+(setq version-control 't)
 (setq delete-old-versions t)
+(setq kept-new-versions 20)
 
 (setq auto-save-list-file-prefix (expand-file-name (concat user-emacs-directory
                                                            "auto-save/")))
