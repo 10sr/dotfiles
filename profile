@@ -134,10 +134,10 @@ case "`hostname`" in
         _HOSTCOLOR_1=cyan
         _HOSTCOLOR_2=black
         ;;
-    newkiwi)
-        _HOSTCOLOR_1=magenta
-        _HOSTCOLOR_2=white
-        ;;
+    # newkiwi)
+    #     _HOSTCOLOR_1=magenta
+    #     _HOSTCOLOR_2=white
+    #     ;;
     debian-vb-win7-opti)
         _HOSTCOLOR_1=red
         _HOSTCOLOR_2=white
