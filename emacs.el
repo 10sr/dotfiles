@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-09 15:09:25 JST 10sr>
+;; Time-stamp: <2018-10-09 15:15:44 JST 10sr>
 
 ;;; Code:
 
@@ -817,7 +817,7 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'wgrep)
   (defvar grep-mode-map)
   (define-key grep-mode-map
-    "e"
+    "w"
     'wgrep-change-to-wgrep-mode))
 
 (with-eval-after-load 'remember
