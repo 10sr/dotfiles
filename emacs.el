@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-09 15:05:52 JST 10sr>
+;; Time-stamp: <2018-10-09 15:09:25 JST 10sr>
 
 ;;; Code:
 
@@ -1936,7 +1936,7 @@ Return that buffer."
 
 (define-minor-mode awk-preview-program-mode
   "Minor mode for awk-preview program buffer."
-  :lighter " AWKPreview"
+  :lighter " AWKPrev"
   :keymap awk-preview-program-mode-map)
 
 
