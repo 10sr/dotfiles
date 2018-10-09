@@ -97,7 +97,8 @@ then
     fi
 fi
 
-expr "$TMP" : ".*$USER-tmp" >/dev/null || export TMP="${TMP}/${USER}-tmp"
+__user_uuid=$(perl -e "use Digest::MD5 qw(md5_hex); print md5_hex('$USER$HOSTNAME')")
+expr "$TMP" : ".*${__user_uuid}-tmp" >/dev/null || export TMP="${TMP}/${__user_uuid}-tmp"
 export TEMP=$TMP
 export TMPDIR=$TMP
 test -d "$TMP" || mkdir -p "$TMP"
