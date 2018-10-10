@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-10 18:23:47 JST 10sr>
+;; Time-stamp: <2018-10-10 19:49:14 JST 10sr>
 
 ;;; Code:
 
@@ -2236,6 +2236,31 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                  ".")))))
 
 (define-key ctl-x-map (kbd "C-r") 'recently-show)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; git tramp
+
+(require 'tramp)
+
+;; TODO: autoload
+(defconst git-tramp-method "git"
+  "Method to connect git repository.")
+
+(defun git-tramp-add-method ()
+  "Add git tramp method."
+  ;; (add-to-list 'tramp-methods
+  ;;              `(,git-tramp-method
+  ;;                (tramp-login-program      ,git-tramp-git-executable)
+  ;;                (tramp-login-args         (,docker-tramp-docker-options ("exec" "-it") ("-u" "%u") ("%h") ("sh")))
+  ;;                (tramp-remote-shell       "/bin/sh")
+  ;;                (tramp-remote-shell-args ("-i" "-c"))))
+  )
+
+;; ;; TODO: autoload
+;; (eval-after-load 'tramp
+;;   '(progn
+;;      (git-tramp-add-method)
+;;      (tramp-set-completion-function git-tramp-method git-tramp-completion-function-alist)))
 
 
 ;; Local Variables:
