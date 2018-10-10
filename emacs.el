@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-10 13:44:14 JST 10sr>
+;; Time-stamp: <2018-10-10 14:41:37 JST 10sr>
 
 ;;; Code:
 
@@ -430,7 +430,7 @@ found, otherwise returns nil."
 (setq eol-mnemonic-mac "\\r")
 (setq eol-mnemonic-unix "")
 
-(which-function-mode 0)
+(which-function-mode 1)
 
 (line-number-mode 0)
 (column-number-mode 0)
