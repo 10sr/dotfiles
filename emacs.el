@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-10 12:26:10 JST 10sr>
+;; Time-stamp: <2018-10-10 12:56:00 JST 10sr>
 
 ;;; Code:
 
@@ -772,20 +772,9 @@ found, otherwise returns nil."
 
 (define-key ctl-x-map "m" 'list-bookmarks)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; buffer killing
+;; vc
 
-;; (defun my-delete-window-killing-buffer () nil)
-
-(defun my-query-kill-current-buffer ()
-  "Interactively kill current buffer."
-  (interactive)
-  (if (y-or-n-p (concat "kill current buffer? :"))
-      (kill-buffer (current-buffer))))
-;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
-(substitute-key-definition 'kill-buffer
-                           'my-query-kill-current-buffer
-                           global-map)
+(set-variable 'vc-handled-backends '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
@@ -1223,7 +1212,7 @@ found, otherwise returns nil."
             (define-key go-mode-map (kbd "M-.") 'godef-jump)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; buffer switching
+;; buffers
 
 (defvar bs-configurations)
 (when (autoload-eval-lazily 'bs '(bs-show)
@@ -1266,9 +1255,19 @@ found, otherwise returns nil."
     (call-interactively 'iswitchb-buffer)))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; vc
-(set-variable 'vc-handled-backends '())
+;; buffer killing
+
+;; (defun my-delete-window-killing-buffer () nil)
+
+(defun my-query-kill-current-buffer ()
+  "Interactively kill current buffer."
+  (interactive)
+  (if (y-or-n-p (concat "kill current buffer? :"))
+      (kill-buffer (current-buffer))))
+;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
+(substitute-key-definition 'kill-buffer
+                           'my-query-kill-current-buffer
+                           global-map)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; recentf-mode
@@ -1441,10 +1440,13 @@ ARG is num to show, or defaults to 7."
                               arg)))
     (dired-move-to-filename)))
 
-(defun my-dired-tramp-open (host)
-  "Open HOST home directory."
-  (interactive "sHostname: ")
-  (find-file (format "/scp:%s:" host)))
+(defun my-tramp-remote-find-file (f)
+  "Open F."
+  (interactive (list (read-file-name "My Find File Tramp: "
+                                     "/scp:"
+                                     nil ;; "/scp:"
+                                     (confirm-nonexistent-file-or-buffer))))
+  (find-file f))
 
 ;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
 
