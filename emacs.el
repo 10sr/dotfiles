@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-10 13:38:46 JST 10sr>
+;; Time-stamp: <2018-10-10 13:44:14 JST 10sr>
 
 ;;; Code:
 
@@ -738,7 +738,9 @@ found, otherwise returns nil."
 
 (setq auto-save-list-file-prefix (expand-file-name (concat user-emacs-directory
                                                            "auto-save/")))
-(setq delete-auto-save-files t)
+;; (setq delete-auto-save-files t)
+(setq auto-save-visited-interval 8)
+(auto-save-visited-mode 1)
 
 (add-to-list 'completion-ignored-extensions ".bak")
 (set-variable 'completion-cycle-threshold nil)  ;; NEVER use
@@ -763,9 +765,9 @@ found, otherwise returns nil."
   (smart-revert-on))
 
 ;; autosave
-
-(when (safe-require-or-eval 'autosave)
-  (autosave-set 8))
+;; auto-save-visited-mode can be used instead?
+;; (when (safe-require-or-eval 'autosave)
+;;   (autosave-set 8))
 
 
 ;; bookmarks
