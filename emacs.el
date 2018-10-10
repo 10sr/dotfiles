@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-10 12:56:00 JST 10sr>
+;; Time-stamp: <2018-10-10 13:38:46 JST 10sr>
 
 ;;; Code:
 
@@ -774,7 +774,7 @@ found, otherwise returns nil."
 
 ;; vc
 
-(set-variable 'vc-handled-backends '())
+(set-variable 'vc-handled-backends '(RCS))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
