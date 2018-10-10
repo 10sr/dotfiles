@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-10 16:10:35 JST 10sr>
+;; Time-stamp: <2018-10-10 18:23:47 JST 10sr>
 
 ;;; Code:
 
@@ -1544,6 +1544,26 @@ ARG is num to show, or defaults to 7."
 ;; (define-key ctl-x-map "f" 'find-dired)
 
 
+;; It works!
+;; (pop-to-buffer (dired-noselect '("." "shrc" "emacs.el")))
+
+(defun my-dired-git-ls-files (args)
+  "Dired from git ls-files."
+  (interactive "sgit ls-files args: ")
+  (pop-to-buffer-same-window
+   (dired-noselect `(,default-directory
+                      ,@(split-string (shell-command-to-string (concat "git ls-files -z " args))
+                                      "\0" t))
+                   ""))
+  )
+
+(define-key ctl-x-map (kbd "f") 'my-dired-git-ls-files)
+(with-eval-after-load 'dired
+  (defvar dired-mode-map (make-sparse-keymap))
+  (define-key dired-mode-map "f" 'my-dired-git-ls-files))
+
+;; (define-minor-mode my-dired-glob-filter)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
@@ -2217,27 +2237,6 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 
 (define-key ctl-x-map (kbd "C-r") 'recently-show)
 
-;;;;;;;;;;;;;;;;;;;;;;
-
-;; It works!
-;; (pop-to-buffer (dired-noselect '("." "shrc" "emacs.el")))
-
-(defun my-dired-git-ls-files (args)
-  "Dired from git ls-files."
-  (interactive "sgit ls-files args: ")
-  (pop-to-buffer-same-window
-   (dired-noselect `(,default-directory
-                      ,@(split-string (shell-command-to-string (concat "git ls-files -z " args))
-                                      "\0" t))
-                   ""))
-  )
-
-(define-key ctl-x-map (kbd "f") 'my-dired-git-ls-files)
-(with-eval-after-load 'dired
-  (defvar dired-mode-map (make-sparse-keymap))
-  (define-key dired-mode-map "f" 'my-dired-git-ls-files))
-
-;; (define-minor-mode my-dired-glob-filter)
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
