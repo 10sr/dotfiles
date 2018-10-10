@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-09 19:28:35 JST 10sr>
+;; Time-stamp: <2018-10-10 12:26:10 JST 10sr>
 
 ;;; Code:
 
@@ -837,8 +837,10 @@ found, otherwise returns nil."
 
 (when (safe-require-or-eval 'aggressive-indent)
   (defvar aggressive-indent-excluded-modes)
-  (add-to-list 'aggressive-indent-excluded-modes
-               'diff-mode)
+  (setq aggressive-indent-excluded-modes
+        `(diff-mode
+          toml-mode
+          ,@aggressive-indent-excluded-modes))
   (global-aggressive-indent-mode 1))
 
 (when (autoload-eval-lazily 'ggtags)
