@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-11 11:59:55 JST 10sr>
+;; Time-stamp: <2018-10-11 13:23:44 JST 10sr>
 
 ;;; Code:
 
@@ -2246,21 +2246,45 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   :prefix "git-revision-"
   :group 'tools)
 
-(defun git-revision-open-tree (treeish)
-  "Open git tree buffer of TREEISH.")
+(defun git-revision--open-tree (tree)
+  "Open git tree buffer of TREE.")
 
-(defun git-revision-open (commit)
-  "Open git tree buffer of COMMIT.")
+(defun git-revision-open (commitish)
+  "Open git tree buffer of COMMITISH."
+  (interactive (list (magit-read-branch-or-commit "Revision: ")))
+  (git-revision--open-tree (git-revision--resolve-treeish commitish)))
 
 (defcustom git-revision-git-executable "git"
   "Git executable."
   :type 'string
   :group 'git-revision)
 
-(defun git-revision--resolve-treeish (commit)
-  "Get treeish id from COMMIT."
-  (cl-assert commit)
-  (cl-assert (not (string= "" commit)))
+(defun git-revision--git-plumbing (&rest args)
+  "Run git plubming command with ARGS.
+Returns first line of output without newline."
+  (with-temp-buffer
+    (let ((status (apply 'call-process
+                         git-revision-git-executable
+                         nil
+                         t
+                         nil
+                         args)))
+      (unless (eq 0
+                  status)
+        (error "Faild to run git %S\n%s"
+               args
+               (buffer-substring-no-properties (point-min)
+                                               (point-max))))
+      (buffer-substring-no-properties (point-min)
+                                      (progn
+                                        (goto-char (point-min))
+                                        (point-at-eol))))))
+
+
+(defun git-revision--resolve-treeish (commitish)
+  "Get treeish id from COMMITISH."
+  (cl-assert commitish)
+  (cl-assert (not (string= "" commitish)))
   (with-temp-buffer
     (let ((status (call-process git-revision-git-executable
                                 nil
@@ -2268,15 +2292,15 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                 nil
                                 "cat-file"
                                 "-p"
-                                commit)))
+                                commitish)))
       (unless (eq 0
                   status)
-        (error "Failed to run cat-file for %s" commit))
+        (error "Failed to run cat-file for %s" commitish))
       (goto-char (point-min))
       (save-match-data
         (re-search-forward "^tree \\([0-9a-f]+\\)$")
         (or (match-string 1)
-            (error "Failed to find treeish for %s" commit))))))
+            (error "Failed to find treeish for %s" commitish))))))
 
 (git-revision--resolve-treeish "HEAD")
 
