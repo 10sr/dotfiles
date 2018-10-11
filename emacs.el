@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-11 18:29:21 JST 10sr>
+;; Time-stamp: <2018-10-11 19:24:33 JST 10sr>
 
 ;;; Code:
 
@@ -2250,12 +2250,15 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   "Create and return buffer for TREEISH."
   (get-buffer-create "*GitRevision<TMP>*"))
 
-(defun git-revision--open-tree (treeish)
+(defun git-revision--open-treeish (treeish &optional name)
   "Open git tree buffer of TREEISH."
-  (let ((buf (git-revision--create-buffer treeish))
+  (let (point
+        (buf (git-revision--create-buffer (or name treeish)))
         (type (git-revision--git-plumbing "cat-file"
                                           "-t"
                                           treeish)))
+    (cl-assert (member type
+                       '("commit" "tree")))
     (with-current-buffer buf
       (buffer-disable-undo)
       (erase-buffer)
@@ -2268,11 +2271,13 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                     "--pretty=short"
                                     treeish)
         (insert "\n"))
+      (setq point (point))
       (git-revision--call-process nil
                                   "ls-tree"
                                   "-r"
                                   "--abbrev"
                                   treeish)
+      (goto-char point)
       (git-revision-mode))
     buf))
 
@@ -2291,10 +2296,38 @@ Result will be inserted into current buffer."
              infile
              args))))
 
+(defun git-revision--open-blob (blob &optional name)
+  "Open blob OBJECT which has NAME."
+  (let ((type (git-revision--git-plumbing "cat-file"
+                                          "-t"
+                                          blob))
+        (buf (git-revision--create-buffer (or name blob))))
+    (cl-assert (string= type "blob"))
+    (with-current-buffer buf
+      (erase-buffer)
+      (git-revision--call-process nil
+                                  "cat-file"
+                                  "-p"
+                                  blob))
+    buf))
+
+(defun git-revision--open (object &optional name)
+  "Open object OBJECT which has NAME."
+  (let ((type (git-revision--git-plumbing "cat-file"
+                                          "-t"
+                                          object)))
+    (pcase type
+      ((or "commit" "tree")
+       (git-revision--open-treeish object name))
+      ("blob"
+       (git-revision--open-blob object name))
+      (_
+       (error "Type cannot handle: %s" type)))))
+
 (defun git-revision-open (commitish)
   "Open git tree buffer of COMMITISH."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
-  (pop-to-buffer (git-revision--open-tree commitish)))
+  (pop-to-buffer (git-revision--open commitish commitish)))
 
 (defcustom git-revision-git-executable "git"
   "Git executable."
@@ -2350,7 +2383,12 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
   (interactive)
   (let ((info (git-revision--extract-object-info (buffer-substring-no-properties (point-at-bol)
                                                                                  (point-at-eol)))))
-    (message "%S" info)))
+    (if info
+        (switch-to-buffer (git-revision--open (plist-get info
+                                                         :object)
+                                              (plist-get info
+                                                         :file)))
+      (message "No object on current line."))))
 
 (defvar git-revision-mode-map
   (let ((map (make-sparse-keymap)))
@@ -2363,7 +2401,7 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
   "Major-mode for `git-revision-open'.")
 
 (require 'magit nil t)
-(git-revision--git-plumbing "cat-file" "-t" "HEAD")
+;; (git-revision--git-plumbing "cat-file" "-t" "HEAD")
 
 
 ;; Local Variables:
