@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-11 19:24:33 JST 10sr>
+;; Time-stamp: <2018-10-11 19:39:25 JST 10sr>
 
 ;;; Code:
 
@@ -2246,9 +2246,9 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   :prefix "git-revision-"
   :group 'tools)
 
-(defun git-revision--create-buffer (treeish)
-  "Create and return buffer for TREEISH."
-  (get-buffer-create "*GitRevision<TMP>*"))
+(defun git-revision--create-buffer (name)
+  "Create and return buffer for NAME."
+  (get-buffer-create (format "*GitRevision<%s>*" name)))
 
 (defun git-revision--open-treeish (treeish &optional name)
   "Open git tree buffer of TREEISH."
@@ -2308,7 +2308,9 @@ Result will be inserted into current buffer."
       (git-revision--call-process nil
                                   "cat-file"
                                   "-p"
-                                  blob))
+                                  blob)
+      ;; after-find-file?
+      )
     buf))
 
 (defun git-revision--open (object &optional name)
