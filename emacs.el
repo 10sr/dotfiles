@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-11 13:23:44 JST 10sr>
+;; Time-stamp: <2018-10-11 13:50:52 JST 10sr>
 
 ;;; Code:
 
@@ -2246,13 +2246,51 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   :prefix "git-revision-"
   :group 'tools)
 
-(defun git-revision--open-tree (tree)
-  "Open git tree buffer of TREE.")
+(defun git-revision--create-buffer (treeish)
+  "Create and return buffer for TREEISH."
+  (get-buffer-create "*GitRevision<TMP>*"))
+
+(defun git-revision--open-tree (treeish)
+  "Open git tree buffer of TREEISH."
+  (let ((buf (git-revision--create-buffer treeish))
+        (type (git-revision--git-plumbing "cat-file"
+                                          "-t"
+                                          treeish)))
+    (with-current-buffer buf
+      (erase-buffer)
+      (when (string= "commit"
+                     type)
+        (git-revision--call-process nil
+                                    "show"
+                                    "--no-patch"
+                                    "--pretty=short"
+                                    treeish)
+        (insert "\n"))
+      (git-revision--call-process nil
+                                  "ls-tree"
+                                  treeish)
+      (git-revision-mode))
+    buf))
+
+(defun git-revision--call-process (&optional infile &rest args)
+  "Call git command with input from INFILE and args ARGS.
+Result will be inserted into current buffer."
+  (let ((status (apply 'call-process
+                       git-revision-git-executable
+                       infile
+                       t
+                       nil
+                       args)))
+    (unless (eq 0
+                status)
+      (error "Failed to call git process %S %S"
+             infile
+             args))))
 
 (defun git-revision-open (commitish)
   "Open git tree buffer of COMMITISH."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
-  (git-revision--open-tree (git-revision--resolve-treeish commitish)))
+  (pop-to-buffer (git-revision--open-tree commitish)))
 
 (defcustom git-revision-git-executable "git"
   "Git executable."
@@ -2271,7 +2309,7 @@ Returns first line of output without newline."
                          args)))
       (unless (eq 0
                   status)
-        (error "Faild to run git %S\n%s"
+        (error "Faild to run git %S:\n%s"
                args
                (buffer-substring-no-properties (point-min)
                                                (point-max))))
@@ -2280,29 +2318,17 @@ Returns first line of output without newline."
                                         (goto-char (point-min))
                                         (point-at-eol))))))
 
+(defvar git-revision-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "n" 'next-line)
+    (define-key map "p" 'previous-line)
+    map))
 
-(defun git-revision--resolve-treeish (commitish)
-  "Get treeish id from COMMITISH."
-  (cl-assert commitish)
-  (cl-assert (not (string= "" commitish)))
-  (with-temp-buffer
-    (let ((status (call-process git-revision-git-executable
-                                nil
-                                t
-                                nil
-                                "cat-file"
-                                "-p"
-                                commitish)))
-      (unless (eq 0
-                  status)
-        (error "Failed to run cat-file for %s" commitish))
-      (goto-char (point-min))
-      (save-match-data
-        (re-search-forward "^tree \\([0-9a-f]+\\)$")
-        (or (match-string 1)
-            (error "Failed to find treeish for %s" commitish))))))
+(define-derived-mode git-revision-mode special-mode "git-revision"
+  "Major-mode for `git-revision-open'.")
 
-(git-revision--resolve-treeish "HEAD")
+(require 'magit nil t)
+(git-revision--git-plumbing "cat-file" "-t" "HEAD")
 
 
 ;; Local Variables:
