@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-11 00:27:24 JST 10sr>
+;; Time-stamp: <2018-10-11 11:59:55 JST 10sr>
 
 ;;; Code:
 
@@ -2240,11 +2240,45 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; git revision
 
+(defgroup git-revision nil
+  "Git revision."
+  :tag "GitRevision"
+  :prefix "git-revision-"
+  :group 'tools)
+
 (defun git-revision-open-tree (treeish)
   "Open git tree buffer of TREEISH.")
 
 (defun git-revision-open (commit)
   "Open git tree buffer of COMMIT.")
+
+(defcustom git-revision-git-executable "git"
+  "Git executable."
+  :type 'string
+  :group 'git-revision)
+
+(defun git-revision--resolve-treeish (commit)
+  "Get treeish id from COMMIT."
+  (cl-assert commit)
+  (cl-assert (not (string= "" commit)))
+  (with-temp-buffer
+    (let ((status (call-process git-revision-git-executable
+                                nil
+                                t
+                                nil
+                                "cat-file"
+                                "-p"
+                                commit)))
+      (unless (eq 0
+                  status)
+        (error "Failed to run cat-file for %s" commit))
+      (goto-char (point-min))
+      (save-match-data
+        (re-search-forward "^tree \\([0-9a-f]+\\)$")
+        (or (match-string 1)
+            (error "Failed to find treeish for %s" commit))))))
+
+(git-revision--resolve-treeish "HEAD")
 
 
 ;; Local Variables:
