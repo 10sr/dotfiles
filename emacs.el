@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-11 13:50:52 JST 10sr>
+;; Time-stamp: <2018-10-11 14:21:14 JST 10sr>
 
 ;;; Code:
 
@@ -2257,9 +2257,11 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                           "-t"
                                           treeish)))
     (with-current-buffer buf
+      (buffer-disable-undo)
       (erase-buffer)
       (when (string= "commit"
                      type)
+        ;; When treeish is a commit, show commit info
         (git-revision--call-process nil
                                     "show"
                                     "--no-patch"
