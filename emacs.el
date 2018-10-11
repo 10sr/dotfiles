@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-11 14:21:14 JST 10sr>
+;; Time-stamp: <2018-10-11 18:29:21 JST 10sr>
 
 ;;; Code:
 
@@ -2270,6 +2270,8 @@ use for the buffer. It defaults to \"*recetf-show*\"."
         (insert "\n"))
       (git-revision--call-process nil
                                   "ls-tree"
+                                  "-r"
+                                  "--abbrev"
                                   treeish)
       (git-revision-mode))
     buf))
@@ -2320,10 +2322,41 @@ Returns first line of output without newline."
                                         (goto-char (point-min))
                                         (point-at-eol))))))
 
+(defun git-revision--extract-object-info (str)
+  "Extract object info from STR.
+
+STR should be a string like following:
+
+100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966	.editorconfig
+
+Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
+  (let (result mode type object file)
+    (save-match-data
+      (with-temp-buffer
+        (insert str)
+        (goto-char (point-min))
+        (and (re-search-forward "\\`\\([0-9]\\{6\\}\\) \\(\\w+\\) \\([0-9a-f]+\\)\t\\(.*\\)\\'"
+                                nil
+                                t)
+             (list :mode (match-string 1)
+                   :type (match-string 2)
+                   :object (match-string 3)
+                   :file (match-string 4)))))))
+;; (plist-get (git-revision--extract-object-info "100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966	.editorconfig") :mode)
+;; (git-revision--extract-object-info "100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966")
+
+(defun git-revision-mode-open-this ()
+  "Open current object."
+  (interactive)
+  (let ((info (git-revision--extract-object-info (buffer-substring-no-properties (point-at-bol)
+                                                                                 (point-at-eol)))))
+    (message "%S" info)))
+
 (defvar git-revision-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "n" 'next-line)
     (define-key map "p" 'previous-line)
+    (define-key map (kbd "C-m") 'git-revision-mode-open-this)
     map))
 
 (define-derived-mode git-revision-mode special-mode "git-revision"
