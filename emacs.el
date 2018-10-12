@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 16:34:18 JST 10sr>
+;; Time-stamp: <2018-10-12 17:39:33 JST 10sr>
 
 ;;; Code:
 
@@ -2238,36 +2238,41 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (define-key ctl-x-map (kbd "C-r") 'recently-show)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; git revision
+;; git walktree
 
-(defgroup git-revision nil
-  "Git revision."
-  :tag "GitRevision"
-  :prefix "git-revision-"
+(defgroup git-walktree nil
+  "Git Walktree."
+  :tag "GitWalktree"
+  :prefix "git-walktree-"
   :group 'tools)
 
-(defvar git-revision-current-commitish nil
+(defvar git-walktree-current-commitish nil
   "Commitish name of currently browsing.")
-(make-variable-buffer-local 'git-revision-current-commitish)
+(make-variable-buffer-local 'git-walktree-current-commitish)
 
-(defvar git-revision-current-path nil
+(defvar git-walktree-current-path nil
   "Path name currently visiting without leading slash.")
-(make-variable-buffer-local 'git-revision-current-path)
+(make-variable-buffer-local 'git-walktree-current-path)
 
-;; (defvar git-revision-repository-path nil
-;;   "Path of current git repository root.")
-;; (make-variable-buffer-local 'git-revision-repository-path)
-
-(defun git-revision--create-buffer (commitish name)
+(defun git-walktree--create-buffer (commitish name)
+  ;; TODO: check repository
   "Create and return buffer for NAME."
-  (get-buffer-create (format "*GitRevision<%s:%s>*" (or commitish "") name)))
+  (when (and commitish
+             (string-match-p "\\`[0-9a-f]+\\'"
+                             commitish)
+             (> (length commitish) 32))
+    (setq commitish
+          (git-walktree--git-plumbing "rev-parse"
+                                      "--short"
+                                      commitish)))
+  (get-buffer-create (format "%s:%s" (or commitish "") name)))
 
-(defun git-revision--open-treeish (commitish path treeish)
+(defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
   (let (point
         point-tree-start
-        (buf (git-revision--create-buffer commitish path))
-        (type (git-revision--git-plumbing "cat-file"
+        (buf (git-walktree--create-buffer commitish path))
+        (type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           treeish))
         )
@@ -2280,24 +2285,24 @@ use for the buffer. It defaults to \"*recetf-show*\"."
           (setq point (point))
           (erase-buffer)
           (when commitish
-            (git-revision--call-process nil
+            (git-walktree--call-process nil
                                         "show"
                                         "--no-patch"
                                         "--pretty=short"
                                         commitish)
             (insert "\n"))
           (setq point-tree-start (point))
-          (git-revision--call-process nil
+          (git-walktree--call-process nil
                                       "ls-tree"
                                       ;; "-r"
                                       "--abbrev"
 
                                       treeish)))
-      (git-revision-mode)
+      (git-walktree-mode)
       (set-buffer-modified-p nil)
 
-      (setq git-revision-current-commitish commitish)
-      (setq git-revision-current-path path)
+      (setq git-walktree-current-commitish commitish)
+      (setq git-walktree-current-path path)
       ;; FIXME: Somehow point go back to point-min when reopen the buffer
       (if (eq point (point-min))
           (goto-char point-tree-start)
@@ -2306,11 +2311,11 @@ use for the buffer. It defaults to \"*recetf-show*\"."
       )
     buf))
 
-(defun git-revision--call-process (&optional infile &rest args)
+(defun git-walktree--call-process (&optional infile &rest args)
   "Call git command with input from INFILE and args ARGS.
 Result will be inserted into current buffer."
   (let ((status (apply 'call-process
-                       git-revision-git-executable
+                       git-walktree-git-executable
                        infile
                        t
                        nil
@@ -2321,25 +2326,25 @@ Result will be inserted into current buffer."
              infile
              args))))
 ?w
-(defun git-revision--open-blob (commitish path blob)
+(defun git-walktree--open-blob (commitish path blob)
   "Open BLOB object."
   (let (point
-        (type (git-revision--git-plumbing "cat-file"
+        (type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           blob))
-        (buf (git-revision--create-buffer commitish path)))
+        (buf (git-walktree--create-buffer commitish path)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
       (let ((inhibit-read-only t))
         (setq point (point))
         (erase-buffer)
-        (git-revision--call-process nil
+        (git-walktree--call-process nil
                                     "cat-file"
                                     "-p"
                                     blob))
       ;; FIXME: Ask for file name when C-xC-s is given
       (setq buffer-file-name
-            (concat (git-revision--git-plumbing "rev-parse"
+            (concat (git-walktree--git-plumbing "rev-parse"
                                                 "--show-toplevel")
                     "/git@"
                     commitish
@@ -2348,19 +2353,19 @@ Result will be inserted into current buffer."
       (set-buffer-modified-p nil)
       (normal-mode t)
 
-      (setq git-revision-current-commitish commitish)
-      (setq git-revision-current-path path)
+      (setq git-walktree-current-commitish commitish)
+      (setq git-walktree-current-path path)
       (setq buffer-read-only t)
       (goto-char point)
       )
     buf))
 
-(defun git-revision--open-noselect (commitish path object)
+(defun git-walktree--open-noselect (commitish path object)
   "Open git tree buffer of COMMITISH.
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH
 without checking it."
-  (let ((type (git-revision--git-plumbing "cat-file"
+  (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           commitish)))
     (cl-assert (string= type "commit")))
@@ -2375,47 +2380,47 @@ without checking it."
       (setq object (or object
                        commitish))
     (setq object (or object
-                     (git-revision--resolve-object commitish path))))
+                     (git-walktree--resolve-object commitish path))))
   (cl-assert object)
 
-  (let ((type (git-revision--git-plumbing "cat-file"
+  (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           object)))
     (pcase type
       ((or "commit" "tree")
-       (git-revision--open-treeish commitish path object))
+       (git-walktree--open-treeish commitish path object))
       ("blob"
-       (git-revision--open-blob commitish path object))
+       (git-walktree--open-blob commitish path object))
       (_
        (error "Type cannot handle: %s" type)))))
 
-(defun git-revision--resolve-object (commitish path)
+(defun git-walktree--resolve-object (commitish path)
   "Return object id of COMMITISIH:PATH."
-  (let ((info (git-revision--parse-lstree-line (git-revision--git-plumbing "ls-tree"
+  (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
                                                                            commitish
                                                                            path))))
     (plist-get info :object)))
 
-(defun git-revision-open (commitish &optional path object)
+(defun git-walktree-open (commitish &optional path object)
   "Open git tree buffer of COMMITISH.
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH without
 checking it."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
-  (pop-to-buffer (git-revision--open-noselect commitish path object)))
-(defalias 'git-revision 'git-revision-open)
+  (pop-to-buffer (git-walktree--open-noselect commitish path object)))
+(defalias 'git-walktree 'git-walktree-open)
 
-(defcustom git-revision-git-executable "git"
+(defcustom git-walktree-git-executable "git"
   "Git executable."
   :type 'string
-  :group 'git-revision)
+  :group 'git-walktree)
 
-(defun git-revision--git-plumbing (&rest args)
+(defun git-walktree--git-plumbing (&rest args)
   "Run git plubming command with ARGS.
 Returns first line of output without newline."
   (with-temp-buffer
     (let ((status (apply 'call-process
-                         git-revision-git-executable
+                         git-walktree-git-executable
                          nil
                          t
                          nil
@@ -2430,13 +2435,13 @@ Returns first line of output without newline."
                                       (progn
                                         (goto-char (point-min))
                                         (point-at-eol))))))
-(defconst git-revision-ls-tree-line-regexp
+(defconst git-walktree-ls-tree-line-regexp
   "^\\([0-9]\\{6\\}\\) \\(\\w+\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
   "Regexp for one line of output of git ls-tree.")
-(defconst git-revision-ls-tree-line-tree-regexp
+(defconst git-walktree-ls-tree-line-tree-regexp
   "^\\([0-9]\\{6\\}\\) \\(tree\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
   "Regexp for tree line of output of git ls-tree.")
-(defun git-revision--parse-lstree-line (str)
+(defun git-walktree--parse-lstree-line (str)
   "Extract object info from STR.
 
 STR should be a string like following without newline.:
@@ -2449,41 +2454,39 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
       (with-temp-buffer
         (insert str)
         (goto-char (point-min))
-        (and (re-search-forward git-revision-ls-tree-line-regexp
+        (and (re-search-forward git-walktree-ls-tree-line-regexp
                                 nil
                                 t)
              (list :mode (match-string 1)
                    :type (match-string 2)
                    :object (match-string 3)
                    :file (match-string 4)))))))
-;; (plist-get (git-revision--extract-object-info "100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966	.editorconfig") :mode)
-;; (git-revision--extract-object-info "100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966")
 
-(defun git-revision-mode-open-this ()
+(defun git-walktree-mode-open-this ()
   "Open current object."
   (interactive)
-  (let ((info (git-revision--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
+  (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
                                                                                (point-at-eol)))))
     (if info
-        (switch-to-buffer (git-revision--open-noselect
-                           git-revision-current-commitish
-                           (git-revision--join-path (plist-get info
+        (switch-to-buffer (git-walktree--open-noselect
+                           git-walktree-current-commitish
+                           (git-walktree--join-path (plist-get info
                                                                :file))
                            (plist-get info
                                       :object)))
       (message "No object on current line."))))
 
-(defun git-revision--join-path (name &optional base)
+(defun git-walktree--join-path (name &optional base)
   "Make path from NAME and BASE.
-If base is omitted or nil use value of `git-revision-current-path'."
+If base is omitted or nil use value of `git-walktree-current-path'."
   (setq base (or base
-                 git-revision-current-path))
+                 git-walktree-current-path))
   (cl-assert base)
   (if (string= base ".")
       name
     (concat base "/" name)))
 
-(defun git-revision--parent-directory (path)
+(defun git-walktree--parent-directory (path)
   "Return parent directory of PATH without trailing slash.
 For root directory return \".\".
 If PATH is equal to \".\", return nil."
@@ -2493,55 +2496,53 @@ If PATH is equal to \".\", return nil."
         nil
       ".")))
 
-(defun git-revision-up (&optional commitish path)
+(defun git-walktree-parent (&optional commitish path)
   "Open parent directory of COMMITISH and PATH.
 If not given, value of current buffer will be used."
   (interactive)
   (setq commitish
-        (or commitish git-revision-current-commitish))
+        (or commitish git-walktree-current-commitish))
   (setq path
-        (or path git-revision-current-path))
-  (let ((parent (git-revision--parent-directory path)))
+        (or path git-walktree-current-path))
+  (let ((parent (git-walktree--parent-directory path)))
     (if parent
-        (switch-to-buffer (git-revision--open-noselect commitish
+        (switch-to-buffer (git-walktree--open-noselect commitish
                                                        parent
                                                        nil))
-      (message "Cannot find parent for current buffer."))))
+      (message "Cannot find parent for current tree."))))
 
-(defgroup git-revision-faces nil
-  "Faces used by git-revision."
-  :group 'git-revision
+(defgroup git-walktree-faces nil
+  "Faces used by git-walktree."
+  :group 'git-walktree
   :group 'faces)
 
-(defface git-revision-tree-face
+(defface git-walktree-tree-face
   '((t (:inherit font-lock-function-name-face)))
   "Face used for tree objects."
-  :group 'git-revision-faces)
-(defvar git-revision-tree-face 'git-revision-tree-face
+  :group 'git-walktree-faces)
+(defvar git-walktree-tree-face 'git-walktree-tree-face
   "Face used for tree objects.")
 
-(defvar git-revision-mode-map
+(defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "n" 'next-line)
     (define-key map "p" 'previous-line)
-    (define-key map "^" 'git-revision-up)
-    (define-key map (kbd "C-m") 'git-revision-mode-open-this)
+    (define-key map "^" 'git-walktree-parent)
+    (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
     map))
 
-(defvar git-revision-mode-font-lock-keywords
+(defvar git-walktree-mode-font-lock-keywords
   `(
-    (,git-revision-ls-tree-line-tree-regexp . (4 'git-revision-tree-face))
+    (,git-walktree-ls-tree-line-tree-regexp . (4 'git-walktree-tree-face))
     )
-  "Syntax highlighting for git-revision mode.")
+  "Syntax highlighting for git-walktree mode.")
 
-(define-derived-mode git-revision-mode special-mode "git-revision"
-  "Major-mode for `git-revision-open'."
+(define-derived-mode git-walktree-mode special-mode "git-walktree"
+  "Major-mode for `git-walktree-open'."
   (set (make-local-variable 'font-lock-defaults)
-       '(git-revision-mode-font-lock-keywords
+       '(git-walktree-mode-font-lock-keywords
          nil nil nil nil
          ))
-  ;; (add-to-list 'font-lock-value
-  ;;              )
   )
 
 (require 'magit nil t)
