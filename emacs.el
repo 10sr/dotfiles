@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 19:43:38 JST 10sr>
+;; Time-stamp: <2018-10-12 21:23:22 JST 10sr>
 
 ;;; Code:
 
@@ -2410,6 +2410,7 @@ without checking it."
     (plist-get info :object)))
 
 (defun git-walktree-open (commitish &optional path object)
+  ;; TODO: What to do when currently in subdirectory?
   "Open git tree buffer of COMMITISH.
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH without
@@ -2481,6 +2482,7 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
                    :file (match-string 4)))))))
 
 (defun git-walktree-mode-open-this ()
+  ;; TODO: Support submodule
   "Open current object."
   (interactive)
   (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
