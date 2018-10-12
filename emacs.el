@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-11 19:39:25 JST 10sr>
+;; Time-stamp: <2018-10-12 12:43:04 JST 10sr>
 
 ;;; Code:
 
@@ -1673,8 +1673,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-                                   (compilation-start command-args
-                                                      'grep-mode))
+        (compilation-start command-args
+                           'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -2246,39 +2246,50 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   :prefix "git-revision-"
   :group 'tools)
 
-(defun git-revision--create-buffer (name)
-  "Create and return buffer for NAME."
-  (get-buffer-create (format "*GitRevision<%s>*" name)))
+(defvar git-revision-current-commitish nil
+  "Commitish name of currently browsing.")
+(make-variable-buffer-local 'git-revision-current-commitish)
 
-(defun git-revision--open-treeish (treeish &optional name)
+(defvar git-revision-current-path nil
+  "Path name currently visiting without leading slash.")
+(make-variable-buffer-local 'git-revision-current-path)
+
+(defun git-revision--create-buffer (commitish name)
+  "Create and return buffer for NAME."
+  (get-buffer-create (format "*GitRevision<%s:%s>*" (or commitish "") name)))
+
+(defun git-revision--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
   (let (point
-        (buf (git-revision--create-buffer (or name treeish)))
+        (buf (git-revision--create-buffer commitish path))
         (type (git-revision--git-plumbing "cat-file"
                                           "-t"
-                                          treeish)))
+                                          treeish))
+        )
     (cl-assert (member type
                        '("commit" "tree")))
     (with-current-buffer buf
       (buffer-disable-undo)
-      (erase-buffer)
-      (when (string= "commit"
-                     type)
-        ;; When treeish is a commit, show commit info
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (when commitish
+          (git-revision--call-process nil
+                                      "show"
+                                      "--no-patch"
+                                      "--pretty=short"
+                                      commitish)
+          (insert "\n"))
+        (setq point (point))
         (git-revision--call-process nil
-                                    "show"
-                                    "--no-patch"
-                                    "--pretty=short"
-                                    treeish)
-        (insert "\n"))
-      (setq point (point))
-      (git-revision--call-process nil
-                                  "ls-tree"
-                                  "-r"
-                                  "--abbrev"
-                                  treeish)
+                                    "ls-tree"
+                                    ;; "-r"
+                                    "--abbrev"
+                                    treeish))
       (goto-char point)
-      (git-revision-mode))
+      (git-revision-mode)
+      (setq git-revision-current-commitish commitish)
+      (setq git-revision-current-path path)
+      )
     buf))
 
 (defun git-revision--call-process (&optional infile &rest args)
@@ -2296,12 +2307,12 @@ Result will be inserted into current buffer."
              infile
              args))))
 
-(defun git-revision--open-blob (blob &optional name)
+(defun git-revision--open-blob (commitish path blob)
   "Open blob OBJECT which has NAME."
   (let ((type (git-revision--git-plumbing "cat-file"
                                           "-t"
                                           blob))
-        (buf (git-revision--create-buffer (or name blob))))
+        (buf (git-revision--create-buffer commitish path)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
       (erase-buffer)
@@ -2310,26 +2321,62 @@ Result will be inserted into current buffer."
                                   "-p"
                                   blob)
       ;; after-find-file?
+      ;; set-major-mode?
+
+      (setq git-revision-current-commitish commitish)
+      (setq git-revision-current-path path)
+      (goto-char (point-min))
       )
     buf))
 
-(defun git-revision--open (object &optional name)
-  "Open object OBJECT which has NAME."
+(defun git-revision--open-noselect (commitish path object)
+  "Open git tree buffer of COMMITISH.
+When PATH was given and non-nil open that, otherwise open root tree.
+When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH
+without checking it."
+  (let ((type (git-revision--git-plumbing "cat-file"
+                                          "-t"
+                                          commitish)))
+    (cl-assert (string= type "commit")))
+
+  (setq path (or path
+                 "."))
+  ;; PATH must not start with and end with slashes
+  (cl-assert (not (string-match "\\`/" path)))
+  (cl-assert (not (string-match "/\\'" path)))
+
+  (if (string= path ".")
+      (setq object (or object
+                       commitish))
+    (setq object (or object
+                     (git-revision--resolve-object commitish path))))
+  (cl-assert object)
+
   (let ((type (git-revision--git-plumbing "cat-file"
                                           "-t"
                                           object)))
     (pcase type
       ((or "commit" "tree")
-       (git-revision--open-treeish object name))
+       (git-revision--open-treeish commitish path object))
       ("blob"
-       (git-revision--open-blob object name))
+       (git-revision--open-blob commitish path object))
       (_
        (error "Type cannot handle: %s" type)))))
 
-(defun git-revision-open (commitish)
-  "Open git tree buffer of COMMITISH."
+(defun git-revision--resolve-object (commitish path)
+  "Return object id of COMMITISIH:PATH."
+  (let ((info (git-revision--parse-lstree-line (git-revisiion--git-plumbing "ls-tree"
+                                                                            commitish
+                                                                            path))))
+    (plist-get info :object)))
+
+(defun git-revision-open (commitish &optional path object)
+  "Open git tree buffer of COMMITISH.
+When PATH was given and non-nil open that, otherwise open root tree.
+When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH without
+checking it."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
-  (pop-to-buffer (git-revision--open commitish commitish)))
+  (pop-to-buffer (git-revision--open-noselect commitish path object)))
 
 (defcustom git-revision-git-executable "git"
   "Git executable."
@@ -2357,10 +2404,10 @@ Returns first line of output without newline."
                                         (goto-char (point-min))
                                         (point-at-eol))))))
 
-(defun git-revision--extract-object-info (str)
+(defun git-revision--parse-lstree-line (str)
   "Extract object info from STR.
 
-STR should be a string like following:
+STR should be a string like following without newline.:
 
 100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966	.editorconfig
 
@@ -2383,19 +2430,57 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
 (defun git-revision-mode-open-this ()
   "Open current object."
   (interactive)
-  (let ((info (git-revision--extract-object-info (buffer-substring-no-properties (point-at-bol)
-                                                                                 (point-at-eol)))))
+  (let ((info (git-revision--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
+                                                                               (point-at-eol)))))
     (if info
-        (switch-to-buffer (git-revision--open (plist-get info
-                                                         :object)
-                                              (plist-get info
-                                                         :file)))
+        (switch-to-buffer (git-revision--open-noselect
+                           git-revision-current-commitish
+                           (git-revision--join-path (plist-get info
+                                                               :file))
+                           (plist-get info
+                                      :object)))
       (message "No object on current line."))))
+
+(defun git-revision--join-path (name &optional base)
+  "Make path from NAME and BASE.
+If base is omitted or nil use value of `git-revision-current-path'."
+  (setq base (or base
+                 git-revision-current-path))
+  (cl-assert base)
+  (if (string= base ".")
+      name
+    (concat base "/" name)))
+
+(defun git-revision--parent-directory (path)
+  "Return parent directory of PATH without trailing slash.
+For root directory return \".\".
+If PATH is equal to \".\", return nil."
+  (if (string-match-p "/" path)
+      (directory-file-name (file-name-directory path))
+    (if (string= "." path)
+        nil
+      ".")))
+
+(defun git-revision-up (&optional commitish path)
+  "Open parent directory of COMMITISH and PATH.
+If not given, value of current buffer will be used."
+  (interactive)
+  (setq commitish
+        (or commitish git-revision-current-commitish))
+  (setq path
+        (or path git-revision-current-path))
+  (let ((parent (git-revision--parent-directory path)))
+    (if parent
+        (switch-to-buffer (git-revision--open-noselect commitish
+                                                       parent
+                                                       nil))
+      (message "Cannot find parent for current buffer."))))
 
 (defvar git-revision-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "n" 'next-line)
     (define-key map "p" 'previous-line)
+    (define-key map "^" 'git-revision-up)
     (define-key map (kbd "C-m") 'git-revision-mode-open-this)
     map))
 
