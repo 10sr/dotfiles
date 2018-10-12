@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 18:52:50 JST 10sr>
+;; Time-stamp: <2018-10-12 18:57:21 JST 10sr>
 
 ;;; Code:
 
@@ -2540,7 +2540,14 @@ If not given, value of current buffer will be used."
 
 (defvar git-walktree-mode-font-lock-keywords
   `(
-    (,git-walktree-ls-tree-line-tree-regexp . (4 'git-walktree-tree-face))
+    (,git-walktree-ls-tree-line-regexp . (
+                                          (1 'shadow)
+                                          (3 'shadow)
+                                          ))
+    (,git-walktree-ls-tree-line-tree-regexp . (
+                                               (2 'git-walktree-tree-face)
+                                               (4 'git-walktree-tree-face)
+                                               ))
     )
   "Syntax highlighting for git-walktree mode.")
 
