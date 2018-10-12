@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 13:19:25 JST 10sr>
+;; Time-stamp: <2018-10-12 13:34:46 JST 10sr>
 
 ;;; Code:
 
@@ -2265,6 +2265,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (defun git-revision--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
   (let (point
+        point-tree-start
         (buf (git-revision--create-buffer commitish path))
         (type (git-revision--git-plumbing "cat-file"
                                           "-t"
@@ -2274,28 +2275,34 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                        '("commit" "tree")))
     (with-current-buffer buf
       (buffer-disable-undo)
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (when commitish
+      (save-excursion
+        (let ((inhibit-read-only t))
+          (setq point (point))
+          (erase-buffer)
+          (when commitish
+            (git-revision--call-process nil
+                                        "show"
+                                        "--no-patch"
+                                        "--pretty=short"
+                                        commitish)
+            (insert "\n"))
+          (setq point-tree-start (point))
           (git-revision--call-process nil
-                                      "show"
-                                      "--no-patch"
-                                      "--pretty=short"
-                                      commitish)
-          (insert "\n"))
-        (setq point (point))
-        (git-revision--call-process nil
-                                    "ls-tree"
-                                    ;; "-r"
-                                    "--abbrev"
+                                      "ls-tree"
+                                      ;; "-r"
+                                      "--abbrev"
 
-                                    treeish))
-      (goto-char point)
+                                      treeish)))
       (git-revision-mode)
       (set-buffer-modified-p nil)
 
       (setq git-revision-current-commitish commitish)
       (setq git-revision-current-path path)
+      ;; FIXME: Somehow point go back to point-min when reopen the buffer
+      (if (eq point (point-min))
+          (goto-char point-tree-start)
+        (goto-char point))
+      (message "POINT: %S" (point))
       )
     buf))
 
