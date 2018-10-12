@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 17:39:33 JST 10sr>
+;; Time-stamp: <2018-10-12 17:46:24 JST 10sr>
 
 ;;; Code:
 
@@ -2292,6 +2292,9 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                         commitish)
             (insert "\n"))
           (setq point-tree-start (point))
+          (insert "Contents of treeish object '")
+          (insert treeish)
+          (insert "':\n")
           (git-walktree--call-process nil
                                       "ls-tree"
                                       ;; "-r"
