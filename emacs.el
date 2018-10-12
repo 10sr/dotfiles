@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 18:57:21 JST 10sr>
+;; Time-stamp: <2018-10-12 19:03:01 JST 10sr>
 
 ;;; Code:
 
@@ -2359,6 +2359,7 @@ Result will be inserted into current buffer."
                     path))
       (set-buffer-modified-p nil)
       (normal-mode t)
+      (setq buffer-file-name nil)
 
       (setq git-walktree-current-commitish commitish)
       (setq git-walktree-current-path path)
