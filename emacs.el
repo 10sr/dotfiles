@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 13:14:35 JST 10sr>
+;; Time-stamp: <2018-10-12 13:19:25 JST 10sr>
 
 ;;; Code:
 
@@ -2288,9 +2288,11 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                     "ls-tree"
                                     ;; "-r"
                                     "--abbrev"
+
                                     treeish))
-      (git-revision-mode)
       (goto-char point)
+      (git-revision-mode)
+      (set-buffer-modified-p nil)
 
       (setq git-revision-current-commitish commitish)
       (setq git-revision-current-path path)
@@ -2337,6 +2339,7 @@ Result will be inserted into current buffer."
                     commitish
                     ":"
                     path))
+      (set-buffer-modified-p nil)
       (normal-mode t)
 
       (setq git-revision-current-commitish commitish)
