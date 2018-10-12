@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 19:04:59 JST 10sr>
+;; Time-stamp: <2018-10-12 19:43:38 JST 10sr>
 
 ;;; Code:
 
@@ -2415,9 +2415,19 @@ When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH without
 checking it."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
+  ;; (setq path (or path
+  ;;                (git-walktree--path-in-repository (directory-file-name default-directory))))
   (pop-to-buffer (git-walktree--open-noselect commitish path object)))
 (defalias 'git-walktree 'git-walktree-open)
 
+(defun git-walktree--path-in-repository (dir)
+  "Convert DIR into relative path to repository root."
+  (with-temp-buffer
+    (cd dir)
+    (let ((root (git-walktree--git-plumbing "rev-parse"
+                                            "--show-toplevel")))
+      (file-relative-name dir root))))
+(file-relative-name "/abc/def/ghi" "/abc/def/ghi")
 (defcustom git-walktree-git-executable "git"
   "Git executable."
   :type 'string
