@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 12:43:04 JST 10sr>
+;; Time-stamp: <2018-10-12 12:45:32 JST 10sr>
 
 ;;; Code:
 
@@ -2365,9 +2365,9 @@ without checking it."
 
 (defun git-revision--resolve-object (commitish path)
   "Return object id of COMMITISIH:PATH."
-  (let ((info (git-revision--parse-lstree-line (git-revisiion--git-plumbing "ls-tree"
-                                                                            commitish
-                                                                            path))))
+  (let ((info (git-revision--parse-lstree-line (git-revision--git-plumbing "ls-tree"
+                                                                           commitish
+                                                                           path))))
     (plist-get info :object)))
 
 (defun git-revision-open (commitish &optional path object)
