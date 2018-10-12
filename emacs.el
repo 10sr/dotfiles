@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 21:23:22 JST 10sr>
+;; Time-stamp: <2018-10-12 21:29:13 JST 10sr>
 
 ;;; Code:
 
@@ -2254,6 +2254,14 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   "Path name currently visiting without leading slash.")
 (make-variable-buffer-local 'git-walktree-current-path)
 
+(defvar git-walktree-buffer-file-name nil
+  "Psudo filename of current buffer.")
+(make-variable-buffer-local 'git-walktree-buffer-file-name)
+
+(defvar git-walktree-object-id nil
+  "Object id of current buffer.")
+(make-variable-buffer-local 'git-walktree-object-id)
+
 (defun git-walktree--create-buffer (commitish name)
   ;; TODO: check repository
   "Create and return buffer for NAME."
@@ -2310,6 +2318,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 
       (setq git-walktree-current-commitish commitish)
       (setq git-walktree-current-path path)
+      (setq git-walktree-object-id treeish)
       ;; FIXME: Somehow point go back to point-min when reopen the buffer
       (if (eq point (point-min))
           (goto-char point-tree-start)
@@ -2349,13 +2358,15 @@ Result will be inserted into current buffer."
                                     "cat-file"
                                     "-p"
                                     blob))
-      (setq buffer-file-name
+      (setq git-walktree-buffer-file-name
             (concat (git-walktree--git-plumbing "rev-parse"
                                                 "--show-toplevel")
                     "/git@"
                     commitish
                     ":"
                     path))
+      (setq buffer-file-name
+            git-walktree-buffer-file-name)
       (normal-mode t)
       ;; For asking filename when C-xC-s
       (setq buffer-file-name nil)
@@ -2363,6 +2374,7 @@ Result will be inserted into current buffer."
 
       (setq git-walktree-current-commitish commitish)
       (setq git-walktree-current-path path)
+      (setq git-walktree-object-id blob)
       (setq buffer-read-only t)
       (goto-char point)
       )
