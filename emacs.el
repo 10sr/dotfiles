@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 19:03:01 JST 10sr>
+;; Time-stamp: <2018-10-12 19:04:59 JST 10sr>
 
 ;;; Code:
 
@@ -2349,7 +2349,6 @@ Result will be inserted into current buffer."
                                     "cat-file"
                                     "-p"
                                     blob))
-      ;; FIXME: Ask for file name when C-xC-s is given
       (setq buffer-file-name
             (concat (git-walktree--git-plumbing "rev-parse"
                                                 "--show-toplevel")
@@ -2357,9 +2356,10 @@ Result will be inserted into current buffer."
                     commitish
                     ":"
                     path))
-      (set-buffer-modified-p nil)
       (normal-mode t)
+      ;; For asking filename when C-xC-s
       (setq buffer-file-name nil)
+      (set-buffer-modified-p t)
 
       (setq git-walktree-current-commitish commitish)
       (setq git-walktree-current-path path)
