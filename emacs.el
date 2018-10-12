@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 12:45:32 JST 10sr>
+;; Time-stamp: <2018-10-12 13:14:35 JST 10sr>
 
 ;;; Code:
 
@@ -2254,6 +2254,10 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   "Path name currently visiting without leading slash.")
 (make-variable-buffer-local 'git-revision-current-path)
 
+;; (defvar git-revision-repository-path nil
+;;   "Path of current git repository root.")
+;; (make-variable-buffer-local 'git-revision-repository-path)
+
 (defun git-revision--create-buffer (commitish name)
   "Create and return buffer for NAME."
   (get-buffer-create (format "*GitRevision<%s:%s>*" (or commitish "") name)))
@@ -2285,8 +2289,9 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                     ;; "-r"
                                     "--abbrev"
                                     treeish))
-      (goto-char point)
       (git-revision-mode)
+      (goto-char point)
+
       (setq git-revision-current-commitish commitish)
       (setq git-revision-current-path path)
       )
@@ -2308,24 +2313,36 @@ Result will be inserted into current buffer."
              args))))
 
 (defun git-revision--open-blob (commitish path blob)
-  "Open blob OBJECT which has NAME."
-  (let ((type (git-revision--git-plumbing "cat-file"
+  "Open BLOB object."
+  (let (point
+        (type (git-revision--git-plumbing "cat-file"
                                           "-t"
                                           blob))
         (buf (git-revision--create-buffer commitish path)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
-      (erase-buffer)
-      (git-revision--call-process nil
-                                  "cat-file"
-                                  "-p"
-                                  blob)
+      (let ((inhibit-read-only t))
+        (setq point (point))
+        (erase-buffer)
+        (git-revision--call-process nil
+                                    "cat-file"
+                                    "-p"
+                                    blob))
       ;; after-find-file?
       ;; set-major-mode?
+      (setq buffer-file-name
+            (concat (git-revision--git-plumbing "rev-parse"
+                                                "--show-toplevel")
+                    "/git@"
+                    commitish
+                    ":"
+                    path))
+      (normal-mode t)
 
       (setq git-revision-current-commitish commitish)
       (setq git-revision-current-path path)
-      (goto-char (point-min))
+      (setq buffer-read-only t)
+      (goto-char point)
       )
     buf))
 
