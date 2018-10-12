@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 13:34:46 JST 10sr>
+;; Time-stamp: <2018-10-12 13:49:59 JST 10sr>
 
 ;;; Code:
 
@@ -2337,8 +2337,7 @@ Result will be inserted into current buffer."
                                     "cat-file"
                                     "-p"
                                     blob))
-      ;; after-find-file?
-      ;; set-major-mode?
+      ;; FIXME: Ask for file name when C-xC-s is given
       (setq buffer-file-name
             (concat (git-revision--git-plumbing "rev-parse"
                                                 "--show-toplevel")
@@ -2502,6 +2501,18 @@ If not given, value of current buffer will be used."
                                                        parent
                                                        nil))
       (message "Cannot find parent for current buffer."))))
+
+(defgroup git-revision-faces nil
+  "Faces used by git-revision."
+  :group 'git-revision
+  :group 'faces)
+
+(defface git-revision-tree
+  '((t (:inherit font-lock-function-name-face)))
+  "Face used for tree objects."
+  :group 'git-revision-faces)
+(defvar git-revision-tree-face 'git-revision-tree
+  "Face used for tree objects.")
 
 (defvar git-revision-mode-map
   (let ((map (make-sparse-keymap)))
