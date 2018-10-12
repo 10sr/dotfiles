@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 17:46:24 JST 10sr>
+;; Time-stamp: <2018-10-12 18:52:50 JST 10sr>
 
 ;;; Code:
 
@@ -2267,6 +2267,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                       commitish)))
   (get-buffer-create (format "%s:%s" (or commitish "") name)))
 
+(require 'ansi-color)
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
   (let (point
@@ -2288,8 +2289,11 @@ use for the buffer. It defaults to \"*recetf-show*\"."
             (git-walktree--call-process nil
                                         "show"
                                         "--no-patch"
+                                        "--color"
                                         "--pretty=short"
                                         commitish)
+            (ansi-color-apply-on-region (point-min)
+                                        (point))
             (insert "\n"))
           (setq point-tree-start (point))
           (insert "Contents of treeish object '")
@@ -2540,7 +2544,7 @@ If not given, value of current buffer will be used."
     )
   "Syntax highlighting for git-walktree mode.")
 
-(define-derived-mode git-walktree-mode special-mode "git-walktree"
+(define-derived-mode git-walktree-mode special-mode "GitWalktree"
   "Major-mode for `git-walktree-open'."
   (set (make-local-variable 'font-lock-defaults)
        '(git-walktree-mode-font-lock-keywords
