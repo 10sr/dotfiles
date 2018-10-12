@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 14:05:11 JST 10sr>
+;; Time-stamp: <2018-10-12 16:34:18 JST 10sr>
 
 ;;; Code:
 
@@ -2320,7 +2320,7 @@ Result will be inserted into current buffer."
       (error "Failed to call git process %S %S"
              infile
              args))))
-
+?w
 (defun git-revision--open-blob (commitish path blob)
   "Open BLOB object."
   (let (point
@@ -2403,6 +2403,7 @@ When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH w
 checking it."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
   (pop-to-buffer (git-revision--open-noselect commitish path object)))
+(defalias 'git-revision 'git-revision-open)
 
 (defcustom git-revision-git-executable "git"
   "Git executable."
@@ -2512,11 +2513,11 @@ If not given, value of current buffer will be used."
   :group 'git-revision
   :group 'faces)
 
-(defface git-revision-tree
+(defface git-revision-tree-face
   '((t (:inherit font-lock-function-name-face)))
   "Face used for tree objects."
   :group 'git-revision-faces)
-(defvar git-revision-tree-face 'git-revision-tree
+(defvar git-revision-tree-face 'git-revision-tree-face
   "Face used for tree objects.")
 
 (defvar git-revision-mode-map
@@ -2527,13 +2528,18 @@ If not given, value of current buffer will be used."
     (define-key map (kbd "C-m") 'git-revision-mode-open-this)
     map))
 
+(defvar git-revision-mode-font-lock-keywords
+  `(
+    (,git-revision-ls-tree-line-tree-regexp . (4 'git-revision-tree-face))
+    )
+  "Syntax highlighting for git-revision mode.")
+
 (define-derived-mode git-revision-mode special-mode "git-revision"
   "Major-mode for `git-revision-open'."
   (set (make-local-variable 'font-lock-defaults)
-       `(((,git-revision-ls-tree-line-tree-regexp
-           4
-           ,git-revision-tree-face))
-         nil t nil nil))
+       '(git-revision-mode-font-lock-keywords
+         nil nil nil nil
+         ))
   ;; (add-to-list 'font-lock-value
   ;;              )
   )
