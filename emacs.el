@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 13:49:59 JST 10sr>
+;; Time-stamp: <2018-10-12 14:05:11 JST 10sr>
 
 ;;; Code:
 
@@ -2429,7 +2429,12 @@ Returns first line of output without newline."
                                       (progn
                                         (goto-char (point-min))
                                         (point-at-eol))))))
-
+(defconst git-revision-ls-tree-line-regexp
+  "^\\([0-9]\\{6\\}\\) \\(\\w+\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
+  "Regexp for one line of output of git ls-tree.")
+(defconst git-revision-ls-tree-line-tree-regexp
+  "^\\([0-9]\\{6\\}\\) \\(tree\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
+  "Regexp for tree line of output of git ls-tree.")
 (defun git-revision--parse-lstree-line (str)
   "Extract object info from STR.
 
@@ -2443,7 +2448,7 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
       (with-temp-buffer
         (insert str)
         (goto-char (point-min))
-        (and (re-search-forward "\\`\\([0-9]\\{6\\}\\) \\(\\w+\\) \\([0-9a-f]+\\)\t\\(.*\\)\\'"
+        (and (re-search-forward git-revision-ls-tree-line-regexp
                                 nil
                                 t)
              (list :mode (match-string 1)
@@ -2523,7 +2528,15 @@ If not given, value of current buffer will be used."
     map))
 
 (define-derived-mode git-revision-mode special-mode "git-revision"
-  "Major-mode for `git-revision-open'.")
+  "Major-mode for `git-revision-open'."
+  (set (make-local-variable 'font-lock-defaults)
+       `(((,git-revision-ls-tree-line-tree-regexp
+           4
+           ,git-revision-tree-face))
+         nil t nil nil))
+  ;; (add-to-list 'font-lock-value
+  ;;              )
+  )
 
 (require 'magit nil t)
 ;; (git-revision--git-plumbing "cat-file" "-t" "HEAD")
