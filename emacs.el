@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 14:51:32 JST 10sr>
+;; Time-stamp: <2018-10-15 15:31:46 JST 10sr>
 
 ;;; Code:
 
@@ -2586,7 +2586,7 @@ If PATH is equal to \".\", return nil."
         nil
       ".")))
 
-(defun git-walktree-parent (&optional commitish path)
+(defun git-walktree-up (&optional commitish path)
   "Open parent directory of COMMITISH and PATH.
 If not given, value of current buffer will be used."
   (interactive)
@@ -2599,7 +2599,7 @@ If not given, value of current buffer will be used."
         (switch-to-buffer (git-walktree--open-noselect commitish
                                                        parent
                                                        nil))
-      (message "Cannot find parent for current tree."))))
+      (message "Cannot find parent directory for current tree."))))
 
 (defgroup git-walktree-faces nil
   "Faces used by git-walktree."
@@ -2617,7 +2617,7 @@ If not given, value of current buffer will be used."
   (let ((map (make-sparse-keymap)))
     (define-key map "n" 'next-line)
     (define-key map "p" 'previous-line)
-    (define-key map "^" 'git-walktree-parent)
+    (define-key map "^" 'git-walktree-up)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
     map))
 
