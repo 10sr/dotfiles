@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 15:44:25 JST 10sr>
+;; Time-stamp: <2018-10-15 15:50:01 JST 10sr>
 
 ;;; Code:
 
@@ -2305,8 +2305,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (require 'ansi-color)
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
-  (let (point
-        point-tree-start
+  (let (point-tree-start
         (buf (git-walktree--create-buffer commitish path))
         (type (git-walktree--git-plumbing "cat-file"
                                           "-t"
@@ -2320,7 +2319,6 @@ use for the buffer. It defaults to \"*recetf-show*\"."
       (cd git-walktree-repository-root)
       (save-excursion
         (let ((inhibit-read-only t))
-          (setq point (point))
           (with-temp-buffer
             (when commitish
               (git-walktree--call-process nil
@@ -2354,11 +2352,9 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                    (file-directory-p dir))
           (cd dir)))
       ;; FIXME: Somehow point go back to point-min when reopen the buffer
-      (if (eq point (point-min))
-          (goto-char point-tree-start)
-        ;; (goto-char point)
+      (when (= (point) (point-min))
+        (goto-char point-tree-start)
         )
-      (message "POINT: %S" (point))
       )
     buf))
 
@@ -2379,8 +2375,7 @@ Result will be inserted into current buffer."
 ?w
 (defun git-walktree--open-blob (commitish path blob)
   "Open BLOB object."
-  (let (point
-        (type (git-walktree--git-plumbing "cat-file"
+  (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           blob))
         (buf (git-walktree--create-buffer commitish path)))
@@ -2389,7 +2384,6 @@ Result will be inserted into current buffer."
       ;; For running git command go back to repository root
       (cd git-walktree-repository-root)
       (let ((inhibit-read-only t))
-        (setq point (point))
         (with-temp-buffer
           (git-walktree--call-process nil
                                       "cat-file"
@@ -2421,7 +2415,6 @@ Result will be inserted into current buffer."
           (cd dir)))
 
       (view-mode 1)
-      ;; (goto-char point)
       )
     buf))
 
