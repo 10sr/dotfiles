@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 14:49:47 JST 10sr>
+;; Time-stamp: <2018-10-15 14:51:32 JST 10sr>
 
 ;;; Code:
 
@@ -2419,7 +2419,7 @@ Result will be inserted into current buffer."
                    (file-directory-p dir))
           (cd dir)))
 
-      (setq buffer-read-only t)
+      (view-mode 1)
       (goto-char point)
       )
     buf))
