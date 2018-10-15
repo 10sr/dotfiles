@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 14:22:50 JST 10sr>
+;; Time-stamp: <2018-10-15 14:44:57 JST 10sr>
 
 ;;; Code:
 
@@ -2316,6 +2316,8 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                        '("commit" "tree")))
     (with-current-buffer buf
       (buffer-disable-undo)
+      ;; For running git command go back to repository root
+      (cd git-walktree-repository-root)
       (save-excursion
         (let ((inhibit-read-only t))
           (setq point (point))
@@ -2383,6 +2385,8 @@ Result will be inserted into current buffer."
         (buf (git-walktree--create-buffer commitish path)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
+      ;; For running git command go back to repository root
+      (cd git-walktree-repository-root)
       (let ((inhibit-read-only t))
         (setq point (point))
         (with-temp-buffer
@@ -2408,7 +2412,8 @@ Result will be inserted into current buffer."
       (setq git-walktree-current-commitish commitish)
       (setq git-walktree-current-path path)
       (setq git-walktree-object-id blob)
-      (let ((dir (expand-file-name (file-name-directory path)
+      (let ((dir (expand-file-name (or (file-name-directory path)
+                                       ".")
                                    git-walktree-repository-root)))
         (when (and git-walktree-try-cd
                    (file-directory-p dir))
@@ -2461,7 +2466,6 @@ without checking it."
     (plist-get info :object)))
 
 (defun git-walktree-open (commitish &optional path object)
-  ;; TODO: What to do when currently in subdirectory?
   "Open git tree buffer of COMMITISH.
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH without
@@ -2469,7 +2473,7 @@ checking it."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
   ;; (setq path (or path
   ;;                (git-walktree--path-in-repository (directory-file-name default-directory))))
-  (pop-to-buffer (git-walktree--open-noselect commitish path object)))
+  (switch-to-buffer (git-walktree--open-noselect commitish path object)))
 (defalias 'git-walktree 'git-walktree-open)
 
 (defun git-walktree--path-in-repository (dir)
@@ -2544,12 +2548,22 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
   (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
                                                                                (point-at-eol)))))
     (if info
-        (switch-to-buffer (git-walktree--open-noselect
-                           git-walktree-current-commitish
-                           (git-walktree--join-path (plist-get info
-                                                               :file))
-                           (plist-get info
-                                      :object)))
+        (switch-to-buffer
+         (if (string= (plist-get info
+                                 :type)
+                      "commit")
+             (with-temp-buffer
+               (cd (plist-get info :file))
+               (git-walktree--open-noselect git-walktree-current-commitish
+                                            (git-walktree--join-path (plist-get info
+                                                                                :file))
+                                            (plist-get info
+                                                       :object)))
+           (git-walktree--open-noselect git-walktree-current-commitish
+                                        (git-walktree--join-path (plist-get info
+                                                                            :file))
+                                        (plist-get info
+                                                   :object))))
       (message "No object on current line."))))
 
 (defun git-walktree--join-path (name &optional base)
