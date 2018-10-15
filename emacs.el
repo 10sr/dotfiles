@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 14:44:57 JST 10sr>
+;; Time-stamp: <2018-10-15 14:49:47 JST 10sr>
 
 ;;; Code:
 
@@ -2554,9 +2554,9 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
                       "commit")
              (with-temp-buffer
                (cd (plist-get info :file))
-               (git-walktree--open-noselect git-walktree-current-commitish
-                                            (git-walktree--join-path (plist-get info
-                                                                                :file))
+               (git-walktree--open-noselect (plist-get info
+                                                       :object)
+                                            nil
                                             (plist-get info
                                                        :object)))
            (git-walktree--open-noselect git-walktree-current-commitish
