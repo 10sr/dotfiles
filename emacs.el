@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 16:30:33 JST 10sr>
+;; Time-stamp: <2018-10-15 18:10:08 JST 10sr>
 
 ;;; Code:
 
@@ -2542,7 +2542,7 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
                    :file (match-string 4)))))))
 
 (defun git-walktree-mode-open-this ()
-  ;; TODO: Support submodule
+  ;; TODO: Support commit object
   "Open current object."
   (interactive)
   (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
@@ -2615,6 +2615,8 @@ If not given, value of current buffer will be used."
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
+    ;; TODO: Add git-walktree-parent-revision
+    ;; TODO: Add git-walktree-next-line
     (define-key map "n" 'next-line)
     (define-key map "p" 'previous-line)
     (define-key map "^" 'git-walktree-up)
