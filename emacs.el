@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 15:31:46 JST 10sr>
+;; Time-stamp: <2018-10-15 15:40:45 JST 10sr>
 
 ;;; Code:
 
@@ -2332,10 +2332,10 @@ use for the buffer. It defaults to \"*recetf-show*\"."
               (ansi-color-apply-on-region (point-min)
                                           (point))
               (insert "\n"))
-            (setq point-tree-start (point))
             (insert "Contents of treeish object '")
             (insert treeish)
             (insert "':\n")
+            (setq point-tree-start (point))
             (git-walktree--call-process nil
                                         "ls-tree"
                                         ;; "-r"
@@ -2460,10 +2460,12 @@ without checking it."
 
 (defun git-walktree--resolve-object (commitish path)
   "Return object id of COMMITISIH:PATH."
-  (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
-                                                                           commitish
-                                                                           path))))
-    (plist-get info :object)))
+  (with-temp-buffer
+    (cd (git-walktree--git-plumbing "rev-parse" "--show-toplevel"))
+    (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
+                                                                             commitish
+                                                                             path))))
+      (plist-get info :object))))
 
 (defun git-walktree-open (commitish &optional path object)
   "Open git tree buffer of COMMITISH.
