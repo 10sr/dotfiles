@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 15:50:01 JST 10sr>
+;; Time-stamp: <2018-10-15 16:16:46 JST 10sr>
 
 ;;; Code:
 
@@ -2454,6 +2454,7 @@ without checking it."
 
 (defun git-walktree--resolve-object (commitish path)
   "Return object id of COMMITISIH:PATH."
+  ;; TODO: use --full-tree
   (with-temp-buffer
     (cd (git-walktree--git-plumbing "rev-parse" "--show-toplevel"))
     (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
