@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 13:47:12 JST 10sr>
+;; Time-stamp: <2018-10-15 13:51:53 JST 10sr>
 
 ;;; Code:
 
@@ -2319,27 +2319,28 @@ use for the buffer. It defaults to \"*recetf-show*\"."
       (save-excursion
         (let ((inhibit-read-only t))
           (setq point (point))
-          (erase-buffer)
-          (when commitish
+          (with-temp-buffer
+            (when commitish
+              (git-walktree--call-process nil
+                                          "show"
+                                          "--no-patch"
+                                          "--color"
+                                          "--pretty=short"
+                                          commitish)
+              (ansi-color-apply-on-region (point-min)
+                                          (point))
+              (insert "\n"))
+            (setq point-tree-start (point))
+            (insert "Contents of treeish object '")
+            (insert treeish)
+            (insert "':\n")
             (git-walktree--call-process nil
-                                        "show"
-                                        "--no-patch"
-                                        "--color"
-                                        "--pretty=short"
-                                        commitish)
-            (ansi-color-apply-on-region (point-min)
-                                        (point))
-            (insert "\n"))
-          (setq point-tree-start (point))
-          (insert "Contents of treeish object '")
-          (insert treeish)
-          (insert "':\n")
-          (git-walktree--call-process nil
-                                      "ls-tree"
-                                      ;; "-r"
-                                      "--abbrev"
+                                        "ls-tree"
+                                        ;; "-r"
+                                        "--abbrev"
 
-                                      treeish)))
+                                        treeish)
+            (git-walktree--replace-into buf))))
       (git-walktree-mode)
       (set-buffer-modified-p nil)
 
@@ -2380,11 +2381,12 @@ Result will be inserted into current buffer."
     (with-current-buffer buf
       (let ((inhibit-read-only t))
         (setq point (point))
-        (erase-buffer)
-        (git-walktree--call-process nil
-                                    "cat-file"
-                                    "-p"
-                                    blob))
+        (with-temp-buffer
+          (git-walktree--call-process nil
+                                      "cat-file"
+                                      "-p"
+                                      blob)
+          (git-walktree--replace-into buf)))
       (setq git-walktree-buffer-file-name
             (concat (git-walktree--git-plumbing "rev-parse"
                                                 "--show-toplevel")
