@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-12 21:29:13 JST 10sr>
+;; Time-stamp: <2018-10-15 13:47:12 JST 10sr>
 
 ;;; Code:
 
@@ -1673,8 +1673,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-        (compilation-start command-args
-                           'grep-mode))
+                                   (compilation-start command-args
+                                                      'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -1692,8 +1692,8 @@ and search from projectile root (if projectile is available)."
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-          (compilation-start command-args
-                             'grep-mode))
+                                     (compilation-start command-args
+                                                        'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
@@ -2262,18 +2262,45 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   "Object id of current buffer.")
 (make-variable-buffer-local 'git-walktree-object-id)
 
+(defvar git-walktree-repository-root nil
+  "Repository root path of current buffer.")
+(make-variable-buffer-local 'git-walktree-repository-root)
+
 (defun git-walktree--create-buffer (commitish name)
   ;; TODO: check repository
   "Create and return buffer for NAME."
-  (when (and commitish
-             (string-match-p "\\`[0-9a-f]+\\'"
-                             commitish)
-             (> (length commitish) 32))
-    (setq commitish
-          (git-walktree--git-plumbing "rev-parse"
-                                      "--short"
-                                      commitish)))
-  (get-buffer-create (format "%s:%s" (or commitish "") name)))
+  (let* ((root (git-walktree--git-plumbing "rev-parse"
+                                           "--show-toplevel"))
+         (commitish-display (if (and commitish
+                                     (string-match-p "\\`[0-9a-f]+\\'"
+                                                     commitish)
+                                     (>= (length commitish) 32))
+                                (git-walktree--git-plumbing "rev-parse"
+                                                            "--short"
+                                                            commitish)
+                              commitish))
+         (name (format "%s:%s"
+                       (or commitish "")
+                       name)))
+
+    (with-current-buffer (get-buffer-create name)
+      (if git-walktree-repository-root
+          (if (string= root
+                       git-walktree-repository-root)
+              (current-buffer)
+            ;; If the buffer is for another repository, create new buffer
+            (with-current-buffer (generate-new-buffer name)
+              (setq git-walktree-repository-root root)
+              (current-buffer)))
+        ;; New buffer
+        (setq git-walktree-repository-root root)
+        (current-buffer)))))
+
+(defun git-walktree--replace-into (target)
+  "Replace TARGET buffer contents with that of current buffer."
+  (let ((buf (current-buffer)))
+    (with-current-buffer target
+      (replace-buffer-contents buf))))
 
 (require 'ansi-color)
 (defun git-walktree--open-treeish (commitish path treeish)
@@ -2445,6 +2472,9 @@ checking it."
   "Git executable."
   :type 'string
   :group 'git-walktree)
+(defcustom git-walktree-try-cd t
+  "Try to cd if directory exists in current working directory if non-nil.
+Otherwise buffer's `default-directory' is always repository root.")
 
 (defun git-walktree--git-plumbing (&rest args)
   "Run git plubming command with ARGS.
