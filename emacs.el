@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 13:51:53 JST 10sr>
+;; Time-stamp: <2018-10-15 14:22:50 JST 10sr>
 
 ;;; Code:
 
@@ -2347,6 +2347,10 @@ use for the buffer. It defaults to \"*recetf-show*\"."
       (setq git-walktree-current-commitish commitish)
       (setq git-walktree-current-path path)
       (setq git-walktree-object-id treeish)
+      (let ((dir (expand-file-name path git-walktree-repository-root)))
+        (when (and git-walktree-try-cd
+                   (file-directory-p dir))
+          (cd dir)))
       ;; FIXME: Somehow point go back to point-min when reopen the buffer
       (if (eq point (point-min))
           (goto-char point-tree-start)
@@ -2404,6 +2408,12 @@ Result will be inserted into current buffer."
       (setq git-walktree-current-commitish commitish)
       (setq git-walktree-current-path path)
       (setq git-walktree-object-id blob)
+      (let ((dir (expand-file-name (file-name-directory path)
+                                   git-walktree-repository-root)))
+        (when (and git-walktree-try-cd
+                   (file-directory-p dir))
+          (cd dir)))
+
       (setq buffer-read-only t)
       (goto-char point)
       )
@@ -2476,7 +2486,9 @@ checking it."
   :group 'git-walktree)
 (defcustom git-walktree-try-cd t
   "Try to cd if directory exists in current working directory if non-nil.
-Otherwise buffer's `default-directory' is always repository root.")
+Otherwise buffer's `default-directory' is always repository root."
+  :type 'boolean
+  :group 'git-walktree)
 
 (defun git-walktree--git-plumbing (&rest args)
   "Run git plubming command with ARGS.
