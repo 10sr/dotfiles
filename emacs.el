@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 15:40:45 JST 10sr>
+;; Time-stamp: <2018-10-15 15:44:25 JST 10sr>
 
 ;;; Code:
 
@@ -2356,7 +2356,8 @@ use for the buffer. It defaults to \"*recetf-show*\"."
       ;; FIXME: Somehow point go back to point-min when reopen the buffer
       (if (eq point (point-min))
           (goto-char point-tree-start)
-        (goto-char point))
+        ;; (goto-char point)
+        )
       (message "POINT: %S" (point))
       )
     buf))
@@ -2420,7 +2421,7 @@ Result will be inserted into current buffer."
           (cd dir)))
 
       (view-mode 1)
-      (goto-char point)
+      ;; (goto-char point)
       )
     buf))
 
