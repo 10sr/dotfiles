@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 18:10:08 JST 10sr>
+;; Time-stamp: <2018-10-15 19:36:35 JST 10sr>
 
 ;;; Code:
 
@@ -1487,6 +1487,8 @@ ARG is num to show, or defaults to 7."
 (with-eval-after-load 'dired
   (safe-require-or-eval 'ls-lisp)
   (defvar dired-mode-map (make-sparse-keymap))
+  ;; dired-do-chgrp sometimes cause system hung
+  (define-key dired-mode-map "G" 'ignore)
   (define-key dired-mode-map "w" 'wdired-change-to-wdired-mode)
   (define-key dired-mode-map "i" 'dired-get-file-info)
   (define-key dired-mode-map "f" 'find-file)
@@ -2272,6 +2274,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (commitish-display (if (and commitish
+                                     ;; TODO: Add git-walktree--commitish-fordisplay
                                      (string-match-p "\\`[0-9a-f]+\\'"
                                                      commitish)
                                      (>= (length commitish) 32))
