@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 19:36:35 JST 10sr>
+;; Time-stamp: <2018-10-15 20:02:55 JST 10sr>
 
 ;;; Code:
 
@@ -2268,22 +2268,24 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   "Repository root path of current buffer.")
 (make-variable-buffer-local 'git-walktree-repository-root)
 
+(defun git-walktree--commitish-fordisplay (commitish)
+  "Convert COMMITISH and return is a suitable format for displaying."
+  (if (and commitish
+           (string-match-p "\\`[0-9a-f]+\\'"
+                           commitish)
+           (>= (length commitish) 32))
+      (git-walktree--git-plumbing "rev-parse"
+                                  "--short"
+                                  commitish)
+    commitish))
+
 (defun git-walktree--create-buffer (commitish name)
-  ;; TODO: check repository
   "Create and return buffer for NAME."
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
-         (commitish-display (if (and commitish
-                                     ;; TODO: Add git-walktree--commitish-fordisplay
-                                     (string-match-p "\\`[0-9a-f]+\\'"
-                                                     commitish)
-                                     (>= (length commitish) 32))
-                                (git-walktree--git-plumbing "rev-parse"
-                                                            "--short"
-                                                            commitish)
-                              commitish))
+         (commitish-display (git-walktree--commitish-fordisplay commitish))
          (name (format "%s:%s"
-                       (or commitish "")
+                       (or commitish-display "")
                        name)))
 
     (with-current-buffer (get-buffer-create name)
@@ -2335,7 +2337,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                                    (point))
                        (insert "\n")
                        (insert (format "Contents of '%s:%s':\n"
-                                       commitish
+                                       (git-walktree--commitish-fordisplay commitish)
                                        path)))
               (insert (format "Contents of treeish object '%s:\n"
                               treeish)))
@@ -2357,7 +2359,6 @@ use for the buffer. It defaults to \"*recetf-show*\"."
         (when (and git-walktree-try-cd
                    (file-directory-p dir))
           (cd dir)))
-      ;; FIXME: Somehow point go back to point-min when reopen the buffer
       (when (= (point) (point-min))
         (goto-char point-tree-start)
         )
