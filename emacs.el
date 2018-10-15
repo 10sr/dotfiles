@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 16:16:46 JST 10sr>
+;; Time-stamp: <2018-10-15 16:30:33 JST 10sr>
 
 ;;; Code:
 
@@ -2305,6 +2305,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (require 'ansi-color)
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
+  (cl-assert path)
   (let (point-tree-start
         (buf (git-walktree--create-buffer commitish path))
         (type (git-walktree--git-plumbing "cat-file"
@@ -2320,19 +2321,21 @@ use for the buffer. It defaults to \"*recetf-show*\"."
       (save-excursion
         (let ((inhibit-read-only t))
           (with-temp-buffer
-            (when commitish
-              (git-walktree--call-process nil
-                                          "show"
-                                          "--no-patch"
-                                          "--color"
-                                          "--pretty=short"
-                                          commitish)
-              (ansi-color-apply-on-region (point-min)
-                                          (point))
-              (insert "\n"))
-            (insert "Contents of treeish object '")
-            (insert treeish)
-            (insert "':\n")
+            (if commitish
+                (progn (git-walktree--call-process nil
+                                                   "show"
+                                                   "--no-patch"
+                                                   "--color"
+                                                   "--pretty=short"
+                                                   commitish)
+                       (ansi-color-apply-on-region (point-min)
+                                                   (point))
+                       (insert "\n")
+                       (insert (format "Contents of '%s:%s':\n"
+                                       commitish
+                                       path)))
+              (insert (format "Contents of treeish object '%s:\n"
+                              treeish)))
             (setq point-tree-start (point))
             (git-walktree--call-process nil
                                         "ls-tree"
