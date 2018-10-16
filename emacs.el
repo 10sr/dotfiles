@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 22:45:19 JST 10sr>
+;; Time-stamp: <2018-10-16 23:14:49 JST 10sr>
 
 ;;; Code:
 
@@ -2653,7 +2653,11 @@ This function do nothing when current line is not ls-tree output."
 (defvar git-walktree-known-child-revisions '()
   "List of already known child reivions of currnet buffer in sha1 string.")
 (make-variable-buffer-local 'git-walktree-known-child-revisions)
+(put 'git-walktree-known-child-revisions
+     'permanent-local
+     t)
 
+;; Delete this function
 (defun git-walktree--parent-revision-1 (revision)
   "Open parent revision REVISION.
 
@@ -2681,14 +2685,19 @@ This function does the following things:
                    child-revision))))
 
 (defun git-walktree--completing-read-commitish (prompt-format collection)
-  "Emit PROMPT and get commitish from COLLECTION from user input."
-  (completing-read (format prompt-format
-                           (mapconcat 'git-walktree--commitish-fordisplay
-                                      collection
-                                      " "))
-                   collection
-                   nil
-                   t))
+  "Emit PROMPT-FORMAT and ask user to which commitish of COLLECTION to use.
+When collection has just one element, return without asking."
+  (cl-assert collection)
+  (if (< (length collection) 2)
+      (car collection)
+    ;; TODO: empty to use car collection
+    (completing-read (format prompt-format
+                             (mapconcat 'git-walktree--commitish-fordisplay
+                                        collection
+                                        " "))
+                     collection
+                     nil
+                     t)))
 
 (defun git-walktree-parent-revision ()
   "Open parent revision of current path.
@@ -2696,11 +2705,10 @@ If current path was not found in the parent revision try to go up path."
   (interactive)
   (if git-walktree-current-commitish
       (let ((parents (git-walktree--parent-sha1 git-walktree-current-commitish)))
+        ;; TODO: Use if
         (cl-case (length parents)
           (0
            (message "This revision has no parent revision"))
-          (1
-           (git-walktree--parent-revision-1 (car parents)))
           (t
            (let ((parent (git-walktree--completing-read-commitish "This revision has multiple parents. Which to open? (%s) "
                                                                   parents)))
@@ -2729,7 +2737,23 @@ If current path was not found in the parent revision try to go up path."
 (defun git-walktree-known-child-revision ()
   "Open known revision of current path."
   (interactive)
-  (message "%S" git-walktree-known-child-revisions))
+  (message "%S" git-walktree-known-child-revisions)
+  (if (< (length git-walktree-known-child-revisions)
+         1)
+      (message "There are no known child revision")
+    (let* ((child (git-walktree--completing-read-commitish "There are multiple known childrens. Which to open? (%s)"
+                                                           git-walktree-known-child-revisions))
+           (path git-walktree-current-path)
+           (obj (git-walktree--resolve-object child path)))
+      (cl-assert path)
+      (while (not obj)
+        (setq path
+              (git-walktree--parent-directory path))
+        (setq obj
+              (git-walktree--resolve-object child path)))
+      (switch-to-buffer (git-walktree--open-noselect child
+                                                     path
+                                                     obj)))))
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
