@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-15 20:02:55 JST 10sr>
+;; Time-stamp: <2018-10-16 13:22:43 JST 10sr>
 
 ;;; Code:
 
@@ -2361,6 +2361,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
           (cd dir)))
       (when (= (point) (point-min))
         (goto-char point-tree-start)
+        (git-walktree-mode--goto-file)
         )
       )
     buf))
@@ -2388,6 +2389,7 @@ Result will be inserted into current buffer."
         (buf (git-walktree--create-buffer commitish path)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
+      ;; TODO: Do nothing when blob already loaded
       ;; For running git command go back to repository root
       (cd git-walktree-repository-root)
       (let ((inhibit-read-only t))
@@ -2546,7 +2548,6 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
                    :file (match-string 4)))))))
 
 (defun git-walktree-mode-open-this ()
-  ;; TODO: Support commit object
   "Open current object."
   (interactive)
   (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
@@ -2605,6 +2606,34 @@ If not given, value of current buffer will be used."
                                                        nil))
       (message "Cannot find parent directory for current tree."))))
 
+(defun git-walktree-mode--goto-file ()
+  "Move point to file field of ls-tree output in current line.
+
+This function do nothing when current line is not ls-tree output."
+  (interactive)
+  (save-match-data
+    (when (save-excursion
+            (goto-char (point-at-bol))
+            (re-search-forward git-walktree-ls-tree-line-regexp
+                               (point-at-eol) t))
+      (goto-char (match-beginning 4)))))
+
+(defun git-walktree-mode-next-line (&optional arg try-vscroll)
+  "Move cursor vertically down ARG lines and move to file field if found."
+  (interactive "^p\np")
+  (or arg (setq arg 1))
+  (line-move arg nil nil try-vscroll)
+  (git-walktree-mode--goto-file)
+  )
+
+(defun git-walktree-mode-previous-line (&optional arg try-vscroll)
+  "Move cursor vertically up ARG lines and move to file field if found."
+  (interactive "^p\np")
+  (or arg (setq arg 1))
+  (line-move (- arg) nil nil try-vscroll)
+  (git-walktree-mode--goto-file)
+  )
+
 (defgroup git-walktree-faces nil
   "Faces used by git-walktree."
   :group 'git-walktree
@@ -2620,9 +2649,10 @@ If not given, value of current buffer will be used."
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
     ;; TODO: Add git-walktree-parent-revision
-    ;; TODO: Add git-walktree-next-line
-    (define-key map "n" 'next-line)
-    (define-key map "p" 'previous-line)
+    (define-key map "n" 'git-walktree-mode-next-line)
+    (define-key map "p" 'git-walktree-mode-previous-line)
+    (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
+    (define-key map (kbd "C-p") 'git-walktree-mode-previous-line)
     (define-key map "^" 'git-walktree-up)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
     map))
