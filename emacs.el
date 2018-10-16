@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 17:54:31 JST 10sr>
+;; Time-stamp: <2018-10-16 18:04:07 JST 10sr>
 
 ;;; Code:
 
@@ -2443,11 +2443,8 @@ without checking it."
   (cl-assert (not (string-match "\\`/" path)))
   (cl-assert (not (string-match "/\\'" path)))
 
-  (if (string= path ".")
-      (setq object (or object
-                       commitish))
-    (setq object (or object
-                     (git-walktree--resolve-object commitish path))))
+  (setq object (or object
+                   (git-walktree--resolve-object commitish path)))
   (cl-assert object)
 
   (let ((type (git-walktree--git-plumbing "cat-file"
@@ -2671,7 +2668,8 @@ This function does the following things:
 - Add revision sha1 of source buffer to created buffer's
   `git-wwalktree-known-child-revisions'.
 - Switch to new buffer."
-  (let* ((child-revision git-walktree-current-commitish)
+  (let* ((child-revision (git-walktree--git-plumbing "rev-parse"
+                                                     git-walktree-current-commitish))
          (path git-walktree-current-path)
          (obj (git-walktree--resolve-object revision path)))
     (cl-assert path)
