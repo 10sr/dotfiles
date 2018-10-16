@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 22:44:44 JST 10sr>
+;; Time-stamp: <2018-10-16 22:45:19 JST 10sr>
 
 ;;; Code:
 
@@ -819,10 +819,6 @@ found, otherwise returns nil."
   (define-key remember-mode-map (kbd "C-x C-s") 'ignore))
 
 (with-eval-after-load 'magit-files
-  ;; `global-magit-file-mode' is enabled by default and this mode overwrites
-  ;; existing keybindings.
-  ;; Apparently it is a HARMFUL behavior and should be fixed, but for now
-  ;; disable this mode here.
   (global-magit-file-mode -1))
 
 (when (boundp 'git-rebase-filename-regexp)
