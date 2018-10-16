@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 18:13:02 JST 10sr>
+;; Time-stamp: <2018-10-16 18:18:24 JST 10sr>
 
 ;;; Code:
 
@@ -2721,10 +2721,10 @@ If current path was not found in the parent revision try to go up path."
 ;; (git-walktree--parent-sha1 "HEAD")
 ;; (git-walktree--parent-sha1 "ae4b80f")
 
-(defun git-revision-known-child-revision ()
+(defun git-walktree-known-child-revision ()
   "Open known revision of current path."
   (interactive)
-  nil)
+  (message "%S" git-walktree-known-child-revisions))
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
