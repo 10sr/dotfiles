@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 13:22:43 JST 10sr>
+;; Time-stamp: <2018-10-16 14:45:32 JST 10sr>
 
 ;;; Code:
 
@@ -2552,11 +2552,14 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
   (interactive)
   (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
                                                                                (point-at-eol)))))
+    ;; TODO: Open commitish when currently on commitish like symbol
     (if info
         (switch-to-buffer
          (if (string= (plist-get info
                                  :type)
                       "commit")
+             ;; For submodule cd to that directory and intialize
+             ;; TODO: Provide way to go back to known "parent" repository
              (with-temp-buffer
                (cd (plist-get info :file))
                (git-walktree--open-noselect (plist-get info
@@ -2646,13 +2649,49 @@ This function do nothing when current line is not ls-tree output."
 (defvar git-walktree-tree-face 'git-walktree-tree-face
   "Face used for tree objects.")
 
+(defvar git-walktree-known-child-revisions '()
+  "List of already known child reivions of currnet buffer in string format.")
+(make-variable-buffer-local 'git-walktree-known-child-revisions)
+
+(defun git-walktree-parent-revision ()
+  "Open parent revision of current path.
+If given path is not found in the parent revision try to go up path."
+  (interactive))
+
+(defun git-walktree--is-a-merge-commit (commitish)
+  "Return non-nil if COMMITISH is a merge commit."
+  (let ((type (git-walktree--git-plumbing "cat-file"
+                                          "-t"
+                                          commitish)))
+    (cl-assert (string= type "commit")))
+  (with-temp-buffer
+    (let ((status (call-process git-walktree-git-executable
+                                nil
+                                t
+                                nil
+                                "cat-file"
+                                "-p"
+                                commitish)))
+      (unless (eq 0
+                  status)
+        (error "Faild to run git %S:\n%s"
+               (list "cat-file" "-p" commitish)
+               (buffer-substring-no-properties (point-min)
+                                               (point-max))))
+      (goto-char (point-min))
+      (save-match-data
+        (> (count-matches "^parent") 1)))))
+;; (git-walktree--is-a-merge-commit "ae4b80f")
+
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
-    ;; TODO: Add git-walktree-parent-revision
     (define-key map "n" 'git-walktree-mode-next-line)
     (define-key map "p" 'git-walktree-mode-previous-line)
     (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
     (define-key map (kbd "C-p") 'git-walktree-mode-previous-line)
+    ;; TODO: Review keybind
+    (define-key map "N" 'git-walktree-parent-revision)
+    (define-key map "P" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
     map))
