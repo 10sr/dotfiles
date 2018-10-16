@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 23:14:49 JST 10sr>
+;; Time-stamp: <2018-10-16 23:18:27 JST 10sr>
 
 ;;; Code:
 
@@ -2704,7 +2704,7 @@ When collection has just one element, return without asking."
 If current path was not found in the parent revision try to go up path."
   (interactive)
   (if git-walktree-current-commitish
-      (let ((parents (git-walktree--parent-sha1 git-walktree-current-commitish)))
+      (let ((parents (git-walktree--parent-commitid git-walktree-current-commitish)))
         ;; TODO: Use if
         (cl-case (length parents)
           (0
@@ -2720,7 +2720,7 @@ If current path was not found in the parent revision try to go up path."
 ;; What is object id?
 ;; commit id?
 ;; commit sha1?
-(defun git-walktree--parent-sha1 (commitish)
+(defun git-walktree--parent-commitid (commitish)
   "Return list of parent commits of COMMITISH in sha1 string."
   (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
