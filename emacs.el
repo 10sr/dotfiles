@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 18:04:07 JST 10sr>
+;; Time-stamp: <2018-10-16 18:11:49 JST 10sr>
 
 ;;; Code:
 
@@ -2703,6 +2703,10 @@ If current path was not found in the parent revision try to go up path."
                                           (car parents))))
              (git-walktree--parent-revision-1 parent)))))))
 
+;; TODO: this name is good?
+;; What is revision?
+;; What is sha1?
+;; What is object id?
 (defun git-walktree--parent-sha1 (commitish)
   "Return list of parent commits of COMMITISH in sha1 string."
   (let ((type (git-walktree--git-plumbing "cat-file"
