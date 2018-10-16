@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 14:45:32 JST 10sr>
+;; Time-stamp: <2018-10-16 15:25:14 JST 10sr>
 
 ;;; Code:
 
@@ -2664,23 +2664,14 @@ If given path is not found in the parent revision try to go up path."
                                           "-t"
                                           commitish)))
     (cl-assert (string= type "commit")))
-  (with-temp-buffer
-    (let ((status (call-process git-walktree-git-executable
-                                nil
-                                t
-                                nil
-                                "cat-file"
-                                "-p"
-                                commitish)))
-      (unless (eq 0
-                  status)
-        (error "Faild to run git %S:\n%s"
-               (list "cat-file" "-p" commitish)
-               (buffer-substring-no-properties (point-min)
-                                               (point-max))))
-      (goto-char (point-min))
-      (save-match-data
-        (> (count-matches "^parent") 1)))))
+  (let* ((parents (git-walktree--git-plumbing "show"
+                                              "--no-patch"
+                                              "--pretty=format:%P"
+                                              commitish))
+         (num (length (split-string parents))))
+    (and (> num 1)
+         num)))
+;; (git-walktree--is-a-merge-commit "HEAD")
 ;; (git-walktree--is-a-merge-commit "ae4b80f")
 
 (defvar git-walktree-mode-map
