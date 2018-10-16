@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 18:18:24 JST 10sr>
+;; Time-stamp: <2018-10-16 22:44:44 JST 10sr>
 
 ;;; Code:
 
@@ -2684,6 +2684,16 @@ This function does the following things:
       (add-to-list 'git-walktree-known-child-revisions
                    child-revision))))
 
+(defun git-walktree--completing-read-commitish (prompt-format collection)
+  "Emit PROMPT and get commitish from COLLECTION from user input."
+  (completing-read (format prompt-format
+                           (mapconcat 'git-walktree--commitish-fordisplay
+                                      collection
+                                      " "))
+                   collection
+                   nil
+                   t))
+
 (defun git-walktree-parent-revision ()
   "Open parent revision of current path.
 If current path was not found in the parent revision try to go up path."
@@ -2696,17 +2706,16 @@ If current path was not found in the parent revision try to go up path."
           (1
            (git-walktree--parent-revision-1 (car parents)))
           (t
-           (let ((parent (completing-read "This revision has multiple parents. Which to open? (default is the left one): "
-                                          parents
-                                          nil
-                                          t
-                                          (car parents))))
+           (let ((parent (git-walktree--completing-read-commitish "This revision has multiple parents. Which to open? (%s) "
+                                                                  parents)))
              (git-walktree--parent-revision-1 parent)))))))
 
 ;; TODO: this name is good?
 ;; What is revision?
 ;; What is sha1?
 ;; What is object id?
+;; commit id?
+;; commit sha1?
 (defun git-walktree--parent-sha1 (commitish)
   "Return list of parent commits of COMMITISH in sha1 string."
   (let ((type (git-walktree--git-plumbing "cat-file"
