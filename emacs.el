@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 15:25:14 JST 10sr>
+;; Time-stamp: <2018-10-16 17:54:31 JST 10sr>
 
 ;;; Code:
 
@@ -2462,14 +2462,22 @@ without checking it."
        (error "Type cannot handle: %s" type)))))
 
 (defun git-walktree--resolve-object (commitish path)
-  "Return object id of COMMITISIH:PATH."
+  "Return object id of COMMITISIH:PATH.
+If path is equal to \".\" return COMMITISH's tree object"
   ;; TODO: use --full-tree
-  (with-temp-buffer
-    (cd (git-walktree--git-plumbing "rev-parse" "--show-toplevel"))
-    (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
-                                                                             commitish
-                                                                             path))))
-      (plist-get info :object))))
+  (cl-assert commitish)
+  (cl-assert path)
+  (if (string= path ".")
+      (git-walktree--git-plumbing "show"
+                                  "--no-patch"
+                                  "--pretty=format:%T"
+                                  commitish)
+    (with-temp-buffer
+      (cd (git-walktree--git-plumbing "rev-parse" "--show-toplevel"))
+      (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
+                                                                               commitish
+                                                                               path))))
+        (plist-get info :object)))))
 
 (defun git-walktree-open (commitish &optional path object)
   "Open git tree buffer of COMMITISH.
@@ -2650,29 +2658,66 @@ This function do nothing when current line is not ls-tree output."
   "Face used for tree objects.")
 
 (defvar git-walktree-known-child-revisions '()
-  "List of already known child reivions of currnet buffer in string format.")
+  "List of already known child reivions of currnet buffer in sha1 string.")
 (make-variable-buffer-local 'git-walktree-known-child-revisions)
+
+(defun git-walktree--parent-revision-1 (revision)
+  "Open parent revision REVISION.
+
+This function does the following things:
+
+- Check if current path exists in REVISION. If not, go up until path was found.
+- Create buffer for REVISION and path found.
+- Add revision sha1 of source buffer to created buffer's
+  `git-wwalktree-known-child-revisions'.
+- Switch to new buffer."
+  (let* ((child-revision git-walktree-current-commitish)
+         (path git-walktree-current-path)
+         (obj (git-walktree--resolve-object revision path)))
+    (cl-assert path)
+    (while (not obj)
+      (setq path
+            (git-walktree--parent-directory path))
+      (setq obj
+            (git-walktree--resolve-object revision path)))
+    (with-current-buffer (switch-to-buffer (git-walktree--open-noselect revision
+                                                                        path
+                                                                        obj))
+      (add-to-list 'git-walktree-known-child-revisions
+                   child-revision))))
 
 (defun git-walktree-parent-revision ()
   "Open parent revision of current path.
-If given path is not found in the parent revision try to go up path."
-  (interactive))
+If current path was not found in the parent revision try to go up path."
+  (interactive)
+  (if git-walktree-current-commitish
+      (let ((parents (git-walktree--parent-sha1 git-walktree-current-commitish)))
+        (cl-case (length parents)
+          (0
+           (message "This revision has no parent revision"))
+          (1
+           (git-walktree--parent-revision-1 (car parents)))
+          (t
+           (let ((parent (completing-read "This revision has multiple parents. Which to open? (default is the left one): "
+                                          parents
+                                          nil
+                                          t
+                                          (car parents))))
+             (git-walktree--parent-revision-1 parent)))))))
 
-(defun git-walktree--is-a-merge-commit (commitish)
-  "Return non-nil if COMMITISH is a merge commit."
+(defun git-walktree--parent-sha1 (commitish)
+  "Return list of parent commits of COMMITISH in sha1 string."
   (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           commitish)))
     (cl-assert (string= type "commit")))
-  (let* ((parents (git-walktree--git-plumbing "show"
-                                              "--no-patch"
-                                              "--pretty=format:%P"
-                                              commitish))
-         (num (length (split-string parents))))
-    (and (> num 1)
-         num)))
-;; (git-walktree--is-a-merge-commit "HEAD")
-;; (git-walktree--is-a-merge-commit "ae4b80f")
+  (let ((parents (git-walktree--git-plumbing "show"
+                                             "--no-patch"
+                                             "--pretty=format:%P"
+                                             commitish)))
+    (split-string parents)))
+;; (git-walktree--parent-sha1 "HEAD")
+;; (git-walktree--parent-sha1 "ae4b80f")
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
@@ -2681,8 +2726,8 @@ If given path is not found in the parent revision try to go up path."
     (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
     (define-key map (kbd "C-p") 'git-walktree-mode-previous-line)
     ;; TODO: Review keybind
-    (define-key map "N" 'git-walktree-parent-revision)
-    (define-key map "P" 'git-walktree-known-child-revision)
+    (define-key map "P" 'git-walktree-parent-revision)
+    (define-key map "N" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
     map))
