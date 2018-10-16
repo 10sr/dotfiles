@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-16 23:18:27 JST 10sr>
+;; Time-stamp: <2018-10-16 23:52:31 JST 10sr>
 
 ;;; Code:
 
@@ -2490,14 +2490,21 @@ checking it."
     (let ((root (git-walktree--git-plumbing "rev-parse"
                                             "--show-toplevel")))
       (file-relative-name dir root))))
-(file-relative-name "/abc/def/ghi" "/abc/def/ghi")
+
 (defcustom git-walktree-git-executable "git"
   "Git executable."
   :type 'string
   :group 'git-walktree)
+
 (defcustom git-walktree-try-cd t
   "Try to cd if directory exists in current working directory if non-nil.
 Otherwise buffer's `default-directory' is always repository root."
+  :type 'boolean
+  :group 'git-walktree)
+
+;; TODO: Use this
+(defcustom git-walktree-reuse-tree-buffer nil
+  "Non-nil to reuse buffer when treeish object."
   :type 'boolean
   :group 'git-walktree)
 
@@ -2650,6 +2657,7 @@ This function do nothing when current line is not ls-tree output."
 (defvar git-walktree-tree-face 'git-walktree-tree-face
   "Face used for tree objects.")
 
+;; TODO: Store as global hash object
 (defvar git-walktree-known-child-revisions '()
   "List of already known child reivions of currnet buffer in sha1 string.")
 (make-variable-buffer-local 'git-walktree-known-child-revisions)
