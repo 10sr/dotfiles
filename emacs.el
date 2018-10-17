@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 15:32:23 JST 10sr>
+;; Time-stamp: <2018-10-17 15:38:50 JST 10sr>
 
 ;;; Code:
 
@@ -2824,6 +2824,8 @@ If current path was not found in the parent revision try to go up path."
     (define-key map "P" 'git-walktree-parent-revision)
     (define-key map "N" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)
+    ;; TODO: implement
+    (define-key map (kbd "DEL") 'git-walktree-back)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
     map))
 
