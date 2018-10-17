@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 15:31:39 JST 10sr>
+;; Time-stamp: <2018-10-17 15:32:23 JST 10sr>
 
 ;;; Code:
 
@@ -2797,7 +2797,6 @@ If current path was not found in the parent revision try to go up path."
   (let* ((commitid (git-walktree--git-plumbing "rev-parse"
                                                git-walktree-current-commitish))
          (children (git-walktree--get-children commitid)))
-    (message "%S" children)
     (if (< (length children)
            1)
         (message "There are no known child revision")
