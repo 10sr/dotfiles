@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 16:46:15 JST 10sr>
+;; Time-stamp: <2018-10-17 17:53:21 JST 10sr>
 
 ;;; Code:
 
@@ -124,6 +124,7 @@ found, otherwise returns nil."
        dired-filter
        wgrep
        magit
+       git-gutter
 
        scala-mode
        ;;ensime
@@ -389,6 +390,9 @@ found, otherwise returns nil."
 
 (when (safe-require-or-eval 'page-break-lines)
   (global-page-break-lines-mode 1))
+
+(when (safe-require-or-eval 'git-gutter)
+  (global-git-gutter-mode 1))
 
 ;; (when (safe-require-or-eval 'fancy-narrow)
 ;;   (fancy-narrow-mode 1))
