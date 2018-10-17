@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 15:16:49 JST 10sr>
+;; Time-stamp: <2018-10-17 15:31:39 JST 10sr>
 
 ;;; Code:
 
@@ -2696,32 +2696,32 @@ PARENT should be a full SHA-1 object name."
 PARENT should be a full SHA-1 object name."
   (gethash parent git-walktree-known-child-revisions))
 
-;; Delete this function
-(defun git-walktree--parent-revision-1 (revision)
-  "Open parent revision REVISION.
+;; ;; Delete this function
+;; (defun git-walktree--parent-revision-1 (revision)
+;;   "Open parent revision REVISION.
 
-This function does the following things:
+;; This function does the following things:
 
-- Check if current path exists in REVISION. If not, go up until path was found.
-- Create buffer for REVISION and path found.
-- Add revision sha1 of source buffer to created buffer's
-  `git-wwalktree-known-child-revisions'.
-- Switch to new buffer."
-  (let* ((child-revision (git-walktree--git-plumbing "rev-parse"
-                                                     git-walktree-current-commitish))
-         (path git-walktree-current-path)
-         (obj (git-walktree--resolve-object revision path)))
-    (cl-assert path)
-    (while (not obj)
-      (setq path
-            (git-walktree--parent-directory path))
-      (setq obj
-            (git-walktree--resolve-object revision path)))
-    (with-current-buffer (switch-to-buffer (git-walktree--open-noselect revision
-                                                                        path
-                                                                        obj))
-      (git-walktree--put-child revision
-                               child-revision))))
+;; - Check if current path exists in REVISION. If not, go up until path was found.
+;; - Create buffer for REVISION and path found.
+;; - Add revision sha1 of source buffer to created buffer's
+;;   `git-wwalktree-known-child-revisions'.
+;; - Switch to new buffer."
+;;   (let* ((child-revision (git-walktree--git-plumbing "rev-parse"
+;;                                                      git-walktree-current-commitish))
+;;          (path git-walktree-current-path)
+;;          (obj (git-walktree--resolve-object revision path)))
+;;     (cl-assert path)
+;;     (while (not obj)
+;;       (setq path
+;;             (git-walktree--parent-directory path))
+;;       (setq obj
+;;             (git-walktree--resolve-object revision path)))
+;;     (with-current-buffer (switch-to-buffer (git-walktree--open-noselect revision
+;;                                                                         path
+;;                                                                         obj))
+;;       (git-walktree--put-child revision
+;;                                child-revision))))
 
 (defun git-walktree--completing-read-commitish (prompt-format collection)
   "Emit PROMPT-FORMAT and ask user to which commitish of COLLECTION to use.
@@ -2742,16 +2742,34 @@ When collection has just one element, return without asking."
   "Open parent revision of current path.
 If current path was not found in the parent revision try to go up path."
   (interactive)
-  (if git-walktree-current-commitish
-      (let ((parents (git-walktree--parent-commitid git-walktree-current-commitish)))
-        ;; TODO: Use if
-        (cl-case (length parents)
-          (0
-           (message "This revision has no parent revision"))
-          (t
-           (let ((parent (git-walktree--completing-read-commitish "This revision has multiple parents. Which to open? (%s) "
-                                                                  parents)))
-             (git-walktree--parent-revision-1 parent)))))))
+  (cl-assert git-walktree-current-commitish)
+  (let* ((commitid (git-walktree--git-plumbing "rev-parse"
+                                               git-walktree-current-commitish))
+         (parents (git-walktree--parent-commitid commitid)))
+    (if (< (length parents)
+           1)
+        (message "This revision has no parent revision")
+      (let* ((parent (git-walktree--completing-read-commitish "This revision has multiple parents. Which to open? (%s) "
+                                                              parents))
+             (path git-walktree-current-path)
+             (obj (git-walktree--resolve-object parent path)))
+        (cl-assert path)
+        (while (not obj)
+          (setq path
+                (git-walktree--parent-directory path))
+          (setq obj
+                (git-walktree--resolve-object parent path)))
+        (switch-to-buffer (git-walktree--open-noselect parent
+                                                       path
+                                                       obj))
+        (git-walktree--put-child parent
+                                 commitid)))))
+;; (cl-case (length parents)
+;;   (0
+;;    (t
+;;     (let ((parent (git-walktree--completing-read-commitish "This revision has multiple parents. Which to open? (%s) "
+;;                                                            parents)))
+;;       (git-walktree--parent-revision-1 parent)))))))
 
 ;; TODO: this name is good?
 ;; What is revision?
