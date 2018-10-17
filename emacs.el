@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 14:19:04 JST 10sr>
+;; Time-stamp: <2018-10-17 15:16:49 JST 10sr>
 
 ;;; Code:
 
@@ -2283,6 +2283,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (defun git-walktree--create-buffer (commitish name type)
   "Create and return buffer for COMMITISH:NAME.
 TYPE is target object type."
+  ;; TODO: Give buffer name as an argument
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (commitish-display (git-walktree--commitish-fordisplay commitish))
@@ -2676,13 +2677,24 @@ This function do nothing when current line is not ls-tree output."
 (defvar git-walktree-tree-face 'git-walktree-tree-face
   "Face used for tree objects.")
 
-;; TODO: Store as global hash object
-(defvar git-walktree-known-child-revisions '()
-  "List of already known child reivions of currnet buffer in sha1 string.")
-(make-variable-buffer-local 'git-walktree-known-child-revisions)
-(put 'git-walktree-known-child-revisions
-     'permanent-local
-     t)
+(defvar git-walktree-known-child-revisions (make-hash-table :test 'equal)
+  "Hash of already known pair of commitid -> list of child commitid.")
+
+(defun git-walktree--put-child (parent child)
+  "Register PARENT and CHILD relationship.
+PARENT should be a full SHA-1 object name."
+  ;; Any way to check if PARENT is a full SHA-1 object name?
+  (let ((current (gethash parent git-walktree-known-child-revisions)))
+    (unless (member child current)
+      (puthash parent
+               (cons child
+                     current)
+               git-walktree-known-child-revisions))))
+
+(defun git-walktree--get-children (parent)
+  "Get known children list of PARENT commit.
+PARENT should be a full SHA-1 object name."
+  (gethash parent git-walktree-known-child-revisions))
 
 ;; Delete this function
 (defun git-walktree--parent-revision-1 (revision)
@@ -2708,8 +2720,8 @@ This function does the following things:
     (with-current-buffer (switch-to-buffer (git-walktree--open-noselect revision
                                                                         path
                                                                         obj))
-      (add-to-list 'git-walktree-known-child-revisions
-                   child-revision))))
+      (git-walktree--put-child revision
+                               child-revision))))
 
 (defun git-walktree--completing-read-commitish (prompt-format collection)
   "Emit PROMPT-FORMAT and ask user to which commitish of COLLECTION to use.
@@ -2764,23 +2776,26 @@ If current path was not found in the parent revision try to go up path."
 (defun git-walktree-known-child-revision ()
   "Open known revision of current path."
   (interactive)
-  (message "%S" git-walktree-known-child-revisions)
-  (if (< (length git-walktree-known-child-revisions)
-         1)
-      (message "There are no known child revision")
-    (let* ((child (git-walktree--completing-read-commitish "There are multiple known childrens. Which to open? (%s)"
-                                                           git-walktree-known-child-revisions))
-           (path git-walktree-current-path)
-           (obj (git-walktree--resolve-object child path)))
-      (cl-assert path)
-      (while (not obj)
-        (setq path
-              (git-walktree--parent-directory path))
-        (setq obj
-              (git-walktree--resolve-object child path)))
-      (switch-to-buffer (git-walktree--open-noselect child
-                                                     path
-                                                     obj)))))
+  (let* ((commitid (git-walktree--git-plumbing "rev-parse"
+                                               git-walktree-current-commitish))
+         (children (git-walktree--get-children commitid)))
+    (message "%S" children)
+    (if (< (length children)
+           1)
+        (message "There are no known child revision")
+      (let* ((child (git-walktree--completing-read-commitish "There are multiple known childrens. Which to open? (%s)"
+                                                             children))
+             (path git-walktree-current-path)
+             (obj (git-walktree--resolve-object child path)))
+        (cl-assert path)
+        (while (not obj)
+          (setq path
+                (git-walktree--parent-directory path))
+          (setq obj
+                (git-walktree--resolve-object child path)))
+        (switch-to-buffer (git-walktree--open-noselect child
+                                                       path
+                                                       obj))))))
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
