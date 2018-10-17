@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 17:53:21 JST 10sr>
+;; Time-stamp: <2018-10-17 17:56:45 JST 10sr>
 
 ;;; Code:
 
@@ -392,7 +392,10 @@ found, otherwise returns nil."
   (global-page-break-lines-mode 1))
 
 (when (safe-require-or-eval 'git-gutter)
-  (global-git-gutter-mode 1))
+  (custom-set-variables
+   '(git-gutter:update-interval 2))
+  (global-git-gutter-mode 1)
+  )
 
 ;; (when (safe-require-or-eval 'fancy-narrow)
 ;;   (fancy-narrow-mode 1))
