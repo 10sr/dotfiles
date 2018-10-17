@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 13:44:20 JST 10sr>
+;; Time-stamp: <2018-10-17 14:19:04 JST 10sr>
 
 ;;; Code:
 
@@ -2280,8 +2280,9 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                   commitish)
     commitish))
 
-(defun git-walktree--create-buffer (commitish name)
-  "Create and return buffer for NAME."
+(defun git-walktree--create-buffer (commitish name type)
+  "Create and return buffer for COMMITISH:NAME.
+TYPE is target object type."
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (commitish-display (git-walktree--commitish-fordisplay commitish))
@@ -2289,18 +2290,26 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                        (or commitish-display "")
                        name)))
 
-    (with-current-buffer (get-buffer-create name)
-      (if git-walktree-repository-root
-          (if (string= root
-                       git-walktree-repository-root)
-              (current-buffer)
-            ;; If the buffer is for another repository, create new buffer
-            (with-current-buffer (generate-new-buffer name)
-              (setq git-walktree-repository-root root)
-              (current-buffer)))
-        ;; New buffer
-        (setq git-walktree-repository-root root)
-        (current-buffer)))))
+    (if (and git-walktree-reuse-tree-buffer
+             (string= type "tree"))
+        (with-current-buffer (or git-walktree-tree-buffer-for-reuse
+                                 (setq git-walktree-tree-buffer-for-reuse
+                                       (get-buffer-create "*gitwalktree*")))
+          (setq git-walktree-repository-root root)
+          (rename-buffer name t)
+          (current-buffer))
+      (with-current-buffer (get-buffer-create name)
+        (if git-walktree-repository-root
+            (if (string= root
+                         git-walktree-repository-root)
+                (current-buffer)
+              ;; If the buffer is for another repository, create new buffer
+              (with-current-buffer (generate-new-buffer name)
+                (setq git-walktree-repository-root root)
+                (current-buffer)))
+          ;; New buffer
+          (setq git-walktree-repository-root root)
+          (current-buffer))))))
 
 (defun git-walktree--replace-into (target)
   "Replace TARGET buffer contents with that of current buffer."
@@ -2312,12 +2321,12 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
   (cl-assert path)
-  (let (point-tree-start
-        (buf (git-walktree--create-buffer commitish path))
-        (type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          treeish))
-        )
+  (let* (point-tree-start
+         (type (git-walktree--git-plumbing "cat-file"
+                                           "-t"
+                                           treeish))
+         (buf (git-walktree--create-buffer commitish path type))
+         )
     (cl-assert (member type
                        '("commit" "tree")))
     (with-current-buffer buf
@@ -2384,10 +2393,10 @@ Result will be inserted into current buffer."
 ?w
 (defun git-walktree--open-blob (commitish path blob)
   "Open BLOB object."
-  (let ((type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          blob))
-        (buf (git-walktree--create-buffer commitish path)))
+  (let* ((type (git-walktree--git-plumbing "cat-file"
+                                           "-t"
+                                           blob))
+         (buf (git-walktree--create-buffer commitish path type)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
       ;; TODO: Do nothing when blob already loaded
@@ -2508,9 +2517,14 @@ Otherwise buffer's `default-directory' is always repository root."
   :group 'git-walktree)
 
 ;; TODO: Use this
-(defcustom git-walktree-reuse-tree-buffer nil
-  "Non-nil to reuse buffer when treeish object."
+(defcustom git-walktree-reuse-tree-buffer t
+  "Non-nil to reuse buffer for treeish object."
   :type 'boolean
+  :group 'git-walktree)
+
+(defcustom git-walktree-tree-buffer-for-reuse nil
+  "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil."
+  :type 'string
   :group 'git-walktree)
 
 (defun git-walktree--git-plumbing (&rest args)
