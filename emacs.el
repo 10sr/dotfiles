@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 17:56:45 JST 10sr>
+;; Time-stamp: <2018-10-17 18:45:09 JST 10sr>
 
 ;;; Code:
 
@@ -818,7 +818,7 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'wgrep)
   (defvar grep-mode-map)
   (define-key grep-mode-map
-    "w"
+    "e"
     'wgrep-change-to-wgrep-mode))
 
 (with-eval-after-load 'remember
@@ -1497,7 +1497,7 @@ ARG is num to show, or defaults to 7."
   (defvar dired-mode-map (make-sparse-keymap))
   ;; dired-do-chgrp sometimes cause system hung
   (define-key dired-mode-map "G" 'ignore)
-  (define-key dired-mode-map "w" 'wdired-change-to-wdired-mode)
+  (define-key dired-mode-map "e" 'wdired-change-to-wdired-mode)
   (define-key dired-mode-map "i" 'dired-get-file-info)
   (define-key dired-mode-map "f" 'find-file)
   (define-key dired-mode-map "!" 'shell-command)
@@ -2345,10 +2345,15 @@ TYPE is target object type."
         (let ((inhibit-read-only t))
           (with-temp-buffer
             (if commitish
+                ;; TODO: Somehow color will be diasbled
+                ;; TODO: branch info after commit sha1 (like (HEAD -> master))
+                ;; not appear
                 (progn (git-walktree--call-process nil
+                                                   "-c"
+                                                   "color.ui=always"
                                                    "show"
                                                    "--no-patch"
-                                                   "--color"
+                                                   "--color=always"
                                                    "--pretty=short"
                                                    commitish)
                        (ansi-color-apply-on-region (point-min)
@@ -2357,8 +2362,8 @@ TYPE is target object type."
                        (insert (format "Contents of '%s:%s':\n"
                                        (git-walktree--commitish-fordisplay commitish)
                                        path)))
-              (insert (format "Contents of treeish object '%s:\n"
-                              treeish)))
+                (insert (format "Contents of treeish object '%s:\n"
+                                treeish)))
             (setq point-tree-start (point))
             (git-walktree--call-process nil
                                         "ls-tree"
