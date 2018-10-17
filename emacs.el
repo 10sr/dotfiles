@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 16:27:32 JST 10sr>
+;; Time-stamp: <2018-10-17 16:46:15 JST 10sr>
 
 ;;; Code:
 
@@ -2439,6 +2439,7 @@ Result will be inserted into current buffer."
     buf))
 
 ;; TODO: Store view history
+;; TODO: Open current file or directory if available
 (defun git-walktree--open-noselect (commitish path object)
   "Open git tree buffer of COMMITISH.
 When PATH was given and non-nil open that, otherwise open root tree.
@@ -2518,7 +2519,6 @@ Otherwise buffer's `default-directory' is always repository root."
   :type 'boolean
   :group 'git-walktree)
 
-;; TODO: Use this
 (defcustom git-walktree-reuse-tree-buffer t
   "Non-nil to reuse buffer for treeish object."
   :type 'boolean
