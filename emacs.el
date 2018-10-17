@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 13:28:15 JST 10sr>
+;; Time-stamp: <2018-10-17 13:44:20 JST 10sr>
 
 ;;; Code:
 
@@ -822,7 +822,7 @@ found, otherwise returns nil."
   ;; `global-magit-file-mode' is enabled by default and this mode overwrites
   ;; existing keybindings.
   ;; Apparently it is a HARMFUL behavior and it is really awful that I have
-  ;; to disable thie mode here, but do that anyway.
+  ;; to disable thie mode here, but do anyway.
   ;; See also https://github.com/magit/magit/issues/3517
   (global-magit-file-mode -1))
 
