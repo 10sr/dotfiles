@@ -2360,10 +2360,12 @@ TYPE is target object type."
                   ;; not appear
                   (progn (git-walktree--call-process nil
                                                      "show"
-                                                     "--stat"
+                                                     ;; TODO: Make this args configurable
                                                      ;; "--no-patch"
                                                      "--color=always"
                                                      "--pretty=short"
+                                                     "--decorate"
+                                                     "--stat"
                                                      commitish)
                          (insert "\n")
                          (insert (format "Contents of '%s:%s':\n"
@@ -2378,7 +2380,6 @@ TYPE is target object type."
                                           "--abbrev"
 
                                           treeish)
-              ;; TODO: Somehow text properties are stripped here
               (git-walktree--replace-into-buffer buf))))
         ;; Overlays won't be copied with replace-buffer-contents so do this
         ;; after copying contents
