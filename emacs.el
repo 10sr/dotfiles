@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-17 18:45:09 JST 10sr>
+;; Time-stamp: <2018-10-18 14:20:26 JST 10sr>
 
 ;;; Code:
 
@@ -2329,6 +2329,7 @@ TYPE is target object type."
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
   (cl-assert path)
+  (cl-assert treeish)
   (let* (point-tree-start
          (type (git-walktree--git-plumbing "cat-file"
                                            "-t"
@@ -2338,55 +2339,57 @@ TYPE is target object type."
     (cl-assert (member type
                        '("commit" "tree")))
     (with-current-buffer buf
-      (buffer-disable-undo)
-      ;; For running git command go back to repository root
-      (cd git-walktree-repository-root)
-      (save-excursion
-        (let ((inhibit-read-only t))
-          (with-temp-buffer
-            (if commitish
-                ;; TODO: Somehow color will be diasbled
-                ;; TODO: branch info after commit sha1 (like (HEAD -> master))
-                ;; not appear
-                (progn (git-walktree--call-process nil
-                                                   "-c"
-                                                   "color.ui=always"
-                                                   "show"
-                                                   "--no-patch"
-                                                   "--color=always"
-                                                   "--pretty=short"
-                                                   commitish)
-                       (ansi-color-apply-on-region (point-min)
-                                                   (point))
-                       (insert "\n")
-                       (insert (format "Contents of '%s:%s':\n"
-                                       (git-walktree--commitish-fordisplay commitish)
-                                       path)))
+      (unless (string= treeish
+                       git-walktree-object-id)
+        (buffer-disable-undo)
+        ;; For running git command go back to repository root
+        (cd git-walktree-repository-root)
+        (save-excursion
+          (let ((inhibit-read-only t))
+            (with-temp-buffer
+              (if commitish
+                  ;; TODO: Somehow color will be diasbled
+                  ;; TODO: branch info after commit sha1 (like (HEAD -> master))
+                  ;; not appear
+                  (progn (git-walktree--call-process nil
+                                                     "-c"
+                                                     "color.ui=always"
+                                                     "show"
+                                                     "--no-patch"
+                                                     "--color=always"
+                                                     "--pretty=short"
+                                                     commitish)
+                         (ansi-color-apply-on-region (point-min)
+                                                     (point))
+                         (insert "\n")
+                         (insert (format "Contents of '%s:%s':\n"
+                                         (git-walktree--commitish-fordisplay commitish)
+                                         path)))
                 (insert (format "Contents of treeish object '%s:\n"
                                 treeish)))
-            (setq point-tree-start (point))
-            (git-walktree--call-process nil
-                                        "ls-tree"
-                                        ;; "-r"
-                                        "--abbrev"
+              (setq point-tree-start (point))
+              (git-walktree--call-process nil
+                                          "ls-tree"
+                                          ;; "-r"
+                                          "--abbrev"
 
-                                        treeish)
-            (git-walktree--replace-into buf))))
-      (git-walktree-mode)
-      (set-buffer-modified-p nil)
+                                          treeish)
+              (git-walktree--replace-into buf))))
+        (git-walktree-mode)
+        (set-buffer-modified-p nil)
 
-      (setq git-walktree-current-commitish commitish)
-      (setq git-walktree-current-path path)
-      (setq git-walktree-object-id treeish)
-      (let ((dir (expand-file-name path git-walktree-repository-root)))
-        (when (and git-walktree-try-cd
-                   (file-directory-p dir))
-          (cd dir)))
-      (when (= (point) (point-min))
-        (goto-char point-tree-start)
-        (git-walktree-mode--goto-file)
-        )
-      )
+        (setq git-walktree-current-commitish commitish)
+        (setq git-walktree-current-path path)
+        (setq git-walktree-object-id treeish)
+        (let ((dir (expand-file-name path git-walktree-repository-root)))
+          (when (and git-walktree-try-cd
+                     (file-directory-p dir))
+            (cd dir)))
+        (when (= (point) (point-min))
+          (goto-char point-tree-start)
+          (git-walktree-mode--goto-file)
+          )
+        ))
     buf))
 
 (defun git-walktree--call-process (&optional infile &rest args)
@@ -2406,48 +2409,52 @@ Result will be inserted into current buffer."
 ?w
 (defun git-walktree--open-blob (commitish path blob)
   "Open BLOB object."
+  (cl-assert commitish)
+  (cl-assert path)
+  (cl-assert blob)
   (let* ((type (git-walktree--git-plumbing "cat-file"
                                            "-t"
                                            blob))
          (buf (git-walktree--create-buffer commitish path type)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
-      ;; TODO: Do nothing when blob already loaded
-      ;; For running git command go back to repository root
-      (cd git-walktree-repository-root)
-      (let ((inhibit-read-only t))
-        (with-temp-buffer
-          (git-walktree--call-process nil
-                                      "cat-file"
-                                      "-p"
-                                      blob)
-          (git-walktree--replace-into buf)))
-      (setq git-walktree-buffer-file-name
-            (concat (git-walktree--git-plumbing "rev-parse"
-                                                "--show-toplevel")
-                    "/git@"
-                    commitish
-                    ":"
-                    path))
-      (setq buffer-file-name
-            git-walktree-buffer-file-name)
-      (normal-mode t)
-      ;; For asking filename when C-xC-s
-      (setq buffer-file-name nil)
-      (set-buffer-modified-p t)
+      (unless (string= blob
+                       git-walktree-object-id)
+        ;; For running git command go back to repository root
+        (cd git-walktree-repository-root)
+        (let ((inhibit-read-only t))
+          (with-temp-buffer
+            (git-walktree--call-process nil
+                                        "cat-file"
+                                        "-p"
+                                        blob)
+            (git-walktree--replace-into buf)))
+        (setq git-walktree-buffer-file-name
+              (concat (git-walktree--git-plumbing "rev-parse"
+                                                  "--show-toplevel")
+                      "/git@"
+                      commitish
+                      ":"
+                      path))
+        (setq buffer-file-name
+              git-walktree-buffer-file-name)
+        (normal-mode t)
+        ;; For asking filename when C-xC-s
+        (setq buffer-file-name nil)
+        (set-buffer-modified-p t)
 
-      (setq git-walktree-current-commitish commitish)
-      (setq git-walktree-current-path path)
-      (setq git-walktree-object-id blob)
-      (let ((dir (expand-file-name (or (file-name-directory path)
-                                       ".")
-                                   git-walktree-repository-root)))
-        (when (and git-walktree-try-cd
-                   (file-directory-p dir))
-          (cd dir)))
+        (setq git-walktree-current-commitish commitish)
+        (setq git-walktree-current-path path)
+        (setq git-walktree-object-id blob)
+        (let ((dir (expand-file-name (or (file-name-directory path)
+                                         ".")
+                                     git-walktree-repository-root)))
+          (when (and git-walktree-try-cd
+                     (file-directory-p dir))
+            (cd dir)))
 
-      (view-mode 1)
-      )
+        (view-mode 1)
+        ))
     buf))
 
 ;; TODO: Store view history
@@ -2457,6 +2464,7 @@ Result will be inserted into current buffer."
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH
 without checking it."
+  (cl-assert commitish)
   (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           commitish)))
@@ -2485,7 +2493,8 @@ without checking it."
 
 (defun git-walktree--resolve-object (commitish path)
   "Return object id of COMMITISIH:PATH.
-If path is equal to \".\" return COMMITISH's tree object"
+If path is equal to \".\" return COMMITISH's tree object
+PATH will be always treated as relative to repository root."
   ;; TODO: use --full-tree
   (cl-assert commitish)
   (cl-assert path)
