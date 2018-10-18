@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-18 15:11:27 JST 10sr>
+;; Time-stamp: <2018-10-18 16:35:55 JST 10sr>
 
 ;;; Code:
 
@@ -2517,7 +2517,6 @@ COMMITISH:PATH without checking it."
   "Return object id of COMMITISIH:PATH.
 If path is equal to \".\" return COMMITISH's tree object
 PATH will be always treated as relative to repository root."
-  ;; TODO: use --full-tree
   (cl-assert commitish)
   (cl-assert path)
   (if (string= path ".")
@@ -2525,12 +2524,11 @@ PATH will be always treated as relative to repository root."
                                   "--no-patch"
                                   "--pretty=format:%T"
                                   commitish)
-    (with-temp-buffer
-      (cd (git-walktree--git-plumbing "rev-parse" "--show-toplevel"))
-      (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
-                                                                               commitish
-                                                                               path))))
-        (plist-get info :object)))))
+    (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
+                                                                             "--full-tree"
+                                                                             commitish
+                                                                             path))))
+      (plist-get info :object))))
 
 (defun git-walktree-open (commitish &optional path object)
   "Open git tree buffer of COMMITISH.
@@ -2598,6 +2596,9 @@ Returns first line of output without newline."
 (defconst git-walktree-ls-tree-line-tree-regexp
   "^\\([0-9]\\{6\\}\\) \\(tree\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
   "Regexp for tree line of output of git ls-tree.")
+(defconst git-walktree-ls-tree-line-commit-regexp
+  "^\\([0-9]\\{6\\}\\) \\(commit\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
+  "Regexp for commit line of output of git ls-tree.")
 (defun git-walktree--parse-lstree-line (str)
   "Extract object info from STR.
 
@@ -2715,11 +2716,15 @@ This function do nothing when current line is not ls-tree output."
   :group 'faces)
 
 (defface git-walktree-tree-face
+  ;; Same as dired-directory
   '((t (:inherit font-lock-function-name-face)))
   "Face used for tree objects."
   :group 'git-walktree-faces)
-(defvar git-walktree-tree-face 'git-walktree-tree-face
-  "Face used for tree objects.")
+(defface git-walktree-commit-face
+  ;; Same as dired-symlink face
+  '((t (:inherit font-lock-keyword-face)))
+  "Face used for commit objects."
+  :group 'git-walktree-faces)
 
 (defvar git-walktree-known-child-revisions (make-hash-table :test 'equal)
   "Hash of already known pair of commitid -> list of child commitid.")
@@ -2850,6 +2855,10 @@ If current path was not found in the parent revision try to go up path."
                                                (2 'git-walktree-tree-face)
                                                (4 'git-walktree-tree-face)
                                                ))
+    (,git-walktree-ls-tree-line-commit-regexp . (
+                                                 (2 'git-walktree-commit-face)
+                                                 (4 'git-walktree-commit-face)
+                                                 ))
     )
   "Syntax highlighting for git-walktree mode.")
 
