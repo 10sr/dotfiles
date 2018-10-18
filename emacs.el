@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-18 14:29:22 JST 10sr>
+;; Time-stamp: <2018-10-18 14:42:27 JST 10sr>
 
 ;;; Code:
 
@@ -2290,7 +2290,6 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (defun git-walktree--create-buffer (commitish name type)
   "Create and return buffer for COMMITISH:NAME.
 TYPE is target object type."
-  ;; TODO: Give buffer name as an argument
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (commitish-display (git-walktree--commitish-fordisplay commitish))
@@ -2456,6 +2455,18 @@ Result will be inserted into current buffer."
         (view-mode 1)
         ))
     buf))
+
+(defun git-walktree--open-noselect-until-found (commitish &optional path)
+  "Open git object of COMMITISH:PATH.
+If PATH not found in COMMITISH tree, go up directory and try again.
+When PATH is omitted or nil, it is calculated from current file or directory."
+  (cl-assert commitish)
+  (let ((type (git-walktree--git-plumbing "cat-file"
+                                          "-t"
+                                          commitish)))
+    (cl-assert (string= type "commit")))
+  ;; TODO: implement
+  nil)
 
 ;; TODO: Store view history
 ;; TODO: Open current file or directory if available
