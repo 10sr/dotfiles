@@ -1,7 +1,5 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-18 17:01:09 JST 10sr>
-
 ;;; Code:
 
 ;; SETUP_LOAD: (let ((file "DOTFILES_DIR/emacs.el"))
@@ -352,6 +350,7 @@ found, otherwise returns nil."
 
 (add-hook 'before-save-hook
           'time-stamp)
+;; Add Time-stamp: <> to insert timestamp there
 (set-variable 'time-stamp-format
               "%:y-%02m-%02d %02H:%02M:%02S %Z 10sr")
 
