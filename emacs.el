@@ -2377,11 +2377,12 @@ TYPE is target object type."
                                           "--abbrev"
 
                                           treeish)
-              (git-walktree--replace-into-buffer buf))))
-        ;; Overlays won't be copied with replace-buffer-contents so do this
-        ;; after copying contents
-        (ansi-color-apply-on-region (point-min)
-                                    (point-max))
+              (git-walktree--replace-into-buffer buf))
+            ;; Overlays won't be copied with replace-buffer-contents so do this
+            ;; after copying contents
+            (remove-overlays)
+            (ansi-color-apply-on-region (point-min)
+                                        (point-max))))
         (git-walktree-mode)
         (set-buffer-modified-p nil)
 
