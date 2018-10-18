@@ -2479,6 +2479,9 @@ When PATH is omitted or nil, it is calculated from current file or directory."
   (setq path
         (or path
             (git-walktree--path-in-repository path)))
+  ;; PATH must not start with and end with slashes
+  (cl-assert (not (string-match "\\`/" path)))
+  (cl-assert (not (string-match "/\\'" path)))
 
   (let ((obj nil))
     (while (not obj)
