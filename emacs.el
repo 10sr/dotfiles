@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-18 14:50:11 JST 10sr>
+;; Time-stamp: <2018-10-18 15:11:27 JST 10sr>
 
 ;;; Code:
 
@@ -394,6 +394,15 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'git-gutter)
   (custom-set-variables
    '(git-gutter:update-interval 2))
+  (custom-set-variables
+   '(git-gutter:unchanged-sign " "))
+  (when (= (display-color-cells)
+           256)
+    (let ((c "color-233"))
+      (set-face-background 'git-gutter:modified c)
+      (set-face-background 'git-gutter:added c)
+      (set-face-background 'git-gutter:deleted c)
+      (set-face-background 'git-gutter:unchanged c)))
   (global-git-gutter-mode 1)
   )
 
@@ -632,8 +641,8 @@ found, otherwise returns nil."
   (add-hook 'dired-mode-hook
             (lambda ()
               (set (make-local-variable 'whitespace-style) nil)))
-  (if (eq (display-color-cells)
-          256)
+  (if (= (display-color-cells)
+         256)
       (set-face-foreground 'whitespace-newline "color-109")
     ;; (progn
     ;;   (set-face-bold-p 'whitespace-newline
