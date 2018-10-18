@@ -2464,6 +2464,7 @@ Result will be inserted into current buffer."
         ))
     buf))
 
+;; TODO: Fix name
 (defun git-walktree--open-noselect-until-found (commitish &optional path)
   "Open git object of COMMITISH:PATH.
 If PATH not found in COMMITISH tree, go up directory and try again.
@@ -2473,8 +2474,20 @@ When PATH is omitted or nil, it is calculated from current file or directory."
                                           "-t"
                                           commitish)))
     (cl-assert (string= type "commit")))
-  ;; TODO: implement
-  nil)
+
+  (setq path
+        (or path
+            (git-walktree--path-in-repository path)))
+
+  (let ((obj nil))
+    (while (not obj)
+      (setq path
+            (git-walktree--parent-directory path))
+      (setq obj
+            (git-walktree--resolve-object commitish path)))
+    (git-walktree--open-noselect commitish
+                                 path
+                                 obj)))
 
 ;; TODO: Store view history
 ;; TODO: Open current file or directory if available
@@ -2540,13 +2553,15 @@ checking it."
   (switch-to-buffer (git-walktree--open-noselect commitish path object)))
 (defalias 'git-walktree 'git-walktree-open)
 
-(defun git-walktree--path-in-repository (dir)
-  "Convert DIR into relative path to repository root."
+(defun git-walktree--path-in-repository (path)
+  "Convert PATH into relative path to repository root."
   (with-temp-buffer
-    (cd dir)
+    (cd (if (file-directory-p path)
+            path
+          (file-name-directory path)))
     (let ((root (git-walktree--git-plumbing "rev-parse"
                                             "--show-toplevel")))
-      (file-relative-name dir root))))
+      (file-relative-name path root))))
 
 (defcustom git-walktree-git-executable "git"
   "Git executable."
