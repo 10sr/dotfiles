@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-18 16:35:55 JST 10sr>
+;; Time-stamp: <2018-10-18 16:53:25 JST 10sr>
 
 ;;; Code:
 
@@ -2327,13 +2327,16 @@ TYPE is target object type."
           (setq git-walktree-repository-root root)
           (current-buffer))))))
 
+;; TODO: Change func name
 (defun git-walktree--replace-into (target)
   "Replace TARGET buffer contents with that of current buffer."
   (let ((buf (current-buffer)))
     (with-current-buffer target
-      (replace-buffer-contents buf))))
+      (save-excursion
+        (erase-buffer)
+        (insert-buffer-substring buf)))))
 
-(require 'ansi-color)
+  (require 'ansi-color)
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
   (cl-assert path)
@@ -2363,7 +2366,8 @@ TYPE is target object type."
                                                      "-c"
                                                      "color.ui=always"
                                                      "show"
-                                                     "--no-patch"
+                                                     "--stat"
+                                                     ;; "--no-patch"
                                                      "--color=always"
                                                      "--pretty=short"
                                                      commitish)
