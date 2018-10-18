@@ -2326,7 +2326,6 @@ TYPE is target object type."
           (setq git-walktree-repository-root root)
           (current-buffer))))))
 
-;; TODO: Change func name
 (defun git-walktree--replace-into-buffer (target)
   "Replace TARGET buffer contents with that of current buffer."
   (let ((buf (current-buffer)))
@@ -2356,8 +2355,6 @@ TYPE is target object type."
           (let ((inhibit-read-only t))
             (with-temp-buffer
               (if commitish
-                  ;; TODO: branch info after commit sha1 (like (HEAD -> master))
-                  ;; not appear
                   (progn (git-walktree--call-process nil
                                                      "show"
                                                      ;; TODO: Make this args configurable
