@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-18 16:53:25 JST 10sr>
+;; Time-stamp: <2018-10-18 17:01:09 JST 10sr>
 
 ;;; Code:
 
@@ -1692,8 +1692,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-                                   (compilation-start command-args
-                                                      'grep-mode))
+        (compilation-start command-args
+                           'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -1711,8 +1711,8 @@ and search from projectile root (if projectile is available)."
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-                                     (compilation-start command-args
-                                                        'grep-mode))
+          (compilation-start command-args
+                             'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
@@ -2336,7 +2336,7 @@ TYPE is target object type."
         (erase-buffer)
         (insert-buffer-substring buf)))))
 
-  (require 'ansi-color)
+(require 'ansi-color)
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of TREEISH."
   (cl-assert path)
@@ -2386,6 +2386,7 @@ TYPE is target object type."
                                           "--abbrev"
 
                                           treeish)
+              ;; TODO: Somehow text properties are stripped here
               (git-walktree--replace-into buf))))
         (git-walktree-mode)
         (set-buffer-modified-p nil)
