@@ -2327,7 +2327,7 @@ TYPE is target object type."
           (current-buffer))))))
 
 ;; TODO: Change func name
-(defun git-walktree--replace-into (target)
+(defun git-walktree--replace-into-buffer (target)
   "Replace TARGET buffer contents with that of current buffer."
   (let ((buf (current-buffer)))
     (with-current-buffer target
@@ -2386,7 +2386,7 @@ TYPE is target object type."
 
                                           treeish)
               ;; TODO: Somehow text properties are stripped here
-              (git-walktree--replace-into buf))))
+              (git-walktree--replace-into-buffer buf))))
         (git-walktree-mode)
         (set-buffer-modified-p nil)
 
@@ -2440,7 +2440,7 @@ Result will be inserted into current buffer."
                                         "cat-file"
                                         "-p"
                                         blob)
-            (git-walktree--replace-into buf)))
+            (git-walktree--replace-into-buffer buf)))
         (setq git-walktree-buffer-file-name
               (concat (git-walktree--git-plumbing "rev-parse"
                                                   "--show-toplevel")
