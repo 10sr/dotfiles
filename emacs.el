@@ -1,6 +1,6 @@
 ;;; emacs.el --- 10sr emacs initialization
 
-;; Time-stamp: <2018-10-18 14:42:27 JST 10sr>
+;; Time-stamp: <2018-10-18 14:50:11 JST 10sr>
 
 ;;; Code:
 
@@ -2473,8 +2473,8 @@ When PATH is omitted or nil, it is calculated from current file or directory."
 (defun git-walktree--open-noselect (commitish path object)
   "Open git tree buffer of COMMITISH.
 When PATH was given and non-nil open that, otherwise open root tree.
-When OBJECT was given and non-nil, assume that is the object of COMMITISH:PATH
-without checking it."
+When OBJECT was given and non-nil, assume that is the full sha1 object id of
+COMMITISH:PATH without checking it."
   (cl-assert commitish)
   (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
@@ -2489,6 +2489,8 @@ without checking it."
 
   (setq object (or object
                    (git-walktree--resolve-object commitish path)))
+  (setq object (git-walktree--git-plumbing "rev-parse"
+                                           object))
   (cl-assert object)
 
   (let ((type (git-walktree--git-plumbing "cat-file"
