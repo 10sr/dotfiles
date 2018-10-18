@@ -2331,9 +2331,7 @@ TYPE is target object type."
   "Replace TARGET buffer contents with that of current buffer."
   (let ((buf (current-buffer)))
     (with-current-buffer target
-      (save-excursion
-        (erase-buffer)
-        (insert-buffer-substring buf)))))
+      (replace-buffer-contents buf))))
 
 (require 'ansi-color)
 (defun git-walktree--open-treeish (commitish path treeish)
@@ -2358,20 +2356,15 @@ TYPE is target object type."
           (let ((inhibit-read-only t))
             (with-temp-buffer
               (if commitish
-                  ;; TODO: Somehow color will be diasbled
                   ;; TODO: branch info after commit sha1 (like (HEAD -> master))
                   ;; not appear
                   (progn (git-walktree--call-process nil
-                                                     "-c"
-                                                     "color.ui=always"
                                                      "show"
                                                      "--stat"
                                                      ;; "--no-patch"
                                                      "--color=always"
                                                      "--pretty=short"
                                                      commitish)
-                         (ansi-color-apply-on-region (point-min)
-                                                     (point))
                          (insert "\n")
                          (insert (format "Contents of '%s:%s':\n"
                                          (git-walktree--commitish-fordisplay commitish)
@@ -2387,6 +2380,10 @@ TYPE is target object type."
                                           treeish)
               ;; TODO: Somehow text properties are stripped here
               (git-walktree--replace-into-buffer buf))))
+        ;; Overlays won't be copied with replace-buffer-contents so do this
+        ;; after copying contents
+        (ansi-color-apply-on-region (point-min)
+                                    (point-max))
         (git-walktree-mode)
         (set-buffer-modified-p nil)
 
