@@ -2765,6 +2765,7 @@ PARENT should be a full SHA-1 object name."
                      current)
                git-walktree-known-child-revisions))))
 
+;; TODO: Add aggressive search mode
 (defun git-walktree--get-children (parent)
   "Get known children list of PARENT commit.
 PARENT should be a full SHA-1 object name."
