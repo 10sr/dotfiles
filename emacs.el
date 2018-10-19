@@ -2258,6 +2258,12 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; git walktree
 
+;; TODO: Fix variable names
+;; commit-sha1 for commit sha1 (allow abbreviated)
+;; commit-full-sha1 for commit sha1 in 40 chars
+;; object-full-sha1 for object sha1 in 40 chars
+;; Do not use something like "-id" in name
+
 (defgroup git-walktree nil
   "Git Walktree."
   :tag "GitWalktree"
@@ -2478,7 +2484,8 @@ When PATH is omitted or nil, it is calculated from current file or directory."
 
   (setq path
         (or path
-            (git-walktree--path-in-repository path)))
+            (git-walktree--path-in-repository (or buffer-file-name
+                                                  default-directory))))
   ;; PATH must not start with and end with slashes
   (cl-assert (not (string-match "\\`/" path)))
   (cl-assert (not (string-match "/\\'" path)))
@@ -2763,13 +2770,13 @@ PARENT should be a full SHA-1 object name."
 PARENT should be a full SHA-1 object name."
   (gethash parent git-walktree-known-child-revisions))
 
+;; TODO: Fix name
 (defun git-walktree--completing-read-commitish (prompt-format collection)
   "Emit PROMPT-FORMAT and ask user to which commitish of COLLECTION to use.
 When collection has just one element, return without asking."
   (cl-assert collection)
   (if (< (length collection) 2)
       (car collection)
-    ;; TODO: empty to use car collection
     (completing-read (format prompt-format
                              (mapconcat 'git-walktree--commitish-fordisplay
                                         collection
@@ -2778,6 +2785,7 @@ When collection has just one element, return without asking."
                      nil
                      t)))
 
+;; TODO: Fix to work on subdirectory
 (defun git-walktree-parent-revision ()
   "Open parent revision of current path.
 If current path was not found in the parent revision try to go up path."
@@ -2805,12 +2813,6 @@ If current path was not found in the parent revision try to go up path."
         (git-walktree--put-child parent
                                  commitid)))))
 
-;; TODO: this name is good?
-;; What is revision?
-;; What is sha1?
-;; What is object id?
-;; commit id?
-;; commit sha1?
 (defun git-walktree--parent-commitid (commitish)
   "Return list of parent commits of COMMITISH in sha1 string."
   (let ((type (git-walktree--git-plumbing "cat-file"
