@@ -307,6 +307,8 @@ endif
 	$(git_conf) alias.b "branch"
 	$(git_conf) alias.sb "show-branch"
 	$(git_conf) alias.ci "commit --verbose"
+	# TODO: Try rebase --interactive --autosquash
+	$(git_conf) alias.cf "commit --verbose --fixup=HEAD -m WIP"
 	$(git_conf) alias.co "checkout"
 	$(git_conf) alias.cim "commit --verbose -m"
 	$(git_conf) alias.di "diff --color"
@@ -332,6 +334,7 @@ endif
 
 	$(git_conf) alias.setcmd '! f(){ git config alias.$$1 "! $$2"; }; f'
 	$(git_conf) alias.make '!make'
+	$(git_conf) alias.e '!env'  # Run command in repository root
 
 	#$(git_conf) alias.wc "!git ls-files -z | xargs -0 wc"
 	# $(git_conf) push.default "simple"
