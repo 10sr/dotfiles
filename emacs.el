@@ -1689,8 +1689,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-        (compilation-start command-args
-                           'grep-mode))
+                                   (compilation-start command-args
+                                                      'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -1708,8 +1708,8 @@ and search from projectile root (if projectile is available)."
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-          (compilation-start command-args
-                             'grep-mode))
+                                     (compilation-start command-args
+                                                        'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
@@ -2581,7 +2581,7 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 
 (defun git-walktree--path-in-repository (path)
   "Convert PATH into relative path to repository root.
-Result will not have leading and trailing slashes."
+  Result will not have leading and trailing slashes."
   (with-temp-buffer
     (cd (if (file-directory-p path)
             path
@@ -2598,7 +2598,7 @@ Result will not have leading and trailing slashes."
 
 (defcustom git-walktree-try-cd t
   "Try to cd if directory exists in current working directory if non-nil.
-Otherwise use repository root for gitwalktree buffer's `default-directory'."
+  Otherwise use repository root for gitwalktree buffer's `default-directory'."
   :type 'boolean
   :group 'git-walktree)
 
@@ -2612,7 +2612,7 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 
 (defun git-walktree--git-plumbing (&rest args)
   "Run git plubming command with ARGS.
-Returns first line of output without newline."
+  Returns first line of output without newline."
   (with-temp-buffer
     (let ((status (apply 'call-process
                          git-walktree-git-executable
@@ -2643,11 +2643,11 @@ Returns first line of output without newline."
 (defun git-walktree--parse-lstree-line (str)
   "Extract object info from STR.
 
-STR should be a string like following without newline.:
+  STR should be a string like following without newline.:
 
-100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966	.editorconfig
+  100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966	.editorconfig
 
-Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
+  Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
   (let (result mode type object file)
     (save-match-data
       (with-temp-buffer
@@ -2689,7 +2689,7 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
 
 (defun git-walktree--join-path (name &optional base)
   "Make path from NAME and BASE.
-If base is omitted or nil use value of `git-walktree-current-path'."
+  If base is omitted or nil use value of `git-walktree-current-path'."
   (setq base (or base
                  git-walktree-current-path))
   (cl-assert base)
@@ -2699,8 +2699,8 @@ If base is omitted or nil use value of `git-walktree-current-path'."
 
 (defun git-walktree--parent-directory (path)
   "Return parent directory of PATH without trailing slash.
-For root directory return \".\".
-If PATH is equal to \".\", return nil."
+  For root directory return \".\".
+  If PATH is equal to \".\", return nil."
   (if (string-match-p "/" path)
       (directory-file-name (file-name-directory path))
     (if (string= "." path)
@@ -2709,7 +2709,7 @@ If PATH is equal to \".\", return nil."
 
 (defun git-walktree-up (&optional committish path)
   "Open parent directory of COMMITTISH and PATH.
-If not given, value of current buffer will be used."
+  If not given, value of current buffer will be used."
   (interactive)
   (setq committish
         (or committish git-walktree-current-committish))
@@ -2725,7 +2725,7 @@ If not given, value of current buffer will be used."
 (defun git-walktree-mode--move-to-file ()
   "Move point to file field of ls-tree output in current line.
 
-This function do nothing when current line is not ls-tree output."
+  This function do nothing when current line is not ls-tree output."
   (interactive)
   (save-match-data
     (when (save-excursion
@@ -2768,11 +2768,11 @@ This function do nothing when current line is not ls-tree output."
 
 (defvar git-walktree-known-child-revisions (make-hash-table :test 'equal)
   "Hash of already known pair of commitid -> list of child commitid.
-Both values should be object full sha1 names.")
+  Both values should be object full sha1 names.")
 
 (defun git-walktree--put-child (parent child)
   "Register PARENT and CHILD relationship.
-PARENT should be a full sha1 object name."
+  PARENT should be a full sha1 object name."
   ;; Any way to check if PARENT is a full SHA-1 object name?
   (let ((current (gethash parent git-walktree-known-child-revisions)))
     (unless (member child current)
@@ -2786,12 +2786,12 @@ PARENT should be a full sha1 object name."
 ;; git log --reverse --pretty=format:%H -n 1 --ancestry-path <PARENT>..HEAD
 (defun git-walktree--get-children (parent)
   "Get known children list of PARENT commit.
-PARENT should be a full sha1 object name."
+  PARENT should be a full sha1 object name."
   (gethash parent git-walktree-known-child-revisions))
 
 (defun git-walktree--choose-committish (prompt-format collection)
   "Emit PROMPT-FORMAT and ask user to which committish of COLLECTION to use.
-When collection has just one element, return the first element without asking."
+  When collection has just one element, return the first element without asking."
   (cl-assert collection)
   (if (< (length collection) 2)
       (car collection)
@@ -2805,7 +2805,7 @@ When collection has just one element, return the first element without asking."
 
 (defun git-walktree-parent-revision ()
   "Open parent revision of current path.
-If current path was not found in the parent revision try to go up path."
+  If current path was not found in the parent revision try to go up path."
   (interactive)
   (cl-assert git-walktree-current-committish)
   (let* ((commit-full-sha1 (git-walktree--git-plumbing "rev-parse"
