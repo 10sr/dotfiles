@@ -2275,7 +2275,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (make-variable-buffer-local 'git-walktree-current-committish)
 
 (defvar git-walktree-current-path nil
-  "Path name currently visiting without leading slash.
+  "Path name currently visiting without leading and trailing slash.
 This path is always relative to repository root.")
 (make-variable-buffer-local 'git-walktree-current-path)
 
@@ -2283,6 +2283,7 @@ This path is always relative to repository root.")
   "Psudo filename of current buffer.")
 (make-variable-buffer-local 'git-walktree-buffer-file-name)
 
+;; TODO: -> object-full-sha1
 (defvar git-walktree-object-id nil
   "Object id of current buffer.")
 (make-variable-buffer-local 'git-walktree-object-id)
