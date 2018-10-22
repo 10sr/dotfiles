@@ -2366,8 +2366,12 @@ It also copy text overlays."
     (cl-assert (member type
                        '("commit" "tree")))
     (with-current-buffer buf
-      (unless (string= treeish
-                       git-walktree-object-id)
+      (unless (and (string= treeish
+                            git-walktree-object-id)
+                   (or (string= committish
+                                git-walktree-current-committish)
+                       (eq committish
+                           git-walktree-current-committish)))
         (buffer-disable-undo)
         ;; For running git command go back to repository root
         (cd git-walktree-repository-root)
@@ -2480,7 +2484,6 @@ Result will be inserted into current buffer."
         ))
     buf))
 
-;; TODO: Fix name
 (defun git-walktree--open-noselect-safe-path (committish &optional path)
   "Open git object of COMMITTISH:PATH.
 If PATH not found in COMMITTISH tree, go up path and try again until found.
@@ -2499,7 +2502,7 @@ When PATH is omitted or nil, it is calculated from current file or directory."
   (cl-assert (not (string-match "\\`/" path)))
   (cl-assert (not (string-match "/\\'" path)))
 
-  (let ((obj nil))
+  (let ((obj (git-walktree--resolve-object committish path)))
     (while (not obj)
       (setq path
             (git-walktree--parent-directory path))
@@ -2510,7 +2513,6 @@ When PATH is omitted or nil, it is calculated from current file or directory."
                                  obj)))
 
 ;; TODO: Store view history
-;; TODO: Open current file or directory if available
 (defun git-walktree--open-noselect (committish path object)
   "Open git tree buffer of COMMITTISH.
 When PATH was given and non-nil open that, otherwise open root tree.
@@ -2568,8 +2570,6 @@ When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object of COMMITTISH:PATH without
 checking it."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
-  ;; (setq path (or path
-  ;;                (git-walktree--path-in-repository (directory-file-name default-directory))))
   (switch-to-buffer (git-walktree--open-noselect committish path object)))
 (defalias 'git-walktree 'git-walktree-open)
 
@@ -2659,7 +2659,6 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
   (interactive)
   (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
                                                                                (point-at-eol)))))
-    ;; TODO: Open committish when currently on committish like symbol
     (if info
         (switch-to-buffer
          (if (string= (plist-get info
@@ -2796,7 +2795,6 @@ When collection has just one element, return the first element without asking."
                      nil
                      t)))
 
-;; TODO: Fix to work on subdirectory
 (defun git-walktree-parent-revision ()
   "Open parent revision of current path.
 If current path was not found in the parent revision try to go up path."
@@ -2813,18 +2811,10 @@ If current path was not found in the parent revision try to go up path."
         (message "This revision has no parent revision")
       (let* ((parent (git-walktree--choose-committish "This revision has multiple parents. Which to open? (%s) "
                                                       parents))
-             (path git-walktree-current-path)
-             (obj (git-walktree--resolve-object parent path)))
+             (path git-walktree-current-path))
         (cl-assert path)
-        (while (not obj)
-          (setq path
-                (git-walktree--parent-directory path))
-          (setq obj
-                (git-walktree--resolve-object parent path)))
-        (switch-to-buffer (git-walktree--open-noselect parent
-                                                       path
-                                                       obj))
-        ))))
+        (switch-to-buffer (git-walktree--open-noselect-safe-path parent
+                                                                 path))))))
 
 (defun git-walktree--parent-commitid (committish)
   "Return list of parent commits of COMMITTISH in sha1 string."
@@ -2851,17 +2841,10 @@ If current path was not found in the parent revision try to go up path."
         (message "There are no known child revision")
       (let* ((child (git-walktree--choose-committish "There are multiple known childrens. Which to open? (%s)"
                                                      children))
-             (path git-walktree-current-path)
-             (obj (git-walktree--resolve-object child path)))
+             (path git-walktree-current-path))
         (cl-assert path)
-        (while (not obj)
-          (setq path
-                (git-walktree--parent-directory path))
-          (setq obj
-                (git-walktree--resolve-object child path)))
-        (switch-to-buffer (git-walktree--open-noselect child
-                                                       path
-                                                       obj))))))
+        (switch-to-buffer (git-walktree--open-noselect-safe-path child
+                                                                 path))))))
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
