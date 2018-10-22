@@ -116,7 +116,7 @@ found, otherwise returns nil."
        pipenv
        imenu-list
        page-break-lines
-       sync-recentf
+       ;; sync-recentf
        aggressive-indent
        fancy-narrow
        dired-filter
@@ -2721,6 +2721,7 @@ If not given, value of current buffer will be used."
                                                        nil))
       (message "Cannot find parent directory for current tree."))))
 
+;; TODO: -> -move-to
 (defun git-walktree-mode--goto-file ()
   "Move point to file field of ls-tree output in current line.
 
