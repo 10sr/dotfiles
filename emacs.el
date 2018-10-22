@@ -2779,6 +2779,8 @@ PARENT should be a full SHA-1 object name."
   "Get known children list of PARENT commit.
 PARENT should be a full SHA-1 object name."
   (gethash parent git-walktree-known-child-revisions))
+;; https://stackoverflow.com/a/9870218
+;; git log --reverse --pretty=format:%H -n 1 --ancestry-path <PARENT>..HEAD
 
 (defun git-walktree--choose-committish (prompt-format collection)
   "Emit PROMPT-FORMAT and ask user to which committish of COLLECTION to use.
