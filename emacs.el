@@ -383,8 +383,6 @@ found, otherwise returns nil."
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
-(define-key ctl-x-map (kbd "C-o") 'occur)
-
 (require 'page-ext nil t)
 
 (when (safe-require-or-eval 'page-break-lines)
@@ -1739,6 +1737,13 @@ and search from projectile root (if projectile is available)."
 
 (define-key ctl-x-map "s" 'my-rgrep)
 (define-key ctl-x-map "." 'my-rgrep-thing-at-point-projectile-root)
+
+(defun my-occur (regexp &optional region)
+  "My occur command to search REGEXP."
+  (interactive (list (read-string "List lines matching regexp: "
+                                  (thing-at-point 'symbol t))))
+  (occur regexp nil region))
+(define-key ctl-x-map (kbd "C-o") 'my-occur)
 
 (set-variable 'dumb-jump-prefer-searcher 'rg)
 
