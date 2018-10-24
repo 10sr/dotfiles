@@ -2289,9 +2289,9 @@ This path is always relative to repository root.")
 (make-variable-buffer-local 'git-walktree-buffer-file-name)
 
 ;; TODO: -> object-full-sha1
-(defvar git-walktree-object-id nil
+(defvar git-walktree-object-full-sha1 nil
   "Object id of current buffer.")
-(make-variable-buffer-local 'git-walktree-object-id)
+(make-variable-buffer-local 'git-walktree-object-full-sha1)
 
 (defvar git-walktree-repository-root nil
   "Repository root path of current buffer.")
@@ -2373,7 +2373,7 @@ It also copy text overlays."
                        '("commit" "tree")))
     (with-current-buffer buf
       (unless (and (string= treeish
-                            git-walktree-object-id)
+                            git-walktree-object-full-sha1)
                    (or (string= committish
                                 git-walktree-current-committish)
                        (eq committish
@@ -2418,7 +2418,7 @@ It also copy text overlays."
 
         (setq git-walktree-current-committish committish)
         (setq git-walktree-current-path path)
-        (setq git-walktree-object-id treeish)
+        (setq git-walktree-object-full-sha1 treeish)
         (let ((dir (expand-file-name path git-walktree-repository-root)))
           (when (and git-walktree-try-cd
                      (file-directory-p dir))
@@ -2457,7 +2457,7 @@ Result will be inserted into current buffer."
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
       (unless (string= blob
-                       git-walktree-object-id)
+                       git-walktree-object-full-sha1)
         ;; For running git command go back to repository root
         (cd git-walktree-repository-root)
         (let ((inhibit-read-only t))
@@ -2478,7 +2478,7 @@ Result will be inserted into current buffer."
 
         (setq git-walktree-current-committish committish)
         (setq git-walktree-current-path path)
-        (setq git-walktree-object-id blob)
+        (setq git-walktree-object-full-sha1 blob)
         (let ((dir (expand-file-name (or (file-name-directory path)
                                          ".")
                                      git-walktree-repository-root)))
