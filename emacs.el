@@ -2006,11 +2006,11 @@ Return that buffer."
   :lighter ""
   (if editorconfig-auto-apply-mode
       (add-hook 'after-save-hook
-                'editorconfig-auto-apply-mode--when-save)
+                'editorconfig-auto-apply-mode--run)
     (remove-hook 'after-save-hook
-                 'editorconfig-auto-apply-mode--when-save)))
+                 'editorconfig-auto-apply-mode--run)))
 
-(defun editorconfig-auto-apply-mode--when-save ()
+(defun editorconfig-auto-apply-mode--run ()
   "When saving .editorconfig file walk all buffers and update configs."
   (when (eq major-mode
             'editorconfig-conf-mode)
