@@ -2263,12 +2263,6 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; git walktree
 
-;; TODO: Fix variable names
-;; commit-sha1 for commit sha1 (allow abbreviated)
-;; commit-full-sha1 for commit sha1 in 40 chars
-;; object-full-sha1 for object sha1 in 40 chars
-;; Do not use something like "-id" in name
-
 (defgroup git-walktree nil
   "Git Walktree."
   :tag "GitWalktree"
@@ -2288,9 +2282,8 @@ This path is always relative to repository root.")
   "Psudo filename of current buffer.")
 (make-variable-buffer-local 'git-walktree-buffer-file-name)
 
-;; TODO: -> object-full-sha1
 (defvar git-walktree-object-full-sha1 nil
-  "Object id of current buffer.")
+  "Object name in full sha1 format of current buffer.")
 (make-variable-buffer-local 'git-walktree-object-full-sha1)
 
 (defvar git-walktree-repository-root nil
@@ -2325,7 +2318,7 @@ TYPE is target object type."
              (string= type "tree"))
         (with-current-buffer (or git-walktree-tree-buffer-for-reuse
                                  (setq git-walktree-tree-buffer-for-reuse
-                                       (get-buffer-create "*gitwalktree*")))
+                                       (generate-new-buffer "gitwalktreebuf")))
           (setq git-walktree-repository-root root)
           (rename-buffer name t)
           (current-buffer))
@@ -2349,6 +2342,7 @@ It also copy text overlays."
     (with-current-buffer target
       (replace-buffer-contents src)))
 
+  ;; Copy color overlays
   (let ((overlays (overlays-in (point-min) (point-max))))
     (dolist (o overlays)
       (let ((beg (overlay-start o))
@@ -2360,7 +2354,9 @@ It also copy text overlays."
 
 (require 'ansi-color)
 (defun git-walktree--open-treeish (committish path treeish)
-  "Open git tree buffer of TREEISH."
+  "Open git tree buffer of COMMITISH:PATH.
+
+TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
   (cl-assert path)
   (cl-assert treeish)
   (let* (point-tree-start
@@ -2374,10 +2370,10 @@ It also copy text overlays."
     (with-current-buffer buf
       (unless (and (string= treeish
                             git-walktree-object-full-sha1)
-                   (or (string= committish
-                                git-walktree-current-committish)
-                       (eq committish
-                           git-walktree-current-committish)))
+                   (or (eq committish
+                           git-walktree-current-committish)
+                       (string= committish
+                                git-walktree-current-committish)))
         (buffer-disable-undo)
         ;; For running git command go back to repository root
         (cd git-walktree-repository-root)
@@ -2425,7 +2421,7 @@ It also copy text overlays."
             (cd dir)))
         (when (= (point) (point-min))
           (goto-char point-tree-start)
-          (git-walktree-mode--goto-file)
+          (git-walktree-mode--move-to-file)
           )
         ))
     buf))
@@ -2446,7 +2442,8 @@ Result will be inserted into current buffer."
              args))))
 ?w
 (defun git-walktree--open-blob (committish path blob)
-  "Open BLOB object."
+  "Open blob object of COMMITISH:PATH.
+BLOB should be a object full sha1 of COMMITISH:PATH."
   (cl-assert committish)
   (cl-assert path)
   (cl-assert blob)
@@ -2505,8 +2502,8 @@ When PATH is omitted or nil, it is calculated from current file or directory."
             (git-walktree--path-in-repository (or buffer-file-name
                                                   default-directory))))
   ;; PATH must not start with and end with slashes
-  (cl-assert (not (string-match "\\`/" path)))
-  (cl-assert (not (string-match "/\\'" path)))
+  (cl-assert (not (string-match-p "\\`/" path)))
+  (cl-assert (not (string-match-p "/\\'" path)))
 
   (let ((obj (git-walktree--resolve-object committish path)))
     (while (not obj)
@@ -2520,9 +2517,9 @@ When PATH is omitted or nil, it is calculated from current file or directory."
 
 ;; TODO: Store view history
 (defun git-walktree--open-noselect (committish path object)
-  "Open git tree buffer of COMMITTISH.
+  "Open buffer to view git object of COMMITTISH:PATH.
 When PATH was given and non-nil open that, otherwise open root tree.
-When OBJECT was given and non-nil, assume that is the full sha1 object id of
+When OBJECT was given and non-nil, assume that is the object full sha1  of
 COMMITTISH:PATH without checking it."
   (cl-assert committish)
   (let ((type (git-walktree--git-plumbing "cat-file"
@@ -2533,8 +2530,8 @@ COMMITTISH:PATH without checking it."
   (setq path (or path
                  "."))
   ;; PATH must not start with and end with slashes
-  (cl-assert (not (string-match "\\`/" path)))
-  (cl-assert (not (string-match "/\\'" path)))
+  (cl-assert (not (string-match-p "\\`/" path)))
+  (cl-assert (not (string-match-p "/\\'" path)))
 
   (setq object (or object
                    (git-walktree--resolve-object committish path)))
@@ -2554,11 +2551,13 @@ COMMITTISH:PATH without checking it."
        (error "Type cannot handle: %s" type)))))
 
 (defun git-walktree--resolve-object (committish path)
-  "Return object id of COMMITISIH:PATH.
-If path is equal to \".\" return COMMITTISH's tree object
+  "Return object full sha1 name of COMMITISIH:PATH.
+If path is equal to \".\" return COMMITTISH's root tree object.
 PATH will be always treated as relative to repository root."
   (cl-assert committish)
   (cl-assert path)
+  (cl-assert (not (string-match-p "\\`/" path)))
+  (cl-assert (not (string-match-p "/\\'" path)))
   (if (string= path ".")
       (git-walktree--git-plumbing "show"
                                   "--no-patch"
@@ -2570,13 +2569,12 @@ PATH will be always treated as relative to repository root."
                                                                              path))))
       (plist-get info :object))))
 
-(defun git-walktree-open (committish &optional path object)
+(defun git-walktree-open (committish &optional path)
   "Open git tree buffer of COMMITTISH.
-When PATH was given and non-nil open that, otherwise open root tree.
-When OBJECT was given and non-nil, assume that is the object of COMMITTISH:PATH without
-checking it."
+When PATH was given and non-nil open that, otherwise try to open current path.
+If target path is not found in COMMITISH tree, go up path and try again until found."
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
-  (switch-to-buffer (git-walktree--open-noselect committish path object)))
+  (switch-to-buffer (git-walktree--open-noselect-safe-path committish path)))
 (defalias 'git-walktree 'git-walktree-open)
 
 (defun git-walktree--path-in-repository (path)
@@ -2596,7 +2594,7 @@ checking it."
 
 (defcustom git-walktree-try-cd t
   "Try to cd if directory exists in current working directory if non-nil.
-Otherwise buffer's `default-directory' is always repository root."
+Otherwise use repository root for gitwalktree buffer's `default-directory'."
   :type 'boolean
   :group 'git-walktree)
 
@@ -2605,10 +2603,8 @@ Otherwise buffer's `default-directory' is always repository root."
   :type 'boolean
   :group 'git-walktree)
 
-(defcustom git-walktree-tree-buffer-for-reuse nil
-  "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil."
-  :type 'string
-  :group 'git-walktree)
+(defvar git-walktree-tree-buffer-for-reuse nil
+  "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil.")
 
 (defun git-walktree--git-plumbing (&rest args)
   "Run git plubming command with ARGS.
@@ -2630,6 +2626,7 @@ Returns first line of output without newline."
                                       (progn
                                         (goto-char (point-min))
                                         (point-at-eol))))))
+
 (defconst git-walktree-ls-tree-line-regexp
   "^\\([0-9]\\{6\\}\\) \\(\\w+\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
   "Regexp for one line of output of git ls-tree.")
@@ -2661,7 +2658,7 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
                    :file (match-string 4)))))))
 
 (defun git-walktree-mode-open-this ()
-  "Open current object."
+  "Open git object of current line."
   (interactive)
   (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
                                                                                (point-at-eol)))))
@@ -2721,8 +2718,7 @@ If not given, value of current buffer will be used."
                                                        nil))
       (message "Cannot find parent directory for current tree."))))
 
-;; TODO: -> -move-to
-(defun git-walktree-mode--goto-file ()
+(defun git-walktree-mode--move-to-file ()
   "Move point to file field of ls-tree output in current line.
 
 This function do nothing when current line is not ls-tree output."
@@ -2739,7 +2735,7 @@ This function do nothing when current line is not ls-tree output."
   (interactive "^p\np")
   (or arg (setq arg 1))
   (line-move arg nil nil try-vscroll)
-  (git-walktree-mode--goto-file)
+  (git-walktree-mode--move-to-file)
   )
 
 (defun git-walktree-mode-previous-line (&optional arg try-vscroll)
@@ -2747,7 +2743,7 @@ This function do nothing when current line is not ls-tree output."
   (interactive "^p\np")
   (or arg (setq arg 1))
   (line-move (- arg) nil nil try-vscroll)
-  (git-walktree-mode--goto-file)
+  (git-walktree-mode--move-to-file)
   )
 
 (defgroup git-walktree-faces nil
@@ -2767,11 +2763,12 @@ This function do nothing when current line is not ls-tree output."
   :group 'git-walktree-faces)
 
 (defvar git-walktree-known-child-revisions (make-hash-table :test 'equal)
-  "Hash of already known pair of commitid -> list of child commitid.")
+  "Hash of already known pair of commitid -> list of child commitid.
+Both values should be object full sha1 names.")
 
 (defun git-walktree--put-child (parent child)
   "Register PARENT and CHILD relationship.
-PARENT should be a full SHA-1 object name."
+PARENT should be a full sha1 object name."
   ;; Any way to check if PARENT is a full SHA-1 object name?
   (let ((current (gethash parent git-walktree-known-child-revisions)))
     (unless (member child current)
@@ -2781,12 +2778,12 @@ PARENT should be a full SHA-1 object name."
                git-walktree-known-child-revisions))))
 
 ;; TODO: Add aggressive search mode
-(defun git-walktree--get-children (parent)
-  "Get known children list of PARENT commit.
-PARENT should be a full SHA-1 object name."
-  (gethash parent git-walktree-known-child-revisions))
 ;; https://stackoverflow.com/a/9870218
 ;; git log --reverse --pretty=format:%H -n 1 --ancestry-path <PARENT>..HEAD
+(defun git-walktree--get-children (parent)
+  "Get known children list of PARENT commit.
+PARENT should be a full sha1 object name."
+  (gethash parent git-walktree-known-child-revisions))
 
 (defun git-walktree--choose-committish (prompt-format collection)
   "Emit PROMPT-FORMAT and ask user to which committish of COLLECTION to use.
@@ -2807,12 +2804,12 @@ When collection has just one element, return the first element without asking."
 If current path was not found in the parent revision try to go up path."
   (interactive)
   (cl-assert git-walktree-current-committish)
-  (let* ((commitid (git-walktree--git-plumbing "rev-parse"
-                                               git-walktree-current-committish))
-         (parents (git-walktree--parent-commitid commitid)))
+  (let* ((commit-full-sha1 (git-walktree--git-plumbing "rev-parse"
+                                                       git-walktree-current-committish))
+         (parents (git-walktree--parent-full-sha1 commit-full-sha1)))
     (dolist (parent parents)
       (git-walktree--put-child parent
-                               commitid))
+                               commit-full-sha1))
     (if (< (length parents)
            1)
         (message "This revision has no parent revision")
@@ -2823,7 +2820,7 @@ If current path was not found in the parent revision try to go up path."
         (switch-to-buffer (git-walktree--open-noselect-safe-path parent
                                                                  path))))))
 
-(defun git-walktree--parent-commitid (committish)
+(defun git-walktree--parent-full-sha1 (committish)
   "Return list of parent commits of COMMITTISH in sha1 string."
   (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
@@ -2834,15 +2831,13 @@ If current path was not found in the parent revision try to go up path."
                                              "--pretty=format:%P"
                                              committish)))
     (split-string parents)))
-;; (git-walktree--parent-sha1 "HEAD")
-;; (git-walktree--parent-sha1 "ae4b80f")
 
 (defun git-walktree-known-child-revision ()
   "Open known revision of current path."
   (interactive)
-  (let* ((commitid (git-walktree--git-plumbing "rev-parse"
-                                               git-walktree-current-committish))
-         (children (git-walktree--get-children commitid)))
+  (let* ((commit-full-sha1 (git-walktree--git-plumbing "rev-parse"
+                                                       git-walktree-current-committish))
+         (children (git-walktree--get-children commit-full-sha1)))
     (if (< (length children)
            1)
         (message "There are no known child revision")
