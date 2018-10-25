@@ -2578,15 +2578,18 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 (defalias 'git-walktree 'git-walktree-open)
 
 (defun git-walktree--path-in-repository (path)
-  "Convert PATH into relative path to repository root."
+  "Convert PATH into relative path to repository root.
+Result will not have leading and trailing slashes."
   (with-temp-buffer
     (cd (if (file-directory-p path)
             path
           (file-name-directory path)))
     (let ((root (git-walktree--git-plumbing "rev-parse"
                                             "--show-toplevel")))
-      (file-relative-name path root))))
+      (file-relative-name (directory-file-name path)
+                          root))))
 
+(file-relative-name "/ab/cd/" "/ab/cd")
 (defcustom git-walktree-git-executable "git"
   "Git executable."
   :type 'string
