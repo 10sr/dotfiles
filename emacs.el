@@ -1974,11 +1974,13 @@ Return that buffer."
 
 (defun awk-preview-commit ()
   "Exit awk-preview and update buffer."
-  (interactive))
+  (interactive)
+  (awk-preview--cleanup))
 
 (defun awk-preview-abort ()
   "Discard result and exit awk-preview."
-  (interactive))
+  (interactive)
+  (awk-preview--cleanup))
 
 (defun awk-preview--cleanup()
   "Cleanup awk preview buffers and variables.")
