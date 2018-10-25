@@ -2589,7 +2589,6 @@ Result will not have leading and trailing slashes."
       (file-relative-name (directory-file-name path)
                           root))))
 
-(file-relative-name "/ab/cd/" "/ab/cd")
 (defcustom git-walktree-git-executable "git"
   "Git executable."
   :type 'string
