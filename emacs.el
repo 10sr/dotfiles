@@ -848,6 +848,8 @@ found, otherwise returns nil."
   (setq aggressive-indent-excluded-modes
         `(diff-mode
           toml-mode
+          conf-mode
+          dockerfile-mode
           ,@aggressive-indent-excluded-modes))
   (global-aggressive-indent-mode 1))
 
