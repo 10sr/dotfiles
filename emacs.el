@@ -91,6 +91,10 @@ found, otherwise returns nil."
        ;; It seems malabar has been merged into jdee and this package
        ;; already removed
        ;; malabar-mode
+       gosh-mode
+       scala-mode
+       ;;ensime
+
 
        ;; ack
        color-moccur
@@ -118,14 +122,13 @@ found, otherwise returns nil."
        page-break-lines
        ;; sync-recentf
        aggressive-indent
-       fancy-narrow
+       ;; fancy-narrow
        dired-filter
        wgrep
        magit
        git-gutter
-
-       scala-mode
-       ;;ensime
+       end-mark
+       sl
 
        editorconfig
        editorconfig-custom-majormode
@@ -148,9 +151,6 @@ found, otherwise returns nil."
        ilookup
        pasteboard
 
-       end-mark
-       sl
-       gosh-mode
        ))
 
 (when (safe-require-or-eval 'package)
@@ -681,8 +681,8 @@ found, otherwise returns nil."
 ;; (set-face-underline 'vertical-border
 ;;                     nil)
 
-(when (safe-require-or-eval 'end-mark)
-  (global-end-mark-mode))
+;; (when (safe-require-or-eval 'end-mark)
+;;   (global-end-mark-mode))
 
 ;; M-x highlight-* to highlight things
 (global-hi-lock-mode 1)
@@ -838,6 +838,19 @@ found, otherwise returns nil."
   ;; to disable thie mode here, but do anyway.
   ;; See also https://github.com/magit/magit/issues/3517
   (global-magit-file-mode -1))
+
+(with-eval-after-load 'magit-section
+  (set-face-background 'magit-section-highlight
+                       nil))
+
+(with-eval-after-load 'magit-diff
+  (set-face-background 'magit-diff-added-highlight
+                       nil)
+  (set-face-background 'magit-diff-removed-highlight
+                       nil)
+  (set-face-background 'magit-diff-context-highlight
+                       nil)
+  )
 
 (when (boundp 'git-rebase-filename-regexp)
   (add-to-list 'auto-mode-alist
