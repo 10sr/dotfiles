@@ -2202,7 +2202,7 @@ files to choose from. It defaults to the whole recent list.
 If optional argument BUFFER-NAME is non-nil, it is a buffer name to
 use for the buffer. It defaults to \"*recetf-show*\"."
   (interactive)
-  (let ((bf (recently-show-create-buffer files buffer-name)))
+  (let ((bf (recently-show--create-buffer-tabulated files buffer-name)))
     (if bf
         (progn
           ;; (recently-save-list)
@@ -2213,6 +2213,41 @@ use for the buffer. It defaults to \"*recetf-show*\"."
           ;;                         recently-show-window-height)
           (shrink-window-if-larger-than-buffer (selected-window)))
       (message "No recent file!"))))
+
+(defun recently-show--create-buffer-tabulated (&optional files buffer-name)
+  "Create buffer listing recently files FILES."
+  (let ((bname (or buffer-name
+                   "*recently-show-tabulated*"))
+        (list (or files
+                  (progn
+                    (recently-reload)
+                    recently-list))))
+    (when list
+      (when (get-buffer bname)
+        (kill-buffer bname))
+      (with-current-buffer (get-buffer-create bname)
+        (setq tabulated-list-format
+              `[("Name" 30 t)
+                ("Full Path" 0 t)])
+        ;; (setq tabulated-list-sort-key (cons "Name" nil))
+        (setq tabulated-list-entries
+              (mapcar (lambda (f)
+                        (list f
+                              (vector (file-name-nondirectory f) f)))
+                      ;; list
+                      recently-list
+                      ))
+        (recently-show-tabulated-mode)
+        (current-buffer)))))
+
+(define-derived-mode recently-show-tabulated-mode tabulated-list-mode "Recently Show"
+  "Major mode for browsing recently opened files and directories."
+  (setq tabulated-list-padding 2)
+  ;; TODO: Implement revert
+  ;; (add-hook 'tabulated-list-revert-hook 'recently-reload nil t)
+  ;; TODO: Implement open
+  (tabulated-list-init-header)
+  (tabulated-list-print nil nil))
 
 (defun recently-show-create-buffer (&optional files buffer-name)
   "Create buffer listing recently files."
