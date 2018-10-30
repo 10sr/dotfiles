@@ -2627,6 +2627,7 @@ PATH will be always treated as relative to repository root."
   "Open git tree buffer of COMMITTISH.
 When PATH was given and non-nil open that, otherwise try to open current path.
 If target path is not found in COMMITISH tree, go up path and try again until found."
+  ;; TODO: Add fallback method for cases where magit is not available
   (interactive (list (magit-read-branch-or-commit "Revision: ")))
   (switch-to-buffer (git-walktree--open-noselect-safe-path committish path)))
 (defalias 'git-walktree 'git-walktree-open)
