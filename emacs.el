@@ -2949,6 +2949,40 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 ;; (git-revision--git-plumbing "cat-file" "-t" "HEAD")
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; git-worktree
+
+(defun git-worktree-get-current-list ()
+  "Get current worktree list."
+  (with-temp-buffer
+    (let ((trees nil)
+          (status (call-process "git"
+                                nil
+                                t
+                                nil
+                                "worktree" "list" "--porcelain")))
+      (cl-assert (eq status 0))
+      (goto-char (point-min))
+      (save-match-data
+        (while (not (eq (point) (point-max)))
+          (let ((worktree nil)
+                (head nil)
+                (branch nil))
+            (while (re-search-forward "^\\([^ ]\+\\) \\(.*\\)$" (point-at-eol) t)
+              (pcase (match-string 1)
+                ("worktree" (setq worktree (match-string 2)))
+                ("HEAD" (setq head (match-string 2)))
+                ("branch" (setq branch (match-string 2))))
+              (forward-line 1)
+              (goto-char (point-at-bol)))
+            (setq trees `(,@trees
+                          (:worktree ,worktree :head ,head :branch ,branch)))
+            (forward-line 1)
+            (goto-char (point-at-bol)))
+          ))
+      trees)))
+
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
