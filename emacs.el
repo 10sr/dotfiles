@@ -1123,6 +1123,8 @@ found, otherwise returns nil."
           (lambda ()
             (when (string-match "\\.md\\'" buffer-file-name)
               (set (make-local-variable 'outline-regexp) "#+ "))))
+(add-hook 'outline-mode-hook
+          'outline-show-all)
 (add-to-list 'auto-mode-alist (cons "\\.ol\\'" 'outline-mode))
 
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
