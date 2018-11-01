@@ -863,6 +863,7 @@ found, otherwise returns nil."
           toml-mode
           conf-mode
           dockerfile-mode
+          groovy-mode
           ,@aggressive-indent-excluded-modes))
   (global-aggressive-indent-mode 1))
 
