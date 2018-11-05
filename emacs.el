@@ -2167,23 +2167,23 @@ Return that buffer."
 (defvar recently-show-window-height 10
   "Max height of window of `recently-show'")
 
-(defvar recently-show-mode-map
-  (let ((map (make-sparse-keymap)))
-    (suppress-keymap map)
-    (define-key map "n" 'next-line)
-    (define-key map "p" 'previous-line)
-    (define-key map (kbd "C-m") 'recently-show-find-file)
-    (define-key map (kbd "SPC") 'recently-show-find-file)
-    (define-key map "v" 'recently-show-view-file)
-    (define-key map "@" 'recently-show-dired)
-    (define-key map "q" 'recently-show-close)
-    (define-key map (kbd "C-g") 'recently-show-close)
-    (define-key map "?" 'describe-mode)
-    (define-key map "/" 'isearch-forward)
-    map))
+;; (defvar recently-show-mode-map
+;;   (let ((map (make-sparse-keymap)))
+;;     (suppress-keymap map)
+;;     (define-key map "n" 'next-line)
+;;     (define-key map "p" 'previous-line)
+;;     (define-key map (kbd "C-m") 'recently-show-find-file)
+;;     (define-key map (kbd "SPC") 'recently-show-find-file)
+;;     (define-key map "v" 'recently-show-view-file)
+;;     (define-key map "@" 'recently-show-dired)
+;;     (define-key map "q" 'recently-show-close)
+;;     (define-key map (kbd "C-g") 'recently-show-close)
+;;     (define-key map "?" 'describe-mode)
+;;     (define-key map "/" 'isearch-forward)
+;;     map))
 
-(defvar recently-show-before-listing-hook nil
-  "Hook run before creating buffer of `recently-show'.")
+;; (defvar recently-show-before-listing-hook nil
+;;   "Hook run before creating buffer of `recently-show'.")
 
 (defvar recently-show-window-configuration nil
   "Used for internal")
@@ -2191,11 +2191,11 @@ Return that buffer."
 (defvar recently-show-abbreviate t
   "Non-nil means use `abbreviate-file-name' when listing recently opened files.")
 
-(define-derived-mode recently-show-mode special-mode "recently-show"
-  "Major mode for `recently-show'."
-  ;; (set (make-local-variable 'scroll-margin)
-  ;;      0)
-  )
+;; (define-derived-mode recently-show-mode special-mode "recently-show"
+;;   "Major mode for `recently-show'."
+;;   ;; (set (make-local-variable 'scroll-margin)
+;;   ;;      0)
+;;   )
 
 ;;;###autoload
 (defun recently-show (&optional files buffer-name)
@@ -2214,7 +2214,8 @@ use for the buffer. It defaults to \"*recetf-show*\"."
           (display-buffer bf)
           ;; (set-window-text-height (selected-window)
           ;;                         recently-show-window-height)
-          (shrink-window-if-larger-than-buffer (selected-window)))
+          ;; (shrink-window-if-larger-than-buffer (selected-window))
+          )
       (message "No recent file!"))))
 
 (defun recently-show--create-buffer-tabulated (&optional files buffer-name)
@@ -2236,7 +2237,10 @@ use for the buffer. It defaults to \"*recetf-show*\"."
         (setq tabulated-list-entries
               (mapcar (lambda (f)
                         (list f
-                              (vector (file-name-nondirectory f) f)))
+                              (vector (file-name-nondirectory f)
+                                      (if recently-show-abbreviate
+                                          (abbreviate-file-name f)
+                                        f))))
                       ;; list
                       recently-list
                       ))
@@ -2255,7 +2259,9 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map)
     (define-key map (kbd "C-m") 'recently-show-tabulated-find-file)
+    ;; TODO: implement
     (define-key map "v" 'recently-show-tabulated-view-file)
+    ;; TODO: implement
     (define-key map "@" 'recently-show-tabulated-dired)
     (define-key map (kbd "C-g") 'recently-show-tabulated-close)
     (define-key map "/" 'isearch-forward)
@@ -2266,41 +2272,40 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   (setq tabulated-list-padding 2)
   ;; TODO: Implement revert
   ;; (add-hook 'tabulated-list-revert-hook 'recently-reload nil t)
-  ;; TODO: Implement open
   (tabulated-list-init-header)
   (tabulated-list-print nil nil))
 
-(defun recently-show-create-buffer (&optional files buffer-name)
-  "Create buffer listing recently files."
-  (let ((bname (or buffer-name
-                   "*recently-show*"))
-        (list (or files
-                  (progn
-                    (recently-reload)
-                    recently-list))))
-    (when list
-      (and (get-buffer bname)
-           (kill-buffer bname))
-      (let ((bf (get-buffer-create bname)))
-        (with-current-buffer bf
-          (recently-show-mode)
-          (let ((inhibit-read-only t))
-            (mapc (lambda (f)
-                    (insert (if recently-show-abbreviate
-                                (abbreviate-file-name f)
-                              f)
-                            "\n"))
-                  list))
-          (goto-char (point-min))
-          ;; (setq buffer-read-only t)
-          )
-        bf))))
+;; (defun recently-show-create-buffer (&optional files buffer-name)
+;;   "Create buffer listing recently files."
+;;   (let ((bname (or buffer-name
+;;                    "*recently-show*"))
+;;         (list (or files
+;;                   (progn
+;;                     (recently-reload)
+;;                     recently-list))))
+;;     (when list
+;;       (and (get-buffer bname)
+;;            (kill-buffer bname))
+;;       (let ((bf (get-buffer-create bname)))
+;;         (with-current-buffer bf
+;;           (recently-show-mode)
+;;           (let ((inhibit-read-only t))
+;;             (mapc (lambda (f)
+;;                     (insert (if recently-show-abbreviate
+;;                                 (abbreviate-file-name f)
+;;                               f)
+;;                             "\n"))
+;;                   list))
+;;           (goto-char (point-min))
+;;           ;; (setq buffer-read-only t)
+;;           )
+;;         bf))))
 
-(defun recently-show-close ()
-  "Close recently-show window."
-  (interactive)
-  (kill-buffer (current-buffer))
-  (set-window-configuration recently-show-window-configuration))
+;; (defun recently-show-close ()
+;;   "Close recently-show window."
+;;   (interactive)
+;;   (kill-buffer (current-buffer))
+;;   (set-window-configuration recently-show-window-configuration))
 
 (defun recently-show-tabulated-close ()
   "Close recently-show window."
@@ -2308,34 +2313,34 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   (kill-buffer (current-buffer))
   (set-window-configuration recently-show-window-configuration))
 
-(defun recently-show-find-file ()
-  "Fine file of current line."
-  (interactive)
-  (let ((f (recently-show-get-filename)))
-    (recently-show-close)
-    (find-file f)))
+;; (defun recently-show-find-file ()
+;;   "Fine file of current line."
+;;   (interactive)
+;;   (let ((f (recently-show-get-filename)))
+;;     (recently-show-close)
+;;     (find-file f)))
 
-(defun recently-show-view-file ()
-  "view file of current line."
-  (interactive)
-  (let ((f (recently-show-get-filename)))
-    (recently-show-close)
-    (view-file f)))
+;; (defun recently-show-view-file ()
+;;   "view file of current line."
+;;   (interactive)
+;;   (let ((f (recently-show-get-filename)))
+;;     (recently-show-close)
+;;     (view-file f)))
 
-(defun recently-show-get-filename ()
-  "Get filename of current line."
-  (buffer-substring-no-properties (point-at-bol)
-                                  (point-at-eol)))
+;; (defun recently-show-get-filename ()
+;;   "Get filename of current line."
+;;   (buffer-substring-no-properties (point-at-bol)
+;;                                   (point-at-eol)))
 
-(defun recently-show-dired()
-  "Open dired buffer of directory containing file of current line."
-  (interactive)
-  (let ((f (recently-show-get-filename)))
-    (recently-show-close)
-    (dired (if (file-directory-p f)
-               f
-             (or (file-name-directory f)
-                 ".")))))
+;; (defun recently-show-dired()
+;;   "Open dired buffer of directory containing file of current line."
+;;   (interactive)
+;;   (let ((f (recently-show-get-filename)))
+;;     (recently-show-close)
+;;     (dired (if (file-directory-p f)
+;;                f
+;;              (or (file-name-directory f)
+;;                  ".")))))
 
 (define-key ctl-x-map (kbd "C-r") 'recently-show)
 
