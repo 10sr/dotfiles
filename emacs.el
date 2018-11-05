@@ -2243,6 +2243,24 @@ use for the buffer. It defaults to \"*recetf-show*\"."
         (recently-show-tabulated-mode)
         (current-buffer)))))
 
+(defun recently-show-tabulated-find-file ()
+  "Find-file in `recently-show-tabulated-mode'."
+  (interactive)
+  (let ((f (tabulated-list-get-id)))
+    (when f
+      (recently-show-tabulated-close)
+      (find-file f))))
+
+(defvar recently-show-tabulated-mode-map
+  (let ((map (make-sparse-keymap)))
+    (suppress-keymap map)
+    (define-key map (kbd "C-m") 'recently-show-tabulated-find-file)
+    (define-key map "v" 'recently-show-tabulated-view-file)
+    (define-key map "@" 'recently-show-tabulated-dired)
+    (define-key map (kbd "C-g") 'recently-show-tabulated-close)
+    (define-key map "/" 'isearch-forward)
+    map))
+
 (define-derived-mode recently-show-tabulated-mode tabulated-list-mode "Recently Show"
   "Major mode for browsing recently opened files and directories."
   (setq tabulated-list-padding 2)
@@ -2279,6 +2297,12 @@ use for the buffer. It defaults to \"*recetf-show*\"."
         bf))))
 
 (defun recently-show-close ()
+  "Close recently-show window."
+  (interactive)
+  (kill-buffer (current-buffer))
+  (set-window-configuration recently-show-window-configuration))
+
+(defun recently-show-tabulated-close ()
   "Close recently-show window."
   (interactive)
   (kill-buffer (current-buffer))
