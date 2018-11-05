@@ -2162,6 +2162,7 @@ Return that buffer."
 (add-hook 'dired-mode-hook
           'recently-dired-mode-hook)
 
+;;;;;;;;;;;;;;;;
 ;; recently-show
 
 (defvar recently-show-window-height 10
@@ -2230,9 +2231,6 @@ use for the buffer. It defaults to \"*recetf-show*\"."
       (when (get-buffer bname)
         (kill-buffer bname))
       (with-current-buffer (get-buffer-create bname)
-        (setq tabulated-list-format
-              `[("Name" 30 t)
-                ("Full Path" 0 t)])
         ;; (setq tabulated-list-sort-key (cons "Name" nil))
         (setq tabulated-list-entries
               (mapcar (lambda (f)
@@ -2244,6 +2242,18 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                       ;; list
                       recently-list
                       ))
+        (let ((max
+               (apply 'max
+                      (mapcar (lambda (l)
+                                (length (elt (cadr l) 0)))
+                              tabulated-list-entries))))
+          (setq tabulated-list-format
+                `[("Name"
+                   ,(min max
+                         30)
+                   t)
+                  ("Full Path" 0 t)])
+          )
         (recently-show-tabulated-mode)
         (current-buffer)))))
 
