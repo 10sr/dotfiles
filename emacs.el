@@ -1821,6 +1821,34 @@ This mode is a simplified version of `adoc-mode'."
   :type 'string
   :group 'awk-preview)
 
+(cl-defstruct awk-preview--env
+  (running-p nil)
+  ;; Point of beg in source buffer
+  (point-beg nil)
+  ;; Point of end in source buffer
+  (point-end nil)
+  ;; Point of beginning
+  ;; Used by preview buffer and always same as awk-preview--point-beg
+  (preview-point-beg nil)
+  ;; Point of beginning
+  ;; Used by preview buffer and may defferent from awk-preview--point-end
+  (preview-point-end nil)
+  ;; Awk preview program file name
+  (program-filename nil)
+  ;; Source buffer
+  (source-buffer nil)
+  ;; Preview buffer
+  (preview-buffer nil)
+  ;; Program buffer
+  (program-buffer nil)
+  ;; Window configuration when entering awk-review
+  (window-configuration nil)
+  )
+
+(defvar awk-preview--env nil
+  "`awk-preview--env' struct object of currently running.")
+(make-variable-buffer-local 'awk-preview--env)
+
 (defvar awk-preview--point-beg
   nil
   "Point of beginning.")
@@ -1993,6 +2021,13 @@ Return that buffer."
 (defun awk-preview-commit ()
   "Exit awk-preview and update buffer."
   (interactive)
+  ;; (with-current-buffer awk-preview--source-buffer
+  ;;   (awk-preview--invoke-awk (current-buffer)
+  ;;                            awk-preview--point-beg
+  ;;                            awk-preview--point-end
+  ;;                            progfile
+  ;;                            t
+  ;;                            t))
   (awk-preview--cleanup))
 
 (defun awk-preview-abort ()
