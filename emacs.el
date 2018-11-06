@@ -1930,7 +1930,11 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
 
 (defun awk-preview (beg end)
   "Run awk and preview result."
-  (interactive "r")
+  (interactive (if (use-region-p)
+                   (list (region-beginning)
+                         (region-end))
+                 (list (point-min)
+                       (point-max))))
   (when (and awk-preview--env
              (awk-preview--env-running-p awk-preview--env))
     (error "AWK-Preview already running"))
@@ -2020,6 +2024,9 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
     (define-key map (kbd "C-c C-l") 'awk-preview-update-preview)
     (define-key map (kbd "C-c C-k") 'awk-preview-abort)
     (define-key map (kbd "C-c C-c") 'awk-preview-commit)
+    ;; TODO: Implement
+    ;; Back preview buffer to original content
+    (define-key map (kbd "C-c C-r") 'awk-preview-clear)
     map)
   "Keymap for `awk-preview-program-mode'.")
 
