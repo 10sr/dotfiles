@@ -823,10 +823,11 @@ found, otherwise returns nil."
 
 (when (autoload-eval-lazily 'wgrep)
   (set-variable 'wgrep-auto-save-buffer t)
-  (defvar grep-mode-map)
-  (define-key grep-mode-map
-    "e"
-    'wgrep-change-to-wgrep-mode))
+  (with-eval-after-load 'grep
+    (defvar grep-mode-map)
+    (define-key grep-mode-map
+      "e"
+      'wgrep-change-to-wgrep-mode)))
 
 (with-eval-after-load 'remember
   (defvar remember-mode-map (make-sparse-keymap))
