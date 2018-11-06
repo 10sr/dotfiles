@@ -1710,8 +1710,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-                                   (compilation-start command-args
-                                                      'grep-mode))
+        (compilation-start command-args
+                           'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -1729,8 +1729,8 @@ and search from projectile root (if projectile is available)."
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-                                     (compilation-start command-args
-                                                        'grep-mode))
+          (compilation-start command-args
+                             'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
@@ -1913,7 +1913,7 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
 (defun awk-preview--create-preview-buffer (e)
   "Create preview buffer for `awk-preview--env' object E."
   (with-current-buffer (awk-preview--env-source-buffer e)
-    ;; TODO: Do not unset buffer-file-name in let
+    ;; TODO: Do not unset buffer-file-name in let, use unwind-protect
     (let ((buffer-file-name nil)
           (beg (awk-preview--env-point-beg e))
           (end (awk-preview--env-point-end e)))
@@ -2016,6 +2016,9 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
 
 (defun awk-preview--cleanup()
   "Cleanup awk preview buffers and variables."
+  (kill-buffer (awk-preview--env-preview-buffer awk-preview--env))
+  ;; TODO: Ask if it should be killed
+  (kill-buffer (awk-preview--env-program-buffer awk-preview--env))
   (setf (awk-preview--env-running-p awk-preview--env) nil)
   (set-window-configuration (awk-preview--env-window-configuration awk-preview--env)))
 
@@ -2026,7 +2029,7 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
     (define-key map (kbd "C-c C-c") 'awk-preview-commit)
     ;; TODO: Implement
     ;; Back preview buffer to original content
-    (define-key map (kbd "C-c C-r") 'awk-preview-clear)
+    (define-key map (kbd "C-c C-r") 'awk-preview-reset)
     map)
   "Keymap for `awk-preview-program-mode'.")
 
