@@ -1929,6 +1929,9 @@ Delete the text between BEG and END when DELETE is non-nil."
 (defun awk-preview (beg end)
   "Run awk and preview result."
   (interactive "r")
+  (when (and awk-preview--env
+             (awk-preview--env-running-p awk-preview--env))
+    (error "AWK-Preview already running"))
   (let ((e (make-awk-preview--env)))
     (setf (awk-preview--env-point-beg e) beg)
     (setf (awk-preview--env-point-end e) end)
