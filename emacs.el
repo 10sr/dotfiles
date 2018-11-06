@@ -821,7 +821,8 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
-(when (safe-require-or-eval 'wgrep)
+(when (autoload-eval-lazily 'wgrep)
+  (set-variable 'wgrep-auto-save-buffer t)
   (defvar grep-mode-map)
   (define-key grep-mode-map
     "e"
