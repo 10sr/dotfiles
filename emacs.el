@@ -944,6 +944,7 @@ found, otherwise returns nil."
               (pipenv-projectile-after-switch-default)))
   )
 (set-variable 'flycheck-python-pycompile-executable "python3")
+(set-variable 'python-indent-guess-indent-offset nil)
 
 ;; http://fukuyama.co/foreign-regexp
 '(and (safe-require-or-eval 'foreign-regexp)
@@ -3044,7 +3045,7 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
           (let ((worktree nil)
                 (head nil)
                 (branch nil))
-            (while (re-search-forward "^\\([^ ]\+\\) \\(.*\\)$" (point-at-eol) t)
+            (while (re-search-forward "^\\([^ ]+\\) \\(.*\\)$" (point-at-eol) t)
               (pcase (match-string 1)
                 ("worktree" (setq worktree (match-string 2)))
                 ("HEAD" (setq head (match-string 2)))
