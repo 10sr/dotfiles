@@ -1855,11 +1855,13 @@ This mode is a simplified version of `adoc-mode'."
      'permanent-local
      t)
 
-(defun awk-preview--invoke-awk (buf beg end progfile output &optional delete)
+(defun awk-preview--invoke-awk (buf beg end progfile output &optional delete display)
   "Execute PROGFILE awk process with BEG and END input and output to OUTPUT buffer.
 
 When OUTPUT is t the result will be output to BUF.
-Delete the text between BEG and END when DELETE is non-nil."
+Delete the text between BEG and END when DELETE is non-nil.
+
+DISPLAY non-nil means redisplay buffer as output is inserted."
   (with-current-buffer buf
     (let ((status (apply 'call-process-region
                          beg
@@ -1867,7 +1869,7 @@ Delete the text between BEG and END when DELETE is non-nil."
                          awk-preview-program
                          delete
                          output
-                         nil
+                         display
                          `(,@awk-preview-switches "-f" ,progfile))))
       (unless (eq status
                   0)
@@ -1993,13 +1995,14 @@ Delete the text between BEG and END when DELETE is non-nil."
 (defun awk-preview-commit ()
   "Exit awk-preview and update buffer."
   (interactive)
-  ;; (with-current-buffer awk-preview--source-buffer
-  ;;   (awk-preview--invoke-awk (current-buffer)
-  ;;                            awk-preview--point-beg
-  ;;                            awk-preview--point-end
-  ;;                            progfile
-  ;;                            t
-  ;;                            t))
+  (cl-assert awk-preview--env)
+  (awk-preview--invoke-awk (awk-preview--env-source-buffer awk-preview--env)
+                           (awk-preview--env-point-beg awk-preview--env)
+                           (awk-preview--env-point-end awk-preview--env)
+                           (awk-preview--env-program-filename awk-preview--env)
+                           t
+                           t
+                           t)
   (awk-preview--cleanup))
 
 (defun awk-preview-abort ()
@@ -2008,7 +2011,9 @@ Delete the text between BEG and END when DELETE is non-nil."
   (awk-preview--cleanup))
 
 (defun awk-preview--cleanup()
-  "Cleanup awk preview buffers and variables.")
+  "Cleanup awk preview buffers and variables."
+  (setf (awk-preview--env-running-p awk-preview--env) nil)
+  (set-window-configuration (awk-preview--env-window-configuration awk-preview--env)))
 
 (defvar awk-preview-program-mode-map
   (let ((map (make-sparse-keymap)))
@@ -3028,6 +3033,10 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
             (goto-char (point-at-bol)))
           ))
       trees)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; j2-mode jinja2-mmm-mode?
 
 
 ;; Local Variables:
