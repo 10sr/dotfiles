@@ -1239,7 +1239,10 @@ found, otherwise returns nil."
   (add-to-list 'auto-mode-alist
                '("/tox\\.ini\\'" . toml-mode))
   (add-to-list 'auto-mode-alist
-               '("/Pipfile\\'" . toml-mode)))
+               '("/Pipfile\\'" . toml-mode))
+  (add-to-list 'auto-mode-alist
+               '("/poetry\\.lock\\'" . toml-mode))
+  )
 
 (when (autoload-eval-lazily 'json-mode)
   (add-to-list 'auto-mode-alist
