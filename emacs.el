@@ -1818,7 +1818,9 @@ This mode is a simplified version of `adoc-mode'."
   :group 'awk-preview)
 
 (defcustom awk-preview-default-program
-  "# C-c C-l to update preview, C-c C-c to commit, C-c C-k to abort.
+  ;; TODO: Use `substitute-command-keys'
+  "# C-c C-l: Update preview      C-c C-c: Commit and exit
+# C-c C-r: Resest to original  C-c C-k: Abort
 {
     print NR, $0
 }
@@ -1999,6 +2001,21 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
               (point)))
       )))
 
+(defun awk-preview-reset ()
+  "Show original input in preview buffer."
+  (interactive)
+  (cl-assert awk-preview--env)
+  (with-current-buffer (awk-preview--env-preview-buffer awk-preview--env)
+    (let ((inhibit-read-only t))
+      (goto-char (awk-preview--env-preview-point-end awk-preview--env))
+      (delete-region (awk-preview--env-preview-point-beg awk-preview--env)
+                     (point))
+      (insert-buffer-substring (awk-preview--env-source-buffer awk-preview--env)
+                               (awk-preview--env-point-beg awk-preview--env)
+                               (awk-preview--env-point-end awk-preview--env))
+      (setf (awk-preview--env-preview-point-end awk-preview--env)
+            (point)))))
+
 (defun awk-preview-commit ()
   "Exit awk-preview and update buffer."
   (interactive)
@@ -2032,8 +2049,6 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
     (define-key map (kbd "C-c C-l") 'awk-preview-update-preview)
     (define-key map (kbd "C-c C-k") 'awk-preview-abort)
     (define-key map (kbd "C-c C-c") 'awk-preview-commit)
-    ;; TODO: Implement
-    ;; Back preview buffer to original content
     (define-key map (kbd "C-c C-r") 'awk-preview-reset)
     map)
   "Keymap for `awk-preview-program-mode'.")
