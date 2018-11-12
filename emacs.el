@@ -2019,10 +2019,12 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
 
 (defun awk-preview--cleanup()
   "Cleanup awk preview buffers and variables."
-  (kill-buffer (awk-preview--env-preview-buffer awk-preview--env))
-  ;; TODO: Ask if it should be killed
-  (kill-buffer (awk-preview--env-program-buffer awk-preview--env))
-  (setf (awk-preview--env-running-p awk-preview--env) nil)
+  (with-current-buffer (awk-preview--env-source-buffer awk-preview--env)
+    (cl-assert awk-preview--env)
+    (kill-buffer (awk-preview--env-preview-buffer awk-preview--env))
+    ;; TODO: Ask if it should be killed
+    (kill-buffer (awk-preview--env-program-buffer awk-preview--env))
+    (setf (awk-preview--env-running-p awk-preview--env) nil))
   (set-window-configuration (awk-preview--env-window-configuration awk-preview--env)))
 
 (defvar awk-preview-program-mode-map
