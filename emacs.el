@@ -390,6 +390,8 @@ found, otherwise returns nil."
 
 (when (safe-require-or-eval 'git-gutter)
   (custom-set-variables
+   '(git-gutter:lighter " Gttr"))
+  (custom-set-variables
    '(git-gutter:update-interval 2))
   (custom-set-variables
    '(git-gutter:unchanged-sign " "))
