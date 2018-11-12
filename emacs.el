@@ -2255,8 +2255,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
         (progn
           ;; (recently-save-list)
           (setq recently-show-window-configuration (current-window-configuration))
-          ;;(pop-to-buffer bf t t)
-          (display-buffer bf)
+          (pop-to-buffer bf)
           ;; (set-window-text-height (selected-window)
           ;;                         recently-show-window-height)
           ;; (shrink-window-if-larger-than-buffer (selected-window))
