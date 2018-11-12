@@ -3051,6 +3051,33 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; j2-mode jinja2-mmm-mode?
 
+(define-derived-mode jinja2-mmm-mode prog-mode
+  "Jinja2 MMM"
+  "Major mode to setup mmm-mode for jinja2 files."
+  (require 'mmm-mode)
+  (require 'mmm-jinja2)
+  (let* ((origname buffer-file-name)
+         (withoutj2 buffer-file-name)
+         (withoutj2 (replace-regexp-in-string "\\.j2\\'"
+                                              ""
+                                              withoutj2))
+         (withoutj2 (replace-regexp-in-string "\\.j2\\'"
+                                              ""
+                                              withoutj2)))
+    (unwind-protect
+        (progn
+          (let ((mode (assoc-default withoutj2
+                                     auto-mode-alist
+                                     'string-match)))
+            (when mode
+              (funcall mode)))
+          (add-to-list 'mmm-classes
+                       'jinja2)
+          (mmm-mode-on))
+      (setq buffer-file-name origname))))
+
+;; (add-to-list 'auto-mode-alist
+;;              '("\\.j2\\'" . jinja2-mmm-mode))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
