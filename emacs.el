@@ -1831,6 +1831,22 @@ This mode is a simplified version of `adoc-mode'."
   :type 'string
   :group 'awk-preview)
 
+(defcustom awk-preview-kill-orphan-program-buffer
+  'ask
+  "This variable decides whether program buffers which do not visit any files
+will be killed when exiting awk-preview sessions.
+
+When set to nil, do not kill program buffers.
+When set to `ask', ask user whether to kill them.
+For other values always kill them silently.
+
+When a program buffer is visiting a file, the buffer will not be killed for any
+cases regardless of this variable."
+  :type '(choice (const t)
+                 (const nil)
+                 (const ask))
+  :group 'awk-preview)
+
 (cl-defstruct awk-preview--env
   (running-p nil)
   ;; Point of beg in source buffer
@@ -2041,8 +2057,12 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
   (with-current-buffer (awk-preview--env-source-buffer awk-preview--env)
     (cl-assert awk-preview--env)
     (kill-buffer (awk-preview--env-preview-buffer awk-preview--env))
-    ;; TODO: Ask if it should be killed
-    (kill-buffer (awk-preview--env-program-buffer awk-preview--env))
+    (when (and (not (buffer-file-name (awk-preview--env-program-buffer awk-preview--env)))
+               (if (eq 'ask
+                       awk-preview-kill-orphan-program-buffer)
+                   (yes-or-no-p "Program buffer does not visit any file. Kill? ")
+                 awk-preview-kill-orphan-program-buffer))
+      (kill-buffer (awk-preview--env-program-buffer awk-preview--env)))
     (setf (awk-preview--env-running-p awk-preview--env) nil))
   (set-window-configuration (awk-preview--env-window-configuration awk-preview--env)))
 
