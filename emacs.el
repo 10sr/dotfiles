@@ -1951,7 +1951,7 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
         (setq awk-preview--env e)
         (current-buffer)))))
 
-(defun awk-preview (beg end)
+(defun awk-preview (beg end &optional program-buffer)
   "Run awk and preview result."
   (interactive (if (use-region-p)
                    (list (region-beginning)
@@ -1968,7 +1968,10 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
     (setf (awk-preview--env-source-buffer e) (current-buffer))
 
     (awk-preview--create-preview-buffer e)
-    (awk-preview--create-program-buffer e)
+    (if program-buffer
+        ;; TODO: IMplement this
+        (awk-preview--setup-program-buffer e program-buffer)
+      (awk-preview--create-program-buffer e))
 
     (setf (awk-preview--env-window-configuration e)
           (current-window-configuration))
