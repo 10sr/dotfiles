@@ -2202,7 +2202,10 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
       (unless (equal recently-list
                      l)
         (setq recently-list l)
-        (recently-write)))))
+        (recently-write)
+        (setq recently-file-mtime
+              (nth 5
+                   (file-attributes recently-file)))))))
 
 (defun recently--truncate (list len)
   "Truncate LIST to LEN."
@@ -3093,31 +3096,24 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 
 (define-derived-mode jinja2-mmm-mode prog-mode
   "Jinja2 MMM"
-  "Major mode to setup mmm-mode for jinja2 files."
+  "Major mode to setup `mmm-mode' with mmm-jinja2.
+This assumes that file name would be in a format like BASE.EXT.j2 ."
   (require 'mmm-mode)
   (require 'mmm-jinja2)
-  (let* ((origname buffer-file-name)
-         (withoutj2 buffer-file-name)
-         (withoutj2 (replace-regexp-in-string "\\.j2\\'"
-                                              ""
-                                              withoutj2))
-         (withoutj2 (replace-regexp-in-string "\\.j2\\'"
-                                              ""
-                                              withoutj2)))
-    (unwind-protect
-        (progn
-          (let ((mode (assoc-default withoutj2
-                                     auto-mode-alist
-                                     'string-match)))
-            (when mode
-              (funcall mode)))
-          (add-to-list 'mmm-classes
-                       'jinja2)
-          (mmm-mode-on))
-      (setq buffer-file-name origname))))
+  (let ((withoutj2 (replace-regexp-in-string "\\.j2\\'"
+                                             ""
+                                             buffer-file-name)))
+    (let ((mode (assoc-default withoutj2
+                               auto-mode-alist
+                               'string-match)))
+      (when mode
+        (funcall mode)))
+    (add-to-list 'mmm-classes
+                 'jinja2)
+    (mmm-mode-on)))
 
-;; (add-to-list 'auto-mode-alist
-;;              '("\\.j2\\'" . jinja2-mmm-mode))
+(add-to-list 'auto-mode-alist
+             '("\\.j2\\'" . jinja2-mmm-mode))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
