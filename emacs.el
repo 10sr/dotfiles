@@ -716,16 +716,21 @@ found, otherwise returns nil."
               'editorconfig-mode-apply t)))
 
 (when (fboundp 'editorconfig-custom-majormode)
-  (add-hook 'editorconfig-custom-hooks
+  (add-hook 'editorconfig-after-apply-functions
             'editorconfig-custom-majormode))
 
 ;; Add readonly=true to set read-only-mode
-(add-hook 'editorconfig-custom-hooks
+(add-hook 'editorconfig-after-apply-functions
           (lambda (props)
             (let ((r (gethash 'readonly props)))
               (when (and (string= r "true")
                          (not buffer-read-only))
                 (read-only-mode 1)))))
+
+(add-hook 'editorconfig-hack-properties-functions
+          '(lambda (props)
+             (when (derived-mode-p makefile-mode)
+               (puthash 'indent_style \"tab\" props))))
 
 ;; (when (fboundp 'editorconfig-charset-extras)
 ;;   (add-hook 'editorconfig-custom-hooks
