@@ -3097,7 +3097,7 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 (define-derived-mode jinja2-mmm-mode prog-mode
   "Jinja2 MMM"
   "Major mode to setup `mmm-mode' with mmm-jinja2.
-This assumes that file name would be in a format like BASE.EXT.j2 ."
+This assumes that file name should be in a format like BASE.EXT.j2 ."
   (require 'mmm-mode)
   (require 'mmm-jinja2)
   (let ((withoutj2 (replace-regexp-in-string "\\.j2\\'"
