@@ -1820,7 +1820,6 @@ This mode is a simplified version of `adoc-mode'."
   :group 'awk-preview)
 
 (defcustom awk-preview-default-program
-  ;; TODO: Use `substitute-command-keys'
   "# C-c C-l: Update preview      C-c C-c: Commit and exit
 # C-c C-r: Resest to original  C-c C-k: Abort
 {
@@ -1848,18 +1847,19 @@ cases regardless of this variable."
   :group 'awk-preview)
 
 (cl-defstruct awk-preview--env
+  ;; Whether awk-preview is currently running
   (running-p nil)
   ;; Point of beg in source buffer
   (point-beg nil)
   ;; Point of end in source buffer
   (point-end nil)
   ;; Point of beginning
-  ;; Used by preview buffer and always same as awk-preview--point-beg
+  ;; Used by preview buffer and always same as point-beg
   (preview-point-beg nil)
   ;; Point of beginning
-  ;; Used by preview buffer and may defferent from awk-preview--point-end
+  ;; Used by preview buffer and may defferent from point-end
   (preview-point-end nil)
-  ;; Awk preview program file name
+  ;; Awk preview program temporary file name
   (program-filename nil)
   ;; Source buffer
   (source-buffer nil)
@@ -1871,9 +1871,8 @@ cases regardless of this variable."
   (window-configuration nil)
   )
 
-(defvar awk-preview--env nil
+(defvar-local awk-preview--env nil
   "`awk-preview--env' struct object of currently running.")
-(make-variable-buffer-local 'awk-preview--env)
 (put 'awk-preview--env
      'permanent-local
      t)
@@ -1997,6 +1996,7 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
 (defun awk-preview-update-preview ()
   "Update awk-preview."
   (interactive)
+  (cl-assert awk-preview--env)
   (with-current-buffer (awk-preview--env-program-buffer awk-preview--env)
     (write-region (point-min)
                   (point-max)
@@ -2055,8 +2055,8 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
 
 (defun awk-preview--cleanup()
   "Cleanup awk-preview buffers variables and files."
+  (cl-assert awk-preview--env)
   (with-current-buffer (awk-preview--env-source-buffer awk-preview--env)
-    (cl-assert awk-preview--env)
     (kill-buffer (awk-preview--env-preview-buffer awk-preview--env))
     (when (and (not (buffer-file-name (awk-preview--env-program-buffer awk-preview--env)))
                (if (eq 'ask
