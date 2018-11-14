@@ -1908,33 +1908,28 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
   "Buffer name of awk preview.")
 
 (defun awk-preview--create-program-buffer (e)
-  "Create program buffer for `awk-preview--env' object E."
+  "Create new program buffer for `awk-preview--env' object E."
   (let ((source-name (buffer-name (awk-preview--env-source-buffer e))))
     (with-current-buffer (generate-new-buffer (format awk-preview-program-buffer-name
                                                       source-name))
       (erase-buffer)
       (insert awk-preview-default-program)
       (awk-mode)
-      (awk-preview-program-mode 1)
-
-      (setf (awk-preview--env-program-buffer e) (current-buffer))
-      (setf (awk-preview--env-program-filename e) (make-temp-file "awk-preview-"
-                                                                  nil
-                                                                  ".awk"))
-
-      (setq awk-preview--env e)
       (current-buffer))))
 
-(defun awk-preview-program-buffer-kill-hook ()
-  "Cleanup for awk-preview program buffer."
-  (when (and awk-preview--env
-             (awk-preview--env-program-filename awk-preview--env))
-    (delete-file (awk-preview--env-program-filename awk-preview--env))))
-(add-hook 'kill-buffer-hook
-          'awk-preview-program-buffer-kill-hook)
+(defun awk-preview--setup-program-buffer (e buf)
+  "Setup awk-preview program buffer for E with BUF."
+  (with-current-buffer buf
+    (awk-preview-program-mode 1)
+    (setq awk-preview--env e))
+  (setf (awk-preview--env-program-buffer e) buf)
+  (setf (awk-preview--env-program-filename e) (make-temp-file "awk-preview-"
+                                                              nil
+                                                              ".awk"))
+  buf)
 
-(defun awk-preview--create-preview-buffer (e)
-  "Create preview buffer for `awk-preview--env' object E."
+(defun awk-preview--create-setup-preview-buffer (e)
+  "Create and setup preview buffer for `awk-preview--env' object E."
   (with-current-buffer (awk-preview--env-source-buffer e)
     (let ((beg (awk-preview--env-point-beg e))
           (end (awk-preview--env-point-end e))
@@ -1955,50 +1950,49 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
       (setf (awk-preview--env-preview-buffer e) buf)
       buf)))
 
-  (defun awk-preview (beg end &optional program-buffer)
-    "Run awk and preview result."
-    (interactive (if (use-region-p)
-                     (list (region-beginning)
-                           (region-end))
-                   (list (point-min)
-                         (point-max))))
-    (when (and awk-preview--env
-               (awk-preview--env-running-p awk-preview--env))
-      (error "AWK-Preview already running"))
-    (let ((e (make-awk-preview--env)))
-      (setf (awk-preview--env-point-beg e) beg)
-      (setf (awk-preview--env-point-end e) end)
+(defun awk-preview (beg end &optional program-buffer)
+  "Run awk and preview result."
+  (interactive (if (use-region-p)
+                   (list (region-beginning)
+                         (region-end))
+                 (list (point-min)
+                       (point-max))))
+  (when (and awk-preview--env
+             (awk-preview--env-running-p awk-preview--env))
+    (error "AWK-Preview already running"))
+  (let ((e (make-awk-preview--env)))
+    (setf (awk-preview--env-point-beg e) beg)
+    (setf (awk-preview--env-point-end e) end)
 
-      (setf (awk-preview--env-source-buffer e) (current-buffer))
+    (setf (awk-preview--env-source-buffer e) (current-buffer))
 
-      (awk-preview--create-preview-buffer e)
-      (if program-buffer
-          ;; TODO: IMplement this
-          (awk-preview--setup-program-buffer e program-buffer)
-        (awk-preview--create-program-buffer e))
+    (awk-preview--create-setup-preview-buffer e)
+    (awk-preview--setup-program-buffer e
+                                       (or program-buffer
+                                           (awk-preview--create-program-buffer e)))
 
-      (setf (awk-preview--env-window-configuration e)
-            (current-window-configuration))
+    (setf (awk-preview--env-window-configuration e)
+          (current-window-configuration))
 
-      (cl-assert (awk-preview--env-point-beg e))
-      (cl-assert (awk-preview--env-point-end e))
-      (cl-assert (awk-preview--env-preview-point-beg e))
-      (cl-assert (awk-preview--env-preview-point-end e))
-      (cl-assert (awk-preview--env-program-filename e))
-      (cl-assert (awk-preview--env-source-buffer e))
-      (cl-assert (awk-preview--env-preview-buffer e))
-      (cl-assert (awk-preview--env-program-buffer e))
-      (cl-assert (awk-preview--env-window-configuration e))
-      (setq awk-preview--env e)
+    (cl-assert (awk-preview--env-point-beg e))
+    (cl-assert (awk-preview--env-point-end e))
+    (cl-assert (awk-preview--env-preview-point-beg e))
+    (cl-assert (awk-preview--env-preview-point-end e))
+    (cl-assert (awk-preview--env-program-filename e))
+    (cl-assert (awk-preview--env-source-buffer e))
+    (cl-assert (awk-preview--env-preview-buffer e))
+    (cl-assert (awk-preview--env-program-buffer e))
+    (cl-assert (awk-preview--env-window-configuration e))
+    (setq awk-preview--env e)
 
-      (set-window-buffer (get-buffer-window (awk-preview--env-source-buffer e))
-                         (awk-preview--env-preview-buffer e))
-      (pop-to-buffer (awk-preview--env-program-buffer e))
+    (set-window-buffer (get-buffer-window (awk-preview--env-source-buffer e))
+                       (awk-preview--env-preview-buffer e))
+    (pop-to-buffer (awk-preview--env-program-buffer e))
 
-      (switch-to-buffer (awk-preview--env-program-buffer e))
-      (setf (awk-preview--env-running-p e) t)
-      (awk-preview-update-preview)
-      ))
+    (switch-to-buffer (awk-preview--env-program-buffer e))
+    (setf (awk-preview--env-running-p e) t)
+    (awk-preview-update-preview)
+    ))
 
 (defun awk-preview-update-preview ()
   "Update awk-preview."
@@ -2060,7 +2054,7 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
   (awk-preview--cleanup))
 
 (defun awk-preview--cleanup()
-  "Cleanup awk preview buffers and variables."
+  "Cleanup awk-preview buffers variables and files."
   (with-current-buffer (awk-preview--env-source-buffer awk-preview--env)
     (cl-assert awk-preview--env)
     (kill-buffer (awk-preview--env-preview-buffer awk-preview--env))
@@ -2070,6 +2064,7 @@ DISPLAY non-nil means redisplay buffer as output is inserted."
                    (yes-or-no-p "Program buffer does not visit any file. Kill? ")
                  awk-preview-kill-orphan-program-buffer))
       (kill-buffer (awk-preview--env-program-buffer awk-preview--env)))
+    (delete-file (awk-preview--env-program-filename awk-preview--env))
     (setf (awk-preview--env-running-p awk-preview--env) nil))
   (set-window-configuration (awk-preview--env-window-configuration awk-preview--env)))
 
