@@ -730,7 +730,7 @@ found, otherwise returns nil."
 
 (add-hook 'editorconfig-hack-properties-functions
           '(lambda (props)
-             (when (derived-mode-p makefile-mode)
+             (when (derived-mode-p 'makefile-mode)
                (puthash 'indent_style \"tab\" props))))
 
 ;; (when (fboundp 'editorconfig-charset-extras)
