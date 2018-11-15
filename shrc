@@ -204,18 +204,23 @@ command -v fortune >/dev/null && {
     echo
 }
 
-if null type figlet && null type lolcat
-then
-    echo `whoami`@`hostname` | figlet | lolcat
-fi
-
 uname -a
 $iswindows && alias tty="echo cmd.exe"
 echo TERM $TERM with $(tput colors) colors using $(tty)
 echo umask: `umask -S`
 
+if null type figlet && null type lolcat
+then
+    echo `whoami`@`hostname` | figlet | lolcat
+fi
+
 echo
-__safe_run w yuk
+__safe_run id `whoami`
+# echo
+## A bit heavy command
+# finger `whoami`
+echo
+__safe_run w `whoami`
 
 # if null type tmux
 # then
@@ -796,7 +801,7 @@ showinfo(){
     }
 
     $iswindows || __safe_run finger $USER
-    LANG=C __safe_runc id
+    LANG=C __safe_run id
     __safe_run xset q
 }
 
