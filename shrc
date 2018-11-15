@@ -190,25 +190,23 @@ then
 else
     alias __safe_lolcat=cat
 fi
+if command -v cowsay >/dev/null
+then
+    alias __safe_cowsay=cowsay
+else
+    alias __safe_cowsay=cat
+fi
 
 command -v fortune >/dev/null && {
-    if command -v cowsay >/dev/null
-    then
-        fortune | cowsay | __safe_lolcat
-        echo
-        fortune -o | cowsay | __safe_lolcat
-        echo
-    else
-        fortune | __safe_lolcat
-        echo
-        fortune -o | __safe_lolcat
-        echo
-    fi
+    fortune | __safe_cowsay | __safe_lolcat
+    echo
+    fortune -o | __safe_cowsay | __safe_lolcat
+    echo
 }
 
 if null type figlet && null type lolcat
 then
-    hostname -s | figlet | lolcat
+    echo `whoami`@`hostname` | figlet | lolcat
 fi
 
 uname -a
