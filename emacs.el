@@ -731,7 +731,7 @@ found, otherwise returns nil."
 (add-hook 'editorconfig-hack-properties-functions
           '(lambda (props)
              (when (derived-mode-p 'makefile-mode)
-               (puthash 'indent_style \"tab\" props))))
+               (puthash 'indent_style "tab" props))))
 
 ;; (when (fboundp 'editorconfig-charset-extras)
 ;;   (add-hook 'editorconfig-custom-hooks
@@ -895,7 +895,7 @@ found, otherwise returns nil."
           (lambda ()
             (setq imenu-generic-expression
                   `(("Sections" ";;;\+\n;; \\(.*\\)\n" 1)
-                    ,@imenu-generic-expression))))
+                  ,@imenu-generic-expression))))
 
 (with-eval-after-load 'compile
   (defvar compilation-filter-start)
@@ -2818,17 +2818,19 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 This assumes that file name should be in a format like BASE.EXT.j2 ."
   (require 'mmm-mode)
   (require 'mmm-jinja2)
-  (let ((withoutj2 (replace-regexp-in-string "\\.j2\\'"
-                                             ""
-                                             buffer-file-name)))
-    (let ((mode (assoc-default withoutj2
-                               auto-mode-alist
-                               'string-match)))
-      (when mode
-        (funcall mode)))
-    (add-to-list 'mmm-classes
-                 'jinja2)
-    (mmm-mode-on)))
+  ;; Sometimes buffer-file-name is set to nil... Why?
+  (when buffer-file-name
+    (let ((withoutj2 (replace-regexp-in-string "\\.j2\\'"
+                                               ""
+                                               buffer-file-name)))
+      (let ((mode (assoc-default withoutj2
+                                 auto-mode-alist
+                                 'string-match)))
+        (when mode
+          (funcall mode)))
+      (add-to-list 'mmm-classes
+                   'jinja2)
+      (mmm-mode-on))))
 
 (add-to-list 'auto-mode-alist
              '("\\.j2\\'" . jinja2-mmm-mode))
