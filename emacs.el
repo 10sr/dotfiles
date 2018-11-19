@@ -1608,7 +1608,7 @@ ARG is num to show, or defaults to 7."
 (define-key ctl-x-map (kbd "f") 'my-dired-git-ls-files)
 (with-eval-after-load 'dired
   (defvar dired-mode-map (make-sparse-keymap))
-  (define-key dired-mode-map "f" 'my-dired-git-ls-files))
+  (define-key dired-mode-map "G" 'my-dired-git-ls-files))
 
 ;; (define-minor-mode my-dired-glob-filter)
 
