@@ -129,6 +129,8 @@ found, otherwise returns nil."
        git-gutter
        end-mark
        sl
+       ;; TODO: Configure pony-tpl-mode
+       pony-mode
 
        editorconfig
        editorconfig-custom-majormode
