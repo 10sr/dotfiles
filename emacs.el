@@ -2151,26 +2151,21 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   :prefix "git-walktree-"
   :group 'tools)
 
-(defvar git-walktree-current-committish nil
+(defvar-local git-walktree-current-committish nil
   "Committish name of currently browsing.")
-(make-variable-buffer-local 'git-walktree-current-committish)
 
-(defvar git-walktree-current-path nil
+(defvar-local git-walktree-current-path nil
   "Path name currently visiting without leading and trailing slash.
 This path is always relative to repository root.")
-(make-variable-buffer-local 'git-walktree-current-path)
 
-(defvar git-walktree-buffer-file-name nil
+(defvar-local git-walktree-buffer-file-name nil
   "Psudo filename of current buffer.")
-(make-variable-buffer-local 'git-walktree-buffer-file-name)
 
-(defvar git-walktree-object-full-sha1 nil
+(defvar-local git-walktree-object-full-sha1 nil
   "Object name in full sha1 format of current buffer.")
-(make-variable-buffer-local 'git-walktree-object-full-sha1)
 
-(defvar git-walktree-repository-root nil
+(defvar-local git-walktree-repository-root nil
   "Repository root path of current buffer.")
-(make-variable-buffer-local 'git-walktree-repository-root)
 (put 'git-walktree-repository-root
      'permanent-local
      t)
@@ -2833,9 +2828,8 @@ This assumes that file name should be in a format like BASE.EXT.j2 ."
       (add-to-list 'mmm-classes
                    'jinja2)
       (mmm-mode-on))))
-
-(add-to-list 'auto-mode-alist
-             '("\\.j2\\'" . jinja2-mmm-mode))
+;; (add-to-list 'auto-mode-alist
+;;              '("\\.j2\\'" . jinja2-mmm-mode))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
