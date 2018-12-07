@@ -1893,7 +1893,10 @@ This mode is a simplified version of `adoc-mode'."
                (file-attributes recently-file)))))
 
 (defun recently-reload ()
-  "Reload file."
+  "Reload file and update `recently-list' value.
+
+This function does nothing when there is no update to `recently-file' since last
+read."
   (when (and (file-readable-p recently-file)
              (not (equal recently-file-mtime
                          (nth 5
