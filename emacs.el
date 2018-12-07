@@ -2131,7 +2131,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; git-worktree
 
-(defun git-worktree-get-current-list ()
+(defun git-worktree-get-current-trees ()
   "Get current worktree list."
   (with-temp-buffer
     (let ((trees nil)
@@ -2160,6 +2160,82 @@ use for the buffer. It defaults to \"*recetf-show*\"."
             (goto-char (point-at-bol)))
           ))
       trees)))
+
+(defun git-worktree--get-repository-root (dir)
+  "Resolve repository root of DIR.
+
+If DIR is not inside of any git repository, signal an error."
+  (cl-assert (file-directory-p dir))
+  (with-temp-buffer
+    (cd dir)
+    (let ((status (call-process "git"
+                                nil
+                                t
+                                nil
+                                "rev-parse" "--show-toplevel")))
+      (goto-char (point-min))
+      (cl-assert (eq status 0)
+                 nil
+                 (buffer-substring-no-properties (point-min) (point-max)))
+      (buffer-substring-no-properties (point-at-bol) (point-at-eol)))))
+;;(git-worktree--get-repository-root default-directory)
+
+(defun git-worktree-open-noselect (&optional directory)
+  "Open git worktree list buffer.
+
+If optional arg DIRECTORY is given change current directory to there before
+initializing."
+  (setq directory (expand-file-name (or directory
+                                        default-directory)))
+  (cl-assert (file-directory-p directory))
+  (let* ((root (git-worktree--get-repository-root directory))
+         (name (file-name-nondirectory root))
+         (bname (format "Git Worktree<%s>" name)))
+    (with-current-buffer (get-buffer-create bname)
+      (cd root)
+      (let ((trees (git-worktree-get-current-trees)))
+        (setq tabulated-list-entries
+              (mapcar (lambda (f)
+                        (list f
+                              (vector (or (plist-get f :branch) "")
+                                      (plist-get f :worktree)
+                                      (plist-get f :head))))
+                      trees))
+        (setq tabulated-list-format
+              `[("Refs" 30 t)
+                ("Worktree" 40 t)
+                ("Head" 0 t)])
+        (git-worktree-mode)
+        (current-buffer)))))
+
+;; ((:worktree "/Users/10sr/.dotfiles" :head "5e7457a8d49ef6a517cdf39d038ba5fdf98dc68e" :branch "refs/heads/master") (:worktree "/Users/10sr/.dotfiles/b1" :head "fa7d868076d807692e35f82ae23596c903fd1117" :branch "refs/heads/b1"))
+(defun git-worktree-open (&optional directory)
+  "Open git worktree list buffer.
+
+If optional arg DIRECTORY is given change current directory to there before
+initializing."
+  (interactive)
+  (let ((bf (git-worktree-open-noselect directory)))
+    (pop-to-buffer bf)))
+(defalias 'git-worktree 'git-worktree-open)
+
+(defvar git-worktree-map
+  (let ((map (make-sparse-keymap)))
+    (suppress-keymap map)
+    (define-key map (kbd "C-m") 'git-worktree-mode-go)
+    (define-key map "R" 'git-worktree-mode-rename)
+    (define-key map "D" 'git-worktree-mode-remove)
+    (define-key map (kbd "C-g") 'git-worktree-mode-close)
+    (define-key map "/" 'isearch-forward)
+    map))
+
+(define-derived-mode git-worktree-mode tabulated-list-mode "Git Worktrees"
+  "Major mode for browsing recently opened files and directories."
+  (setq tabulated-list-padding 2)
+  ;; TODO: Implement revert
+  ;; (add-hook 'tabulated-list-revert-hook 'git-worktree-mode-reload nil t)
+  (tabulated-list-init-header)
+  (tabulated-list-print nil nil))
 
 
 ;; Local Variables:
