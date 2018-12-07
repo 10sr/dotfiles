@@ -1784,25 +1784,6 @@ and search from projectile root (if projectile is available)."
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;; adoc-simple-mode
-
-(when (safe-require-or-eval 'adoc-mode)
-  (defvar adoc-simple-font-lock-keywords
-    nil)
-  (define-derived-mode adoc-simple-mode adoc-mode
-    "Adoc-Simple"
-    "Major mode for editing AsciiDoc text files.
-This mode is a simplified version of `adoc-mode'."
-    '(set (make-local-variable 'font-lock-defaults)
-          '(adoc-simple-font-lock-keywords
-            nil nil nil nil
-            (font-lock-multiline . t)
-            (font-lock-mark-block-function . adoc-font-lock-mark-block-function))))
-  (add-to-list 'auto-mode-alist
-               '("\\.adoc\\'" . adoc-simple-mode)))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editorconfig-auto-apply
 
@@ -2180,31 +2161,6 @@ use for the buffer. It defaults to \"*recetf-show*\"."
           ))
       trees)))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; j2-mode jinja2-mmm-mode?
-
-(define-derived-mode jinja2-mmm-mode prog-mode
-  "Jinja2 MMM"
-  "Major mode to setup `mmm-mode' with mmm-jinja2.
-This assumes that file name should be in a format like BASE.EXT.j2 ."
-  (require 'mmm-mode)
-  (require 'mmm-jinja2)
-  ;; Sometimes buffer-file-name is set to nil... Why?
-  (when buffer-file-name
-    (let ((withoutj2 (replace-regexp-in-string "\\.j2\\'"
-                                               ""
-                                               buffer-file-name)))
-      (let ((mode (assoc-default withoutj2
-                                 auto-mode-alist
-                                 'string-match)))
-        (when mode
-          (funcall mode)))
-      (add-to-list 'mmm-classes
-                   'jinja2)
-      (mmm-mode-on))))
-;; (add-to-list 'auto-mode-alist
-;;              '("\\.j2\\'" . jinja2-mmm-mode))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
