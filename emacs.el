@@ -2193,7 +2193,18 @@ initializing."
          (bname (format "Git Worktree<%s>" name)))
     (with-current-buffer (get-buffer-create bname)
       (cd root)
-      (let ((trees (git-worktree-get-current-trees)))
+      (let* ((trees (git-worktree-get-current-trees))
+             (branch-max-length
+              (apply 'max
+                     (cl-loop for e in trees
+                              when (plist-get e :branch)
+                              collect (length (plist-get e :branch)))))
+             (worktree-max-length
+              (apply 'max
+                     (cl-loop for e in trees
+                              when (plist-get e :worktree)
+                              collect (length (plist-get e :worktree)))))
+             )
         (setq tabulated-list-entries
               (mapcar (lambda (f)
                         (list f
@@ -2202,9 +2213,9 @@ initializing."
                                       (plist-get f :head))))
                       trees))
         (setq tabulated-list-format
-              `[("Refs" 30 t)
-                ("Worktree" 40 t)
-                ("Head" 0 t)])
+              `[("Branch" ,branch-max-length t)
+                ("Worktree" ,worktree-max-length t)
+                ("Head" -1 t)])
         (git-worktree-mode)
         (current-buffer)))))
 
