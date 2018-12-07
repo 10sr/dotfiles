@@ -1871,6 +1871,8 @@ This mode is a simplified version of `adoc-mode'."
 
 (defun recently-write ()
   "Write to file."
+  ;; Failsafe to avoid purging all existing entries
+  (assert recently-list)
   (with-temp-buffer
     (prin1 recently-list
            (current-buffer))
