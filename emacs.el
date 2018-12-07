@@ -2193,32 +2193,34 @@ initializing."
          (bname (format "Git Worktree<%s>" name)))
     (with-current-buffer (get-buffer-create bname)
       (cd root)
-      (let* ((trees (git-worktree-get-current-trees))
-             (branch-max-size
-              (apply 'max
-                     (cl-loop for e in trees
-                              when (plist-get e :branch)
-                              collect (length (plist-get e :branch)))))
-             (worktree-max-size
-              (apply 'max
-                     (cl-loop for e in trees
-                              when (plist-get e :worktree)
-                              collect (length (plist-get e :worktree)))))
-             )
+      (let ((trees (git-worktree-get-current-trees)))
         (setq tabulated-list-entries
-              (mapcar (lambda (f)
-                        (list f
-                              (vector (or (plist-get f :branch) "")
-                                      (plist-get f :worktree)
-                                      (plist-get f :head))))
+              (mapcar (lambda (e)
+                        (list e
+                              (vector
+                               (concat (file-relative-name (plist-get e :worktree))
+                                       "/")
+                               (or (plist-get e :branch) "")
+                               (plist-get e :head)
+                               )))
                       trees))
-        (setq tabulated-list-format
-              `[("Branch" ,branch-max-size t)
-                ("Worktree" ,worktree-max-size t)
-                ("Head" -1 t)])
+        (let ((branch-max-size
+               (apply 'max
+                      (cl-loop for e in tabulated-list-entries
+                               collect (length (elt (cadr e) 1)))))
+              (worktree-max-size
+               (apply 'max
+                      (length "Worktree")
+                      (cl-loop for e in tabulated-list-entries
+                               collect (length (elt (cadr e) 0))))))
+          (setq tabulated-list-format
+                `[
+                  ("Worktree" ,worktree-max-size t)
+                  ("Branch" ,branch-max-size t)
+                  ("Head" -1 t)
+                  ]))
         (git-worktree-mode)
         (current-buffer)))))
-
 ;; ((:worktree "/Users/10sr/.dotfiles" :head "5e7457a8d49ef6a517cdf39d038ba5fdf98dc68e" :branch "refs/heads/master") (:worktree "/Users/10sr/.dotfiles/b1" :head "fa7d868076d807692e35f82ae23596c903fd1117" :branch "refs/heads/b1"))
 (defun git-worktree-open (&optional directory)
   "Open git worktree list buffer.
