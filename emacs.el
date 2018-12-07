@@ -1853,7 +1853,7 @@ and search from projectile root (if projectile is available)."
 (defun recently-write ()
   "Write to file."
   ;; Failsafe to avoid purging all existing entries
-  (assert recently-list)
+  (cl-assert recently-list)
   (with-temp-buffer
     (prin1 recently-list
            (current-buffer))
@@ -1895,7 +1895,7 @@ read."
                  if (string-match re path) return nil
                  finally return t)
     (recently-reload)
-    (let* ((l (copy-list recently-list))
+    (let* ((l (cl-copy-list recently-list))
            (l (delete path
                       l))
            (l (cl-loop for e in l
