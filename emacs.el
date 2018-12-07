@@ -2232,6 +2232,13 @@ initializing."
     (pop-to-buffer bf)))
 (defalias 'git-worktree 'git-worktree-open)
 
+(defun git-worktree-mode-go ()
+  "Go to worktree directory at point."
+  (interactive)
+  (let ((id (tabulated-list-get-id)))
+    (when id
+      (dired (plist-get id :worktree)))))
+
 (defvar git-worktree-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map)
