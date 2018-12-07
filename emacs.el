@@ -2219,7 +2219,7 @@ initializing."
     (pop-to-buffer bf)))
 (defalias 'git-worktree 'git-worktree-open)
 
-(defvar git-worktree-map
+(defvar git-worktree-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map)
     (define-key map (kbd "C-m") 'git-worktree-mode-go)
