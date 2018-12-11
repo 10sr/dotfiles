@@ -1996,7 +1996,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (defun recently-show--create-buffer-tabulated (&optional buffer-name)
   "Create buffer listing recently files."
   (let ((bname (or buffer-name
-                   "*recently-show-tabulated*")))
+                   "*Recently*")))
     (when (get-buffer bname)
       (kill-buffer bname))
     (with-current-buffer (get-buffer-create bname)
@@ -2076,72 +2076,11 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   (tabulated-list-init-header)
   (tabulated-list-print nil nil))
 
-;; (defun recently-show-create-buffer (&optional files buffer-name)
-;;   "Create buffer listing recently files."
-;;   (let ((bname (or buffer-name
-;;                    "*recently-show*"))
-;;         (list (or files
-;;                   (progn
-;;                     (recently-reload)
-;;                     recently-list))))
-;;     (when list
-;;       (and (get-buffer bname)
-;;            (kill-buffer bname))
-;;       (let ((bf (get-buffer-create bname)))
-;;         (with-current-buffer bf
-;;           (recently-show-mode)
-;;           (let ((inhibit-read-only t))
-;;             (mapc (lambda (f)
-;;                     (insert (if recently-show-abbreviate
-;;                                 (abbreviate-file-name f)
-;;                               f)
-;;                             "\n"))
-;;                   list))
-;;           (goto-char (point-min))
-;;           ;; (setq buffer-read-only t)
-;;           )
-;;         bf))))
-
-;; (defun recently-show-close ()
-;;   "Close recently-show window."
-;;   (interactive)
-;;   (kill-buffer (current-buffer))
-;;   (set-window-configuration recently-show-window-configuration))
-
 (defun recently-show-tabulated-close ()
   "Close recently-show window."
   (interactive)
   (kill-buffer (current-buffer))
   (set-window-configuration recently-show-window-configuration))
-
-;; (defun recently-show-find-file ()
-;;   "Fine file of current line."
-;;   (interactive)
-;;   (let ((f (recently-show-get-filename)))
-;;     (recently-show-close)
-;;     (find-file f)))
-
-;; (defun recently-show-view-file ()
-;;   "view file of current line."
-;;   (interactive)
-;;   (let ((f (recently-show-get-filename)))
-;;     (recently-show-close)
-;;     (view-file f)))
-
-;; (defun recently-show-get-filename ()
-;;   "Get filename of current line."
-;;   (buffer-substring-no-properties (point-at-bol)
-;;                                   (point-at-eol)))
-
-;; (defun recently-show-dired()
-;;   "Open dired buffer of directory containing file of current line."
-;;   (interactive)
-;;   (let ((f (recently-show-get-filename)))
-;;     (recently-show-close)
-;;     (dired (if (file-directory-p f)
-;;                f
-;;              (or (file-name-directory f)
-;;                  ".")))))
 
 (define-key ctl-x-map (kbd "C-r") 'recently-show)
 
