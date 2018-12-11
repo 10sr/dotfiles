@@ -1940,38 +1940,11 @@ read."
 ;;;;;;;;;;;;;;;;
 ;; recently-show
 
-(defvar recently-show-window-height 10
-  "Max height of window of `recently-show'")
-
-;; (defvar recently-show-mode-map
-;;   (let ((map (make-sparse-keymap)))
-;;     (suppress-keymap map)
-;;     (define-key map "n" 'next-line)
-;;     (define-key map "p" 'previous-line)
-;;     (define-key map (kbd "C-m") 'recently-show-find-file)
-;;     (define-key map (kbd "SPC") 'recently-show-find-file)
-;;     (define-key map "v" 'recently-show-view-file)
-;;     (define-key map "@" 'recently-show-dired)
-;;     (define-key map "q" 'recently-show-close)
-;;     (define-key map (kbd "C-g") 'recently-show-close)
-;;     (define-key map "?" 'describe-mode)
-;;     (define-key map "/" 'isearch-forward)
-;;     map))
-
-;; (defvar recently-show-before-listing-hook nil
-;;   "Hook run before creating buffer of `recently-show'.")
-
 (defvar recently-show-window-configuration nil
   "Used for internal")
 
 (defvar recently-show-abbreviate t
   "Non-nil means use `abbreviate-file-name' when listing recently opened files.")
-
-;; (define-derived-mode recently-show-mode special-mode "recently-show"
-;;   "Major mode for `recently-show'."
-;;   ;; (set (make-local-variable 'scroll-margin)
-;;   ;;      0)
-;;   )
 
 ;;;###autoload
 (defun recently-show (&optional buffer-name)
@@ -1984,13 +1957,8 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   (let ((bf (recently-show--create-buffer-tabulated buffer-name)))
     (if bf
         (progn
-          ;; (recently-save-list)
           (setq recently-show-window-configuration (current-window-configuration))
-          (pop-to-buffer bf)
-          ;; (set-window-text-height (selected-window)
-          ;;                         recently-show-window-height)
-          ;; (shrink-window-if-larger-than-buffer (selected-window))
-          )
+          (pop-to-buffer bf))
       (message "No recent file!"))))
 
 (defun recently-show--create-buffer-tabulated (&optional buffer-name)
