@@ -2203,6 +2203,21 @@ initializing."
       (apply 'git-worktree--call-process args))
     (revert-buffer)))
 
+(defun git-worktree-mode-remove ()
+  "Remove worktree at point."
+  (interactive)
+  (let* ((id (tabulated-list-get-id))
+         (path (plist-get id :worktree)))
+    (cl-assert path nil "No worktree info at point")
+    (cl-assert (file-directory-p path) t "Directory not found")
+    (when (yes-or-no-p (format "Remove workking directory \"%s\": "
+                               path))
+      (with-temp-buffer
+        (git-worktree--call-process "worktree"
+                                    "remove"
+                                    path))
+      (revert-buffer))))
+
 (defvar git-worktree-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map)
