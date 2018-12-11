@@ -1974,14 +1974,14 @@ read."
 ;;   )
 
 ;;;###autoload
-(defun recently-show (&optional files buffer-name)
+(defun recently-show (&optional buffer-name)
   "Show simplified list of recently opened files.
-If optional argument FILES is non-nil, it is a list of recently-opened
-files to choose from. It defaults to the whole recent list.
 If optional argument BUFFER-NAME is non-nil, it is a buffer name to
 use for the buffer. It defaults to \"*recetf-show*\"."
+  ;; If optional argument FILES is non-nil, it is a list of recently-opened
+  ;; files to choose from. It defaults to the whole recent list.
   (interactive)
-  (let ((bf (recently-show--create-buffer-tabulated files buffer-name)))
+  (let ((bf (recently-show--create-buffer-tabulated buffer-name)))
     (if bf
         (progn
           ;; (recently-save-list)
@@ -1993,26 +1993,21 @@ use for the buffer. It defaults to \"*recetf-show*\"."
           )
       (message "No recent file!"))))
 
-(defun recently-show--create-buffer-tabulated (&optional files buffer-name)
-  "Create buffer listing recently files FILES."
-  (setq files
-        (or files
-            (progn
-              (recently-reload)
-              recently-list)))
+(defun recently-show--create-buffer-tabulated (&optional buffer-name)
+  "Create buffer listing recently files."
   (let ((bname (or buffer-name
                    "*recently-show-tabulated*")))
-    (when files
-      (when (get-buffer bname)
-        (kill-buffer bname))
-      (with-current-buffer (get-buffer-create bname)
-        ;; (setq tabulated-list-sort-key (cons "Name" nil))
-        (recently-show--set-tabulated-list-mode-variables files)
-        (recently-show-tabulated-mode)
-        (current-buffer)))))
+    (when (get-buffer bname)
+      (kill-buffer bname))
+    (with-current-buffer (get-buffer-create bname)
+      ;; (setq tabulated-list-sort-key (cons "Name" nil))
+      (recently-show--set-tabulated-list-mode-variables)
+      (recently-show-tabulated-mode)
+      (current-buffer))))
 
-(defun recently-show--set-tabulated-list-mode-variables (files)
-  "Set variables for `tabulated-list-mode'. to use FILES."
+(defun recently-show--set-tabulated-list-mode-variables ()
+  "Set variables for `tabulated-list-mode'."
+  (recently-reload)
   (setq tabulated-list-entries
         (mapcar (lambda (f)
                   (list f
@@ -2020,7 +2015,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
                                 (if recently-show-abbreviate
                                     (abbreviate-file-name f)
                                   f))))
-                files
+                recently-list
                 ))
   (let ((max
          (apply 'max
@@ -2057,8 +2052,10 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (define-derived-mode recently-show-tabulated-mode tabulated-list-mode "Recently Show"
   "Major mode for browsing recently opened files and directories."
   (setq tabulated-list-padding 2)
-  ;; TODO: Implement revert
-  ;; (add-hook 'tabulated-list-revert-hook 'recently-reload nil t)
+  (add-hook 'tabulated-list-revert-hook
+            'recently-show--set-tabulated-list-mode-variables
+            nil
+            t)
   (tabulated-list-init-header)
   (tabulated-list-print nil nil))
 
