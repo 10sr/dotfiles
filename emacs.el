@@ -2120,12 +2120,12 @@ initializing."
          (bname (format "*GitWorktree<%s>*" name)))
     (with-current-buffer (get-buffer-create bname)
       (cd root)
-      (git-worktree--set-tabulated-list-mmode-variables)
+      (git-worktree--set-tabulated-list-mode-variables)
       (git-worktree-mode)
       (current-buffer))))
 ;; ((:worktree "/Users/10sr/.dotfiles" :head "5e7457a8d49ef6a517cdf39d038ba5fdf98dc68e" :branch "refs/heads/master") (:worktree "/Users/10sr/.dotfiles/b1" :head "fa7d868076d807692e35f82ae23596c903fd1117" :branch "refs/heads/b1"))
 
-(defun git-worktree--set-tabulated-list-mmode-variables ()
+(defun git-worktree--set-tabulated-list-mode-variables ()
   "Set variables for `tabulated-list-mode'."
   (let ((trees (git-worktree-get-current-trees)))
     (setq tabulated-list-entries
@@ -2233,7 +2233,7 @@ initializing."
   "Major mode for browsing recently opened files and directories."
   (setq tabulated-list-padding 2)
   (add-hook 'tabulated-list-revert-hook
-            'git-worktree--set-tabulated-list-mmode-variables
+            'git-worktree--set-tabulated-list-mode-variables
             nil
             t)
   (tabulated-list-init-header)
