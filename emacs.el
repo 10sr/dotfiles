@@ -1995,41 +1995,44 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 
 (defun recently-show--create-buffer-tabulated (&optional files buffer-name)
   "Create buffer listing recently files FILES."
+  (setq files
+        (or files
+            (progn
+              (recently-reload)
+              recently-list)))
   (let ((bname (or buffer-name
-                   "*recently-show-tabulated*"))
-        (list (or files
-                  (progn
-                    (recently-reload)
-                    recently-list))))
-    (when list
+                   "*recently-show-tabulated*")))
+    (when files
       (when (get-buffer bname)
         (kill-buffer bname))
       (with-current-buffer (get-buffer-create bname)
         ;; (setq tabulated-list-sort-key (cons "Name" nil))
-        (setq tabulated-list-entries
-              (mapcar (lambda (f)
-                        (list f
-                              (vector (file-name-nondirectory f)
-                                      (if recently-show-abbreviate
-                                          (abbreviate-file-name f)
-                                        f))))
-                      ;; list
-                      recently-list
-                      ))
-        (let ((max
-               (apply 'max
-                      (mapcar (lambda (l)
-                                (length (elt (cadr l) 0)))
-                              tabulated-list-entries))))
-          (setq tabulated-list-format
-                `[("Name"
-                   ,(min max
-                         30)
-                   t)
-                  ("Full Path" 0 t)])
-          )
+        (recently-show--set-tabulated-list-mode-variables files)
         (recently-show-tabulated-mode)
         (current-buffer)))))
+
+(defun recently-show--set-tabulated-list-mode-variables (files)
+  "Set variables for `tabulated-list-mode'. to use FILES."
+  (setq tabulated-list-entries
+        (mapcar (lambda (f)
+                  (list f
+                        (vector (file-name-nondirectory f)
+                                (if recently-show-abbreviate
+                                    (abbreviate-file-name f)
+                                  f))))
+                files
+                ))
+  (let ((max
+         (apply 'max
+                (mapcar (lambda (l)
+                          (length (elt (cadr l) 0)))
+                        tabulated-list-entries))))
+    (setq tabulated-list-format
+          `[("Name"
+             ,(min max
+                   30)
+             t)
+            ("Full Path" 0 t)])))
 
 (defun recently-show-tabulated-find-file ()
   "Find-file in `recently-show-tabulated-mode'."
