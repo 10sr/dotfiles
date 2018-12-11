@@ -2164,20 +2164,25 @@ initializing."
   (interactive)
   (let* ((id (tabulated-list-get-id))
          (path (plist-get id :worktree)))
-    (when path
-      (if (file-directory-p path)
-          (dired path)
-        (error "Directory not found: %s" path)))))
+    (cl-assert path nil "No worktree info at point")
+    (cl-assert (file-directory-p path) t "Directory not found")
+    (dired path)))
 
 (defun git-worktree-mode-move ()
   "Move worktree at point to a new location."
   (interactive)
   (let* ((id (tabulated-list-get-id))
          (path (plist-get id :worktree)))
-    (when path
-      (if (file-directory-p path)
-          (dired path)
-        (error "Directory not found: %s" path)))))
+    (cl-assert path nil "No worktree info at point")
+    (cl-assert (file-directory-p path) t "Directory not found")
+    (let ((new (read-file-name (format "New name for worktree %s: "
+                                       path))))
+      (with-temp-buffer
+        (git-worktree--call-process "worktree"
+                                    "move"
+                                    path
+                                    (expand-file-name new)))
+      (revert-buffer))))
 
 (defvar git-worktree-mode-map
   (let ((map (make-sparse-keymap)))
