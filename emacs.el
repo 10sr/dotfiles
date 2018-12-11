@@ -2058,12 +2058,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (defun git-worktree-get-current-trees ()
   "Get current worktree list."
   (with-temp-buffer
-    (let ((status (call-process "git"
-                                nil
-                                t
-                                nil
-                                "worktree" "list" "--porcelain")))
-      (cl-assert (eq status 0)))
+    (git-worktree--call-process "worktree" "list" "--porcelain")
     (goto-char (point-min))
     (let ((trees nil))
       (save-match-data
@@ -2085,7 +2080,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
           ))
       trees)))
 
-(defun git-worktree--call-process (args)
+(defun git-worktree--call-process (&rest args)
   "Start git process synchronously with ARGS.
 
 Raise error when git process ends with non-zero status.
@@ -2107,14 +2102,7 @@ If DIR is not inside of any git repository, signal an error."
   (cl-assert (file-directory-p dir))
   (with-temp-buffer
     (cd dir)
-    (let ((status (call-process "git"
-                                nil
-                                t
-                                nil
-                                "rev-parse" "--show-toplevel")))
-      (cl-assert (eq status 0)
-                 nil
-                 (buffer-substring-no-properties (point-min) (point-max))))
+    (git-worktree--call-process "rev-parse" "--show-toplevel")
     (goto-char (point-min))
     (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
 ;;(git-worktree--get-repository-root default-directory)
@@ -2181,11 +2169,20 @@ initializing."
           (dired path)
         (error "Directory not found: %s" path)))))
 
-(defun git-worktree-mode-move ())
+(defun git-worktree-mode-move ()
+  "Move worktree at point to a new location."
+  (interactive)
+  (let* ((id (tabulated-list-get-id))
+         (path (plist-get id :worktree)))
+    (when path
+      (if (file-directory-p path)
+          (dired path)
+        (error "Directory not found: %s" path)))))
 
 (defvar git-worktree-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map)
+    (define-key map "A" 'git-worktree-mode-add)
     (define-key map (kbd "C-m") 'git-worktree-mode-go)
     (define-key map "R" 'git-worktree-mode-move)
     (define-key map "D" 'git-worktree-mode-remove)
