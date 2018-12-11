@@ -2058,14 +2058,14 @@ use for the buffer. It defaults to \"*recetf-show*\"."
 (defun git-worktree-get-current-trees ()
   "Get current worktree list."
   (with-temp-buffer
-    (let ((trees nil)
-          (status (call-process "git"
+    (let ((status (call-process "git"
                                 nil
                                 t
                                 nil
                                 "worktree" "list" "--porcelain")))
-      (cl-assert (eq status 0))
-      (goto-char (point-min))
+      (cl-assert (eq status 0)))
+    (goto-char (point-min))
+    (let ((trees nil))
       (save-match-data
         (while (not (eq (point) (point-max)))
           (let ((worktree nil)
@@ -2085,6 +2085,21 @@ use for the buffer. It defaults to \"*recetf-show*\"."
           ))
       trees)))
 
+(defun git-worktree--call-process (args)
+  "Start git process synchronously with ARGS.
+
+Raise error when git process ends with non-zero status.
+Any output will be written to current buffer."
+  (let ((status (apply 'call-process
+                       "git"
+                       nil
+                       t
+                       nil
+                       args)))
+    (cl-assert (eq status 0)
+               nil
+               (buffer-substring-no-properties (point-min) (point-max)))))
+
 (defun git-worktree--get-repository-root (dir)
   "Resolve repository root of DIR.
 
@@ -2097,11 +2112,11 @@ If DIR is not inside of any git repository, signal an error."
                                 t
                                 nil
                                 "rev-parse" "--show-toplevel")))
-      (goto-char (point-min))
       (cl-assert (eq status 0)
                  nil
-                 (buffer-substring-no-properties (point-min) (point-max)))
-      (buffer-substring-no-properties (point-at-bol) (point-at-eol)))))
+                 (buffer-substring-no-properties (point-min) (point-max))))
+    (goto-char (point-min))
+    (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
 ;;(git-worktree--get-repository-root default-directory)
 
 (defun git-worktree-open-noselect (&optional directory)
@@ -2142,9 +2157,9 @@ initializing."
                   ("Worktree" ,worktree-max-size t)
                   ("Branch" ,branch-max-size t)
                   ("Head" -1 t)
-                  ]))
-        (git-worktree-mode)
-        (current-buffer)))))
+                  ])))
+      (git-worktree-mode)
+      (current-buffer))))
 ;; ((:worktree "/Users/10sr/.dotfiles" :head "5e7457a8d49ef6a517cdf39d038ba5fdf98dc68e" :branch "refs/heads/master") (:worktree "/Users/10sr/.dotfiles/b1" :head "fa7d868076d807692e35f82ae23596c903fd1117" :branch "refs/heads/b1"))
 (defun git-worktree-open (&optional directory)
   "Open git worktree list buffer.
@@ -2159,15 +2174,20 @@ initializing."
 (defun git-worktree-mode-go ()
   "Go to worktree directory at point."
   (interactive)
-  (let ((id (tabulated-list-get-id)))
-    (when id
-      (dired (plist-get id :worktree)))))
+  (let* ((id (tabulated-list-get-id))
+         (path (plist-get id :worktree)))
+    (when path
+      (if (file-directory-p path)
+          (dired path)
+        (error "Directory not found: %s" path)))))
+
+(defun git-worktree-mode-move ())
 
 (defvar git-worktree-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map)
     (define-key map (kbd "C-m") 'git-worktree-mode-go)
-    (define-key map "R" 'git-worktree-mode-rename)
+    (define-key map "R" 'git-worktree-mode-move)
     (define-key map "D" 'git-worktree-mode-remove)
     (define-key map (kbd "C-g") 'git-worktree-mode-close)
     (define-key map "/" 'isearch-forward)
