@@ -2030,12 +2030,20 @@ use for the buffer. It defaults to \"*recetf-show*\"."
             ("Full Path" 0 t)])))
 
 (defun recently-show-tabulated-find-file ()
-  "Find-file in `recently-show-tabulated-mode'."
+  "Find file at point."
   (interactive)
   (let ((f (tabulated-list-get-id)))
     (when f
       (recently-show-tabulated-close)
       (find-file f))))
+
+(defun recently-show-tabulated-view-file ()
+  "View file at point."
+  (interactive)
+  (let ((f (tabulated-list-get-id)))
+    (when f
+      (recently-show-tabulated-close)
+      (view-file f))))
 
 (defvar recently-show-tabulated-mode-map
   (let ((map (make-sparse-keymap)))
