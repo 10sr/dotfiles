@@ -2001,28 +2001,28 @@ use for the buffer. It defaults to \"*recetf-show*\"."
   "Find file at point."
   (interactive)
   (let ((f (tabulated-list-get-id)))
-    (when f
-      (recently-show-tabulated-close)
-      (find-file f))))
+    (cl-assert f nil "No entry at point")
+    (recently-show-tabulated-close)
+    (find-file f)))
 
 (defun recently-show-tabulated-view-file ()
   "View file at point."
   (interactive)
   (let ((f (tabulated-list-get-id)))
-    (when f
-      (recently-show-tabulated-close)
-      (view-file f))))
+    (cl-assert f nil "No entry at point")
+    (recently-show-tabulated-close)
+    (view-file f)))
 
 (defun recently-show-tabulated-dired()
   "Open dired buffer of directory at point."
   (interactive)
   (let ((f (tabulated-list-get-id)))
-    (when f
-      (recently-show-tabulated-close)
-      (dired (if (file-directory-p f)
-                 f
-               (or (file-name-directory f)
-                   "."))))))
+    (cl-assert f nil "No entry at point")
+    (recently-show-tabulated-close)
+    (dired (if (file-directory-p f)
+               f
+             (or (file-name-directory f)
+                 ".")))))
 
 (defvar recently-show-tabulated-mode-map
   (let ((map (make-sparse-keymap)))
