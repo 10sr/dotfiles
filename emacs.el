@@ -2129,7 +2129,7 @@ initializing."
   (cl-assert (file-directory-p directory))
   (let* ((root (git-worktree--get-repository-root directory))
          (name (file-name-nondirectory root))
-         (bname (format "Git Worktree<%s>" name)))
+         (bname (format "*GitWorktree<%s>*" name)))
     (with-current-buffer (get-buffer-create bname)
       (cd root)
       (let ((trees (git-worktree-get-current-trees)))
@@ -2193,7 +2193,7 @@ initializing."
     (define-key map "/" 'isearch-forward)
     map))
 
-(define-derived-mode git-worktree-mode tabulated-list-mode "Git Worktrees"
+(define-derived-mode git-worktree-mode tabulated-list-mode "Git-Worktrees"
   "Major mode for browsing recently opened files and directories."
   (setq tabulated-list-padding 2)
   ;; TODO: Implement revert
