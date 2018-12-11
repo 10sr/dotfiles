@@ -2180,7 +2180,7 @@ initializing."
          (path (plist-get id :worktree)))
     (cl-assert path nil "No worktree info at point")
     (cl-assert (file-directory-p path) t "Directory not found")
-    (let ((new (read-file-name (format "New name for worktree %s: "
+    (let ((new (read-file-name (format "New name for worktree \"%s\": "
                                        path))))
       (with-temp-buffer
         (git-worktree--call-process "worktree"
@@ -2189,6 +2189,20 @@ initializing."
                                     (expand-file-name new)))
       (revert-buffer))))
 
+(defun git-worktree-mode-add ()
+  "Add new git worktree."
+  (interactive)
+  (let* ((path (read-file-name "Path of new worktree: "))
+         (commitish (read-string (format "Commitish to checkout to \"%s\" (Empty to omit): "
+                                         path)))
+         (args (append '("worktree" "add")
+                       (if (string= "" commitish)
+                           (list (expand-file-name path))
+                         (list (expand-file-name path) commitish)))))
+    (with-temp-buffer
+      (apply 'git-worktree--call-process args))
+    (revert-buffer)))
+
 (defvar git-worktree-mode-map
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map)
@@ -2196,7 +2210,7 @@ initializing."
     (define-key map (kbd "C-m") 'git-worktree-mode-go)
     (define-key map "R" 'git-worktree-mode-move)
     (define-key map "D" 'git-worktree-mode-remove)
-    (define-key map (kbd "C-g") 'git-worktree-mode-close)
+    ;; (define-key map (kbd "C-g") 'git-worktree-mode-close)
     (define-key map "/" 'isearch-forward)
     map))
 
