@@ -2034,7 +2034,7 @@ use for the buffer. It defaults to \"*recetf-show*\"."
     (define-key map "/" 'isearch-forward)
     map))
 
-(define-derived-mode recently-show-tabulated-mode tabulated-list-mode "Recently Show"
+(define-derived-mode recently-show-tabulated-mode tabulated-list-mode "Recently-Show"
   "Major mode for browsing recently opened files and directories."
   (setq tabulated-list-padding 2)
   (add-hook 'tabulated-list-revert-hook
