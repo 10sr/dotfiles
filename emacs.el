@@ -2007,6 +2007,47 @@ initializing."
   (tabulated-list-print nil nil))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;
+;; with-venv
+
+(defmacro with-venv-dir (dir &rest body)
+  "Set python environment to DIR and execute BODY."
+  `(progn
+     (message "%S" ,dir)
+     ,@body))
+
+(defmacro with-venv (&rest body)
+  "Execute BODY with venv enabled.
+
+This function tries to find suitable venv dir, or raise error when none found."
+  `(with-venv-dir ,(with-venv-find-venv-dir) ,@body))
+
+(defvar-local with-venv-venv-dir
+  nil
+  "Venv directory path.")
+
+(defun with-venv-find-venv-dir (&optional dir)
+  "Try to find venv dir for DIR or raise error when none found."
+  (with-temp-buffer
+    (when dir
+      (cd dir))
+    (or
+     ;; If set explicitly use it
+     with-venv-venv-dir
+     ;; Check pipenv
+     (let ((status (call-process "pipenv" nil t nil "--venv")))
+       (goto-char (point-min))
+       (and (eq status 0)
+            (buffer-substring-no-properties (point-at-bol)
+                                            (point-at-eol))))
+     ;; Search for .venv dir
+     (locate-dominating-file default-directory
+                             ".venv")))
+
+
+;; (with-venv (:dir default-directory) (message "a"))
+;; (with-venv () (message "a"))
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
