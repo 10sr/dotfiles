@@ -2023,6 +2023,7 @@ When nil, `with-venv' tries to find suitable venv dir.")
          (--with-venv-exec-path-orig (cl-copy-list exec-path)))
      (unwind-protect
          (progn
+           ;; Do the same thing that bin/activate does
            (setq exec-path
                  (cons (concat ,dir "/bin")
                        exec-path))
