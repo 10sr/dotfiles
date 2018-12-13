@@ -2042,7 +2042,7 @@ This function tries to find suitable venv dir, or raise error when none found."
                                             (point-at-eol))))
      ;; Search for .venv dir
      (locate-dominating-file default-directory
-                             ".venv")))
+                             ".venv"))))
 
 
 ;; (with-venv (:dir default-directory) (message "a"))
