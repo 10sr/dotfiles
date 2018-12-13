@@ -2020,7 +2020,11 @@ initializing."
   "Execute BODY with venv enabled.
 
 This function tries to find suitable venv dir, or raise error when none found."
-  `(with-venv-dir ,(with-venv-find-venv-dir) ,@body))
+  `(with-venv-dir
+    ;; If set explicitly use it
+    ,(or with-venv-venv-dir
+         with-venv-find-venv-dir)
+    ,@body))
 
 (defvar-local with-venv-venv-dir
   nil
@@ -2032,17 +2036,38 @@ This function tries to find suitable venv dir, or raise error when none found."
     (when dir
       (cd dir))
     (or
-     ;; If set explicitly use it
-     with-venv-venv-dir
      ;; Check pipenv
-     (let ((status (call-process "pipenv" nil t nil "--venv")))
-       (goto-char (point-min))
-       (and (eq status 0)
-            (buffer-substring-no-properties (point-at-bol)
-                                            (point-at-eol))))
+     (with-venv--find-venv-dir-pipenv)
+     ;; Check poetry
+     (with-venv--find-venv-dir-poetry)
      ;; Search for .venv dir
-     (locate-dominating-file default-directory
-                             ".venv"))))
+     (with-venv--find-venv-dir-by-name))))
+
+(defun with-venv--find-venv-dir-pipenv ()
+  "Try to find venv dir via pipenv."
+  (with-temp-buffer
+    (let ((status (call-process "pipenv" nil t nil "--venv")))
+      (when (eq status 0)
+        (goto-char (point-min))
+        (buffer-substring-no-properties (point-at-bol)
+                                        (point-at-eol))))))
+
+(defun with-venv--find-venv-dir-poetry ()
+  "Try to find venv dir via poetry."
+  (with-temp-buffer
+    ;; TODO: Use poetry env info --path
+    (let ((status (call-process "poetry" nil t nil "debug:info")))
+      (when (eq status 0)
+        (goto-char (point-min))
+        (save-match-data
+          (when (re-search-forward "^ \\* Path: *\\(.*\\)$")
+            (match-string 1)))))))
+
+(defun with-venv--find-venv-dir-by-name ()
+  "Try to find venv dir by its name."
+  (expand-file-name ".venv"
+                    (locate-dominating-file default-directory
+                                            ".venv")))
 
 
 ;; (with-venv (:dir default-directory) (message "a"))
