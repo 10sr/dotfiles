@@ -2010,11 +2010,30 @@ initializing."
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; with-venv
 
+(defvar-local with-venv-venv-dir
+  nil
+  "Venv directory path.
+
+This variable is intended to be explicitly set by user.
+When nil, `with-venv' tries to find suitable venv dir.")
+
 (defmacro with-venv-dir (dir &rest body)
   "Set python environment to DIR and execute BODY."
-  `(progn
-     (message "%S" ,dir)
-     ,@body))
+  `(let ((--with-venv-process-environment-orig (cl-copy-list process-environment))
+         (--with-venv-exec-path-orig (cl-copy-list exec-path)))
+     (unwind-protect
+         (progn
+           (setq exec-path
+                 (cons (concat ,dir "/bin")
+                       exec-path))
+           (setenv "VIRTUAL_ENV" ,dir)
+           (setenv "PATH" (concat ,dir "/bin:" (or (getenv "PATH") "")))
+           (setenv "PYTHONHOME")
+           ,@body)
+       (setq process-environment
+             --with-venv-process-environment-orig)
+       (setq exec-path
+             --with-venv-exec-path-orig))))
 
 (defmacro with-venv (&rest body)
   "Execute BODY with venv enabled.
@@ -2023,12 +2042,8 @@ This function tries to find suitable venv dir, or raise error when none found."
   `(with-venv-dir
     ;; If set explicitly use it
     ,(or with-venv-venv-dir
-         with-venv-find-venv-dir)
+         (with-venv-find-venv-dir))
     ,@body))
-
-(defvar-local with-venv-venv-dir
-  nil
-  "Venv directory path.")
 
 (defun with-venv-find-venv-dir (&optional dir)
   "Try to find venv dir for DIR or raise error when none found."
@@ -2065,9 +2080,11 @@ This function tries to find suitable venv dir, or raise error when none found."
 
 (defun with-venv--find-venv-dir-by-name ()
   "Try to find venv dir by its name."
-  (expand-file-name ".venv"
-                    (locate-dominating-file default-directory
-                                            ".venv")))
+  (let ((dir (locate-dominating-file default-directory
+                                     ".venv")))
+    (when dir
+      (expand-file-name ".venv"
+                        dir))))
 
 
 ;; (with-venv (:dir default-directory) (message "a"))
