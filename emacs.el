@@ -2133,6 +2133,10 @@ When a function is adviced with this function, it is wrapped with `with-venv'."
   (with-venv
    (apply orig-func args)))
 
+(with-eval-after-load 'blacken
+  (with-venv-advice-add 'blacken-call-bin))
+
+
 ;; (with-venv (:dir default-directory) (message "a"))
 ;; (with-venv () (message "a"))
 
