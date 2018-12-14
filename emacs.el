@@ -2056,6 +2056,7 @@ suitable environment was found."
   `(with-venv-dir
     ;; If set explicitly use it
     (or with-venv-venv-dir
+        ;; Check previously used directory
         (with-venv-check-exists with-venv-previously-used)
         (setq with-venv-previously-used (with-venv-find-venv-dir)))
     ,@body))
@@ -2067,18 +2068,12 @@ If none found return nil."
     (when dir
       (cd dir))
     (or
-     ;; Check used previously
-     (with-venv-check-exists
-      with-venv-previously-used)
      ;; Check pipenv
-     (with-venv-check-exists
-      (with-venv--find-venv-dir-pipenv))
+     (with-venv-check-exists (with-venv--find-venv-dir-pipenv))
      ;; Check poetry
-     (with-venv-check-exists
-      (with-venv--find-venv-dir-poetry))
+     (with-venv-check-exists (with-venv--find-venv-dir-poetry))
      ;; Search for .venv dir
-     (with-venv-check-exists
-      (with-venv--find-venv-dir-by-name)))))
+     (with-venv-check-exists (with-venv--find-venv-dir-by-name)))))
 
 (defun with-venv--find-venv-dir-pipenv ()
   "Try to find venv dir via pipenv."
