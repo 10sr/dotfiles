@@ -1086,6 +1086,9 @@ found, otherwise returns nil."
   (add-to-list 'auto-mode-alist
                '("build\\.gradle\\'" . groovy-mode)))
 
+(add-to-list 'auto-mode-alist
+             '("\\.gawk\\'" . awk-mode))
+
 (with-eval-after-load 'yaml-mode
   (defvar yaml-mode-map (make-sparse-keymap))
   (define-key yaml-mode-map (kbd "C-m") 'newline))
