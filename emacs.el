@@ -2018,7 +2018,9 @@ initializing."
   "Venv directory path.
 
 This variable is intended to be explicitly set by user.
-When nil, `with-venv' tries to find suitable venv dir.")
+When nil, `with-venv' tries to find suitable venv dir.
+When this variable is set , use this value without checking if it is a valid
+python environment.")
 
 (defmacro with-venv-dir (dir &rest body)
   "Set python environment to DIR and execute BODY.
@@ -2029,7 +2031,7 @@ If dir is nil, execute BODY as usual."
          (--with-venv-exec-path-orig (cl-copy-list exec-path)))
      (unwind-protect
          (progn
-           (when dir
+           (when ,dir
              ;; Do the same thing that bin/activate does
              (setq exec-path
                    (cons (concat ,dir "/bin")
@@ -2043,6 +2045,9 @@ If dir is nil, execute BODY as usual."
        (setq exec-path
              --with-venv-exec-path-orig))))
 
+
+(defvar-local with-venv-previously-used nil
+  "Previously used venv dir path.")
 (defmacro with-venv (&rest body)
   "Execute BODY with venv enabled.
 
@@ -2051,32 +2056,29 @@ suitable environment was found."
   `(with-venv-dir
     ;; If set explicitly use it
     ,(or with-venv-venv-dir
-         (with-venv-find-venv-dir))
+         (with-venv-check-exists with-venv-previously-used)
+         (setq with-venv-previously-used (with-venv-find-venv-dir)))
     ,@body))
 
-(defvar-local with-venv-previously-used nil
-  "Previously used venv dir path.")
 (defun with-venv-find-venv-dir (&optional dir)
   "Try to find venv dir for DIR.
 If none found return nil."
   (with-temp-buffer
     (when dir
       (cd dir))
-    (let ((result (or
-                   ;; Check used previously
-                   (with-venv-check-exists
-                    with-venv-previously-used)
-                   ;; Check pipenv
-                   (with-venv-check-exists
-                    (with-venv--find-venv-dir-pipenv))
-                   ;; Check poetry
-                   (with-venv-check-exists
-                    (with-venv--find-venv-dir-poetry))
-                   ;; Search for .venv dir
-                   (with-venv-check-exists
-                    (with-venv--find-venv-dir-by-name)))))
-      (setq with-venv-previously-used
-            result))))
+    (or
+     ;; Check used previously
+     (with-venv-check-exists
+      with-venv-previously-used)
+     ;; Check pipenv
+     (with-venv-check-exists
+      (with-venv--find-venv-dir-pipenv))
+     ;; Check poetry
+     (with-venv-check-exists
+      (with-venv--find-venv-dir-poetry))
+     ;; Search for .venv dir
+     (with-venv-check-exists
+      (with-venv--find-venv-dir-by-name)))))
 
 (defun with-venv--find-venv-dir-pipenv ()
   "Try to find venv dir via pipenv."
