@@ -2055,9 +2055,9 @@ This function tries to find suitable venv dir, or run BODY as usual when no
 suitable environment was found."
   `(with-venv-dir
     ;; If set explicitly use it
-    ,(or with-venv-venv-dir
-         (with-venv-check-exists with-venv-previously-used)
-         (setq with-venv-previously-used (with-venv-find-venv-dir)))
+    (or with-venv-venv-dir
+        (with-venv-check-exists with-venv-previously-used)
+        (setq with-venv-previously-used (with-venv-find-venv-dir)))
     ,@body))
 
 (defun with-venv-find-venv-dir (&optional dir)
@@ -2116,6 +2116,22 @@ If none found return nil."
                                            dir))
        dir))
 
+(defun with-venv-advice-add (func)
+  "Setup advice so that FUNC uses `with-env' macro when executing."
+  (advice-add func
+              :around
+              'with-venv--advice-around))
+
+(defun with-venv-advice-remove (func)
+  "Remove advice added by `with-venv-advice-add'."
+  (advice-remove func
+                 'with-venv--advice-around))
+
+(defun with-venv--advice-around (orig-func &rest args)
+  "Function to be used to advice functions with `with-venv-advice-add'.
+When a function is adviced with this function, it is wrapped with `with-venv'."
+  (with-venv
+   (apply orig-func args)))
 
 ;; (with-venv (:dir default-directory) (message "a"))
 ;; (with-venv () (message "a"))
