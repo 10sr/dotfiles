@@ -717,6 +717,9 @@ found, otherwise returns nil."
   ;;               'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1)
   (set-variable 'editorconfig-mode-lighter " EC")
+  (when (fboundp 'ws-butler-mode)
+    (set-variable 'editorconfig-trim-whitespaces-mode
+                  'ws-butler-mode))
   (with-eval-after-load 'org-src
     ;; [*.org\[\*Org Src*\[ c \]*\]]
     (add-hook 'org-src-mode-hook
