@@ -2035,13 +2035,15 @@ If dir is nil, execute BODY as usual."
      (unwind-protect
          (progn
            (when ,dir
-             ;; Do the same thing that bin/activate does
-             (setq exec-path
-                   (cons (concat ,dir "/bin")
-                         exec-path))
-             (setenv "VIRTUAL_ENV" ,dir)
-             (setenv "PATH" (concat ,dir "/bin:" (or (getenv "PATH") "")))
-             (setenv "PYTHONHOME"))
+             (let* ((dir (file-name-as-directory ,dir))
+                    (bin (expand-file-name "bin" dir)))
+               ;; Do the same thing that bin/activate does
+               (setq exec-path
+                     (cons bin
+                           exec-path))
+               (setenv "VIRTUAL_ENV" dir)
+               (setenv "PATH" (concat bin ":" (or (getenv "PATH") "")))
+               (setenv "PYTHONHOME")))
            ,@body)
        (setq process-environment
              --with-venv-process-environment-orig)
