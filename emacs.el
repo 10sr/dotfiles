@@ -964,7 +964,8 @@ found, otherwise returns nil."
 (set-variable 'flycheck-python-pycompile-executable "python3")
 (set-variable 'python-indent-guess-indent-offset nil)
 (with-eval-after-load 'blacken
-  (with-venv-advice-add 'blacken-buffer))
+  (when (require 'with-venv nil t)
+    (with-venv-advice-add 'blacken-buffer)))
 
 
 ;; http://fukuyama.co/foreign-regexp
