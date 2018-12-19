@@ -1603,6 +1603,7 @@ ARG is num to show, or defaults to 7."
 (when (autoload-eval-lazily 'dired-filter)
   (add-hook 'dired-mode-hook
             'dired-filter-mode))
+(set-variable 'dired-filter-stack nil)
 
 ;; Currently disabled in favor of dired-from-git-ls-files
 ;; (define-key ctl-x-map "f" 'find-dired)
