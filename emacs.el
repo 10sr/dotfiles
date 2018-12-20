@@ -209,7 +209,8 @@ found, otherwise returns nil."
   ;; does not work?
   )
 ;; (add-to-list 'default-frame-alist '(cursor-type . box))
-(if window-system (menu-bar-mode 1) (menu-bar-mode 0))
+(menu-bar-mode 1)
+(define-key ctl-x-map "m" 'menu-bar-open)
 (and (fboundp 'tool-bar-mode)
      (tool-bar-mode 0))
 (and (fboundp 'set-scroll-bar-mode)
@@ -802,7 +803,7 @@ found, otherwise returns nil."
 
 ;; bookmarks
 
-(define-key ctl-x-map "m" 'list-bookmarks)
+;; (define-key ctl-x-map "m" 'list-bookmarks)
 
 ;; vc
 
