@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+
+  <menu id="xdg-menu" label="Openbox 3" execute="xdg_menu --format openbox3-pipe" />
+
+  <menu id="system-menu" label="System">
+    <item label="Openbox Configuration Manager">
+      <action name="Execute">
+        <command>obconf</command>
+        <startupnotify><enabled>yes</enabled></startupnotify>
+      </action>
+    </item>
+    <item label="Manage Cups Printers">
+      <action name="Execute">
+        <command>xdg-open http://localhost:631/</command>
+        <startupnotify>
+          <enabled>no</enabled>
+          <icon>cups</icon>
+        </startupnotify>
+      </action>
+    </item>
+    <separator />
+    <item label="Reconfigure Openbox">
+      <action name="Reconfigure" />
+    </item>
+  </menu>
+
+  <menu id="exit-menu" label="Exit">
+    <item label="Log Out">
+      <action name="Exit">
+        <prompt>yes</prompt>
+      </action>
+    </item>
+    <item label="Shutdown">
+	  <action name="Execute">
+		<command>systemctl poweroff</command>
+	  </action>
+	</item>
+	<item label="Restart">
+	  <action name="Execute">
+		<command>systemctl reboot</command>
+	  </action>
+	</item>
+	<item label="Suspend">
+	  <action name="Execute">
+		<command>systemctl suspend</command>
+	  </action>
+	</item>
+	<item label="Hibernate">
+	  <action name="Execute">
+		<command>systemctl hibernate</command>
+	  </action>
+	</item>
+  </menu>
+
+  <menu id="root-menu" label="Openbox 3">
+    <separator label="Applications" />
+    <menu id="xdg-menu" />
+    <separator label="System" />
+    <menu id="system-menu"/>
+    <menu id="exit-menu"/>
+    <separator />
+    <item label="Log Out">
+      <action name="Exit">
+        <prompt>yes</prompt>
+      </action>
+    </item>
+  </menu>
+
+</openbox_menu>
