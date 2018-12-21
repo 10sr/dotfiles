@@ -38,7 +38,7 @@ export TERMCAP="${TERMCAP}:vb="
 # export ENV=~/.shrc
 
 export PAGER="less"
-export LESS="-iMX"
+export LESS="-iMRX"
 
 # Style for lesspipe is defined in esc.style
 _src_hilite_lp_path="`command -v src-hilite-lesspipe.sh 2>/dev/null`"
