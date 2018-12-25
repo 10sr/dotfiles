@@ -1633,6 +1633,9 @@ ARG is num to show, or defaults to 7."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(when (fboundp 'browse-url-default-macosx-browser)
+  (defalias 'browse-osx 'browse-url-default-macosx-browser))
+
 (defalias 'qcalc 'quick-calc)
 
 (defun memo (&optional dir)
