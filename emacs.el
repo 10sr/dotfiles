@@ -1808,7 +1808,7 @@ and search from projectile root (if projectile is available)."
 
 (define-minor-mode editorconfig-auto-apply-mode
   "When saving .editorconfig file update buffer configs."
-  :global t
+  :global t  ;; TODO: global nil and instruct to hook to editorconfig-conf-mode-hook
   :lighter ""
   (if editorconfig-auto-apply-mode
       (add-hook 'after-save-hook
