@@ -714,8 +714,8 @@ found, otherwise returns nil."
   (recently-mode 1))
 
 (when (safe-require-or-eval 'editorconfig)
-  ;; (set-variable 'editorconfig-get-properties-function
-  ;;               'editorconfig-core-get-properties-hash)
+  (set-variable 'editorconfig-get-properties-function
+                'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1)
   (set-variable 'editorconfig-mode-lighter " EC")
   (when (fboundp 'ws-butler-mode)
@@ -1593,6 +1593,8 @@ ARG is num to show, or defaults to 7."
                   (delete-file file)))))
 
   (when (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack))
+    (set-variable 'pack-silence
+                  t)
     (with-eval-after-load 'dired
       (define-key dired-mode-map "P" 'pack-dired-dwim)))
 
@@ -2020,6 +2022,23 @@ initializing."
             t)
   (tabulated-list-init-header)
   (tabulated-list-print nil nil))
+
+;;;;;;;;;;;;;;;;
+;; flychcek-black
+
+(require 'flycheck)
+
+(flycheck-define-checker black
+  "A Python style checker."
+  :command ("black" "--check" source)
+  :error-parser my-flycheck-parse-unified-diff
+  :modes python-mode)
+
+(defun my-flycheck-parse-unified-diff (output checker buffer)
+  "Flycheck parser to parse diff output."
+  (with-temp-buffer
+    (insert output)
+    nil))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
