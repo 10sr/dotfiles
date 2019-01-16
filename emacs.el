@@ -2028,11 +2028,24 @@ initializing."
 
 (require 'flycheck)
 
-(flycheck-define-checker black
+(flycheck-define-checker python-black
   "A Python style checker."
-  :command ("black" "--check" source)
+  :command ("python3"
+            "-m" "black"
+            (config-file "--config" flycheck-black)
+            "--check" source)
   :error-parser my-flycheck-parse-unified-diff
+  :enabled (lambda ()
+             (or (not (flycheck-python-needs-module-p 'python-black))
+                 (flycheck-python-find-module 'python-black "black")))
+  :verify (lambda (_) (flycheck-python-verify-module 'python-black "black"))
   :modes python-mode)
+
+(flycheck-def-config-file-var flycheck-black python-black "pyproject.toml"
+  :safe #'stringp)
+
+(add-to-list 'flycheck-checkers
+             'python-black)
 
 (defun my-flycheck-parse-unified-diff (output checker buffer)
   "Flycheck parser to parse diff output."
