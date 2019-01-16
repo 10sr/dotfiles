@@ -2047,6 +2047,10 @@ initializing."
 (add-to-list 'flycheck-checkers
              'python-black)
 
+(defun my-flycheck-parse-any-error (output checker buffer)
+  "Flycheck parser to check if OUTPUT is not empty."
+  ())
+
 (defun my-flycheck-parse-unified-diff (output checker buffer)
   "Flycheck parser to parse diff output."
   (let ((source-line 0)
