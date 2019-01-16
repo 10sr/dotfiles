@@ -2028,18 +2028,18 @@ initializing."
 
 (require 'flycheck)
 
-(flycheck-define-checker python-black
-  "A Python style checker."
-  :command ("python3"
-            "-m" "black"
-            (config-file "--config" flycheck-black)
-            "--check" source)
-  :error-parser my-flycheck-parse-unified-diff
-  :enabled (lambda ()
-             (or (not (flycheck-python-needs-module-p 'python-black))
-                 (flycheck-python-find-module 'python-black "black")))
-  :verify (lambda (_) (flycheck-python-verify-module 'python-black "black"))
-  :modes python-mode)
+'(flycheck-define-checker python-black
+   "A Python style checker."
+   :command ("python3"
+             "-m" "black"
+             (config-file "--config" flycheck-black)
+             "--check" source)
+   :error-parser my-flycheck-parse-unified-diff
+   :enabled (lambda ()
+              (or (not (flycheck-python-needs-module-p 'python-black))
+                  (flycheck-python-find-module 'python-black "black")))
+   :verify (lambda (_) (flycheck-python-verify-module 'python-black "black"))
+   :modes python-mode)
 
 (flycheck-def-config-file-var flycheck-black python-black "pyproject.toml"
   :safe #'stringp)
@@ -2049,9 +2049,34 @@ initializing."
 
 (defun my-flycheck-parse-unified-diff (output checker buffer)
   "Flycheck parser to parse diff output."
-  (with-temp-buffer
-    (insert output)
-    nil))
+  (let ((source-line 0)
+        (result ())
+        (hunk "HUNK"))
+    (with-temp-buffer
+      (insert output)
+      (goto-char (point-min))
+      (while (not (eq (point) (point-max)))
+        ;; FIXME: Do not stop when no result
+        (while (not (re-search-forward "^@@ -\\([0-9]+\\),\\([0-9]+\\) \\+\\([0-9]+\\),\\([0-9]+\\) @@.*$" (point-at-eol) t))
+          (forward-line 1)
+          (goto-char (point-at-bol)))
+        (setq source-line
+              (string-to-number (match-string 1)))
+        ;; TODO: Add filename support
+        (setq hunk
+              (match-string 0))
+        ;;(while (not (rearch-forward "^\\(-\\|\\+\\)")))
+        )
+      (add-to-list 'result
+                   (flycheck-error-new-at
+                    0
+                    nil
+                    'error
+                    "MESSAGE"
+                    :buffer buffer
+                    :checker checker
+                    :group hunk)))
+    result))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
