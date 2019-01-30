@@ -978,6 +978,8 @@ found, otherwise returns nil."
 
 (autoload-eval-lazily 'sql '(sql-mode)
   (require 'sql-indent nil t))
+(add-to-list 'auto-mode-alist
+             '("\\.hql\\'" . sql-mode))
 
 (when (autoload-eval-lazily 'git-command)
   (define-key ctl-x-map "g" 'git-command))
