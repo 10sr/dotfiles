@@ -2108,6 +2108,9 @@ initializing."
                     :group hunk)))
     result))
 
+(set-variable 'flycheck-python-mypy-ini
+              ".mypy.ini")
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
