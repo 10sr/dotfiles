@@ -2062,6 +2062,7 @@ initializing."
 (add-to-list 'flycheck-checkers
              'python-black-check)
 
+;; Fix when file has invalid syntax
 (defun flycheck-parse-black-check (output checker buffer)
   "Flycheck parser to check if reformat is required."
   (with-temp-buffer
