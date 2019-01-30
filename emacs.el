@@ -2062,21 +2062,31 @@ initializing."
 (add-to-list 'flycheck-checkers
              'python-black-check)
 
-;; Fix when file has invalid syntax
 (defun flycheck-parse-black-check (output checker buffer)
   "Flycheck parser to check if reformat is required."
   (with-temp-buffer
     (insert output)
     (goto-char (point-min))
-    (when (re-search-forward "^would reformat .*$" nil t)
-      (list (flycheck-error-new-at
-             (point-min)
-             nil
-             'error
-             ;;(format "Black: %s" (match-string 0))
-             "Black: would reformat buffer"
-             :buffer buffer
-             :checker checker)))))
+    (save-match-data
+      (when (re-search-forward "^would reformat .*$" nil t)
+        (list (flycheck-error-new-at
+               (point-min)
+               nil
+               'error
+               ;;(format "Black: %s" (match-string 0))
+               "Black: would be reformatted"
+               :buffer buffer
+               :checker checker)))
+      (when (re-search-forward "^error: cannot format .*$" nil t)
+        (list (flycheck-error-new-at
+               (point-min)
+               nil
+               'error
+               ;; Fix not to include absolute file path
+               (format "Black: %s" (match-string 0))
+               :buffer buffer
+               :checker checker)))
+      )))
 
 (defun my-flycheck-parse-unified-diff (output checker buffer)
   "Flycheck parser to parse diff output."
