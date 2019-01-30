@@ -2066,8 +2066,8 @@ initializing."
   "Flycheck parser to check if reformat is required."
   (with-temp-buffer
     (insert output)
-    (goto-char (point-min))
     (save-match-data
+      (goto-char (point-min))
       (when (re-search-forward "^would reformat .*$" nil t)
         (list (flycheck-error-new-at
                (point-min)
@@ -2077,6 +2077,7 @@ initializing."
                "Black: would be reformatted"
                :buffer buffer
                :checker checker)))
+      (goto-char (point-min))
       (when (re-search-forward "^error: cannot format .*$" nil t)
         (list (flycheck-error-new-at
                (point-min)
