@@ -2030,17 +2030,17 @@ initializing."
 
 (require 'flycheck)
 
-(flycheck-define-checker python-black
+(flycheck-define-checker python-black-check
   "A Python style checker."
-  :command ("python3"
-            "-m" "black"
+  :command ("python3" "-m" "black"
+            "--check"
             (config-file "--config" flycheck-black)
-            "--check" source)
-  :error-parser my-flycheck-parse-any-error
+            source)
+  :error-parser flycheck-parse-black-check
   :enabled (lambda ()
-             (or (not (flycheck-python-needs-module-p 'python-black))
-                 (flycheck-python-find-module 'python-black "black")))
-  :verify (lambda (_) (flycheck-python-verify-module 'python-black "black"))
+             (or (not (flycheck-python-needs-module-p 'python-black-check))
+                 (flycheck-python-find-module 'python-black-check "black")))
+  :verify (lambda (_) (flycheck-python-verify-module 'python-black-check "black"))
   :modes python-mode)
 
 '(flycheck-define-checker python-black-diff
@@ -2056,13 +2056,13 @@ initializing."
    :verify (lambda (_) (flycheck-python-verify-module 'python-black "black"))
    :modes python-mode)
 
-(flycheck-def-config-file-var flycheck-black python-black "pyproject.toml"
+(flycheck-def-config-file-var flycheck-black python-black-check "pyproject.toml"
   :safe #'stringp)
 
 (add-to-list 'flycheck-checkers
-             'python-black)
+             'python-black-check)
 
-(defun my-flycheck-parse-any-error (output checker buffer)
+(defun flycheck-parse-black-check (output checker buffer)
   "Flycheck parser to check if reformat is required."
   (with-temp-buffer
     (insert output)
