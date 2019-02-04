@@ -2071,7 +2071,7 @@ initializing."
         (goto-char (point-min))
         (when (re-search-forward "^would reformat .*$" nil t)
           (setq result (list (flycheck-error-new-at
-                              (point-min)
+                              (point-max)
                               nil
                               'error
                               ;;(format "Black: %s" (match-string 0))
@@ -2081,7 +2081,7 @@ initializing."
         (goto-char (point-min))
         (when (re-search-forward "^error: cannot format .*$" nil t)
           (setq reslt (list (flycheck-error-new-at
-                             (point-min)
+                             (point-max)
                              nil
                              'error
                              ;; Fix not to include absolute file path
