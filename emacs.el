@@ -2064,30 +2064,31 @@ initializing."
 
 (defun flycheck-parse-black-check (output checker buffer)
   "Flycheck parser to check if reformat is required."
-  (with-temp-buffer
-    (insert output)
-    (save-match-data
-      (goto-char (point-min))
-      (when (re-search-forward "^would reformat .*$" nil t)
-        (list (flycheck-error-new-at
-               (point-min)
-               nil
-               'error
-               ;;(format "Black: %s" (match-string 0))
-               "Black: would be reformatted"
-               :buffer buffer
-               :checker checker)))
-      (goto-char (point-min))
-      (when (re-search-forward "^error: cannot format .*$" nil t)
-        (list (flycheck-error-new-at
-               (point-min)
-               nil
-               'error
-               ;; Fix not to include absolute file path
-               (format "Black: %s" (match-string 0))
-               :buffer buffer
-               :checker checker)))
-      )))
+  (let ((result nil))
+    (with-temp-buffer
+      (insert output)
+      (save-match-data
+        (goto-char (point-min))
+        (when (re-search-forward "^would reformat .*$" nil t)
+          (setq result (list (flycheck-error-new-at
+                              (point-min)
+                              nil
+                              'error
+                              ;;(format "Black: %s" (match-string 0))
+                              "Black: would be reformatted"
+                              :buffer buffer
+                              :checker checker))))
+        (goto-char (point-min))
+        (when (re-search-forward "^error: cannot format .*$" nil t)
+          (setq reslt (list (flycheck-error-new-at
+                             (point-min)
+                             nil
+                             'error
+                             ;; Fix not to include absolute file path
+                             (format "Black: %s" (match-string 0))
+                             :buffer buffer
+                             :checker checker))))))
+    result))
 
 (defun my-flycheck-parse-unified-diff (output checker buffer)
   "Flycheck parser to parse diff output."
