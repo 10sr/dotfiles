@@ -2037,24 +2037,29 @@ initializing."
             (config-file "--config" flycheck-black)
             source)
   :error-parser flycheck-parse-black-check
+  ;; :error-patterns
+  ;; (
+  ;;  (error line-start "error: cannot format " (file-name) ": " (message) ": " line ":" column ": " (one-or-more any) line-end)
+  ;;  (error line-start (message) " " (file-name) line-end)
+  ;;  )
   :enabled (lambda ()
              (or (not (flycheck-python-needs-module-p 'python-black-check))
                  (flycheck-python-find-module 'python-black-check "black")))
   :verify (lambda (_) (flycheck-python-verify-module 'python-black-check "black"))
   :modes python-mode)
 
-'(flycheck-define-checker python-black-diff
-   "A Python style checker."
-   :command ("python3"
-             "-m" "black"
-             (config-file "--config" flycheck-black)
-             "--diff" source)
-   :error-parser my-flycheck-parse-unified-diff
-   :enabled (lambda ()
-              (or (not (flycheck-python-needs-module-p 'python-black))
-                  (flycheck-python-find-module 'python-black "black")))
-   :verify (lambda (_) (flycheck-python-verify-module 'python-black "black"))
-   :modes python-mode)
+;; (flycheck-define-checker python-black-diff
+;;   "A Python style checker."
+;;   :command ("python3"
+;;             "-m" "black"
+;;             (config-file "--config" flycheck-black)
+;;             "--diff" source)
+;;   :error-parser my-flycheck-parse-unified-diff
+;;   :enabled (lambda ()
+;;              (or (not (flycheck-python-needs-module-p 'python-black))
+;;                  (flycheck-python-find-module 'python-black "black")))
+;;   :verify (lambda (_) (flycheck-python-verify-module 'python-black "black"))
+;;   :modes python-mode)
 
 (flycheck-def-config-file-var flycheck-black python-black-check "pyproject.toml"
   :safe #'stringp)
