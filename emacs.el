@@ -2079,7 +2079,7 @@ initializing."
                               :buffer buffer
                               :checker checker))))
         (goto-char (point-min))
-        (when (re-search-forward "^error: cannot format .*$" nil t)
+        (when (re-search-forward "^error: .*$" nil t)
           (setq reslt (list (flycheck-error-new-at
                              (point-max)
                              nil
