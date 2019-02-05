@@ -2071,7 +2071,7 @@ initializing."
         (goto-char (point-min))
         (when (re-search-forward "^would reformat .*$" nil t)
           (setq result (list (flycheck-error-new-at
-                              (point-max)
+                              (point-min)
                               nil
                               'error
                               ;;(format "Black: %s" (match-string 0))
@@ -2080,14 +2080,14 @@ initializing."
                               :checker checker))))
         (goto-char (point-min))
         (when (re-search-forward "^error: .*$" nil t)
-          (setq reslt (list (flycheck-error-new-at
-                             (point-max)
-                             nil
-                             'error
-                             ;; Fix not to include absolute file path
-                             (format "Black: %s" (match-string 0))
-                             :buffer buffer
-                             :checker checker))))))
+          (setq result (list (flycheck-error-new-at
+                              (point-min)
+                              nil
+                              'error
+                              ;; Fix not to include absolute file path
+                              (format "Black: %s" (match-string 0))
+                              :buffer buffer
+                              :checker checker))))))
     result))
 
 (defun my-flycheck-parse-unified-diff (output checker buffer)
