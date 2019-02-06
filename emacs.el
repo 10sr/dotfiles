@@ -1851,16 +1851,25 @@ and search from projectile root (if projectile is available)."
         (while (not (eq (point) (point-max)))
           (let ((worktree nil)
                 (head nil)
-                (branch nil))
-            (while (re-search-forward "^\\([^ ]+\\) \\(.*\\)$" (point-at-eol) t)
+                (branch nil)
+                (bare nil))
+            (while (or (re-search-forward "^\\([^ ]+\\) \\(.*\\)$" (point-at-eol) t)
+                       (re-search-forward "^\\([^ ]+\\)$" (point-at-eol) t))
               (pcase (match-string 1)
                 ("worktree" (setq worktree (match-string 2)))
                 ("HEAD" (setq head (match-string 2)))
-                ("branch" (setq branch (match-string 2))))
+                ("branch" (setq branch (match-string 2)))
+                ("bare" (setq bare t))
+                )
               (forward-line 1)
               (goto-char (point-at-bol)))
             (setq trees `(,@trees
-                          (:worktree ,worktree :head ,head :branch ,branch)))
+                          (
+                           :worktree ,worktree
+                           :head ,head
+                           :branch ,branch
+                           :bare ,bare
+                           )))
             (forward-line 1)
             (goto-char (point-at-bol)))
           ))
@@ -1920,17 +1929,22 @@ initializing."
                           (vector
                            (concat (file-relative-name (plist-get e :worktree))
                                    "/")
-                           (or (plist-get e :branch) "")
-                           (plist-get e :head)
+                           (or (plist-get e :branch)
+                               ;; bare worktree do not have head attr
+                               "N/A")
+                           (or (plist-get e :head)
+                               ;; bare worktree do not have head attr
+                               "N/A")
                            )))
                   trees))
     (let ((branch-max-size
            (apply 'max
+                  (length "Branch") ;; Header text
                   (cl-loop for e in tabulated-list-entries
                            collect (length (elt (cadr e) 1)))))
           (worktree-max-size
            (apply 'max
-                  (length "Worktree")
+                  (length "Worktree") ;; Header text
                   (cl-loop for e in tabulated-list-entries
                            collect (length (elt (cadr e) 0))))))
       (setq tabulated-list-format
@@ -1980,7 +1994,7 @@ initializing."
   "Add new git worktree."
   (interactive)
   (let* ((path (read-file-name "Path of new worktree: "))
-         (commitish (read-string (format "Commitish to checkout to \"%s\" (Empty to omit): "
+         (commitish (read-string (format "Commitish to checkout to worktree \"%s\" (Empty to use the same name): "
                                          path)))
          (args (append '("worktree" "add")
                        (if (string= "" commitish)
