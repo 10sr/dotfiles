@@ -1838,6 +1838,7 @@ and search from projectile root (if projectile is available)."
 
 (define-key ctl-x-map (kbd "C-r") 'recently-show)
 (define-key ctl-x-map "T" 'git-worktree)
+(define-key ctl-x-map "W" 'git-walktree)
 
 ;;;;;;;;;;;;;;;;
 ;; flychcek-black
