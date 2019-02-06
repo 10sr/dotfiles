@@ -1949,6 +1949,7 @@ initializing."
   (let ((bf (git-worktree-open-noselect directory)))
     (pop-to-buffer bf)))
 (defalias 'git-worktree 'git-worktree-open)
+(define-key ctl-x-map "T" 'git-worktree)
 
 (defun git-worktree-mode-go ()
   "Go to worktree directory at point."
