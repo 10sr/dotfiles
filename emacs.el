@@ -884,6 +884,7 @@ found, otherwise returns nil."
           conf-mode
           dockerfile-mode
           groovy-mode
+          scala-mode
           ,@aggressive-indent-excluded-modes))
   (global-aggressive-indent-mode 1))
 
