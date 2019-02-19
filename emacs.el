@@ -131,6 +131,7 @@ found, otherwise returns nil."
        sl
        ;; TODO: Configure pony-tpl-mode
        pony-mode
+       gited
 
        editorconfig
        editorconfig-custom-majormode
