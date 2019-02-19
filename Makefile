@@ -297,11 +297,14 @@ else
 	$(git_conf) status.relativePaths false
 	$(git_conf) status.showUntrackedFiles normal
 	$(git_conf) log.date iso
+	$(git_conf) fetch.prune true
+	$(git_conf) fetch.pruneTags true
 	$(git_conf) push.default current
 	$(git_conf) pull.ff only
 ifneq (,$(xz))
 	$(git_conf) tar.txz.command "xz -c"
 endif
+
 	$(git_conf) alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --date=short -n 499"
 	$(git_conf) alias.st "status -s -b"
 	$(git_conf) alias.b "branch"
