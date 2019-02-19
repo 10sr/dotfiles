@@ -907,7 +907,7 @@ found, otherwise returns nil."
           (lambda ()
             (setq imenu-generic-expression
                   `(("Sections" ";;;\+\n;; \\(.*\\)\n" 1)
-                  ,@imenu-generic-expression))))
+                    ,@imenu-generic-expression))))
 
 (with-eval-after-load 'compile
   (defvar compilation-filter-start)
@@ -985,6 +985,9 @@ found, otherwise returns nil."
 
 (when (autoload-eval-lazily 'git-command)
   (define-key ctl-x-map "g" 'git-command))
+
+(when (autoload-eval-lazily 'gited)
+  (define-key ctl-x-map (kbd "C-g") 'gited-list))
 
 (when (safe-require-or-eval 'git-commit)
   (global-git-commit-mode 1))
@@ -1748,8 +1751,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-        (compilation-start command-args
-                           'grep-mode))
+                                   (compilation-start command-args
+                                                      'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -1767,8 +1770,8 @@ and search from projectile root (if projectile is available)."
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-          (compilation-start command-args
-                             'grep-mode))
+                                     (compilation-start command-args
+                                                        'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
