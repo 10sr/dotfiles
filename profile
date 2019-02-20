@@ -40,14 +40,6 @@ export TERMCAP="${TERMCAP}:vb="
 export PAGER="less"
 export LESS="-iMRX"
 
-# Style for lesspipe is defined in esc.style
-_src_hilite_lp_path="`command -v src-hilite-lesspipe.sh 2>/dev/null`"
-for f in /usr/share/source-highlight/src-hilite-lesspipe.sh
-do
-    test -z "$_src_hilite_lp_path" && test -e "$f" && _src_hilite_lp_path="$f"
-done
-test -n "$_src_hilite_lp_path" && export LESSOPEN="| $_src_hilite_lp_path %s"
-
 if false which nvim >/dev/null
 then
     _VI_ALT=nvim
