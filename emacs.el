@@ -1283,7 +1283,7 @@ found, otherwise returns nil."
 (add-hook 'go-mode-hook
           (lambda()
             (defvar go-mode-map)
-            (add-hook 'before-save-hook' 'gofmt-before-save)
+            (add-hook 'before-save-hook' 'gofmt-before-save nil t)
             (define-key go-mode-map (kbd "M-.") 'godef-jump)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
