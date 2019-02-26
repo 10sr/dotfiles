@@ -1249,7 +1249,9 @@ found, otherwise returns nil."
             (set (make-local-variable (defvar hl-line-range-function))
                  (lambda () '(0 . 0)))
             (set (make-local-variable 'scroll-margin)
-                 0)))
+                 0)
+            (set-variable 'term-buffer-maximum-size 20480)
+            ))
 
 (add-hook 'Man-mode-hook
           (lambda ()
