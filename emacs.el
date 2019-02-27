@@ -1288,6 +1288,11 @@ found, otherwise returns nil."
             (add-hook 'before-save-hook' 'gofmt-before-save nil t)
             (define-key go-mode-map (kbd "M-.") 'godef-jump)))
 
+(when (autoload-eval-lazily 'k8s-mode)
+  (add-to-list 'auto-mode-alist
+               '("\\.k8s\\'" . k8s-mode)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; buffers
 
