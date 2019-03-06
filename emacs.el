@@ -401,8 +401,8 @@ found, otherwise returns nil."
    '(git-gutter:update-interval 2))
   (custom-set-variables
    '(git-gutter:unchanged-sign " "))
-  (when (= (display-color-cells)
-           256)
+  (when (>= (display-color-cells)
+            256)
     (let ((c "color-233"))
       (set-face-background 'git-gutter:modified c)
       (set-face-background 'git-gutter:added c)
@@ -646,8 +646,8 @@ found, otherwise returns nil."
   (add-hook 'dired-mode-hook
             (lambda ()
               (set (make-local-variable 'whitespace-style) nil)))
-  (if (= (display-color-cells)
-         256)
+  (if (>= (display-color-cells)
+          256)
       (set-face-foreground 'whitespace-newline "color-109")
     ;; (progn
     ;;   (set-face-bold-p 'whitespace-newline
