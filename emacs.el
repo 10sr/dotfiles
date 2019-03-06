@@ -133,6 +133,7 @@ found, otherwise returns nil."
        pony-mode
        gited
        highlight-indentation
+       diminish
 
        editorconfig
        editorconfig-custom-majormode
@@ -465,6 +466,15 @@ found, otherwise returns nil."
                           "[N]"
                         "")
                       )))
+
+(when (safe-require-or-eval 'diminish)
+  (diminish 'recently-mode)
+  (diminish 'editorconfig-mode)
+  (diminish 'auto-highlight-symbol-mode)
+  (diminish 'global-whitespace-mode)
+  (diminish 'which-key-mode)
+  (diminish 'page-break-lines-mode)
+  (diminish 'highlight-indentation-mode))
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 
