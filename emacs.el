@@ -132,6 +132,7 @@ found, otherwise returns nil."
        ;; TODO: Configure pony-tpl-mode
        pony-mode
        gited
+       highlight-indentation
 
        editorconfig
        editorconfig-custom-majormode
@@ -707,6 +708,14 @@ found, otherwise returns nil."
   (set-variable 'ahs-idle-interval 0.6)
   (global-auto-highlight-symbol-mode 1))
 
+
+(when (safe-require-or-eval 'highlight-indentation)
+  (safe-require-or-eval 'easy-mmode)
+  (define-globalized-minor-mode global-highlight-indentation-mode
+    highlight-indentation-mode highlight-indentation-mode)
+  (global-highlight-indentation-mode 1)
+  (set-face-background 'highlight-indentation-face "color-236"))
+;; (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
