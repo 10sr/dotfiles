@@ -1249,10 +1249,13 @@ found, otherwise returns nil."
   ;;   "n" 'nonincremental-repeat-search-forward)
   ;; (define-key view-mode-map
   ;;   "N" 'nonincremental-repeat-search-backward)
-  (define-key view-mode-map "/" 'isearch-forward-regexp)
-  (define-key view-mode-map "?" 'isearch-backward-regexp)
-  (define-key view-mode-map "n" 'isearch-repeat-forward)
-  (define-key view-mode-map "N" 'isearch-repeat-backward)
+
+  ;; N conflicts with git-walktree
+  ;; (define-key view-mode-map "/" 'isearch-forward-regexp)
+  ;; (define-key view-mode-map "?" 'isearch-backward-regexp)
+  ;; (define-key view-mode-map "n" 'isearch-repeat-forward)
+  ;; (define-key view-mode-map "N" 'isearch-repeat-backward)
+
   (define-key view-mode-map (kbd "C-m") 'my-rgrep-symbol-at-point))
 (global-set-key "\M-r" 'view-mode)
 ;; (setq view-read-only t)
