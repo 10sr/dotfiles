@@ -468,6 +468,7 @@ found, otherwise returns nil."
                       )))
 
 (when (safe-require-or-eval 'diminish)
+  ;; FIXME: Eval after enabling mode
   (diminish 'recently-mode)
   (diminish 'editorconfig-mode)
   (diminish 'auto-highlight-symbol-mode)
