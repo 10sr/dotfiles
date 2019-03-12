@@ -1629,7 +1629,9 @@ ARG is num to show, or defaults to 7."
                   '(file-readable-p file)
                   (delete-file file)))))
 
-  (when (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack))
+  (when (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack)
+          (add-to-list 'pack-program-alist
+                       '("\\.txz\\'" :pack "tar -cJf" :unpack "tar -xf")))
     (set-variable 'pack-silence
                   t)
     (with-eval-after-load 'dired
