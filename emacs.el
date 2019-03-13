@@ -743,12 +743,16 @@ found, otherwise returns nil."
                    ;; Breadth-first find https://github.com/tavianator/bfs
                    "bfs"
                  "find"))
-         (defcmd (concat "set -o pipefail; "
+         (defcmd (concat "set -eu; set -o pipefail; "
+                         "echo .; "
+                         "echo ..; "
                          "command " find " -L . "
+                         "-mindepth 1 "
                          "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-                         "-o -print 2> /dev/null "
+                         "-o -print "
+                         "2> /dev/null "
                          "| "
-                         "sed -e 's|^\\./||'")))
+                         "cut -b3-")))
     (setenv "FZF_DEFAULT_COMMAND" defcmd))
   (define-key ctl-x-map (kbd "C-f") 'fzf)
   )
