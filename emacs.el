@@ -738,7 +738,12 @@ found, otherwise returns nil."
   ;; (set-variable 'fzf/executable "sk")
   ;; (set-variable 'fzf/args "--color bw --print-query")
   ;; Modified from hardcoded default to include directories, hidden files, and root directory
-  (let ((defcmd "set -o pipefail; command find -L . \\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune -o -print 2> /dev/null"))
+  (let ((defcmd (concat "set -o pipefail; "
+                        "command find -L . "
+                        "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+                        "-o -print 2> /dev/null "
+                        "| "
+                        "sed -e 's|\\./||'")))
     (setenv "FZF_DEFAULT_COMMAND" defcmd))
   ;; (define-key ctl-x-map (kbd "C-f") 'fzf)
   )
