@@ -731,6 +731,10 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
+;; Cannot goto directory from fzf
+;; (when (autoload-eval-lazily 'fzf)
+;;   (define-key ctl-x-map (kbd "C-f") 'fzf))
+
 (when (safe-require-or-eval 'recently)
   (recently-mode 1))
 
