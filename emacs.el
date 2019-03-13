@@ -733,7 +733,8 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
-(when (autoload-eval-lazily 'fzf)
+(when (and (autoload-eval-lazily 'fzf)
+           (executable-find "fzf"))
   ;; Too slow!
   ;; (set-variable 'fzf/executable "sk")
   ;; (set-variable 'fzf/args "--color bw --print-query")
