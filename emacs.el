@@ -744,7 +744,7 @@ found, otherwise returns nil."
                         "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
                         "-o -print 2> /dev/null "
                         "| "
-                        "sed -e 's|\\./||'")))
+                        "sed -e 's|^\\./||'")))
     (setenv "FZF_DEFAULT_COMMAND" defcmd))
   ;; (define-key ctl-x-map (kbd "C-f") 'fzf)
   )
