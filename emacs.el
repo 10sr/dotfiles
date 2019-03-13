@@ -721,11 +721,13 @@ found, otherwise returns nil."
 
 
 (when (safe-require-or-eval 'highlight-indentation)
-  (safe-require-or-eval 'easy-mmode)
-  (define-globalized-minor-mode global-highlight-indentation-mode
-    highlight-indentation-mode highlight-indentation-mode)
-  (global-highlight-indentation-mode 1)
-  (set-face-background 'highlight-indentation-face "color-236"))
+  (set-face-background 'highlight-indentation-face "color-236")
+  (dolist (hook
+           '(
+             prog-mode-hook
+             ))
+    (add-hook hook
+              'highlight-indentation-mode)))
 ;; (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
