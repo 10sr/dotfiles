@@ -738,7 +738,11 @@ found, otherwise returns nil."
   ;; Too slow!
   ;; (set-variable 'fzf/executable "sk")
   ;; (set-variable 'fzf/args "--color bw --print-query")
-  ;; Modified from hardcoded default to include directories, hidden files, and root directory
+  ;; Modified from hardcoded default to include:
+  ;;  - directories
+  ;;  - hidden files
+  ;;  - root directory (.)
+  ;;  - parent directory (..)
   (let* ((find (if (executable-find "bfs")
                    ;; Breadth-first find https://github.com/tavianator/bfs
                    "bfs"
@@ -754,6 +758,7 @@ found, otherwise returns nil."
                          "| "
                          "cut -b3-")))
     (setenv "FZF_DEFAULT_COMMAND" defcmd))
+  (set-variable 'fzf/window-height 45)
   (define-key ctl-x-map (kbd "C-f") 'fzf)
   )
 
