@@ -734,42 +734,45 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
-(when (and (autoload-eval-lazily 'fzf)
-           (executable-find "fzf"))
-  ;; Too slow!
-  ;; (set-variable 'fzf/executable "sk")
-  ;; (set-variable 'fzf/args "--color bw --print-query")
-  ;; Modified from hardcoded default to include:
-  ;;  - directories
-  ;;  - hidden files
-  ;;  - root directory (.)
-  ;;  - parent directory (..)
-  (let* ((find (if (executable-find "bfs")
-                   ;; Breadth-first find https://github.com/tavianator/bfs
-                   "bfs"
-                 "find"))
-         (defcmd (concat "set -eu; set -o pipefail; "
-                         "echo .; "
-                         "echo ..; "
-                         "command " find " -L . "
-                         "-mindepth 1 "
-                         "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-                         "-o -print "
-                         "2> /dev/null "
-                         "| "
-                         "cut -b3-")))
-    (setenv "FZF_DEFAULT_COMMAND" defcmd))
-  (set-variable 'fzf/window-height 45)
-  )
+;; fzf
+
+;; Too slow!
+;; (set-variable 'fzf/executable "sk")
+;; (set-variable 'fzf/args "--color bw --print-query")
+;; Modified from hardcoded default to include:
+;;  - directories
+;;  - hidden files
+;;  - root directory (.)
+;;  - parent directory (..)
+(let* ((find (if (executable-find "bfs")
+                 ;; Breadth-first find https://github.com/tavianator/bfs
+                 "bfs"
+               "find"))
+       (defcmd (concat "set -eu; set -o pipefail; "
+                       "echo .; "
+                       "echo ..; "
+                       "command " find " -L . "
+                       "-mindepth 1 "
+                       "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+                       "-o -print "
+                       "2> /dev/null "
+                       "| "
+                       "cut -b3-")))
+  (setenv "FZF_DEFAULT_COMMAND" defcmd))
+(set-variable 'fzf/window-height 45)
+
 (defun my-fzf-or-find-file ()
   "Call fzf if usable or call find-file."
   (declare (interactive-only t))
   (interactive)
-  (if (and (fboundp 'fzf)
+  (if (and (executable-find "fzf")
+           (fboundp 'fzf)
            (not (file-remote-p default-directory)))
       (fzf)
     (call-interactively 'find-file)))
 (define-key ctl-x-map (kbd "f") 'my-fzf-or-find-file)
+
+;; recently
 
 (when (safe-require-or-eval 'recently)
   (recently-mode 1))
@@ -1632,8 +1635,8 @@ ARG is num to show, or defaults to 7."
   (define-key dired-mode-map "e" 'wdired-change-to-wdired-mode)
   (define-key dired-mode-map "i" 'dired-get-file-info)
   ;; (define-key dired-mode-map "f" 'find-file)
-  ;; (define-key dired-mode-map "z" 'fzf)
   (define-key dired-mode-map "f" 'my-fzf-or-find-file)
+  (define-key dired-mode-map "z" 'fzf)
   (define-key dired-mode-map "!" 'shell-command)
   (define-key dired-mode-map "&" 'async-shell-command)
   (define-key dired-mode-map "X" 'dired-do-async-shell-command)
