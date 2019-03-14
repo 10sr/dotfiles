@@ -1740,7 +1740,7 @@ condition to choose COMMAND when evaluated.")
        ;; ripgrep
        ("rg"
         (executable-find "rg")
-        "rg --hidden --no-heading --smart-case ")
+        "rg -nH --no-heading --color=always --hidden --glob '!.git/' --smart-case -M 1280 ")
 
        ;; git grep
        ("gitgrep"
