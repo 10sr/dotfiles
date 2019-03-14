@@ -134,6 +134,7 @@ found, otherwise returns nil."
        gited
        highlight-indentation
        diminish
+       fzf
 
        editorconfig
        editorconfig-custom-majormode
