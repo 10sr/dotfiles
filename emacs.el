@@ -629,7 +629,7 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'whitespace)
   (add-to-list 'whitespace-display-mappings
                ;; We need t since last one takes precedence
-               `(tab-mark ?\t ,(vconcat "^I\t")) t)
+               `(tab-mark ?\t ,(vconcat "|>\t")) t)
   ;; (add-to-list 'whitespace-display-mappings
   ;;              `(newline-mark ?\n ,(vconcat "$\n")))
   (setq whitespace-style '(face
