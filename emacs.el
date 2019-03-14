@@ -760,7 +760,14 @@ found, otherwise returns nil."
                          "cut -b3-")))
     (setenv "FZF_DEFAULT_COMMAND" defcmd))
   (set-variable 'fzf/window-height 45)
-  ;; (define-key ctl-x-map (kbd "C-f") 'fzf)
+  (defun my-fzf-or-find-file ()
+    "Call fzf if usable or call find-file."
+    (declare (interactive-only t))
+    (interactive)
+    (if (and (file-remote-p default-directory))
+        (call-interactively 'find-file)
+      (fzf)))
+  (define-key ctl-x-map (kbd "C-f") 'my-fzf-or-find-file)
   )
 
 (when (safe-require-or-eval 'recently)
