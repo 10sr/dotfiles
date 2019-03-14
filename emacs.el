@@ -760,7 +760,7 @@ found, otherwise returns nil."
                          "cut -b3-")))
     (setenv "FZF_DEFAULT_COMMAND" defcmd))
   (set-variable 'fzf/window-height 45)
-  (define-key ctl-x-map (kbd "C-f") 'fzf)
+  ;; (define-key ctl-x-map (kbd "C-f") 'fzf)
   )
 
 (when (safe-require-or-eval 'recently)
