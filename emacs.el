@@ -744,6 +744,8 @@ found, otherwise returns nil."
 ;;  - hidden files
 ;;  - root directory (.)
 ;;  - parent directory (..)
+;; ripgrep cannot list directories...
+;; (setenv "FZF_DEFAULT_COMMAND" "rg --files --hidden --follow --glob '!.git/*' --no-ignore")
 (let* ((find (if (executable-find "bfs")
                  ;; Breadth-first find https://github.com/tavianator/bfs
                  "bfs"
