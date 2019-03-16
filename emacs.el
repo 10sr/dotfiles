@@ -762,6 +762,7 @@ found, otherwise returns nil."
                        "cut -b3-")))
   (setenv "FZF_DEFAULT_COMMAND" defcmd))
 (set-variable 'fzf/window-height 45)
+(set-variable 'fzf/args "-x --color bw --print-query --inline-info --cycle")
 
 (defun my-fzf-or-find-file ()
   "Call fzf if usable or call find-file."
