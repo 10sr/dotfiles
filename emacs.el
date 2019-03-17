@@ -736,7 +736,7 @@ found, otherwise returns nil."
 
 ;; fzf
 
-;; Too slow!
+;; Too slow in term buffer!
 ;; (set-variable 'fzf/executable "sk")
 ;; (set-variable 'fzf/args "--color bw --print-query")
 ;; Modified from hardcoded default to include:
@@ -746,22 +746,29 @@ found, otherwise returns nil."
 ;;  - parent directory (..)
 ;; ripgrep cannot list directories...
 ;; (setenv "FZF_DEFAULT_COMMAND" "rg --files --hidden --follow --glob '!.git/*' --no-ignore")
-;; TODO: Use fd if available
 (let* ((find (if (executable-find "bfs")
                  ;; Breadth-first find https://github.com/tavianator/bfs
                  "bfs"
                "find"))
-       (defcmd (concat "set -eu; set -o pipefail; "
-                       "echo .; "
-                       "echo ..; "
-                       "command " find " -L . "
-                       "-mindepth 1 "
-                       "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-                       "-o -print "
-                       "2> /dev/null "
-                       "| "
-                       "cut -b3-")))
-  (setenv "FZF_DEFAULT_COMMAND" defcmd))
+       (findcmd (concat "set -eu; set -o pipefail; "
+                        "echo .; "
+                        "echo ..; "
+                        "command " find " -L . "
+                        "-mindepth 1 "
+                        "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+                        "-o -print "
+                        "2> /dev/null "
+                        "| "
+                        "cut -b3-"))
+       (fdcmd (concat "set -eu; set -o pipefail; "
+                      "echo .; "
+                      "echo ..; "
+                      "command fd "
+                      "--follow --hidden --no-ignore "
+                      "2>/dev/null")))
+  (if (executable-find "fd")
+      (setenv "FZF_DEFAULT_COMMAND" fdcmd)
+    (setenv "FZF_DEFAULT_COMMAND" findcmd)))
 (set-variable 'fzf/window-height 45)
 (set-variable 'fzf/args "--print-query --ansi --inline-info --cycle")
 
@@ -974,7 +981,7 @@ found, otherwise returns nil."
           (lambda ()
             (setq imenu-generic-expression
                   `(("Sections" ";;;\+\n;; \\(.*\\)\n" 1)
-                    ,@imenu-generic-expression))))
+                      ,@imenu-generic-expression))))
 
 (with-eval-after-load 'compile
   (defvar compilation-filter-start)
