@@ -238,7 +238,7 @@ found, otherwise returns nil."
 (defvar my-prefix-map nil
   "My prefix map.")
 (define-prefix-command 'my-prefix-map)
-;; (define-key ctl-x-map (kbd "C-x") 'my-prefix-map)
+(global-set-key (kbd "C-^") 'my-prefix-map)
 ;; (define-key my-prefix-map (kbd "C-q") 'quoted-insert)
 ;; (define-key my-prefix-map (kbd "C-z") 'suspend-frame)
 
@@ -979,7 +979,7 @@ found, otherwise returns nil."
           (lambda ()
             (setq imenu-generic-expression
                   `(("Sections" ";;;\+\n;; \\(.*\\)\n" 1)
-                      ,@imenu-generic-expression))))
+                    ,@imenu-generic-expression))))
 
 (with-eval-after-load 'compile
   (defvar compilation-filter-start)
