@@ -1016,6 +1016,9 @@ found, otherwise returns nil."
   )
 
 
+;; (ido-mode 1)
+;; (setq ido-enable-flex-matching t)
+
 ;; https://github.com/lunaryorn/flycheck
 (when (safe-require-or-eval 'flycheck)
   (call-after-init 'global-flycheck-mode))
