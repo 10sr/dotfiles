@@ -749,6 +749,7 @@ found, otherwise returns nil."
 (let* ((find (if (executable-find "bfs")
                  ;; Breadth-first find https://github.com/tavianator/bfs
                  "bfs"
+               ;; Use gfind if available?
                "find"))
        (findcmd (concat "set -eu; set -o pipefail; "
                         "echo .; "
