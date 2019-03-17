@@ -763,6 +763,7 @@ found, otherwise returns nil."
                       "echo ..; "
                       "command fd "
                       "--follow --hidden --no-ignore "
+                      ;; "--color always "
                       "2>/dev/null")))
   (if (executable-find "fd")
       (setenv "FZF_DEFAULT_COMMAND" fdcmd)
