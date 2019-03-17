@@ -96,7 +96,6 @@ found, otherwise returns nil."
        ;;ensime
 
 
-       ;; ack
        color-moccur
        ggtags
        flycheck
@@ -120,9 +119,7 @@ found, otherwise returns nil."
        pipenv
        imenu-list
        page-break-lines
-       ;; sync-recentf
        aggressive-indent
-       ;; fancy-narrow
        dired-filter
        wgrep
        magit
