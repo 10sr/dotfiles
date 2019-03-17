@@ -997,12 +997,24 @@ found, otherwise returns nil."
 ;; Workaround to avoid ensime error
 (defvar ensime-mode-key-prefix nil)
 
-;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
 (when (safe-require-or-eval 'company)
+  ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
+  ;; https://qiita.com/yuze/items/a145b1e3edb6d0c24cbf
   (global-company-mode)
-  (set-variable 'company-idle-delay 0.5)
+  (set-variable 'company-idle-delay nil)
   (set-variable 'company-minimum-prefix-length 2)
-  (set-variable 'company-selection-wrap-around t))
+  (set-variable 'company-selection-wrap-around t)
+
+  (global-set-key (kbd "C-M-i") 'company-complete)
+  (define-key emacs-lisp-mode-map (kbd "C-M-i") 'company-complete)
+
+  (defvar company-active-map)
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-active-map (kbd "C-s") 'company-filter-candidates)
+  (define-key company-active-map (kbd "C-i") 'company-complete-selection)
+  (define-key company-active-map (kbd "C-f") 'company-complete-selection)
+  )
 
 
 ;; https://github.com/lunaryorn/flycheck
@@ -1684,6 +1696,7 @@ ARG is num to show, or defaults to 7."
                   (delete-file file)))))
 
   (when (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack)
+          (defvar pack-program-alist)
           (add-to-list 'pack-program-alist
                        '("\\.txz\\'" :pack "tar -cJf" :unpack "tar -xf")))
     (set-variable 'pack-silence
