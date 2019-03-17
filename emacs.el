@@ -1005,8 +1005,7 @@ found, otherwise returns nil."
   (set-variable 'company-minimum-prefix-length 2)
   (set-variable 'company-selection-wrap-around t)
 
-  (global-set-key (kbd "C-M-i") 'company-complete)
-  (define-key emacs-lisp-mode-map (kbd "C-M-i") 'company-complete)
+  (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
 
   (defvar company-active-map)
   (define-key company-active-map (kbd "C-n") 'company-select-next)
