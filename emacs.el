@@ -1950,6 +1950,7 @@ and search from projectile root (if projectile is available)."
 ;;;;;;;;;;;;;;;;
 ;; flychcek-black
 
+;; TODO: Move to https://github.com/10sr/flycheck-black-check
 (require 'flycheck)
 
 (flycheck-define-checker python-black-check
