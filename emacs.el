@@ -763,13 +763,13 @@ found, otherwise returns nil."
                       "echo ..; "
                       "command fd "
                       "--follow --hidden --no-ignore "
-                      ;; "--color always "
+                      "--color always "
                       "2>/dev/null")))
   (if (executable-find "fd")
       (setenv "FZF_DEFAULT_COMMAND" fdcmd)
     (setenv "FZF_DEFAULT_COMMAND" findcmd)))
 (set-variable 'fzf/window-height 45)
-(set-variable 'fzf/args "--print-query --ansi --inline-info --cycle")
+(set-variable 'fzf/args "--print-query --ansi --color='bg+:-1' --inline-info --cycle")
 
 (defun my-fzf-or-find-file ()
   "Call fzf if usable or call find-file."
