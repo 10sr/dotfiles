@@ -1,0 +1,4 @@
+[*.terminal]
+file_type_ext = xml
+indent_style = tab
+end_of_line = lf
