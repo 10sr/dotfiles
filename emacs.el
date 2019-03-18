@@ -787,6 +787,7 @@ found, otherwise returns nil."
 ;; recently
 
 (when (safe-require-or-eval 'recently)
+  (set-variable 'recently-max 1000)
   (recently-mode 1))
 
 (when (safe-require-or-eval 'editorconfig)
