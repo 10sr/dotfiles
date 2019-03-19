@@ -782,7 +782,7 @@ found, otherwise returns nil."
            (not (file-remote-p default-directory)))
       (fzf)
     (call-interactively 'find-file)))
-(define-key ctl-x-map (kbd "f") 'my-fzf-or-find-file)
+(define-key ctl-x-map "f" 'my-fzf-or-find-file)
 
 (defun my-fzf-all-lines ()
   "Fzf all lines."
