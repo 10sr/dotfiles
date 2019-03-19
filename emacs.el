@@ -788,7 +788,7 @@ found, otherwise returns nil."
   "Fzf all lines."
   (interactive)
   (let ((process-environment (cl-copy-list process-environment)))
-    (setenv "FZF_DEFAULT_COMMAND" "rg -nH --hidden --follow --glob '!.git/*' ^")
+    (setenv "FZF_DEFAULT_COMMAND" "rg -nH --no-heading --hidden --follow --glob '!.git/*' --color=always ^")
     (fzf)))
 (define-key ctl-x-map "S" 'my-fzf-all-lines)
 
