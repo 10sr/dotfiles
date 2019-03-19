@@ -743,7 +743,6 @@ found, otherwise returns nil."
 ;;  - parent directory (..)
 ;; ripgrep cannot list directories...
 ;; (setenv "FZF_DEFAULT_COMMAND" "rg --files --hidden --follow --glob '!.git/*' --no-ignore")
-;; "rg -nH --hidden --follow --glob '!.git/*' ^"
 (let* ((find (if (executable-find "bfs")
                  ;; Breadth-first find https://github.com/tavianator/bfs
                  "bfs"
@@ -784,6 +783,14 @@ found, otherwise returns nil."
       (fzf)
     (call-interactively 'find-file)))
 (define-key ctl-x-map (kbd "f") 'my-fzf-or-find-file)
+
+(defun my-fzf-all-lines ()
+  "Fzf all lines."
+  (interactive)
+  (let ((process-environment (cl-copy-list process-environment)))
+    (setenv "FZF_DEFAULT_COMMAND" "rg -nH --hidden --follow --glob '!.git/*' ^")
+    (fzf)))
+(define-key ctl-x-map "L" 'my-fzf-all-lines)
 
 ;; recently
 
