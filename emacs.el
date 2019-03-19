@@ -790,7 +790,7 @@ found, otherwise returns nil."
   (let ((process-environment (cl-copy-list process-environment)))
     (setenv "FZF_DEFAULT_COMMAND" "rg -nH --hidden --follow --glob '!.git/*' ^")
     (fzf)))
-(define-key ctl-x-map "L" 'my-fzf-all-lines)
+(define-key ctl-x-map "S" 'my-fzf-all-lines)
 
 ;; recently
 
