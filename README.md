@@ -1,7 +1,9 @@
+[![Build Status](https://travis-ci.org/10sr/dotfiles.svg?branch=master)](https://travis-ci.org/10sr/dotfiles)
+
+
 Dotfiles
 ========
 
-[![Build Status](https://travis-ci.org/10sr/dotfiles.svg?branch=master)](https://travis-ci.org/10sr/dotfiles)
 
 10sr dotfiles repository.
 
