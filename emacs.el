@@ -743,6 +743,7 @@ found, otherwise returns nil."
 ;;  - parent directory (..)
 ;; ripgrep cannot list directories...
 ;; (setenv "FZF_DEFAULT_COMMAND" "rg --files --hidden --follow --glob '!.git/*' --no-ignore")
+;; "rg -nH --hidden --follow --glob '!.git/*' ^"
 (let* ((find (if (executable-find "bfs")
                  ;; Breadth-first find https://github.com/tavianator/bfs
                  "bfs"
@@ -1721,15 +1722,16 @@ ARG is num to show, or defaults to 7."
 ;; (define-key ctl-x-map "f" 'find-dired)
 
 
-;; It works!
-;; (pop-to-buffer (dired-noselect '("." "shrc" "emacs.el")))
-
-(defun my-dired-git-ls-files (args)
+(defvar my-dired-git-ls-files-history
+  "History for `my-dired-git-ls-files'." nil)
+(defun my-dired-git-ls-files (arg)
   "Dired from git ls-files."
-  (interactive "sgit ls-files args: ")
+  (interactive (list
+                (read-shell-command "git ls-files: "
+                                    "git ls-files -z ")))
   (pop-to-buffer-same-window
    (dired-noselect `(,default-directory
-                      ,@(split-string (shell-command-to-string (concat "git ls-files -z " args))
+                      ,@(split-string (shell-command-to-string arg)
                                       "\0" t))
                    ""))
   )
