@@ -33,3 +33,4 @@ trim_trailing_whitespace = false
 
 [*.hoe]
 file_type_ext = ini
+aaa=b

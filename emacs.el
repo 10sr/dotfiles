@@ -1928,13 +1928,22 @@ and search from projectile root (if projectile is available)."
 
 (define-minor-mode editorconfig-auto-apply-mode
   "When saving .editorconfig file update buffer configs."
-  :global t  ;; TODO: global nil and instruct to hook to editorconfig-conf-mode-hook
-  :lighter ""
+  :lighter " ECAA"
   (if editorconfig-auto-apply-mode
       (add-hook 'after-save-hook
-                'editorconfig-auto-apply-mode--run)
+                'editorconfig-auto-apply-mode--run nil t)
     (remove-hook 'after-save-hook
-                 'editorconfig-auto-apply-mode--run)))
+                 'editorconfig-auto-apply-mode--run t)))
+
+(defun editorconfig-auto-apply-mode-turn-on ()
+  "Turn on `editorconfig-auto-apply-mode'."
+  (unless editorconfig-auto-apply-mode
+    (editorconfig-auto-apply-mode 1)))
+
+(defun editorconfig-auto-apply-mode-turn-off ()
+  "Turn off `editorconfig-auto-apply-mode'."
+  (when editorconfig-auto-apply-mode
+    (editorconfig-auto-apply-mode -1)))
 
 (defun editorconfig-auto-apply-mode--run ()
   "When saving .editorconfig file walk all buffers and update configs."
@@ -1948,7 +1957,8 @@ and search from projectile root (if projectile is available)."
           (with-current-buffer buf
             (editorconfig-mode-apply)))))))
 
-(editorconfig-auto-apply-mode 1)
+(add-hook 'editorconfig-conf-mode-hook
+          'editorconfig-auto-apply-mode-turn-on)
 
 
 
