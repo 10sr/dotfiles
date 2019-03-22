@@ -803,7 +803,7 @@ found, otherwise returns nil."
   (set-variable 'editorconfig-get-properties-function
                 'editorconfig-core-get-properties-hash)
   (editorconfig-mode 1)
-  (set-variable 'editorconfig-mode-lighter " EC")
+  (set-variable 'editorconfig-mode-lighter "")
   (when (fboundp 'ws-butler-mode)
     (set-variable 'editorconfig-trim-whitespaces-mode
                   'ws-butler-mode))
@@ -1936,12 +1936,12 @@ and search from projectile root (if projectile is available)."
     (remove-hook 'after-save-hook
                  'editorconfig-auto-apply-mode--run t)))
 
-(defun editorconfig-auto-apply-mode-turn-on ()
+(defun editorconfig-auto-apply-enable ()
   "Turn on `editorconfig-auto-apply-mode'."
   (unless editorconfig-auto-apply-mode
     (editorconfig-auto-apply-mode 1)))
 
-(defun editorconfig-auto-apply-mode-turn-off ()
+(defun editorconfig-auto-apply-disable ()
   "Turn off `editorconfig-auto-apply-mode'."
   (when editorconfig-auto-apply-mode
     (editorconfig-auto-apply-mode -1)))
@@ -1959,7 +1959,7 @@ and search from projectile root (if projectile is available)."
             (editorconfig-mode-apply)))))))
 
 (add-hook 'editorconfig-conf-mode-hook
-          'editorconfig-auto-apply-mode-turn-on)
+          'editorconfig-auto-apply-enable)
 
 
 
