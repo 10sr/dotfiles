@@ -558,6 +558,9 @@ found, otherwise returns nil."
                   ": "))
   (prompt-text-mode 1))
 
+(when (safe-require-or-eval 'amx)
+  (amx-mode 1))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
 
