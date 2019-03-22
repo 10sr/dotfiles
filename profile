@@ -105,8 +105,6 @@ fi
 export JAVA_OPTS="$JAVA_OPTS -Duser.language=en"
 
 export GOPATH="$HOME/.golang"
-# TODO:
-# export GOPATH="$HOME/.golang"
 export PATH="$GOPATH/bin:$PATH"
 
 export PYTHONUSERBASE=$HOME/.pip
