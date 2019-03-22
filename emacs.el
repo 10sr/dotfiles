@@ -377,6 +377,7 @@ found, otherwise returns nil."
 
 ;; C-h and DEL
 (global-set-key (kbd "C-h") (kbd "DEL"))
+;; (normal-erase-is-backspace-mode 1)
 
 ;;(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
 (global-set-key (kbd "C-m") 'newline-and-indent)
