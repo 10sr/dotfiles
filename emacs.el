@@ -566,7 +566,7 @@ found, otherwise returns nil."
   (defvar amx-map)
   (define-key amx-map (kbd "C-h") (kbd "DEL")))
 
-(when (autoload-eval-lazily 'helm)
+(autoload-eval-lazily 'helm nil
   (defvar helm-map)
   (define-key helm-map (kbd "C-h") (kbd "DEL")))
 
