@@ -328,6 +328,9 @@ found, otherwise returns nil."
 (global-set-key (kbd "<eisu-toggle>") 'ignore)
 (global-set-key (kbd "C-<eisu-toggle>") 'ignore)
 
+;; Interactively evaluate Emacs Lisp expressions
+(define-key ctl-x-map "i" 'ielm)
+
 (when (safe-require-or-eval 'which-key)
   (which-key-mode))
 
