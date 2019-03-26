@@ -39,6 +39,11 @@ export TERMCAP="${TERMCAP}:vb="
 
 export PAGER="less"
 export LESS="-iMRX"
+if which bat >/dev/null
+then
+    export LESSOPEN="| bat --color=always %s"
+    # export LESSOPEN="| bat --color=always --decorations=never %s"
+fi
 
 if false which nvim >/dev/null
 then
