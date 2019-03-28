@@ -226,6 +226,9 @@ found, otherwise returns nil."
    ;; (view-emacs-news)
    ))
 
+(with-current-buffer "*Messages*"
+  (emacs-lock-mode 'kill))
+
 (cd ".")  ; when using windows use / instead of \ in `default-directory'
 
 ;; locale
