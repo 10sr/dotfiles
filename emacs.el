@@ -473,13 +473,15 @@ found, otherwise returns nil."
 
 (when (safe-require-or-eval 'diminish)
   ;; FIXME: Eval after enabling mode
-  (diminish 'recently-mode)
-  (diminish 'editorconfig-mode)
-  (diminish 'auto-highlight-symbol-mode)
-  (diminish 'global-whitespace-mode)
-  (diminish 'which-key-mode)
-  (diminish 'page-break-lines-mode)
-  (diminish 'highlight-indentation-mode))
+  (call-after-init
+   (lambda ()
+     (diminish 'recently-mode)
+     (diminish 'editorconfig-mode)
+     (diminish 'auto-highlight-symbol-mode)
+     (diminish 'global-whitespace-mode)
+     (diminish 'which-key-mode)
+     (diminish 'page-break-lines-mode)
+     (diminish 'highlight-indentation-mode))))
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 
