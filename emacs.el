@@ -1782,6 +1782,19 @@ ARG is num to show, or defaults to 7."
                                                "")
                                              "memo.txt"))))
 
+(set (defvar my-privnotes-path nil
+       "My privnotes repository path.")
+     (expand-file-name "~/my/privnotes"))
+
+(defun my-privnotes-readme (path)
+  "Open my privnotes."
+  (interactive (list
+                (read-file-name "Privnotes: "
+                                (expand-file-name (format-time-string "%Y%m%d_")
+                                                  my-privnotes-path))))
+  (find-file (expand-file-name "README.md" path)))
+(define-key ctl-x-map "p" 'my-privnotes-readme)
+
 (set (defvar my-rgrep-alist nil
        "Alist of rgrep command.
 Each element is in the form like (NAME SEXP COMMAND), where SEXP returns the
