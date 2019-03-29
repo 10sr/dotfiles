@@ -143,7 +143,6 @@ found, otherwise returns nil."
        ;; 10sr repository
        ;; 10sr-extras
        terminal-title
-       recentf-show
        dired-list-all-mode
        pack
        set-modeline-color
@@ -1464,59 +1463,6 @@ found, otherwise returns nil."
 (substitute-key-definition 'kill-buffer
                            'my-query-kill-current-buffer
                            global-map)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; recentf-mode
-
-(set-variable 'recentf-save-file (expand-file-name (concat user-emacs-directory
-                                                           "recentf")))
-(set-variable 'recentf-max-menu-items 20)
-(set-variable 'recentf-max-saved-items 30)
-(set-variable 'recentf-show-file-shortcuts-flag nil)
-(set-variable 'recentf-auto-cleanup 3)
-
-;; (safe-require-or-eval 'sync-recentf)
-
-;; (when (safe-require-or-eval 'recentf)
-;;   (add-to-list 'recentf-exclude
-;;                (regexp-quote recentf-save-file))
-;;   (add-to-list 'recentf-exclude
-;;                (regexp-quote (expand-file-name user-emacs-directory)))
-;;   (add-to-list 'recentf-exclude
-;;                "/sync-recentf-marker\\'")
-;;   (define-key ctl-x-map (kbd "C-r") 'recentf-open-files)
-;;   (remove-hook 'find-file-hook
-;;                'recentf-track-opened-file)
-;;   (defun my-recentf-load-track-save-list ()
-;;     "Load current recentf list from file, track current visiting file, then save
-;; the list."
-;;     (recentf-load-list)
-;;     (recentf-track-opened-file)
-;;     (recentf-save-list))
-;;   (add-hook 'find-file-hook
-;;             'my-recentf-load-track-save-list)
-;;   (add-hook 'kill-emacs-hook
-;;             'recentf-load-list)
-;;   ;;(run-with-idle-timer 5 t 'recentf-save-list)
-;;   ;; (add-hook 'find-file-hook
-;;   ;;           (lambda ()
-;;   ;;             (recentf-add-file default-directory)))
-;;   (when (autoload-eval-lazily 'recentf-show)
-;;     (define-key ctl-x-map (kbd "C-r") 'recentf-show)
-;;     ;; (add-hook 'recentf-show-before-listing-hook
-;;     ;;           'recentf-load-list)
-;;     )
-;;   (recentf-mode 1)
-;;   (define-key recentf-dialog-mode-map (kbd "<up>") 'previous-line)
-;;   (define-key recentf-dialog-mode-map (kbd "<down>") 'next-line)
-;;   (define-key recentf-dialog-mode-map "p" 'previous-line)
-;;   (define-key recentf-dialog-mode-map "n" 'next-line)
-;;   (add-hook 'recentf-dialog-mode-hook
-;;             (lambda ()
-;;               ;; (recentf-save-list)
-;;               ;; (define-key recentf-dialog-mode-map (kbd "C-x C-f")
-;;               ;; 'my-recentf-cd-and-find-file)
-;;               (cd "~/"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
