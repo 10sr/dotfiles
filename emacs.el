@@ -24,6 +24,7 @@
   "If `after-init-hook' has been run, call FUNC immediately.
 Otherwize hook it."
   (if after-init-time
+      ;; Currently after-init-hook is run just after setting after-init-hook
       (funcall func)
     (add-hook 'after-init-hook
               func)))
