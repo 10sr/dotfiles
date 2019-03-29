@@ -20,14 +20,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
-(defun call-after-init (func)
-  "If `after-init-hook' has been run, call FUNC immediately.
+(defmacro call-after-init (&rest body)
+  "If `after-init-hook' has been run, run BODY immediately.
 Otherwize hook it."
-  (if after-init-time
-      ;; Currently after-init-hook is run just after setting after-init-hook
-      (funcall func)
-    (add-hook 'after-init-hook
-              func)))
+  (declare (indent 0) (debug t))
+  `(if after-init-time
+       ;; Currently after-init-hook is run just after setting after-init-hook
+       (progn
+         ,@body)
+     (add-hook 'after-init-hook
+               (lambda ()
+                 ,@body))))
 
 (defmacro safe-require-or-eval (feature)
   "Require FEATURE if available.
@@ -218,13 +221,12 @@ found, otherwise returns nil."
      (set-scroll-bar-mode nil))
 
 (call-after-init
- (lambda ()
-   (message "%s %s" invocation-name emacs-version)
-   (message "Invocation directory: %s" default-directory)
-   (message "%s was taken to initialize emacs." (emacs-init-time))
-   (view-echo-area-messages)
-   ;; (view-emacs-news)
-   ))
+  (message "%s %s" invocation-name emacs-version)
+  (message "Invocation directory: %s" default-directory)
+  (message "%s was taken to initialize emacs." (emacs-init-time))
+  (view-echo-area-messages)
+  ;; (view-emacs-news)
+  )
 
 (with-current-buffer "*Messages*"
   (emacs-lock-mode 'kill))
@@ -248,10 +250,10 @@ found, otherwise returns nil."
 ;; (comint-show-maximum-output)
 
 ;; kill scratch
-(call-after-init (lambda ()
-                   (let ((buf (get-buffer "*scratch*")))
-                     (when buf
-                       (kill-buffer buf)))))
+(call-after-init
+  (let ((buf (get-buffer "*scratch*")))
+    (when buf
+      (kill-buffer buf))))
 
 ;; modifier keys
 ;; (setq mac-option-modifier 'control)
@@ -475,14 +477,13 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'diminish)
   ;; FIXME: Eval after enabling mode
   (call-after-init
-   (lambda ()
-     (diminish 'recently-mode)
-     (diminish 'editorconfig-mode)
-     (diminish 'auto-highlight-symbol-mode)
-     (diminish 'global-whitespace-mode)
-     (diminish 'which-key-mode)
-     (diminish 'page-break-lines-mode)
-     (diminish 'highlight-indentation-mode))))
+    (diminish 'recently-mode)
+    (diminish 'editorconfig-mode)
+    (diminish 'auto-highlight-symbol-mode)
+    (diminish 'global-whitespace-mode)
+    (diminish 'which-key-mode)
+    (diminish 'page-break-lines-mode)
+    (diminish 'highlight-indentation-mode)))
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 
@@ -1048,7 +1049,7 @@ found, otherwise returns nil."
 
 ;; https://github.com/lunaryorn/flycheck
 (when (safe-require-or-eval 'flycheck)
-  (call-after-init 'global-flycheck-mode))
+  (call-after-init (global-flycheck-mode)))
 
 (when (autoload-eval-lazily 'ilookup)
   (define-key ctl-x-map "d" 'ilookup-open-word))
@@ -1127,7 +1128,7 @@ found, otherwise returns nil."
 ;;   (add-to-list 'load-path
 ;;                (expand-file-name (concat user-emacs-directory "/cedet")))
 ;;   (safe-require-or-eval 'cedet-devel-load)
-;;   (call-after-init 'activate-malabar-mode))
+;;   (call-after-init (activate-malabar-mode)))
 
 (with-eval-after-load 'make-mode
   (defvar makefile-mode-map (make-sparse-keymap))
