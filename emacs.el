@@ -404,6 +404,7 @@ found, otherwise returns nil."
   (global-page-break-lines-mode 1))
 
 (when (safe-require-or-eval 'git-gutter)
+  (declare-function global-git-gutter-mode "git-gutter")
   (custom-set-variables
    '(git-gutter:lighter " Gttr"))
   (custom-set-variables
@@ -1073,6 +1074,7 @@ found, otherwise returns nil."
   (define-key python-mode-map (kbd "C-m") 'newline-and-indent))
 
 (when (autoload-eval-lazily 'pipenv)
+  (declare-function pipenv-projectile-after-switch-default "pipenv")
   (add-hook 'python-mode-hook
             (lambda ()
               (pipenv-mode 1)
@@ -1414,6 +1416,10 @@ found, otherwise returns nil."
 ;; buffers
 
 (defvar bs-configurations)
+(declare-function bs-set-configuration "bs")
+(declare-function bs-refresh "bs")
+(declare-function bs-message-without-log "bs")
+(declare-function bs--current-config-message "bs")
 (when (autoload-eval-lazily 'bs '(bs-show)
         (add-to-list 'bs-configurations
                      '("specials" "^\\*" nil ".*" nil nil))
