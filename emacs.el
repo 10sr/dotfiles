@@ -1732,13 +1732,19 @@ ARG is num to show, or defaults to 7."
        "My privnotes repository path.")
      (expand-file-name "~/my/privnotes"))
 
-(defun my-privnotes-readme (path)
+(defun my-privnotes-readme (dir)
   "Open my privnotes."
   (interactive (list
                 (read-file-name "Privnotes: "
                                 (expand-file-name (format-time-string "%Y%m%d_")
                                                   my-privnotes-path))))
-  (find-file (expand-file-name "README.md" path)))
+  (let ((path (expand-file-name "README.md" dir)))
+    (with-current-buffer (find-file path)
+      (unless (file-exists-p path)
+        (insert (file-name-base dir)
+                "\n"
+                "=======\n"
+                "\n\n")))))
 (define-key ctl-x-map "p" 'my-privnotes-readme)
 
 (set (defvar my-rgrep-alist nil
