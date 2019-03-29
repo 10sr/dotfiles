@@ -1733,7 +1733,7 @@ ARG is num to show, or defaults to 7."
      (expand-file-name "~/my/privnotes"))
 
 (defun my-privnotes-readme (dir)
-  "Open my privnotes."
+  "Open my privnotes DIR."
   (interactive (list
                 (read-file-name "Privnotes: "
                                 (expand-file-name (format-time-string "%Y%m%d_")
