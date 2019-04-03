@@ -568,11 +568,6 @@ found, otherwise returns nil."
                   ": "))
   (prompt-text-mode 1))
 
-(when (safe-require-or-eval 'amx)
-  (amx-mode 1)
-  (defvar amx-map)
-  (define-key amx-map (kbd "C-h") (kbd "DEL")))
-
 (autoload-eval-lazily 'helm nil
   (defvar helm-map)
   (define-key helm-map (kbd "C-h") (kbd "DEL")))
