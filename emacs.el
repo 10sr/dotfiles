@@ -738,6 +738,7 @@ found, otherwise returns nil."
   (dolist (hook
            '(
              prog-mode-hook
+             text-mode-hook
              ))
     (add-hook hook
               'highlight-indentation-mode)))
