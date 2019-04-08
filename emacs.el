@@ -572,6 +572,12 @@ found, otherwise returns nil."
   (defvar helm-map)
   (define-key helm-map (kbd "C-h") (kbd "DEL")))
 
+(setq-default header-line-format
+              '(:eval (let ((f (or (buffer-file-name)
+                                   default-directory)))
+                        (when f
+                          (abbreviate-file-name f)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
 
@@ -1910,6 +1916,11 @@ and search from projectile root (if projectile is available)."
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
 
+
+(define-key ctl-x-map (kbd "C-r") 'recently-show)
+(define-key ctl-x-map "T" 'git-worktree)
+(define-key ctl-x-map "W" 'git-walktree)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editorconfig-auto-apply
 
@@ -1948,10 +1959,6 @@ and search from projectile root (if projectile is available)."
           'editorconfig-auto-apply-enable)
 
 
-
-(define-key ctl-x-map (kbd "C-r") 'recently-show)
-(define-key ctl-x-map "T" 'git-worktree)
-(define-key ctl-x-map "W" 'git-walktree)
 
 ;;;;;;;;;;;;;;;;
 ;; flychcek-black
@@ -2057,6 +2064,15 @@ and search from projectile root (if projectile is available)."
 
 (set-variable 'flycheck-python-mypy-ini
               ".mypy.ini")
+
+
+;;;;;;;;;;;;;;;;;;;
+;; peek-file-mode
+
+(defun peek-file (file)
+  "Peek FILE."
+  (interactive)
+  (message "%s" file))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
