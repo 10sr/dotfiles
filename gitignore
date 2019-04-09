@@ -4,6 +4,7 @@
 
 # gnu global
 GPATH
+
 GRTAGS
 GSYMS
 GTAGS

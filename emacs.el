@@ -1041,7 +1041,10 @@ found, otherwise returns nil."
   (set-variable 'company-minimum-prefix-length 2)
   (set-variable 'company-selection-wrap-around t)
 
-  (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
+  (defvar company-mode-map)
+  ;; TODO: It seems this indent is a bit different from original C-i command
+  (define-key company-mode-map (kbd "C-i") 'company-indent-or-complete-common)
+  ;; (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
 
   (defvar company-active-map)
   (define-key company-active-map (kbd "C-n") 'company-select-next)
