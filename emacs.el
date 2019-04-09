@@ -1042,7 +1042,8 @@ found, otherwise returns nil."
   (set-variable 'company-selection-wrap-around t)
 
   (defvar company-mode-map)
-  ;; TODO: It seems this indent is a bit different from original C-i command
+  ;; TODO: It seems sometimes this indent is a bit different from original C-i command
+  ;; For example python-mode?
   (define-key company-mode-map (kbd "C-i") 'company-indent-or-complete-common)
   ;; (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
 
@@ -1052,6 +1053,28 @@ found, otherwise returns nil."
   (define-key company-active-map (kbd "C-s") 'company-filter-candidates)
   (define-key company-active-map (kbd "C-i") 'company-complete-selection)
   (define-key company-active-map (kbd "C-f") 'company-complete-selection)
+
+  (defvar company-candidates)
+  (defvar company-candidates-length)
+  ;; (popup-tip "Hello, World!")
+  (require 'popup nil t)
+  (defun my-company-length-popup-tip ()
+    "Show tooltip of candidate length."
+    (interactive)
+    ;; Do nothing when already in company completion
+    (unless company-candidates
+      (let ((l nil))
+        (unwind-protect
+            (progn
+              (company-manual-begin)
+              (setq l company-candidates-length))
+          (company-cancel))
+        (when l
+          (popup-tip (format "(%d)" l))))))
+
+  (set-variable 'my-company-length-popup-tip-timer
+                (run-with-idle-timer 0.5 t
+                                     'my-company-length-popup-tip))
 
   ;; https://qiita.com/syohex/items/8d21d7422f14e9b53b17
   (set-face-attribute 'company-tooltip nil
@@ -1070,7 +1093,6 @@ found, otherwise returns nil."
                       :background "gray40")
 
   )
-
 
 ;; https://github.com/lunaryorn/flycheck
 (when (safe-require-or-eval 'flycheck)
