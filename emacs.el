@@ -1054,15 +1054,17 @@ found, otherwise returns nil."
   (define-key company-active-map (kbd "C-i") 'company-complete-selection)
   (define-key company-active-map (kbd "C-f") 'company-complete-selection)
 
+  (defvar company-mode)
   (defvar company-candidates)
   (defvar company-candidates-length)
   ;; (popup-tip "Hello, World!")
-  (require 'popup nil t)
   (defun my-company-length-popup-tip ()
     "Show tooltip of candidate length."
     (interactive)
-    ;; Do nothing when already in company completion
-    (unless company-candidates
+    (when (and (require 'popup nil t)
+               company-mode
+               ;; Do nothing when already in company completion
+               (not company-candidates))
       (let ((l nil))
         (unwind-protect
             (progn
