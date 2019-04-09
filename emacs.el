@@ -1078,6 +1078,12 @@ found, otherwise returns nil."
                 (run-with-idle-timer 0.5 t
                                      'my-company-length-popup-tip))
 
+  ;; (current-active-maps)
+  ;; (lookup-key)
+  '(mapcar (lambda (map)
+             (lookup-key map (kbd "C-i")))
+           (current-active-maps))
+
   ;; https://qiita.com/syohex/items/8d21d7422f14e9b53b17
   (set-face-attribute 'company-tooltip nil
                       :foreground "black" :background "lightgrey")
@@ -1901,8 +1907,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-                                   (compilation-start command-args
-                                                      'grep-mode))
+        (compilation-start command-args
+                           'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -1920,8 +1926,8 @@ and search from projectile root (if projectile is available)."
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-                                     (compilation-start command-args
-                                                        'grep-mode))
+          (compilation-start command-args
+                             'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
