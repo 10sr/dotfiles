@@ -1044,6 +1044,7 @@ found, otherwise returns nil."
   (defvar company-mode-map)
   ;; TODO: It seems sometimes this indent is a bit different from original C-i command
   ;; For example python-mode?
+  ;; TODO: Set python-indent-trigger-commands
   (define-key company-mode-map (kbd "C-i") 'company-indent-or-complete-common)
   ;; (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
 
