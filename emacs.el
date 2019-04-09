@@ -1075,7 +1075,7 @@ found, otherwise returns nil."
           (popup-tip (format "(%d)" l))))))
 
   (set-variable 'my-company-length-popup-tip-timer
-                (run-with-idle-timer 0.5 t
+                (run-with-idle-timer 0.2 t
                                      'my-company-length-popup-tip))
 
   ;; (current-active-maps)
