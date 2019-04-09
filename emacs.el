@@ -1014,6 +1014,7 @@ found, otherwise returns nil."
             (setq imenu-generic-expression
                   `(("Sections" ";;;\+\n;; \\(.*\\)\n" 1)
                     ,@imenu-generic-expression))))
+;; TODO: Try paraedit http://daregada.blogspot.com/2012/03/paredit.html
 
 (with-eval-after-load 'compile
   (defvar compilation-filter-start)
@@ -1035,6 +1036,7 @@ found, otherwise returns nil."
   ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
   ;; https://qiita.com/yuze/items/a145b1e3edb6d0c24cbf
   (global-company-mode)
+  ;; TODO: Show length of candidate list on cursor?
   (set-variable 'company-idle-delay nil)
   (set-variable 'company-minimum-prefix-length 2)
   (set-variable 'company-selection-wrap-around t)
