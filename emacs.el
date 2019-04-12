@@ -1079,7 +1079,7 @@ found, otherwise returns nil."
               (setq l company-candidates-length))
           (company-cancel))
         (when l
-          (popup-tip (format "(%d)" l))))))
+          (popup-tip (format "%d" l))))))
 
   (set-variable 'my-company-length-popup-tip-timer
                 (run-with-idle-timer 0.2 t
