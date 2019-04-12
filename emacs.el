@@ -40,6 +40,7 @@ At compile time the feature will be loaded immediately."
      (message "safe-require-or-eval: Trying to require %s" ,feature)
      (require ,feature nil t)))
 
+;; TODO: Remove: Defining autoload is no more needed for most cases
 (defmacro autoload-eval-lazily (feature &optional functions &rest body)
   "Define autoloading FEATURE that defines FUNCTIONS.
 FEATURE is a symbol.  FUNCTIONS is a list of symbols.  If FUNCTIONS is nil,
@@ -98,6 +99,7 @@ found, otherwise returns nil."
        gosh-mode
        scala-mode
        ;;ensime
+       web-mode
 
 
        color-moccur
@@ -946,6 +948,11 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
+(when (fboundp 'web-mode)
+  (add-to-list 'auto-mode-alist
+               '("\\.html\\.j2\\'" . web-mode))
+  )
+
 (when (autoload-eval-lazily 'wgrep)
   (set-variable 'wgrep-auto-save-buffer t)
   (with-eval-after-load 'grep
@@ -1270,6 +1277,7 @@ found, otherwise returns nil."
         )
   (add-to-list 'auto-mode-alist
                '("build\\.gradle\\'" . groovy-mode)))
+
 
 (add-to-list 'auto-mode-alist
              '("\\.gawk\\'" . awk-mode))
