@@ -1081,9 +1081,10 @@ found, otherwise returns nil."
         (when l
           (popup-tip (format "%d" l))))))
 
-  (set-variable 'my-company-length-popup-tip-timer
-                (run-with-idle-timer 0.2 t
-                                     'my-company-length-popup-tip))
+  ;; This breaks japanese text input
+  ;; (set-variable 'my-company-length-popup-tip-timer
+  ;;               (run-with-idle-timer 0.2 t
+  ;;                                    'my-company-length-popup-tip))
 
   ;; (current-active-maps)
   ;; (lookup-key)
