@@ -659,7 +659,7 @@ found, otherwise returns nil."
                            ;; lines
                            lines-tail  ; lines over 80
                            newline      ; newlines
-                           empty        ; empty lines at beg or end of buffer
+                           ;; empty        ; empty lines at beg or end of buffer
                            ;; big-indent
                            ;; space-mark
                            tab-mark
