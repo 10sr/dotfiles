@@ -1048,11 +1048,13 @@ found, otherwise returns nil."
   (set-variable 'company-selection-wrap-around t)
 
   (defvar company-mode-map)
-  ;; TODO: It seems sometimes this indent is a bit different from original C-i command
-  ;; For example python-mode?
-  ;; TODO: Set python-indent-trigger-commands
   (define-key company-mode-map (kbd "C-i") 'company-indent-or-complete-common)
-  ;; (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
+  (with-eval-after-load 'python
+    (defvar python-indent-trigger-commands)
+    ;; TODO: This disables completion in puthon?
+    (add-to-list 'python-indent-trigger-commands
+                 'company-indent-or-complete-common))
+  (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
 
   (defvar company-active-map)
   (define-key company-active-map (kbd "C-n") 'company-select-next)
@@ -2025,7 +2027,7 @@ and search from projectile root (if projectile is available)."
 ;; flychcek-black
 
 ;; TODO: Move to https://github.com/10sr/flycheck-black-check
-(require 'flycheck)
+(require 'flycheck nil t)
 
 (flycheck-define-checker python-black-check
   "A Python style checker."
