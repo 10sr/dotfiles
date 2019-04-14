@@ -1979,7 +1979,12 @@ and search from projectile root (if projectile is available)."
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
 
+(defun my-pushbullet-note (text &optional title)
+  "Push TEXT."
+  (interactive "sText to Push: ")
+  (pb/push-item '("") text "note" (or title "Push from Emacs")))
 
+;; TODO: Move
 (define-key ctl-x-map (kbd "C-r") 'recently-show)
 (define-key ctl-x-map "T" 'git-worktree)
 (define-key ctl-x-map "W" 'git-walktree)
