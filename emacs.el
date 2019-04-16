@@ -1138,11 +1138,11 @@ found, otherwise returns nil."
   (define-key python-mode-map (kbd "C-m") 'newline-and-indent))
 
 (when (autoload-eval-lazily 'pipenv)
-  (declare-function pipenv-projectile-after-switch-default "pipenv")
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (pipenv-mode 1)
-              (pipenv-projectile-after-switch-default)))
+  ;; (declare-function pipenv-projectile-after-switch-default "pipenv")
+  ;; (add-hook 'python-mode-hook
+  ;;           (lambda ()
+  ;;             (pipenv-mode 1)
+  ;;             (pipenv-projectile-after-switch-default)))
   )
 (set-variable 'flycheck-python-pycompile-executable "python3")
 (set-variable 'python-indent-guess-indent-offset nil)
