@@ -1982,7 +1982,7 @@ and search from projectile root (if projectile is available)."
 (defun my-pushbullet-note (text &optional title)
   "Push TEXT."
   (interactive "sText to Push: ")
-  (pb/push-item '("") text "note" (or title "Push from Emacs")))
+  (pb/push-item '("") text "note" (or title "")))
 
 ;; TODO: Move
 (define-key ctl-x-map (kbd "C-r") 'recently-show)
