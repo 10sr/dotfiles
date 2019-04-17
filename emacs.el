@@ -1067,21 +1067,26 @@ found, otherwise returns nil."
   (defvar company-candidates)
   (defvar company-candidates-length)
   ;; (popup-tip "Hello, World!")
-  (defun my-company-length-popup-tip ()
-    "Show tooltip of candidate length."
+  (defun my-company-lighter-current-length ()
+    "Get current candidate length."
     (interactive)
-    (when (and (require 'popup nil t)
-               company-mode
-               ;; Do nothing when already in company completion
-               (not company-candidates))
-      (let ((l nil))
+    (let ((l nil))
+      (when (and company-mode
+                 ;; Do nothing when already in company completion
+                 (not company-candidates))
         (unwind-protect
             (progn
-              (company-manual-begin)
+              (company-auto-begin)
               (setq l company-candidates-length))
-          (company-cancel))
-        (when l
-          (popup-tip (format "%d" l))))))
+          (company-cancel)))
+      (if l
+          (format "[%d]" l)
+        "")))
+
+  (defvar company-lighter)
+  (add-to-list 'company-lighter
+               '(:eval (my-company-lighter-current-length))
+               t)
 
   ;; This breaks japanese text input
   ;; (set-variable 'my-company-length-popup-tip-timer
