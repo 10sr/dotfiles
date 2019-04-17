@@ -1076,7 +1076,8 @@ found, otherwise returns nil."
                  (not company-candidates))
         (unwind-protect
             (progn
-              (company-auto-begin)
+              ;; (company-auto-begin)
+              (company-manual-begin)
               (setq l company-candidates-length))
           (company-cancel)))
       (if l
@@ -1084,6 +1085,7 @@ found, otherwise returns nil."
         "")))
 
   (defvar company-lighter)
+  (set-variable 'company-lighter-base "Cmp")
   (add-to-list 'company-lighter
                '(:eval (my-company-lighter-current-length))
                t)
