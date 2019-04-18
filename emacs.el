@@ -471,7 +471,7 @@ found, otherwise returns nil."
 (column-number-mode 0)
 (size-indication-mode 0)
 (setq mode-line-position
-      '(:eval (format "L%%l/%d%s:C%%c"
+      '(:eval (format ":%%l:%%c<%d%s>"
                       (count-lines (point-max)
                                    (point-min))
                       (if (buffer-narrowed-p)
