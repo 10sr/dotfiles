@@ -860,6 +860,12 @@ found, otherwise returns nil."
              (when (derived-mode-p 'makefile-mode)
                (puthash 'indent_style "tab" props))))
 
+(when (fboundp 'editorconfig-auto-apply-enable)
+  (add-hook 'editorconfig-conf-mode-hook
+            'editorconfig-auto-apply-enable))
+
+
+
 ;; (when (fboundp 'editorconfig-charset-extras)
 ;;   (add-hook 'editorconfig-custom-hooks
 ;;             'editorconfig-charset-extras))
@@ -1131,6 +1137,13 @@ found, otherwise returns nil."
 ;; https://github.com/lunaryorn/flycheck
 (when (safe-require-or-eval 'flycheck)
   (call-after-init (global-flycheck-mode)))
+
+(with-eval-after-load 'flycheck
+  (when (fboundp 'flycheck-black-check-setup)
+    (flycheck-black-check-setup)))
+
+(set-variable 'flycheck-python-mypy-ini
+              ".mypy.ini")
 
 (when (autoload-eval-lazily 'ilookup)
   (define-key ctl-x-map "d" 'ilookup-open-word))
@@ -2005,149 +2018,7 @@ and search from projectile root (if projectile is available)."
 (define-key ctl-x-map "T" 'git-worktree)
 (define-key ctl-x-map "W" 'git-walktree)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; editorconfig-auto-apply
 
-(define-minor-mode editorconfig-auto-apply-mode
-  "When saving .editorconfig file update buffer configs."
-  :lighter " ECAA"
-  (if editorconfig-auto-apply-mode
-      (add-hook 'after-save-hook
-                'editorconfig-auto-apply-mode--run nil t)
-    (remove-hook 'after-save-hook
-                 'editorconfig-auto-apply-mode--run t)))
-
-(defun editorconfig-auto-apply-enable ()
-  "Turn on `editorconfig-auto-apply-mode'."
-  (unless editorconfig-auto-apply-mode
-    (editorconfig-auto-apply-mode 1)))
-
-(defun editorconfig-auto-apply-disable ()
-  "Turn off `editorconfig-auto-apply-mode'."
-  (when editorconfig-auto-apply-mode
-    (editorconfig-auto-apply-mode -1)))
-
-(defun editorconfig-auto-apply-mode--run ()
-  "When saving .editorconfig file walk all buffers and update configs."
-  (when (eq major-mode
-            'editorconfig-conf-mode)
-    (let ((dir (file-name-directory buffer-file-name)))
-      (cl-dolist (buf (buffer-list))
-        (when (and (buffer-file-name buf)
-                   (file-in-directory-p (buffer-file-name buf)
-                                        dir))
-          (with-current-buffer buf
-            (editorconfig-mode-apply)))))))
-
-(add-hook 'editorconfig-conf-mode-hook
-          'editorconfig-auto-apply-enable)
-
-
-
-;;;;;;;;;;;;;;;;
-;; flychcek-black
-
-;; TODO: Move to https://github.com/10sr/flycheck-black-check
-(require 'flycheck nil t)
-
-(flycheck-define-checker python-black-check
-  "A Python style checker."
-  :command ("python3" "-m" "black"
-            "--check"
-            (config-file "--config" flycheck-black)
-            source)
-  :error-parser flycheck-parse-black-check
-  ;; :error-patterns
-  ;; (
-  ;;  (error line-start "error: cannot format " (file-name) ": " (message) ": " line ":" column ": " (one-or-more any) line-end)
-  ;;  (error line-start (message) " " (file-name) line-end)
-  ;;  )
-  :enabled (lambda ()
-             (or (not (flycheck-python-needs-module-p 'python-black-check))
-                 (flycheck-python-find-module 'python-black-check "black")))
-  :verify (lambda (_) (flycheck-python-verify-module 'python-black-check "black"))
-  :modes python-mode)
-
-;; (flycheck-define-checker python-black-diff
-;;   "A Python style checker."
-;;   :command ("python3"
-;;             "-m" "black"
-;;             (config-file "--config" flycheck-black)
-;;             "--diff" source)
-;;   :error-parser my-flycheck-parse-unified-diff
-;;   :enabled (lambda ()
-;;              (or (not (flycheck-python-needs-module-p 'python-black))
-;;                  (flycheck-python-find-module 'python-black "black")))
-;;   :verify (lambda (_) (flycheck-python-verify-module 'python-black "black"))
-;;   :modes python-mode)
-
-(flycheck-def-config-file-var flycheck-black python-black-check "pyproject.toml"
-  :safe #'stringp)
-
-(add-to-list 'flycheck-checkers
-             'python-black-check)
-
-(defun flycheck-parse-black-check (output checker buffer)
-  "Flycheck parser to check if reformat is required."
-  (let ((result nil))
-    (with-temp-buffer
-      (insert output)
-      (save-match-data
-        (goto-char (point-min))
-        (when (re-search-forward "^would reformat .*$" nil t)
-          (add-to-list 'result (flycheck-error-new-at
-                                (point-min)
-                                nil
-                                'error
-                                ;;(format "Black: %s" (match-string 0))
-                                "Black: would reformat"
-                                :buffer buffer
-                                :checker checker)))
-        (goto-char (point-min))
-        (when (re-search-forward "^error: .*$" nil t)
-          (add-to-list 'result (flycheck-error-new-at
-                                (point-min)
-                                nil
-                                'error
-                                ;; Fix not to include absolute file path
-                                (format "Black: %s" (match-string 0))
-                                :buffer buffer
-                                :checker checker)))))
-    result))
-
-(defun my-flycheck-parse-unified-diff (output checker buffer)
-  "Flycheck parser to parse diff output."
-  (let ((source-line 0)
-        (result ())
-        (hunk "HUNK"))
-    (with-temp-buffer
-      (insert output)
-      (goto-char (point-min))
-      (while (not (eq (point) (point-max)))
-        ;; FIXME: Do not stop when no result
-        (while (not (re-search-forward "^@@ -\\([0-9]+\\),\\([0-9]+\\) \\+\\([0-9]+\\),\\([0-9]+\\) @@.*$" (point-at-eol) t))
-          (forward-line 1)
-          (goto-char (point-at-bol)))
-        (setq source-line
-              (string-to-number (match-string 1)))
-        ;; TODO: Add filename support
-        (setq hunk
-              (match-string 0))
-        ;;(while (not (rearch-forward "^\\(-\\|\\+\\)")))
-        )
-      (add-to-list 'result
-                   (flycheck-error-new-at
-                    0
-                    nil
-                    'error
-                    "MESSAGE"
-                    :buffer buffer
-                    :checker checker
-                    :group hunk)))
-    result))
-
-(set-variable 'flycheck-python-mypy-ini
-              ".mypy.ini")
 
 
 ;;;;;;;;;;;;;;;;;;;
