@@ -827,6 +827,7 @@ found, otherwise returns nil."
 ;; recently
 
 (when (safe-require-or-eval 'recently)
+  (define-key ctl-x-map (kbd "C-r") 'recently-show)
   (set-variable 'recently-max 1000)
   (recently-mode 1))
 
@@ -1819,6 +1820,9 @@ ARG is num to show, or defaults to 7."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
 
+(define-key ctl-x-map "T" 'git-worktree)
+(define-key ctl-x-map "W" 'git-walktree)
+
 (when (fboundp 'browse-url-default-macosx-browser)
   (defalias 'browse-osx 'browse-url-default-macosx-browser))
 
@@ -2013,10 +2017,6 @@ and search from projectile root (if projectile is available)."
   (interactive "sText to Push: ")
   (pb/push-item '("") text "note" (or title "")))
 
-;; TODO: Move
-(define-key ctl-x-map (kbd "C-r") 'recently-show)
-(define-key ctl-x-map "T" 'git-worktree)
-(define-key ctl-x-map "W" 'git-walktree)
 
 
 
