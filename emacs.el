@@ -32,6 +32,7 @@ Otherwize hook it."
                (lambda ()
                  ,@body))))
 
+;; TODO: Remove: Just checking fboundp should be enough for most cases
 (defmacro safe-require-or-eval (feature)
   "Require FEATURE if available.
 
