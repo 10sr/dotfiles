@@ -761,6 +761,8 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
 
+(auto-insert-mode 1)
+
 ;; fzf
 
 ;; Too slow in term buffer!
@@ -1078,6 +1080,7 @@ found, otherwise returns nil."
     (interactive)
     (let ((l nil))
       (when (and company-mode
+                 (not (minibufferp))
                  ;; Do nothing when already in company completion
                  (not company-candidates))
         (unwind-protect
