@@ -138,6 +138,7 @@ found, otherwise returns nil."
        highlight-indentation
        diminish
        fzf
+       fic-mode
 
        editorconfig
        editorconfig-custom-majormode
@@ -751,6 +752,10 @@ found, otherwise returns nil."
     (add-hook hook
               'highlight-indentation-mode)))
 ;; (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
+
+(when (fboundp 'fic-mode)
+  (add-hook prog-mode-hook
+            'fic-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
