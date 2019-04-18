@@ -490,7 +490,13 @@ found, otherwise returns nil."
     (diminish 'page-break-lines-mode)
     (diminish 'highlight-indentation-mode)))
 
+(setq mode-line-front-space "")
+;; (setq mode-line-end-spaces "")
+;; Set current frame name to empty string
+(set-frame-parameter nil 'name "")
+
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; minibuffer
