@@ -754,7 +754,7 @@ found, otherwise returns nil."
 ;; (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
 
 (when (fboundp 'fic-mode)
-  (add-hook prog-mode-hook
+  (add-hook 'prog-mode-hook
             'fic-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
