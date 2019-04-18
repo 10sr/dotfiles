@@ -2018,7 +2018,68 @@ and search from projectile root (if projectile is available)."
   (pb/push-item '("") text "note" (or title "")))
 
 
+;;;;;;;;;;;;;;;;;;;;;
+;; git-bug
 
+(defconst git-bug-ls-regexp
+  (eval-when-compile
+    (rx bol
+        (submatch (one-or-more alphanumeric))  ; id
+        ;; (one-or-more any)
+        (one-or-more space)
+        (submatch (or "open" "close"))  ; status
+        (one-or-more space)
+        (submatch (maximal-match (zero-or-more print)))  ; title
+        "\t"
+        (submatch (one-or-more alphanumeric))  ; user
+        (one-or-more space)
+        "C:"
+        (submatch (one-or-more digit))  ; Comment num
+        (one-or-more space)
+        "L:"
+        (submatch (one-or-more digit))  ; Label num
+        eol
+        ))
+  "Regexp to parse line of output of git-bug ls.
+Used by `git-bug-ls'.")
+
+(defun git-bug--bugs ()
+  "Get list of git-bug bugs."
+  (interactive)
+  (with-temp-buffer
+    (git-bug--call-process "bug" "ls")
+    (goto-char (point-min))
+    (let ((bugs nil))
+      (while (not (eq (point) (point-max)))
+        (save-match-data
+          (when (re-search-forward git-bug-ls-regexp (point-at-eol) t)
+            (setq bugs `(,@bugs
+                         ,(list
+                           :id (match-string 1)
+                           :status (match-string 2)
+                           :title (string-trim (match-string 3))
+                           :user (match-string 4)
+                           :comment-num (match-string 5)
+                           :label-num (match-string 6)
+                           )))))
+        (forward-line 1)
+        (goto-char (point-at-bol)))
+      bugs)))
+
+(defun git-bug--call-process (&rest args)
+  "Start git process synchronously with ARGS.
+
+Raise error when git process ends with non-zero status.
+Any output will be written to current buffer."
+  (let ((status (apply 'call-process
+                       "git"
+                       nil
+                       t
+                       nil
+                       args)))
+    (cl-assert (eq status 0)
+               nil
+               (buffer-substring-no-properties (point-min) (point-max)))))
 
 
 ;;;;;;;;;;;;;;;;;;;
