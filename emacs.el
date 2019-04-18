@@ -2043,9 +2043,8 @@ and search from projectile root (if projectile is available)."
   "Regexp to parse line of output of git-bug ls.
 Used by `git-bug-ls'.")
 
-(defun git-bug--bugs ()
+(defun git-bug-bugs ()
   "Get list of git-bug bugs."
-  (interactive)
   (with-temp-buffer
     (git-bug--call-process "bug" "ls")
     (goto-char (point-min))
@@ -2065,6 +2064,34 @@ Used by `git-bug-ls'.")
         (forward-line 1)
         (goto-char (point-at-bol)))
       bugs)))
+
+(defun git-bug-ls-noselect (&optional directory)
+  "Open git bug list buffer.
+
+If optional arg DIRECTORY is given change current directory to there before
+initializing."
+  (setq directory (expand-file-name (or directory
+                                        default-directory)))
+  (cl-assert (file-directory-p directory))
+  (let* ((root (git-bug--get-repository-root directory))
+         (name (file-name-nondirectory root))
+         (bname (format "*GitBug<%s>*" name)))
+    (with-current-buffer (get-buffer-create bname)
+      (cd root)
+      (git-bug--set-tabulated-list-mode-variables)
+      (git-bug-mode)
+      (current-buffer))))
+
+(defun git-bug--get-repository-root (dir)
+  "Resolve repository root of DIR.
+
+If DIR is not inside of any git repository, signal an error."
+  (cl-assert (file-directory-p dir))
+  (with-temp-buffer
+    (cd dir)
+    (git-bug--call-process "rev-parse" "--show-toplevel")
+    (goto-char (point-min))
+    (buffer-substring-no-properties (point-at-bol) (point-at-eol))))
 
 (defun git-bug--call-process (&rest args)
   "Start git process synchronously with ARGS.
