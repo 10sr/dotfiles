@@ -2084,8 +2084,8 @@ initializing."
          (bname (format "*GitBug<%s>*" name)))
     (with-current-buffer (get-buffer-create bname)
       (cd root)
-      (git-bug--set-tabulated-list-mode-variables)
-      (git-bug-mode)
+      (git-bug-ls--set-tabulated-list-mode-variables)
+      (git-bug-ls-mode)
       (current-buffer))))
 
 (defun git-bug--get-repository-root (dir)
