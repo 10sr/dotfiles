@@ -20,6 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
+;; TODO: Rename to eval-after-init
 (defmacro call-after-init (&rest body)
   "If `after-init-hook' has been run, run BODY immediately.
 Otherwize hook it."
@@ -493,6 +494,17 @@ found, otherwise returns nil."
 (setq mode-line-front-space "")
 ;; (setq mode-line-end-spaces "")
 ;; Set current frame name to empty string
+(setq-default mode-line-format
+              (let* ((l mode-line-format)
+                     (l (cl-substitute " " "   "
+                                       l
+                                       :test 'equal))
+                     (l (cl-substitute " " "  "
+                                       l
+                                       :test 'equal))
+                     )
+                l))
+
 (set-frame-parameter nil 'name "")
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
@@ -787,15 +799,15 @@ found, otherwise returns nil."
                ;; Use gfind if available?
                "find"))
        (findcmd (concat "set -eu; set -o pipefail; "
-                        "echo .; "
-                        "echo ..; "
-                        "command " find " -L . "
-                        "-mindepth 1 "
-                        "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-                        "-o -print "
-                        "2> /dev/null "
-                        "| "
-                        "cut -b3-"))
+       "echo .; "
+       "echo ..; "
+       "command " find " -L . "
+       "-mindepth 1 "
+       "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+       "-o -print "
+       "2> /dev/null "
+       "| "
+       "cut -b3-"))
        (fdcmd (concat "set -eu; set -o pipefail; "
                       "echo .; "
                       "echo ..; "
@@ -1091,7 +1103,8 @@ found, otherwise returns nil."
   (defun my-company-lighter-current-length ()
     "Get current candidate length."
     (interactive)
-    (let ((l nil))
+    (let ((l nil)
+          (inhibit-message t))
       (when (and company-mode
                  (not (minibufferp))
                  ;; Do nothing when already in company completion
