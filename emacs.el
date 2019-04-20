@@ -206,6 +206,7 @@ found, otherwise returns nil."
 ;; start and quit
 
 (setq inhibit-startup-message t)
+(setq initial-buffer-choice 'messages-buffer)
 (setq confirm-kill-emacs 'y-or-n-p)
 (setq gc-cons-threshold (* 1024 1024 16))
 (setq garbage-collection-messages nil)
@@ -229,7 +230,7 @@ found, otherwise returns nil."
   (message "%s %s" invocation-name emacs-version)
   (message "Invocation directory: %s" default-directory)
   (message "%s was taken to initialize emacs." (emacs-init-time))
-  (view-echo-area-messages)
+  ;; (view-echo-area-messages)
   ;; (view-emacs-news)
   )
 
