@@ -1856,6 +1856,8 @@ ARG is num to show, or defaults to 7."
                                                "")
                                              "memo.txt"))))
 
+;; TODO: remember-projectile
+
 (set (defvar my-privnotes-path nil
        "My privnotes repository path.")
      (expand-file-name "~/my/privnotes"))
