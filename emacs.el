@@ -800,15 +800,15 @@ found, otherwise returns nil."
                ;; Use gfind if available?
                "find"))
        (findcmd (concat "set -eu; set -o pipefail; "
-       "echo .; "
-       "echo ..; "
-       "command " find " -L . "
-       "-mindepth 1 "
-       "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-       "-o -print "
-       "2> /dev/null "
-       "| "
-       "cut -b3-"))
+                        "echo .; "
+                        "echo ..; "
+                        "command " find " -L . "
+                        "-mindepth 1 "
+                        "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+                        "-o -print "
+                        "2> /dev/null "
+                        "| "
+                        "cut -b3-"))
        (fdcmd (concat "set -eu; set -o pipefail; "
                       "echo .; "
                       "echo ..; "
@@ -915,6 +915,11 @@ found, otherwise returns nil."
 ;; (setq delete-auto-save-files t)
 (setq auto-save-visited-interval 8)
 (auto-save-visited-mode 1)
+
+;; (add-to-list 'auto-save-file-name-transforms
+;;              `(".*" ,(concat user-emacs-directory "auto-save-dir") t))
+;; (setq auto-save-interval 3)
+;; (auto-save-mode 1)
 
 (add-to-list 'completion-ignored-extensions ".bak")
 (set-variable 'completion-cycle-threshold nil)  ;; NEVER use
@@ -1972,8 +1977,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-        (compilation-start command-args
-                           'grep-mode))
+                                   (compilation-start command-args
+                                                      'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -1991,8 +1996,8 @@ and search from projectile root (if projectile is available)."
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-          (compilation-start command-args
-                             'grep-mode))
+                                     (compilation-start command-args
+                                                        'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
