@@ -1110,11 +1110,10 @@ found, otherwise returns nil."
                  (not (minibufferp))
                  ;; Do nothing when already in company completion
                  (not company-candidates))
-        (unwind-protect
-            (progn
-              ;; (company-auto-begin)
-              (company-manual-begin)
-              (setq l company-candidates-length))
+        (ignore-errors
+          ;; (company-auto-begin)
+          (company-manual-begin)
+          (setq l company-candidates-length)
           (company-cancel)))
       (if l
           (format "[%d]" l)
