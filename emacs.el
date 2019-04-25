@@ -141,6 +141,7 @@ found, otherwise returns nil."
        diminish
        fzf
        fic-mode
+       term-cursor
 
        editorconfig
        editorconfig-custom-majormode
