@@ -1000,6 +1000,9 @@ found, otherwise returns nil."
       "e"
       'wgrep-change-to-wgrep-mode)))
 
+(when (fboundp 'grep-context-mode)
+  (add-hook 'compilation-mode-hook #'grep-context-mode))
+
 (with-eval-after-load 'remember
   (defvar remember-mode-map (make-sparse-keymap))
   (define-key remember-mode-map (kbd "C-x C-s") 'ignore))
