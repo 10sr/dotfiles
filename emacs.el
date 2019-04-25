@@ -356,7 +356,7 @@ found, otherwise returns nil."
   (if buffer-read-only
       (setq cursor-type 'bar)
     (setq cursor-type 'box)))
-(add-hook 'switch-buffer-functionsp
+(add-hook 'switch-buffer-functions
           'my-cursor-type-change)
 (add-hook 'read-only-mode-hook
           'my-cursor-type-change)
