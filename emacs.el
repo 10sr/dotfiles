@@ -348,6 +348,20 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editor
 
+;; Used from term-cursor
+(defun my-cursor-type-change (&rest args)
+  "ARGS are discarded."
+  (if buffer-read-only
+      (setq cursor-type 'bar)
+    (setq cursor-type 'box)))
+(add-hook 'switch-buffer-functionsp
+          'my-cursor-type-change)
+(add-hook 'read-only-mode-hook
+          'my-cursor-type-change)
+(when (fboundp 'global-term-cursor-mode)
+  (global-term-cursor-mode 1))
+;; (term-cursor--eval)
+
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
       scroll-margin 2)
