@@ -351,6 +351,7 @@ found, otherwise returns nil."
 ;; Used from term-cursor
 (defun my-cursor-type-change (&rest args)
   "ARGS are discarded."
+  ;; TODO: Support wdired
   (if buffer-read-only
       (setq cursor-type 'bar)
     (setq cursor-type 'box)))
