@@ -350,19 +350,21 @@ found, otherwise returns nil."
 ;; editor
 
 ;; Used from term-cursor
+;; hbar is too hard to find...
 (defun my-cursor-type-change (&rest args)
   "ARGS are discarded."
-  ;; TODO: Support wdired
+  ;; TODO: Support wdired and wgrep
   (if buffer-read-only
-      (setq cursor-type 'bar)
+      (setq cursor-type 'hbar)
     (setq cursor-type 'box)))
-(add-hook 'switch-buffer-functions
-          'my-cursor-type-change)
-(add-hook 'read-only-mode-hook
-          'my-cursor-type-change)
-(when (fboundp 'global-term-cursor-mode)
-  (global-term-cursor-mode 1))
-;; (term-cursor--eval)
+;; (add-hook 'switch-buffer-functions
+;;           'my-cursor-type-change)
+;; (add-hook 'read-only-mode-hook
+;;           'my-cursor-type-change)
+;; (when (fboundp 'global-term-cursor-mode)
+;;   (global-term-cursor-mode 1))
+;; ;; (term-cursor--eval)
+
 
 (setq kill-whole-line t)
 (setq scroll-conservatively 35
@@ -523,6 +525,34 @@ found, otherwise returns nil."
                 l))
 
 (set-frame-parameter nil 'name "")
+
+;; See color-name-rgb-alist for available color names
+;; http://www.raebear.net/computers/emacs-colors/
+;; https://www.emacswiki.org/emacs/ListColors
+;; (list-colors-display is not a complete list)
+(defconst my-mode-line-background-default
+  (face-background 'mode-line)
+  "Default color of mode-line at init.")
+(defun my-mode-line-color-update (&rest args)
+  "ARGS are discarded"
+  (let ((ro "tan")
+        (rw "grey75"))
+    (if (or (not buffer-read-only)
+            (and (eq major-mode 'wdired-mode)))
+        (set-face-background 'mode-line
+                             rw)
+      (set-face-background 'mode-line
+                           ro))))
+(add-hook 'switch-buffer-functions
+          'my-mode-line-color-update)
+(add-hook 'read-only-mode-hook
+          'my-mode-line-color-update)
+(add-hook 'wdired-mode-hook
+          'my-mode-line-color-update)
+;; TODO: Support wgrep-mode
+
+(set-face-background 'header-line
+                     "grey75")
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 
