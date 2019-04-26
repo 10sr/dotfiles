@@ -549,7 +549,15 @@ found, otherwise returns nil."
           'my-mode-line-color-update)
 (add-hook 'wdired-mode-hook
           'my-mode-line-color-update)
-;; TODO: Support wgrep-mode
+(advice-add 'wdired-change-to-dired-mode
+            :after
+            'my-mode-line-color-update)
+(advice-add 'wgrep-change-to-wgrep-mode
+            :after
+            'my-mode-line-color-update)
+(advice-add 'wgrep-to-original-mode
+            :after
+            'my-mode-line-color-update)
 
 (set-face-background 'header-line
                      my-mode-line-background-default)
