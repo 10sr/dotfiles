@@ -2200,6 +2200,9 @@ Any output will be written to current buffer."
   (interactive)
   (message "%s" file))
 
+;;;;;;;;;;;;;;;;;;;;
+;; remember-projectile
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
