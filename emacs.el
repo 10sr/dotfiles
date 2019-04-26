@@ -535,7 +535,7 @@ found, otherwise returns nil."
   "Default color of mode-line at init.")
 (defun my-mode-line-color-update (&rest args)
   "ARGS are discarded"
-  (let ((ro "tan")
+  (let ((ro "skyblue")
         (rw "grey75"))
     (if (or (not buffer-read-only)
             (and (eq major-mode 'wdired-mode)))
