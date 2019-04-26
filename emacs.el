@@ -536,7 +536,7 @@ found, otherwise returns nil."
 (defun my-mode-line-color-update (&rest args)
   "ARGS are discarded"
   (let ((ro "skyblue")
-        (rw "grey75"))
+        (rw my-mode-line-background-default))
     (if (or (not buffer-read-only)
             (and (eq major-mode 'wdired-mode)))
         (set-face-background 'mode-line
@@ -552,7 +552,7 @@ found, otherwise returns nil."
 ;; TODO: Support wgrep-mode
 
 (set-face-background 'header-line
-                     "grey75")
+                     my-mode-line-background-default)
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 
