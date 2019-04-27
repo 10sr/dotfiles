@@ -770,9 +770,10 @@ found, otherwise returns nil."
 (face-spec-set 'hl-line
                '((((min-colors 256)
                    (background dark))
-                  (:background "color-234"))
+                  (:background "SlateBlue4"))
                  (((min-colors 256)
                    (background light))
+                  ;; TODO: What is should be?
                   (:background "color-234"))
                  (t
                   (:underline "black"))))
