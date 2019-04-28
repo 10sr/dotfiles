@@ -349,6 +349,10 @@ found, otherwise returns nil."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editor
 
+;; Basically it should not set globally (instead use something like file local
+;; variables or editorconfig), but for most cases I just need this...
+(setq-default require-final-newline t)
+
 ;; Used from term-cursor
 ;; hbar is too hard to find...
 (defun my-cursor-type-change (&rest args)
@@ -1173,6 +1177,7 @@ found, otherwise returns nil."
                  (not (minibufferp))
                  ;; Do nothing when already in company completion
                  (not company-candidates))
+        ;; FIXME: Somehow it cannto catch errors from ggtags
         (ignore-errors
           ;; (company-auto-begin)
           (company-manual-begin)
@@ -1184,9 +1189,9 @@ found, otherwise returns nil."
 
   (defvar company-lighter)
   (set-variable 'company-lighter-base "Cmp")
-  (add-to-list 'company-lighter
-               '(:eval (my-company-lighter-current-length))
-               t)
+  ;; (add-to-list 'company-lighter
+  ;;              '(:eval (my-company-lighter-current-length))
+  ;;              t)
 
   ;; This breaks japanese text input
   ;; (set-variable 'my-company-length-popup-tip-timer
