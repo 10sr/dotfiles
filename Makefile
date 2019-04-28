@@ -301,6 +301,7 @@ else
 	$(git_conf) fetch.pruneTags true
 	$(git_conf) push.default current
 	$(git_conf) pull.ff only
+	$(git_conf) branch.autoSetupMerge always
 ifneq (,$(xz))
 	$(git_conf) tar.txz.command "xz -c"
 endif
