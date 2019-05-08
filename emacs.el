@@ -774,7 +774,7 @@ found, otherwise returns nil."
 (face-spec-set 'hl-line
                '((((min-colors 256)
                    (background dark))
-                  (:background "IndianRed4"))
+                  (:background "RoyalBlue4"))
                  (((min-colors 256)
                    (background light))
                   ;; TODO: What is should be?
