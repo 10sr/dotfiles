@@ -6,6 +6,8 @@
 ;; SETUP_LOAD:   (and (file-readable-p file)
 ;; SETUP_LOAD:        (byte-recompile-file file nil 0 t)))
 
+;; TODO: Use custom-set-variables in place of set-variable
+
 (setq debug-on-error t)
 
 ;; make directories
