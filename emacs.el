@@ -352,6 +352,15 @@ found, otherwise returns nil."
 ;; Basically it should not set globally (instead use something like file local
 ;; variables or editorconfig), but for most cases I just need this...
 (setq-default require-final-newline t)
+(defun my-set-require-final-newline ()
+  "Set `require-final-newline'."
+  (set (make-local-variable 'require-final-newline)
+       mode-require-final-newline))
+
+(add-hook 'prog-mode-hook
+          'my-set-require-final-newline)
+(add-hook 'conf-mode-hook
+          'my-set-require-final-newline)
 
 ;; Used from term-cursor
 ;; hbar is too hard to find...
