@@ -769,13 +769,24 @@ found, otherwise returns nil."
      '(safe-require-or-eval 'fill-column-indicator)
      (setq fill-column-indicator))
 
+(defun my-gen-hl-line-color-dark ()
+  "Generate color for current line in black background."
+  (let* ((candidates (mapcar 'number-to-string (number-sequence 0 6)))
+         (limit (length candidates)))
+    (format "#%s%s%s"
+            (nth (random limit) candidates)
+            (nth (random limit) candidates)
+            (nth (random limit) candidates)
+            )))
+;; (my-gen-hl-line-color-dark)
+
 ;; highlight current line
 ;; http://wiki.riywo.com/index.php?Meadow
 (face-spec-set 'hl-line
-               '((((min-colors 256)
+               `((((min-colors 256)
                    (background dark))
                   ;; Rotate midnightblue
-                  (:background "#701919"))
+                  (:background ,(my-gen-hl-line-color-dark)))
                  (((min-colors 256)
                    (background light))
                   ;; TODO: What is should be?
@@ -860,25 +871,25 @@ found, otherwise returns nil."
                ;; Use gfind if available?
                "find"))
        (findcmd (concat "set -eu; set -o pipefail; "
-       "echo .; "
-       "echo ..; "
-       "command " find " -L . "
-       "-mindepth 1 "
-       "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-       "-o -print "
-       "2> /dev/null "
-       "| "
-       "cut -b3-"))
-                 (fdcmd (concat "set -eu; set -o pipefail; "
-                                "echo .; "
-                                "echo ..; "
-                                "command fd "
-                                "--follow --hidden --no-ignore "
-                                "--color always "
-                                "2>/dev/null")))
-               (if (executable-find "fd")
-                   (setenv "FZF_DEFAULT_COMMAND" fdcmd)
-                 (setenv "FZF_DEFAULT_COMMAND" findcmd)))
+                        "echo .; "
+                        "echo ..; "
+                        "command " find " -L . "
+                        "-mindepth 1 "
+                        "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+                        "-o -print "
+                        "2> /dev/null "
+                        "| "
+                        "cut -b3-"))
+       (fdcmd (concat "set -eu; set -o pipefail; "
+                      "echo .; "
+                      "echo ..; "
+                      "command fd "
+                      "--follow --hidden --no-ignore "
+                      "--color always "
+                      "2>/dev/null")))
+  (if (executable-find "fd")
+      (setenv "FZF_DEFAULT_COMMAND" fdcmd)
+    (setenv "FZF_DEFAULT_COMMAND" findcmd)))
 (set-variable 'fzf/window-height 45)
 (set-variable 'fzf/args "--print-query --ansi --color='bg+:-1' --inline-info --cycle")
 ;; (set-variable 'fzf/args "--print-query --ansi --inline-info --cycle")
