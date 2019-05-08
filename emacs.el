@@ -774,7 +774,7 @@ found, otherwise returns nil."
 (face-spec-set 'hl-line
                '((((min-colors 256)
                    (background dark))
-                  (:background "SlateBlue4"))
+                  (:background "IndianRed4"))
                  (((min-colors 256)
                    (background light))
                   ;; TODO: What is should be?
@@ -859,25 +859,25 @@ found, otherwise returns nil."
                ;; Use gfind if available?
                "find"))
        (findcmd (concat "set -eu; set -o pipefail; "
-                        "echo .; "
-                        "echo ..; "
-                        "command " find " -L . "
-                        "-mindepth 1 "
-                        "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-                        "-o -print "
-                        "2> /dev/null "
-                        "| "
-                        "cut -b3-"))
-       (fdcmd (concat "set -eu; set -o pipefail; "
-                      "echo .; "
-                      "echo ..; "
-                      "command fd "
-                      "--follow --hidden --no-ignore "
-                      "--color always "
-                      "2>/dev/null")))
-  (if (executable-find "fd")
-      (setenv "FZF_DEFAULT_COMMAND" fdcmd)
-    (setenv "FZF_DEFAULT_COMMAND" findcmd)))
+       "echo .; "
+       "echo ..; "
+       "command " find " -L . "
+       "-mindepth 1 "
+       "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+       "-o -print "
+       "2> /dev/null "
+       "| "
+       "cut -b3-"))
+                 (fdcmd (concat "set -eu; set -o pipefail; "
+                                "echo .; "
+                                "echo ..; "
+                                "command fd "
+                                "--follow --hidden --no-ignore "
+                                "--color always "
+                                "2>/dev/null")))
+               (if (executable-find "fd")
+                   (setenv "FZF_DEFAULT_COMMAND" fdcmd)
+                 (setenv "FZF_DEFAULT_COMMAND" findcmd)))
 (set-variable 'fzf/window-height 45)
 (set-variable 'fzf/args "--print-query --ansi --color='bg+:-1' --inline-info --cycle")
 ;; (set-variable 'fzf/args "--print-query --ansi --inline-info --cycle")
