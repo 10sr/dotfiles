@@ -783,12 +783,19 @@ found, otherwise returns nil."
 
 (defun my-gen-hl-line-color-dark ()
   "Generate color for current line in black background."
-  (let* ((candidates (mapcar 'number-to-string (number-sequence 0 6)))
-         (limit (length candidates)))
+  (let* ((candidates (mapcar 'number-to-string (number-sequence 1 6)))
+         (limit (length candidates))
+         (r 0) (g 0) (b 0))
+    (while (and (<= (abs (- r g)) 1)
+                (<= (abs (- g b)) 1)
+                (<= (abs (- b r)) 1))
+      (setq r (random limit))
+      (setq g (random limit))
+      (setq b (random limit)))
     (format "#%s%s%s"
-            (nth (random limit) candidates)
-            (nth (random limit) candidates)
-            (nth (random limit) candidates)
+            (nth r candidates)
+            (nth g candidates)
+            (nth b candidates)
             )))
 ;; (my-gen-hl-line-color-dark)
 
