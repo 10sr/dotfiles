@@ -1166,7 +1166,11 @@ found, otherwise returns nil."
                                             (point)))))
   (add-to-list 'compilation-error-regexp-alist
                ;; ansible-lint
-               '("^\\([^ \n]+\\):\\([0-9]+\\)$" 1 2)))
+               '("^\\([^ \n]+\\):\\([0-9]+\\)$" 1 2))
+  (add-to-list 'compilation-error-regexp-alist
+               ;; pydocstyle
+               '("^\\([^ \n]+\\):\\([0-9]+\\) " 1 2))
+  )
 
 ;; Workaround to avoid ensime error
 (defvar ensime-mode-key-prefix nil)
