@@ -1094,8 +1094,10 @@ found, otherwise returns nil."
   (add-hook 'compilation-mode-hook #'grep-context-mode))
 
 (with-eval-after-load 'remember
-  (defvar remember-mode-map (make-sparse-keymap))
+  (defvar remember-mode-map)
   (define-key remember-mode-map (kbd "C-x C-s") 'ignore))
+(set-variable 'remember-notes-initial-major-mode
+              'change-log-mode)
 
 (with-eval-after-load 'magit-files
   ;; `global-magit-file-mode' is enabled by default and this mode overwrites
