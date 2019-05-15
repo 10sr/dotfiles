@@ -2244,6 +2244,18 @@ Any output will be written to current buffer."
 ;;;;;;;;;;;;;;;;;;;;
 ;; remember-projectile
 
+;; TODO: Add global-minor-mode
+(defvar remember-data-file)
+(defun my-set-remember-data-file-buffer-local ()
+  "Set `remember-data-file'."
+  (when (require 'projectile nil t)
+    (setq-local remember-data-file
+                (expand-file-name ".remember.notes"
+                                  (projectile-project-root)))))
+
+(add-hook 'after-change-major-mode-hook
+          'my-set-remember-data-file-buffer-local)
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
