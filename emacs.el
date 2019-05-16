@@ -2295,7 +2295,7 @@ Any output will be written to current buffer."
 
 (flycheck-define-checker python-pydocstyle
   "Docstring style checker."
-  :command ("python3" "-m" "pydocstyle"
+  :command ("python" "-m" "pydocstyle"
             source-inplace)
   :error-patterns
   (
