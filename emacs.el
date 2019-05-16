@@ -144,6 +144,7 @@ found, otherwise returns nil."
        fzf
        fic-mode
        term-cursor
+       pydoc
 
        editorconfig
        editorconfig-custom-majormode
@@ -1187,11 +1188,11 @@ found, otherwise returns nil."
 
   (defvar company-mode-map)
   (define-key company-mode-map (kbd "C-i") 'company-indent-or-complete-common)
-  (with-eval-after-load 'python
-    (defvar python-indent-trigger-commands)
-    ;; TODO: This disables completion in puthon?
-    (add-to-list 'python-indent-trigger-commands
-                 'company-indent-or-complete-common))
+  ;; (with-eval-after-load 'python
+  ;;   (defvar python-indent-trigger-commands)
+  ;;   ;; TODO: This disables completion in puthon?
+  ;;   (add-to-list 'python-indent-trigger-commands
+  ;;                'company-indent-or-complete-common))
   (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
 
   (defvar company-active-map)
@@ -1267,9 +1268,6 @@ found, otherwise returns nil."
   (when (fboundp 'flycheck-black-check-setup)
     (flycheck-black-check-setup)))
 
-(set-variable 'flycheck-python-mypy-ini
-              ".mypy.ini")
-
 (when (autoload-eval-lazily 'ilookup)
   (define-key ctl-x-map "d" 'ilookup-open-word))
 
@@ -1290,6 +1288,8 @@ found, otherwise returns nil."
 (with-eval-after-load 'python
   (defvar python-mode-map (make-sparse-keymap))
   (define-key python-mode-map (kbd "C-m") 'newline-and-indent))
+(set-variable 'pydoc-command
+              "python3 -m pydoc")
 
 (when (autoload-eval-lazily 'pipenv)
   ;; (declare-function pipenv-projectile-after-switch-default "pipenv")
@@ -1298,11 +1298,38 @@ found, otherwise returns nil."
   ;;             (pipenv-mode 1)
   ;;             (pipenv-projectile-after-switch-default)))
   )
+
+(set-variable 'flycheck-python-mypy-ini ".mypy.ini")
+
+(set-variable 'flycheck-python-pylint-executable "python3")
 (set-variable 'flycheck-python-pycompile-executable "python3")
+
 (set-variable 'python-indent-guess-indent-offset nil)
+
 (with-eval-after-load 'blacken
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'blacken-buffer)))
+
+(defun my-set-flycheck-python-executables ()
+  "Set flycheck executables."
+  (when (require 'with-venv nil t)
+    (let ((venv (with-venv-find-venv-dir)))
+      (when venv
+        (let ((python (expand-file-name "bin/python"
+                                        venv)))
+          (set-variable 'flycheck-python-pylint-executable
+                        python)
+          (set-variable 'flycheck-python-pycompile-executable
+                        python)
+          (set-variable 'flycheck-python-black-check-executable
+                        python)
+          (set-variable 'flycheck-python-mypy-executable
+                        python)
+          (set-variable 'flycheck-python-flake8-executable
+                        python)
+          )))))
+(add-hook 'python-mode-hook
+          'my-set-flycheck-python-executables)
 
 
 ;; http://fukuyama.co/foreign-regexp
