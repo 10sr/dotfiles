@@ -1327,6 +1327,8 @@ found, otherwise returns nil."
                         python)
           (set-variable 'flycheck-python-flake8-executable
                         python)
+          (set-variable 'flycheck-python-pydocstyle-executable
+                        python)
           )))))
 (add-hook 'python-mode-hook
           'my-set-flycheck-python-executables)
@@ -2284,6 +2286,34 @@ Any output will be written to current buffer."
 
 (add-hook 'after-change-major-mode-hook
           'my-set-remember-data-file-buffer-local)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;
+;; flycheck-pydocstyle
+
+(require 'flycheck nil t)
+
+(flycheck-define-checker python-pydocstyle
+  "Docstring style checker."
+  :command ("python3" "-m" "pydocstyle"
+            source-inplace)
+  :error-patterns
+  (
+   (error line-start (file-name) ":" line " " (one-or-more not-newline) "\n" (one-or-more blank) (message) line-end)
+   )
+  :enabled (lambda ()
+             (or (not (flycheck-python-needs-module-p 'python-pydocstyle))
+                 (flycheck-python-find-module 'python-black-check "pydocstyle")))
+  :verify (lambda (_) (flycheck-python-verify-module 'python-black-check "pydocstyle"))
+  :modes python-mode)
+
+(defun flycheck-pydocstyle-setup ()
+  "Setup Flycheck pydocstyle."
+  (interactive)
+  (add-to-list 'flycheck-checkers
+               'python-pydocstyle))
+
+(flycheck-pydocstyle-setup)
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
