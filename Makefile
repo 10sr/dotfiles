@@ -301,6 +301,8 @@ else
 	$(git_conf) fetch.pruneTags true
 	$(git_conf) push.default current
 	$(git_conf) pull.ff only
+	$(git_conf) rebase.stat true
+	$(git_conf) rebase.missingCommitsCheck error
 ifneq (,$(xz))
 	$(git_conf) tar.txz.command "xz -c"
 endif
