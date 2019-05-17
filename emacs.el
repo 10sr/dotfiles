@@ -1310,28 +1310,17 @@ found, otherwise returns nil."
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'blacken-buffer)))
 
-(defun my-set-flycheck-python-executables ()
-  "Set flycheck executables."
+;; https://github.com/lunaryorn/old-emacs-configuration/blob/master/lisp/flycheck-virtualenv.el
+(defun my-set-venv-flycheck-executable-find ()
+  "Set flycheck executabie find."
   (when (require 'with-venv nil t)
-    (let ((venv (with-venv-find-venv-dir)))
-      (when venv
-        (let ((python (expand-file-name "bin/python"
-                                        venv)))
-          (set-variable 'flycheck-python-pylint-executable
-                        python)
-          (set-variable 'flycheck-python-pycompile-executable
-                        python)
-          (set-variable 'flycheck-python-black-check-executable
-                        python)
-          (set-variable 'flycheck-python-mypy-executable
-                        python)
-          (set-variable 'flycheck-python-flake8-executable
-                        python)
-          (set-variable 'flycheck-python-pydocstyle-executable
-                        python)
-          )))))
+    (set-variable 'flycheck-executable-find
+                  '(lambda (e)
+                     (with-venv
+                       (executable-find e)))
+                  t)))
 (add-hook 'python-mode-hook
-          'my-set-flycheck-python-executables)
+          'my-set-venv-flycheck-executable-find)
 
 
 ;; http://fukuyama.co/foreign-regexp
