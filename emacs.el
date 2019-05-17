@@ -1321,6 +1321,8 @@ found, otherwise returns nil."
                   t)))
 (add-hook 'python-mode-hook
           'my-set-venv-flycheck-executable-find)
+;; Run multiple chekcers
+;; https://github.com/flycheck/flycheck/issues/186
 
 
 ;; http://fukuyama.co/foreign-regexp
