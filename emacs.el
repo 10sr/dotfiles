@@ -2284,6 +2284,7 @@ Any output will be written to current buffer."
 
 (require 'flycheck nil t)
 
+;; TODO: Use `source' and config file
 (flycheck-define-checker python-pydocstyle
   "Docstring style checker."
   :command ("python" "-m" "pydocstyle"
