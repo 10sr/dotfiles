@@ -1112,13 +1112,31 @@ found, otherwise returns nil."
   (set-face-background 'magit-section-highlight
                        nil))
 
+;; Sane colors
 (with-eval-after-load 'magit-diff
-  (set-face-background 'magit-diff-added-highlight
-                       nil)
-  (set-face-background 'magit-diff-removed-highlight
-                       nil)
-  (set-face-background 'magit-diff-context-highlight
-                       nil)
+  (set-face-background 'magit-diff-context nil)
+  (set-face-background 'magit-diff-context-highlight nil)
+
+  (set-face-foreground 'magit-diff-hunk-heading nil)
+  (set-face-background 'magit-diff-hunk-heading nil)
+  (set-face-foreground 'magit-diff-hunk-heading-highlight nil)
+  (set-face-background 'magit-diff-hunk-heading-highlight nil)
+
+  ;; https://blog.shibayu36.org/entry/2016/03/27/220552
+  ;; cursorが載っていない状態でのaddedのface
+  (set-face-foreground 'magit-diff-added "green")
+  (set-face-background 'magit-diff-added nil)
+  ;; cursorが載っている状態のaddedのface
+  (set-face-foreground 'magit-diff-added-highlight "green")
+  (set-face-background 'magit-diff-added-highlight nil)
+  ;; cursor載っていない状態のremoved
+  (set-face-foreground 'magit-diff-removed "red")
+  (set-face-background 'magit-diff-removed nil)
+  ;; cursor載っている状態のremoved
+  (set-face-foreground 'magit-diff-removed-highlight "red")
+  (set-face-background 'magit-diff-removed-highlight nil)
+  ;; lineを選択してstageしようとするときのface
+  (set-face-background 'magit-diff-lines-boundary "blue")
   )
 
 (when (boundp 'git-rebase-filename-regexp)
