@@ -1337,8 +1337,9 @@ found, otherwise returns nil."
                      (with-venv
                        (executable-find e)))
                   t)))
-(add-hook 'python-mode-hook
-          'my-set-venv-flycheck-executable-find)
+;; TODO: This sucks when venv dir is not found
+;; (add-hook 'python-mode-hook
+;;           'my-set-venv-flycheck-executable-find)
 ;; Run multiple chekcers
 ;; https://github.com/flycheck/flycheck/issues/186
 
