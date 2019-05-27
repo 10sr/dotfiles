@@ -1301,6 +1301,8 @@ found, otherwise returns nil."
 (with-eval-after-load 'python
   (defvar python-mode-map (make-sparse-keymap))
   (define-key python-mode-map (kbd "C-m") 'newline-and-indent))
+(set-variable 'py-indent-list-style
+              'one-level-to-beginning-of-statement)
 (set-variable 'pydoc-command
               "python3 -m pydoc")
 
