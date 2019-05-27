@@ -1305,6 +1305,10 @@ found, otherwise returns nil."
               'one-level-to-beginning-of-statement)
 (set-variable 'pydoc-command
               "python3 -m pydoc")
+(with-eval-after-load 'pydoc
+  (when (require 'with-venv nil t)
+    (with-venv-advice-add 'pydoc)))
+
 
 (when (autoload-eval-lazily 'pipenv)
   ;; (declare-function pipenv-projectile-after-switch-default "pipenv")
