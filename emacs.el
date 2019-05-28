@@ -1624,12 +1624,11 @@ found, otherwise returns nil."
 (add-hook 'term-mode-hook
           (lambda ()
             ;; Stop current line highlighting
-            (set (make-local-variable (defvar hl-line-range-function))
-                 (lambda () '(0 . 0)))
-            (set (make-local-variable 'scroll-margin)
-                 0)
-            (set-variable 'term-buffer-maximum-size 20480)
+            (set-variable 'hl-line-range-function (lambda () '(0 . 0)) t)
+            (set-variable 'scroll-margin 0 t)
             ))
+(set-variable 'term-buffer-maximum-size 20480)
+(set-variable 'term-suppress-hard-newline t)
 
 (add-hook 'Man-mode-hook
           (lambda ()
@@ -2117,8 +2116,8 @@ and search from projectile root (if projectile is available)."
            (safe-require-or-eval 'projectile)
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-                                   (compilation-start command-args
-                                                      'grep-mode))
+        (compilation-start command-args
+                           'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -2136,8 +2135,8 @@ and search from projectile root (if projectile is available)."
     (if (safe-require-or-eval 'projectile)
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-                                     (compilation-start command-args
-                                                        'grep-mode))
+          (compilation-start command-args
+                             'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
