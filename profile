@@ -121,6 +121,8 @@ export PIPENV_VENV_IN_PROJECT=1
 
 export STARDICT_DATA_DIR=$HOME/.brew/share/sdcv-dict-oxford
 
+export HOMEBREW_NO_AUTO_UPDATE=1
+
 ###########################################
 # Host colors
 
