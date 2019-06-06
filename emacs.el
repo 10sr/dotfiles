@@ -1542,7 +1542,9 @@ found, otherwise returns nil."
 (when (autoload-eval-lazily 'markdown-mode
           '(markdown-mode gfm-mode)
         (defvar gfm-mode-map (make-sparse-keymap))
-        (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline))
+        (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline)
+        (define-key gfm-mode-map "`" nil)  ;; markdown-electric-backquote
+        )
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'gfm-mode))
   (set-variable 'markdown-command (or (executable-find "markdown")
                                       (executable-find "markdown.pl")
