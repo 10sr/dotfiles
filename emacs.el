@@ -1362,8 +1362,10 @@ found, otherwise returns nil."
 (when (autoload-eval-lazily 'git-command)
   (define-key ctl-x-map "g" 'git-command))
 
-(when (autoload-eval-lazily 'gited)
-  (define-key ctl-x-map (kbd "C-g") 'gited-list))
+;; This keybind cause unexpected call really many many times
+;; (when (autoload-eval-lazily 'gited)
+;;   (define-key ctl-x-map (kbd "C-g") 'gited-list))
+(defalias 'gited 'gited-list)
 
 (when (safe-require-or-eval 'git-commit)
   (global-git-commit-mode 1))
