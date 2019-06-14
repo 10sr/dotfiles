@@ -146,6 +146,7 @@ found, otherwise returns nil."
        term-cursor
        pydoc
        swoop
+       color-identifiers-mode
 
        editorconfig
        editorconfig-custom-majormode
@@ -675,6 +676,10 @@ found, otherwise returns nil."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
+
+(when (fboundp 'color-identifiers-mode)
+  (add-hook 'prog-mode-hook
+            'color-identifiers-mode))
 
 (setq text-quoting-style 'grave)
 
