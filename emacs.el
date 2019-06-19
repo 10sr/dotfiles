@@ -1157,9 +1157,15 @@ found, otherwise returns nil."
   (global-aggressive-indent-mode 1))
 
 (when (fboundp 'ggtags-mode)
-  ;; TODO: Do not use for emacs-lisp-mode
-  (add-hook 'prog-mode-hook
-            'ggtags-mode))
+  (add-hook 'c-mode-common-hook
+            'ggtags-mode)
+  (add-hook 'python-mode-hook
+            'ggtags-mode)
+  (add-hook 'js-mode-hook
+            'ggtags-mode)
+  (add-hook 'scheme-mode-hook
+            'ggtags-mode)
+  )
 
 (when (autoload-eval-lazily 'imenu-list)
   ;; (set-variable 'imenu-list-auto-resize t)
