@@ -1157,6 +1157,7 @@ found, otherwise returns nil."
   (global-aggressive-indent-mode 1))
 
 (when (fboundp 'ggtags-mode)
+  ;; TODO: Do not use for emacs-lisp-mode
   (add-hook 'prog-mode-hook
             'ggtags-mode))
 
