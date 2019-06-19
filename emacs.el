@@ -1156,14 +1156,9 @@ found, otherwise returns nil."
           ,@aggressive-indent-excluded-modes))
   (global-aggressive-indent-mode 1))
 
-(when (autoload-eval-lazily 'ggtags)
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-                (ggtags-mode 1))))
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (ggtags-mode 1))))
+(when (fboundp 'ggtags-mode)
+  (add-hook 'prog-mode-hook
+            'ggtags-mode))
 
 (when (autoload-eval-lazily 'imenu-list)
   ;; (set-variable 'imenu-list-auto-resize t)
