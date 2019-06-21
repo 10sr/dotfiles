@@ -322,7 +322,7 @@ endif
 	$(git_conf) alias.ffme "merge --ff-only --stat --verbose"
 	$(git_conf) alias.gr "grep -n"
 	$(git_conf) alias.atag "tag --annotated"
-	$(git_conf) alias.stag "tag --signed"
+	$(git_conf) alias.stag "tag --sign"
 	$(git_conf) alias.ls "ls-files"
 	# $(git_conf) alias.ls "ls-files -v --full-name"
 	# $(git_conf) alias.ls "status -u -s ."
