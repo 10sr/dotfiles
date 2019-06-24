@@ -1351,8 +1351,19 @@ found, otherwise returns nil."
                        (executable-find e)))
                   t)))
 
+(defun my-update-flycheck-flake8-error-level-alist ()
+  "Update `flycheck-flake8-error-level-alist'."
+  (defvar flycheck-flake8-error-level-alist)
+  ;; (add-to-list 'flycheck-flake8-error-level-alist
+  ;;              '("^D.*$" . warning))
+  (set-variable 'flycheck-flake8-error-level-alist
+                nil)
+  )
+
 (add-hook 'python-mode-hook
           'my-set-venv-flycheck-executable-find)
+(add-hook 'python-mode-hook
+          'my-update-flycheck-flake8-error-level-alist)
 ;; Run multiple chekcers
 ;; https://github.com/flycheck/flycheck/issues/186
 
