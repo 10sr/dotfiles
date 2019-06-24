@@ -1285,9 +1285,9 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'flycheck)
   (call-after-init (global-flycheck-mode)))
 
-(with-eval-after-load 'flycheck
-  (when (fboundp 'flycheck-black-check-setup)
-    (flycheck-black-check-setup)))
+;; (with-eval-after-load 'flycheck
+;;   (when (fboundp 'flycheck-black-check-setup)
+;;     (flycheck-black-check-setup)))
 
 (when (autoload-eval-lazily 'ilookup)
   (define-key ctl-x-map "d" 'ilookup-open-word))
@@ -1341,15 +1341,18 @@ found, otherwise returns nil."
 ;; https://github.com/lunaryorn/old-emacs-configuration/blob/master/lisp/flycheck-virtualenv.el
 (defun my-set-venv-flycheck-executable-find ()
   "Set flycheck executabie find."
-  (when (require 'with-venv nil t)
+  (interactive)
+  (when (and (require 'with-venv nil t)
+             ;; Hack not to set when venv dir not found
+             (with-venv-find-venv-dir))
     (set-variable 'flycheck-executable-find
                   '(lambda (e)
                      (with-venv
                        (executable-find e)))
                   t)))
-;; TODO: This sucks when venv dir is not found
-;; (add-hook 'python-mode-hook
-;;           'my-set-venv-flycheck-executable-find)
+
+(add-hook 'python-mode-hook
+          'my-set-venv-flycheck-executable-find)
 ;; Run multiple chekcers
 ;; https://github.com/flycheck/flycheck/issues/186
 
@@ -2340,7 +2343,7 @@ Any output will be written to current buffer."
   (add-to-list 'flycheck-checkers
                'python-pydocstyle))
 
-(flycheck-pydocstyle-setup)
+;; (flycheck-pydocstyle-setup)
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
