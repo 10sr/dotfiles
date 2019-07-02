@@ -1084,6 +1084,27 @@ found, otherwise returns nil."
 ;; Include some extra modes
 (require 'generic-x)
 
+;; Derived from https://github.com/ensime/ensime-emacs/issues/591#issuecomment-291916753
+(defun my-scalafmt ()
+  (interactive)
+  (cl-assert buffer-file-name)
+  (cl-assert (not (buffer-modified-p)))
+  (let* ((configdir (locate-dominating-file default-directory ".scalafmt.conf"))
+         (configoption (if configdir
+                           (concat " --config "
+                                   (shell-quote-argument (expand-file-name configdir))
+                                   ".scalafmt.conf"
+                                   )
+                         ""))
+         (str (concat "scalafmt -f "
+                      (shell-quote-argument buffer-file-name)
+                      configoption
+                      " -i --exclude ensime")))
+    (message str)
+    (shell-command-to-string str))
+  (message "scalafmt done")
+  (revert-buffer nil t))
+
 (when (fboundp 'web-mode)
   (add-to-list 'auto-mode-alist
                '("\\.html\\.j2\\'" . web-mode))
