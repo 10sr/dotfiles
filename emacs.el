@@ -1218,7 +1218,21 @@ found, otherwise returns nil."
   )
 
 ;; Workaround to avoid ensime error
-(defvar ensime-mode-key-prefix nil)
+;; (defvar ensime-mode-key-prefix nil)
+(set-variable 'ensime-startup-notification nil)
+;; https://blog.shibayu36.org/entry/2015/07/07/103000
+(defun my-ensime-enable-eldoc ()
+  "Show error message or type name at point by Eldoc."
+  (setq-local eldoc-documentation-function
+              #'(lambda ()
+                  (when (ensime-connected-p)
+                    (let ((err (ensime-print-errors-at-point)))
+                      (or (and err (not (string= err "")) err)
+                          (ensime-type-at-point))))))
+  (eldoc-mode 1)
+  )
+(add-hook 'ensime-mode-hook
+          'my-ensime-enable-eldoc)
 
 (when (safe-require-or-eval 'company)
   ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
