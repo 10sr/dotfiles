@@ -2364,6 +2364,8 @@ Any output will be written to current buffer."
 (add-hook 'after-change-major-mode-hook
           'my-set-remember-data-file-buffer-local)
 
+(define-key ctl-x-map "R" 'remember)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; flycheck-pydocstyle
