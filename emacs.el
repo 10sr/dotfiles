@@ -2297,6 +2297,11 @@ Used by `git-bug-ls'.")
         (goto-char (point-at-bol)))
       bugs)))
 
+(defun git-bug-ls ()
+  "Open and select git bug list buffer."
+  (interactive)
+  (pop-to-buffer (git-bug-ls-noselect)))
+
 (defun git-bug-ls-noselect (&optional directory)
   "Open git bug list buffer.
 
