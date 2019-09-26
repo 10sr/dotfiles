@@ -2072,13 +2072,13 @@ condition to choose COMMAND when evaluated.")
        ;; ripgrep
        ("rg"
         (executable-find "rg")
-        "rg -nH --no-heading --color=always --hidden --glob '!.git/' --smart-case -M 1280 ")
+        "rg -nH --no-heading --hidden --glob '!.git/' --smart-case -M 1280 ")
 
        ;; git grep
        ("gitgrep"
         (eq 0
             (shell-command "git rev-parse --git-dir"))
-        "git --no-pager -c color.grep=always grep -nH -e ")
+        "git --no-pager grep -nH -e ")
 
        ;; sift
        ("sift"
