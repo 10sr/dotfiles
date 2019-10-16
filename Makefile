@@ -315,8 +315,8 @@ endif
 	$(git_conf) alias.ci "commit --verbose --allow-empty"
 	# TODO: Try rebase --interactive --autosquash
 	$(git_conf) alias.cf "commit --verbose --fixup=HEAD -m WIP"
-	$(git_conf) alias.co "! echo alias co is removed, use sc and re instead; false"
-	$(git_conf) alias.sc "switch"
+	$(git_conf) alias.co "! echo alias co is removed, use si and re instead; false"
+	$(git_conf) alias.si "switch"
 	$(git_conf) alias.re "restore"
 	$(git_conf) alias.cim "commit --verbose -m"
 	$(git_conf) alias.di "diff --color"
