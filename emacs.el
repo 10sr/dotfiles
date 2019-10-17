@@ -1345,6 +1345,7 @@ found, otherwise returns nil."
   )
 
 (set-variable 'flycheck-python-mypy-ini ".mypy.ini")
+(set-variable 'flycheck-flake8rc "setup.cfg")
 
 (set-variable 'flycheck-python-pylint-executable "python3")
 (set-variable 'flycheck-python-pycompile-executable "python3")
