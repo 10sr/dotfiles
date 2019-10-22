@@ -2353,34 +2353,6 @@ Any output will be written to current buffer."
 (define-key ctl-x-map "R" 'remember)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;; flycheck-pydocstyle
-
-(require 'flycheck nil t)
-
-;; TODO: Use `source' and config file
-(flycheck-define-checker python-pydocstyle
-  "Docstring style checker."
-  :command ("python" "-m" "pydocstyle"
-            source-inplace)
-  :error-patterns
-  (
-   (error line-start (file-name) ":" line " " (one-or-more not-newline) "\n" (one-or-more blank) (message) line-end)
-   )
-  :enabled (lambda ()
-             (or (not (flycheck-python-needs-module-p 'python-pydocstyle))
-                 (flycheck-python-find-module 'python-black-check "pydocstyle")))
-  :verify (lambda (_) (flycheck-python-verify-module 'python-black-check "pydocstyle"))
-  :modes python-mode)
-
-(defun flycheck-pydocstyle-setup ()
-  "Setup Flycheck pydocstyle."
-  (interactive)
-  (add-to-list 'flycheck-checkers
-               'python-pydocstyle))
-
-;; (flycheck-pydocstyle-setup)
-
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
