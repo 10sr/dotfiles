@@ -2353,6 +2353,22 @@ Any output will be written to current buffer."
 (define-key ctl-x-map "R" 'remember)
 
 
+;; ivy
+
+(when (require 'counsel nil t)
+  (defvar ivy-re-builders-alist)
+  (set-variable 'ivy-re-builders-alist
+                '((t . ivy--regex-fuzzy)))
+  ;; (counsel-mode 1)
+  ;; counsel-fzf executes fzf -f QUERY for each input
+  ;; (define-key ctl-x-map "f"
+  ;;   (lambda ()
+  ;;     (interactive
+  ;;      (let ((process-environment (cl-copy-list process-environment)))
+  ;;        (setenv "FZF_DEFAULT_COMMAND" nil)
+  ;;        (counsel-fzf)))))
+  )
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
