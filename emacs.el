@@ -2358,7 +2358,11 @@ Any output will be written to current buffer."
 (when (require 'counsel nil t)
   (defvar ivy-re-builders-alist)
   (set-variable 'ivy-re-builders-alist
-                '((t . ivy--regex-fuzzy)))
+                '((t . (lambda (s)
+                         ;; Ignore whitespace
+                         (ivy--regex-fuzzy (replace-regexp-in-string (rx space)
+                                                                     ""
+                                                                     s))))))
   (define-key esc-map "x" 'counsel-M-x)
   ;; (counsel-mode 1)
   ;; counsel-fzf executes fzf -f QUERY for each input
