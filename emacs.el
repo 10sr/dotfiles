@@ -2359,6 +2359,7 @@ Any output will be written to current buffer."
   (defvar ivy-re-builders-alist)
   (set-variable 'ivy-re-builders-alist
                 '((t . ivy--regex-fuzzy)))
+  (define-key esc-map "x" 'counsel-M-x)
   ;; (counsel-mode 1)
   ;; counsel-fzf executes fzf -f QUERY for each input
   ;; (define-key ctl-x-map "f"
