@@ -2216,9 +2216,9 @@ and search from projectile root (if projectile is available)."
                                   (thing-at-point 'symbol t))))
   (occur regexp nil region))
 (define-key ctl-x-map (kbd "C-o") 'my-occur)
-(when (fboundp 'swoop)
-  (define-key ctl-x-map (kbd "C-o") 'swoop)
-  )
+;; (when (fboundp 'swoop)
+;;   (define-key ctl-x-map (kbd "C-o") 'swoop)
+;;   )
 
 (set-variable 'dumb-jump-prefer-searcher 'rg)
 
