@@ -2352,7 +2352,7 @@ Any output will be written to current buffer."
 
 ;; ivy
 
-(when (require 'counsel nil t)
+(when (fboundp 'counsel-M-x)
   (defvar ivy-re-builders-alist)
   (set-variable 'ivy-re-builders-alist
                 '((t . (lambda (s)
@@ -2371,7 +2371,7 @@ Any output will be written to current buffer."
   ;;        (counsel-fzf)))))
   )
 
-(when (require 'swoop nil t)
+(when (fboundp 'swoop)
   (global-set-key (kbd "C-s") 'swoop)
   (global-set-key (kbd "C-r") 'swoop)
   (define-key esc-map (kbd "C-s") 'swoop-multi)
