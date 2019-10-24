@@ -2374,7 +2374,7 @@ Any output will be written to current buffer."
 (when (require 'swoop nil t)
   (global-set-key (kbd "C-s") 'swoop)
   (global-set-key (kbd "C-r") 'swoop)
-  ;; TODO: swoop-multi
+  (define-key esc-map (kbd "C-s") 'swoop-multi)
   )
 
 ;; Local Variables:
