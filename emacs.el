@@ -2372,7 +2372,10 @@ Any output will be written to current buffer."
   )
 
 (when (require 'swoop nil t)
-  (global-set-key (kbd "C-s") 'swoop))
+  (global-set-key (kbd "C-s") 'swoop)
+  (global-set-key (kbd "C-r") 'swoop)
+  ;; TODO: swoop-multi
+  )
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
