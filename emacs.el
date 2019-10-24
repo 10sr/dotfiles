@@ -2216,9 +2216,6 @@ and search from projectile root (if projectile is available)."
                                   (thing-at-point 'symbol t))))
   (occur regexp nil region))
 (define-key ctl-x-map (kbd "C-o") 'my-occur)
-;; (when (fboundp 'swoop)
-;;   (define-key ctl-x-map (kbd "C-o") 'swoop)
-;;   )
 
 (set-variable 'dumb-jump-prefer-searcher 'rg)
 
@@ -2373,6 +2370,9 @@ Any output will be written to current buffer."
   ;;        (setenv "FZF_DEFAULT_COMMAND" nil)
   ;;        (counsel-fzf)))))
   )
+
+(when (require 'swoop nil t)
+  (global-set-key (kbd "C-s") 'swoop))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
