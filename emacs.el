@@ -146,6 +146,7 @@ found, otherwise returns nil."
        pydoc
        swoop
        color-identifiers-mode
+       dired-k
 
        editorconfig
        editorconfig-custom-majormode
