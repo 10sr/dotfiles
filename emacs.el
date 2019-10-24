@@ -2380,7 +2380,8 @@ Any output will be written to current buffer."
 (when (fboundp 'dired-k)
   (set-variable 'dired-k-style 'git)
   ;; What is the best way of doing this?
-  (fset 'dired-k--highlight-by-file-attribyte 'ignore)
+  (with-eval-after-load 'dired-k
+    (fset 'dired-k--highlight-by-file-attribyte 'ignore))
   ;; (set-variable 'dired-k-size-colors
   ;;               `((,most-positive-fixnum)))
   ;; (set-variable 'dired-k-date-colors
