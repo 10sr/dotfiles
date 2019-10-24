@@ -2377,6 +2377,25 @@ Any output will be written to current buffer."
   (define-key esc-map (kbd "C-s") 'swoop-multi)
   )
 
+(when (fboundp 'dired-k)
+  (set-variable 'dired-k-style 'git)
+  ;; What is the best way of doing this?
+  (fset 'dired-k--highlight-by-file-attribyte 'ignore)
+  ;; (set-variable 'dired-k-size-colors
+  ;;               `((,most-positive-fixnum)))
+  ;; (set-variable 'dired-k-date-colors
+  ;;               `((,most-positive-fixnum)))
+
+  (with-eval-after-load 'dired
+    ;; You can use dired-k alternative to revert-buffer
+    (defvar dired-mode-map)
+    (define-key dired-mode-map (kbd "g") 'dired-k))
+
+  ;; always execute dired-k when dired buffer is opened
+  (add-hook 'dired-initial-position-hook 'dired-k)
+  (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
+  )
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
