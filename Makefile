@@ -309,6 +309,7 @@ endif
 	$(git_conf) tag.forceSignAnnotated true
 
 	$(git_conf) alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --date=short -n 499"
+	$(git_conf) alias.px "log -p -G"  # pickaxe
 	$(git_conf) alias.st "status -s -b"
 	$(git_conf) alias.b "branch"
 	$(git_conf) alias.sb "show-branch"
