@@ -2391,11 +2391,18 @@ Any output will be written to current buffer."
   (with-eval-after-load 'dired
     ;; You can use dired-k alternative to revert-buffer
     (defvar dired-mode-map)
-    (define-key dired-mode-map (kbd "g") 'dired-k))
+    ;; (define-key dired-mode-map (kbd "g") 'dired-k)
+    )
 
   ;; always execute dired-k when dired buffer is opened
   (add-hook 'dired-initial-position-hook 'dired-k)
   (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (setq revert-buffer-function
+                    (lambda (arg noconfirm)
+                      (dired-revert arg noconfirm)
+                      (dired-k-no-revert)))))
   )
 
 ;; Local Variables:
