@@ -2400,6 +2400,7 @@ Any output will be written to current buffer."
   (add-hook 'dired-mode-hook
             (lambda ()
               (setq revert-buffer-function
+                    ;; TODO: Define function name
                     (lambda (arg noconfirm)
                       (dired-revert arg noconfirm)
                       (dired-k-no-revert)))))
