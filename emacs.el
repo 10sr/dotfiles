@@ -527,7 +527,9 @@ found, otherwise returns nil."
     (diminish 'global-whitespace-mode)
     (diminish 'which-key-mode)
     (diminish 'page-break-lines-mode)
-    (diminish 'highlight-indentation-mode)))
+    (diminish 'highlight-indentation-mode)
+    (diminish 'color-identifiers-mode)
+    ))
 
 (setq mode-line-front-space "")
 ;; (setq mode-line-end-spaces "")
