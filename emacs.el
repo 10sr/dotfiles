@@ -1359,6 +1359,10 @@ found, otherwise returns nil."
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'blacken-buffer)))
 
+(with-eval-after-load 'isortify
+  (when (require 'with-venv nil t)
+    (with-venv-advice-add 'isortify-buffer)))
+
 ;; https://github.com/lunaryorn/old-emacs-configuration/blob/master/lisp/flycheck-virtualenv.el
 (defun my-set-venv-flycheck-executable-find ()
   "Set flycheck executabie find."
