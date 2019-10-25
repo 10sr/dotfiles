@@ -2381,6 +2381,7 @@ Any output will be written to current buffer."
 ;; dired-k seems to always create index.lock file so disabling temporarily
 (when (fboundp 'dired-k)
   (set-variable 'dired-k-style 'git)
+
   ;; What is the best way of doing this?
   (with-eval-after-load 'dired-k
     (fset 'dired-k--highlight-by-file-attribyte 'ignore))
@@ -2388,12 +2389,6 @@ Any output will be written to current buffer."
   ;;               `((,most-positive-fixnum)))
   ;; (set-variable 'dired-k-date-colors
   ;;               `((,most-positive-fixnum)))
-
-  (with-eval-after-load 'dired
-    ;; You can use dired-k alternative to revert-buffer
-    (defvar dired-mode-map)
-    ;; (define-key dired-mode-map (kbd "g") 'dired-k)
-    )
 
   ;; always execute dired-k when dired buffer is opened
   (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
