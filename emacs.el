@@ -2380,7 +2380,6 @@ Any output will be written to current buffer."
   (define-key esc-map (kbd "C-s") 'swoop-multi)
   )
 
-;; dired-k seems to always create index.lock file so disabling temporarily
 (when (fboundp 'dired-k)
   (set-variable 'dired-k-style 'git)
 
