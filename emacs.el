@@ -2368,6 +2368,10 @@ Any output will be written to current buffer."
                          (ivy--regex-fuzzy (replace-regexp-in-string (rx space)
                                                                      ""
                                                                      s))))))
+
+  (defvar ivy-minibuffer-map)
+  (define-key ivy-minibuffer-map (kbd "C-u")
+    (lambda () (interactive) (delete-region (point-at-bol) (point))))
   (define-key esc-map "x" 'counsel-M-x)
   ;; (counsel-mode 1)
   ;; counsel-fzf executes fzf -f QUERY for each input
