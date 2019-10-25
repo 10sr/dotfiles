@@ -1845,14 +1845,19 @@ ARG is num to show, or defaults to 7."
 (defun dired-get-file-info ()
   "Print information of current line file."
   (interactive)
-  (let ((f (shell-quote-argument (dired-get-filename t))))
-    (if (file-directory-p f)
+  (let* ((file (dired-get-filename t))
+         (quoted (shell-quote-argument file)))
+    (if (file-directory-p file)
         (progn
           (message "Calculating disk usage...")
-          (shell-command (concat "du -hsD "
-                                 f)))
+          (let ((du (or (executable-find "gdu")
+                        (executable-find "du")
+                        (error "du not found"))))
+            (shell-command (concat du
+                                   " -hsD "
+                                   quoted))))
       (shell-command (concat "file "
-                             f)))))
+                             quoted)))))
 
 (defun my-dired-scroll-up ()
   "Scroll up."
