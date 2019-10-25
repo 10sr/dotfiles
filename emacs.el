@@ -2392,6 +2392,11 @@ Any output will be written to current buffer."
   (global-set-key (kbd "C-s") 'swoop)
   (global-set-key (kbd "C-r") 'swoop)
   (define-key esc-map (kbd "C-s") 'swoop-multi)
+  (with-eval-after-load 'swoop-lib
+    (defvar swoop-map)
+    (define-key swoop-map (kbd "C-s") 'swoop-action-goto-line-next)
+    (define-key swoop-map (kbd "C-r") 'swoop-action-goto-line-prev)
+    )
   )
 
 (when (fboundp 'dired-k)
