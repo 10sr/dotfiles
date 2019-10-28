@@ -2410,7 +2410,8 @@ Any output will be written to current buffer."
   ;; (set-variable 'dired-k-date-colors
   ;;               `((,most-positive-fixnum)))
 
-  ;; always execute dired-k when dired buffer is opened
+  ;; always execute dired-k when dired buffer is opened and reverted
+  ;; TODO: Always up-to-date
   (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
   )
 
