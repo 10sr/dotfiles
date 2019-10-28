@@ -12,6 +12,7 @@ __safe_add_path_l(){
 }
 
 __safe_add_path_l "$HOME/.cabal/bin"
+__safe_add_path_l "$HOME/.cargo/bin"
 __safe_add_path_l "$HOME/.local/lib/gems/bin"
 __safe_add_path_l "$HOME/.gem/ruby/2.1.0/bin"
 __safe_add_path_l "$HOME/.local/bin"
