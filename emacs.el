@@ -1162,6 +1162,38 @@ found, otherwise returns nil."
   (set-face-background 'magit-diff-lines-boundary "blue")
   )
 
+(defun my-magit-messenger (file line)
+  "Magit messenger."
+  (interactive (list buffer-file-name
+                     (line-number-at-pos)))
+  (cl-assert file)
+  (cl-assert line)
+  (let* ((blame-args '("-w"))
+         (id (with-temp-buffer
+               (let ((exit (apply 'call-process
+                                  "git"  ;; PROGRAM
+                                  nil  ;; INFILE
+                                  t  ;; DESTINATION
+                                  nil  ;; DISPLAY
+                                  "--no-pager"  ;; ARGS
+                                  "blame"
+                                  "-L"
+                                  (format "%d,+1" line)
+                                  "--porcelain"
+                                  file
+                                  blame-args
+                                  )))
+                 (goto-char (point-min))
+                 (cl-assert (eq exit 0)
+                            "Failed: %s" (buffer-substring (point)
+                                                           (point-at-eol)))
+                 (save-match-data
+                   (re-search-forward (rx buffer-start
+                                          (one-or-more hex-digit)))
+                   (match-string 0))))))
+    (magit-show-commit id)))
+
+
 (when (boundp 'git-rebase-filename-regexp)
   (add-to-list 'auto-mode-alist
                `(,git-rebase-filename-regexp . text-mode)))
