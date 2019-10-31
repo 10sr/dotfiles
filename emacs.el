@@ -1810,6 +1810,13 @@ found, otherwise returns nil."
   (interactive)
   (if (y-or-n-p (concat "kill current buffer? :"))
       (kill-buffer (current-buffer))))
+(defun my-force-query-kill-current-buffer ()
+  "Interactively kill current buffer."
+  (interactive)
+  (when (y-or-n-p (concat "kill current buffer? :"))
+    (let ((kill-buffer-hook nil)
+          (kill-buffer-query-functions nil))
+      (kill-buffer (current-buffer)))))
 ;;(global-set-key "\C-xk" 'my-query-kill-current-buffer)
 (substitute-key-definition 'kill-buffer
                            'my-query-kill-current-buffer
