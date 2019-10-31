@@ -2462,7 +2462,7 @@ Any output will be written to current buffer."
   (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
   )
 
-(add-hook 'python-mode
+(add-hook 'python-mode-hook
           (lambda ()
             ;; Currently on python-mode eldoc-mode sometimes print
             ;; wired message on "from" keyword:
