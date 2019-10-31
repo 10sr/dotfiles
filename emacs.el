@@ -2462,6 +2462,13 @@ Any output will be written to current buffer."
   (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
   )
 
+(add-hook 'python-mode
+          (lambda ()
+            ;; Currently on python-mode eldoc-mode sometimes print
+            ;; wired message on "from" keyword:
+            ;;var from = require("./from")
+            (eldoc-mode -1)))
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
