@@ -1333,8 +1333,12 @@ found, otherwise returns nil."
   )
 
 ;; https://github.com/lunaryorn/flycheck
+;; TODO: Any way to disable auto check?
+;; Update flycheck-hooks-alist?
 (when (safe-require-or-eval 'flycheck)
   (call-after-init (global-flycheck-mode)))
+;; (set-variable 'flycheck-display-errors-delay 2.0)
+;; (fset 'flycheck-display-error-at-point-soon 'ignore)
 
 ;; (with-eval-after-load 'flycheck
 ;;   (when (fboundp 'flycheck-black-check-setup)
