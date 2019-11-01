@@ -976,7 +976,12 @@ found, otherwise returns nil."
 (add-hook 'editorconfig-hack-properties-functions
           '(lambda (props)
              (when (derived-mode-p 'makefile-mode)
-               (puthash 'indent_style "tab" props))))
+               (puthash 'indent_style "tab" props))
+             (when (derived-mode-p 'diff-mode)
+               (puthash 'trim_trailing_whitespace "false" props)
+               (puthash 'insert_final_newline "false" props)
+               )
+             ))
 
 (when (fboundp 'editorconfig-auto-apply-enable)
   (add-hook 'editorconfig-conf-mode-hook
