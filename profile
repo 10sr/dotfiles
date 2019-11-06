@@ -119,6 +119,7 @@ export PATH="$PYTHONUSERBASE/bin:$PATH"
 export PIP_USER=1
 
 export PIPENV_VENV_IN_PROJECT=1
+export PIPENV_MAX_DEPTH=10  # Defaults to 3
 
 export STARDICT_DATA_DIR=$HOME/.brew/share/sdcv-dict-oxford
 
