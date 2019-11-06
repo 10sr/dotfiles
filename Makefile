@@ -307,6 +307,7 @@ ifneq (,$(xz))
 	$(git_conf) tar.txz.command "xz -c"
 endif
 	$(git_conf) tag.forceSignAnnotated true
+	$(git_conf) tag.sort "version:refname"
 
 	$(git_conf) alias.graph "log --graph --date-order -C -M --pretty=tformat:\"%C(green)%h%C(reset) %C(white)%ad%C(reset) %C(red)%an%C(reset)%C(yellow)%d%C(reset) %C(white bold)%s%C(reset)\" --date=short -n 499"
 	$(git_conf) alias.px "log -p -G"  # pickaxe
