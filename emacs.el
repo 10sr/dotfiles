@@ -2504,6 +2504,10 @@ Any output will be written to current buffer."
             ;;var from = require("./from")
             (eldoc-mode -1)))
 
+;; ?
+(define-key input-decode-map "\e[1;5C" [C-right])
+(define-key input-decode-map "\e[1;5D" [C-left])
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
