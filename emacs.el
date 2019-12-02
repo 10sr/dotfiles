@@ -2441,6 +2441,9 @@ Any output will be written to current buffer."
   ;;        (counsel-fzf)))))
   )
 
+(when (fboundp 'counsel-imenu)
+  (define-key ctl-x-map "l" 'counsel-imenu))
+
 (when (fboundp 'swoop)
   ;; (global-set-key (kbd "C-s") 'swoop)
   ;; (global-set-key (kbd "C-r") 'swoop)
