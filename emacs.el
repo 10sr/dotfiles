@@ -1493,6 +1493,7 @@ found, otherwise returns nil."
 
 
 (setq diff-switches "-u")
+(autoload 'diff-goto-source "diff-mode")
 (with-eval-after-load 'diff-mode
   ;; (when (and (eq major-mode
   ;;                'diff-mode)
