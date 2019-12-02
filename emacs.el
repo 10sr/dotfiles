@@ -2416,19 +2416,20 @@ Any output will be written to current buffer."
 
 ;; ivy
 
-(when (fboundp 'counsel-M-x)
-  (defvar ivy-re-builders-alist)
-  (set-variable 'ivy-re-builders-alist
-                '((t . (lambda (s)
-                         ;; Ignore whitespace
-                         (ivy--regex-fuzzy (replace-regexp-in-string (rx space)
-                                                                     ""
-                                                                     s))))))
+(defvar ivy-re-builders-alist)
+(set-variable 'ivy-re-builders-alist
+              '((t . (lambda (s)
+                       ;; Ignore whitespace
+                       (ivy--regex-fuzzy (replace-regexp-in-string (rx space)
+                                                                   ""
+                                                                   s))))))
 
-  (with-eval-after-load 'ivy
-    (defvar ivy-minibuffer-map)
-    (define-key ivy-minibuffer-map (kbd "C-u")
-      (lambda () (interactive) (delete-region (point-at-bol) (point)))))
+(with-eval-after-load 'ivy
+  (defvar ivy-minibuffer-map)
+  (define-key ivy-minibuffer-map (kbd "C-u")
+    (lambda () (interactive) (delete-region (point-at-bol) (point)))))
+
+(when (fboundp 'counsel-M-x)
   (define-key esc-map "x" 'counsel-M-x)
   ;; (counsel-mode 1)
   ;; counsel-fzf executes fzf -f QUERY for each input
