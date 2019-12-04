@@ -1229,7 +1229,7 @@ found, otherwise returns nil."
 (when (autoload-eval-lazily 'imenu-list)
   ;; (set-variable 'imenu-list-auto-resize t)
   (set-variable 'imenu-list-focus-after-activation t)
-  (define-key ctl-x-map "l" 'imenu-list-smart-toggle))
+  (define-key ctl-x-map (kbd "C-l") 'imenu-list-smart-toggle))
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
