@@ -1206,7 +1206,8 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'aggressive-indent)
   (defvar aggressive-indent-excluded-modes)
   (setq aggressive-indent-excluded-modes
-        `(diff-mode
+        `(web-mode
+          diff-mode
           toml-mode
           conf-mode
           dockerfile-mode
