@@ -2392,10 +2392,36 @@ Any output will be written to current buffer."
 ;;;;;;;;;;;;;;;;;;;
 ;; peek-file-mode
 
+(defvar peek-file-buffers
+  ()
+  "Peek buffers.")
+
 (defun peek-file (file)
   "Peek FILE."
-  (interactive)
-  (message "%s" file))
+  (interactive "fFile to peek: ")
+  (with-current-buffer (find-file file)
+    (peek-file-mode)))
+
+(define-minor-mode peek-file-mode
+  "Peek file mode."
+  :lighter "PK"
+  (view-mode peek-file-mode)
+  (add-to-list 'peek-file-buffers
+               (current-buffer))
+  (add-hook 'switch-buffer-functions
+            'peek-file-remove-buffers))
+
+(defun peek-file-remove-buffers (&args _)
+  "Remove peek file buffers."
+  (cl-dolist (buf (cl-copy-list peek-file-buffers))
+    (unless (get-buffer-window buf t)
+      (setq peek-file-buffers
+            (delq buf
+                  peek-file-buffers))
+      (with-current-buffer buf
+        (when peek-file-mode
+          (kill-buffer))))))
+
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; remember-projectile
