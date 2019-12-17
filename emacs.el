@@ -2507,6 +2507,7 @@ Any output will be written to current buffer."
 
   )
 
+;; なんかよくわからないけど頻繁に index.lock を残してしまう
 (when (fboundp 'dired-k)
   (set-variable 'dired-k-style 'git)
 
@@ -2519,7 +2520,7 @@ Any output will be written to current buffer."
   ;;               `((,most-positive-fixnum)))
 
   ;; always execute dired-k when dired buffer is opened and reverted
-  (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
+  ;; (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
 
   ;; This causes:
   ;; fatal: Unable to create '.git/index.lock': File exist.s
