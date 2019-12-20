@@ -1114,6 +1114,9 @@ found, otherwise returns nil."
 (when (fboundp 'web-mode)
   (add-to-list 'auto-mode-alist
                '("\\.html\\.j2\\'" . web-mode))
+  (add-to-list 'auto-mode-alist
+               ;; Django Template Language
+               '("\\.dtl\\'" . web-mode))
   )
 
 (when (autoload-eval-lazily 'wgrep)
