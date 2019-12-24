@@ -1230,10 +1230,19 @@ found, otherwise returns nil."
             'ggtags-mode)
   )
 
-(when (autoload-eval-lazily 'imenu-list)
+(when (fboundp 'imenu-list-minor-mode)
+  (defvar imenu-list-buffer-name)
+  (defun my-imenu-list-toggle ()
+    "My 'imenu-list` toggle."
+    (interactive)
+    (require 'imenu-list)
+    (if (eq (window-buffer)
+            (get-buffer imenu-list-buffer-name))
+        (imenu-list-minor-mode -1)
+      (imenu-list-minor-mode 1)))
   ;; (set-variable 'imenu-list-auto-resize t)
   (set-variable 'imenu-list-focus-after-activation t)
-  (define-key ctl-x-map (kbd "C-l") 'imenu-list-smart-toggle))
+  (define-key ctl-x-map (kbd "C-l") 'my-imenu-list-toggle))
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
