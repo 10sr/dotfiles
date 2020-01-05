@@ -155,7 +155,7 @@ then
     zstyle ':completion:*' use-cache yes
     # zstyle ':completion:*:cd:*' tag-order local-directories
     zstyle ':completion:*' completer _complete _bash_completions \
-        _history
+           _history
     # zstyle ':completion:*:*:cd:*' completer
     zstyle ':completion:*' accept-exact-dirs true
     zstyle ':completion:*' special-dirs true
@@ -209,12 +209,20 @@ $iswindows && alias tty="echo cmd.exe"
 echo TERM $TERM with $(tput colors) colors using $(tty)
 echo umask: `umask -S`
 
-if null type figlet && null type lolcat
+# if null type figlet && null type lolcat
+# then
+#     echo `whoami`@`hostname` | figlet | lolcat
+# fi
+# echo
+
+if command -v neofetch >/dev/null
 then
-    echo `whoami`@`hostname` | figlet | lolcat
+    neofetch
+elif command -v screenfetch >/dev/null
+then
+    screenfetch
 fi
 
-echo
 __safe_run id `whoami`
 # echo
 ## A bit heavy command
@@ -579,9 +587,9 @@ s(){
             return 1
         fi
         find . \
-            -path '*/.git' -prune -o \
-            -path '*/.svn' -prune -o \
-            -type -f -exec grep -nH -e --color=always "$@" {} + \
+             -path '*/.git' -prune -o \
+             -path '*/.svn' -prune -o \
+             -type -f -exec grep -nH -e --color=always "$@" {} + \
             | $PAGER
     fi
 }
@@ -797,8 +805,8 @@ showinfo(){
     __safe_run diskinfo
 
     ! $isdarwin && test -n "${DISPLAY}" && {
-        __safe_run xrandr | \grep --color=never ^Screen
-    }
+            __safe_run xrandr | \grep --color=never ^Screen
+        }
 
     $iswindows || __safe_run finger $USER
     LANG=C __safe_run id
@@ -967,7 +975,7 @@ __my_moc_state(){
 __my_parse_svn_branch() {
     ___svn_url=$(LANG=C svn info 2>/dev/null | sed -ne 's#^URL: ##p')
     ___svn_repository_root=$(LANG=C svn info 2>/dev/null | \
-        sed -ne 's#^Repository Root: ##p')
+                                 sed -ne 's#^Repository Root: ##p')
     echo ${___svn_url} | sed -e 's#^'"${___svn_repository_root}"'##g' | \
         awk '{print $1}'
 }
@@ -983,7 +991,7 @@ __my_svn_ps1(){
 __my_battery_status(){
     ___dir=/sys/class/power_supply/BAT0
     if test -d $___dir && test -r $___dir/status && test -r $___dir/charge_full && \
-        test -r $___dir/charge_now
+            test -r $___dir/charge_now
     then
         ___st=$(cat $___dir/status)
         ___full=$(cat $___dir/charge_full)
@@ -1038,7 +1046,7 @@ __printf_ipaddr(){
     # ipaddress <fmt>
     type ip >/dev/null 2>&1 || return 1
     ___ip=$(LANG=C ip addr show scope global | \
-        \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
+                \grep --color=never --only-matching 'inet [^ ]*' | cut -d " " -f 2)
     test -n "$___ip" && printf "$1" $___ip
 }
 
@@ -1190,7 +1198,7 @@ test -n "$__MY_DTACH" && \
 __my_ps1_info2(){
     # second line of PS1
     echo $(__my_ps1_memo) $(__my_ps1_jobs) ${__my_ps1_str_scr} \
-        ${__my_ps1_str_ssh} ${__my_ps1_str_dt} $(__my_alert_fail) \
+         ${__my_ps1_str_ssh} ${__my_ps1_str_dt} $(__my_alert_fail) \
         | sed -e 's/ /|/g'
 }
 
@@ -1251,8 +1259,8 @@ __my_set_title(){
     case $TERM in
         (rxvt*|xterm*|aterm|screen*)
             test -t 1 &&
-            test -z "$EMACS" &&
-            echo -n -e "\033]0;$1\007"
+                test -z "$EMACS" &&
+                echo -n -e "\033]0;$1\007"
             ;;
     esac
 }
