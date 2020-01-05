@@ -2059,12 +2059,7 @@ ARG is num to show, or defaults to 7."
                   '(file-readable-p file)
                   (delete-file file)))))
 
-  (when (autoload-eval-lazily 'pack '(dired-do-pack-or-unpack pack-pack)
-          (defvar pack-program-alist)
-          (add-to-list 'pack-program-alist
-                       '("\\.txz\\'" :pack "tar -cJf" :unpack "tar -xf")))
-    (set-variable 'pack-silence
-                  t)
+  (when (fboundp 'pack-dired-dwim)
     (with-eval-after-load 'dired
       (define-key dired-mode-map "P" 'pack-dired-dwim)))
 
@@ -2100,6 +2095,22 @@ ARG is num to show, or defaults to 7."
 (with-eval-after-load 'dired
   (defvar dired-mode-map (make-sparse-keymap))
   (define-key dired-mode-map "G" 'my-dired-git-ls-files))
+
+(with-eval-after-load 'pack
+  (set-variable 'pack-silence
+                t)
+  (defvar pack-program-alist)
+  (add-to-list 'pack-program-alist
+               '("\\.txz\\'" :pack "tar -cJf" :unpack "tar -xf"))
+
+  (when (executable-find "aunpack")
+    (add-to-list 'pack-program-alist
+                 ' ("\\.zip\\'"
+                    :pack ("zip" "-r" archive sources)
+                    :pack-append ("zip" "-r" archive sources)
+                    :unpack ("aunpack" archive))))
+  )
+
 
 ;; (define-minor-mode my-dired-glob-filter)
 
