@@ -23,8 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
-;; TODO: Rename to eval-after-init
-(defmacro call-after-init (&rest body)
+(defmacro eval-after-init (&rest body)
   "If `after-init-hook' has been run, run BODY immediately.
 Otherwize hook it."
   (declare (indent 0) (debug t))
@@ -233,7 +232,7 @@ found, otherwise returns nil."
 (and (fboundp 'set-scroll-bar-mode)
      (set-scroll-bar-mode nil))
 
-(call-after-init
+(eval-after-init
   (message "%s %s" invocation-name emacs-version)
   (message "Invocation directory: %s" default-directory)
   (message "%s was taken to initialize emacs." (emacs-init-time))
@@ -263,7 +262,7 @@ found, otherwise returns nil."
 ;; (comint-show-maximum-output)
 
 ;; kill scratch
-(call-after-init
+(eval-after-init
   (let ((buf (get-buffer "*scratch*")))
     (when buf
       (kill-buffer buf))))
@@ -521,7 +520,7 @@ found, otherwise returns nil."
 
 (when (safe-require-or-eval 'diminish)
   ;; FIXME: Eval after enabling mode
-  (call-after-init
+  (eval-after-init
     (diminish 'recently-mode)
     (diminish 'editorconfig-mode)
     (diminish 'auto-highlight-symbol-mode)
@@ -1355,7 +1354,7 @@ found, otherwise returns nil."
 ;; TODO: Any way to disable auto check?
 ;; Update flycheck-hooks-alist?
 (when (safe-require-or-eval 'flycheck)
-  (call-after-init (global-flycheck-mode)))
+  (eval-after-init (global-flycheck-mode)))
 ;; (set-variable 'flycheck-display-errors-delay 2.0)
 ;; (fset 'flycheck-display-error-at-point-soon 'ignore)
 
@@ -1492,7 +1491,7 @@ found, otherwise returns nil."
 ;;   (add-to-list 'load-path
 ;;                (expand-file-name (concat user-emacs-directory "/cedet")))
 ;;   (safe-require-or-eval 'cedet-devel-load)
-;;   (call-after-init (activate-malabar-mode)))
+;;   (eval-after-init (activate-malabar-mode)))
 
 (with-eval-after-load 'make-mode
   (defvar makefile-mode-map (make-sparse-keymap))
