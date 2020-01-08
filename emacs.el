@@ -441,6 +441,11 @@ found, otherwise returns nil."
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 
+(when (fboundp 'undo-fu-only-undo)
+  (global-set-key (kbd "C-_") 'undo-fu-only-undo))
+(when (fboundp 'undo-fu-only-redo)
+  (global-set-key (kbd "C-M-_") 'undo-fu-only-redo))
+
 (require 'page-ext nil t)
 
 (when (safe-require-or-eval 'page-break-lines)
