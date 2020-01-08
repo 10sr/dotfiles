@@ -2569,6 +2569,28 @@ Any output will be written to current buffer."
 (define-key input-decode-map "\e[1;5C" [C-right])
 (define-key input-decode-map "\e[1;5D" [C-left])
 
+;; mozc
+(when nil
+  ;; https://tottoto.net/mac-emacs-karabiner-elements-japanese-input-method-config/
+  (with-eval-after-load 'mozc
+    (define-key mozc-mode-map (kbd "C-h") 'backward-delete-char))
+  (setq default-input-method "japanese-mozc")
+  (custom-set-variables '(mozc-leim-title "あ"))
+  (defun turn-on-input-method ()
+    (interactive)
+    (activate-input-method default-input-method))
+  (defun turn-off-input-method ()
+    (interactive)
+    (deactivate-input-method))
+  )
+;; (global-set-key
+;;  (kbd "C-<f11>" . turn-on-input-method)
+;;  ("C-<f12>" . turn-off-input-method))
+
+;; (setq mozc-candidate-style 'overlay)
+;; (setq mozc-candidate-style 'echo-area)
+
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
