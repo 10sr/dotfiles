@@ -1,0 +1,59 @@
+{
+    "title": "ターミナル設定 https://qiita.com/ottijp/items/392783cef49d3eafca14",
+    "rules": [
+        {
+            "description": "かなの無効化",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "lang1",
+                        "modifiers": {
+                            "mandatory": [],
+                            "optional": []
+                        }
+                    },
+                    "conditions": [
+                        {
+                            "type": "frontmost_application_if",
+                            "bundle_identifiers": [
+                                "^com\\.apple\\.Terminal$"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "description": "英数の迂回",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "lang2",
+                        "modifiers": {
+                            "mandatory": [],
+                            "optional": []
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "c",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        }
+                    ],
+                    "conditions": [
+                        {
+                            "type": "frontmost_application_if",
+                            "bundle_identifiers": [
+                                "^com\\.apple\\.Terminal$"
+                            ]~~
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
