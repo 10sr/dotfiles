@@ -2570,11 +2570,14 @@ Any output will be written to current buffer."
 (define-key input-decode-map "\e[1;5D" [C-left])
 
 ;; mozc
-(when nil
+(when (locate-library "mozc")
   ;; https://tottoto.net/mac-emacs-karabiner-elements-japanese-input-method-config/
   (with-eval-after-load 'mozc
-    (define-key mozc-mode-map (kbd "C-h") 'backward-delete-char))
-  (setq default-input-method "japanese-mozc")
+    ;; (define-key mozc-mode-map (kbd "C-h") 'backward-delete-char)
+    ;; (define-key mozc-mode-map (kbd "C-p") (kbd "<up>"))
+    ;; (define-key mozc-mode-map (kbd "C-n") (kbd "SPC"))
+    )
+  ;; (setq default-input-method "japanese-mozc")
   (custom-set-variables '(mozc-leim-title "あ"))
   (defun turn-on-input-method ()
     (interactive)
@@ -2582,7 +2585,17 @@ Any output will be written to current buffer."
   (defun turn-off-input-method ()
     (interactive)
     (deactivate-input-method))
-  )
+  ;; (setq mozc-candidate-style 'echo-area)
+
+  (require 'mozc-popup)
+  (set-variable 'mozc-candidate-style 'popup)
+
+  (require 'mozc-im)
+  (setq default-input-method "japanese-mozc-im")
+  (global-set-key (kbd "C-j") 'toggle-input-method)
+  (global-set-key (kbd "C-c m e") 'turn-on-input-method)
+  (global-set-key (kbd "C-c m d") 'turn-off-input-method)
+  ) ;; 日本語入力ぐぐる
 ;; (global-set-key
 ;;  (kbd "C-<f11>" . turn-on-input-method)
 ;;  ("C-<f12>" . turn-off-input-method))
