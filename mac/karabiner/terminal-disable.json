@@ -2,7 +2,7 @@
     "title": "ターミナル設定 https://qiita.com/ottijp/items/392783cef49d3eafca14",
     "rules": [
         {
-            "description": "かなの無効化",
+            "description": "かなの迂回",
             "manipulators": [
                 {
                     "type": "basic",
@@ -10,9 +10,25 @@
                         "key_code": "lang1",
                         "modifiers": {
                             "mandatory": [],
-                            "optional": []
+                            "optional": [
+                                "any"
+                            ]
                         }
                     },
+                    "to": [
+                        {
+                            "key_code": "c",
+                            "modifiers": [
+                                "left_control"
+                            ]
+                        },
+                        {
+                            "key_code": "m"
+                        },
+                        {
+                            "key_code": "e"
+                        }
+                    ],
                     "conditions": [
                         {
                             "type": "frontmost_application_if",
@@ -33,7 +49,9 @@
                         "key_code": "lang2",
                         "modifiers": {
                             "mandatory": [],
-                            "optional": []
+                            "optional": [
+                                "any"
+                            ]
                         }
                     },
                     "to": [
@@ -42,6 +60,12 @@
                             "modifiers": [
                                 "left_control"
                             ]
+                        },
+                        {
+                            "key_code": "m"
+                        },
+                        {
+                            "key_code": "d"
                         }
                     ],
                     "conditions": [
@@ -49,7 +73,7 @@
                             "type": "frontmost_application_if",
                             "bundle_identifiers": [
                                 "^com\\.apple\\.Terminal$"
-                            ]~~
+                            ]
                         }
                     ]
                 }
