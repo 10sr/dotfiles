@@ -2496,6 +2496,34 @@ Any output will be written to current buffer."
   ;;        (counsel-fzf)))))
   )
 
+(when (eval-and-compile (require 'counsel nil t))
+
+  (defvar counsel-describe-map)
+
+  (defun my-counsel-describe-symbol ()
+    "Forwaord to `describe-symbol'."
+    (interactive)
+    (ivy-read "Describe symbol: " obarray
+              :predicate (lambda (sym)
+                           (or (fboundp sym)
+                               (boundp sym)
+                               (facep sym)
+                               (symbol-plist sym)))
+              :require-match t
+              :history 'counsel-describe-symbol-history
+              :keymap counsel-describe-map
+              :preselect (ivy-thing-at-point)
+              :action (lambda (x)
+                        (describe-symbol (intern x)))
+              :caller 'my-counsel-describe-symbol))
+
+  (ivy-configure 'my-counsel-describe-symbol
+    :sort-fn #'ivy-string<)
+
+  (define-key help-map "o" 'my-counsel-describe-symbol)
+  )
+
+
 (when (fboundp 'counsel-imenu)
   (define-key ctl-x-map "l" 'counsel-imenu))
 
