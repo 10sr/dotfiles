@@ -2513,12 +2513,12 @@ Any output will be written to current buffer."
   (defun my-counsel-describe-symbol ()
     "Forwaord to `describe-symbol'."
     (interactive)
+    (eval-and-compile (require 'help-mode))  ;; describe-symbol-backends
     (ivy-read "Describe symbol: " obarray
-              :predicate (lambda (sym)
-                           (or (fboundp sym)
-                               (boundp sym)
-                               (facep sym)
-                               (symbol-plist sym)))
+              ;; From describe-symbol definition
+              :predicate (lambda (vv)
+                           (cl-some (lambda (x) (funcall (nth 1 x) vv))
+                                    describe-symbol-backends))
               :require-match t
               :history 'counsel-describe-symbol-history
               :keymap counsel-describe-map
