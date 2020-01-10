@@ -1435,14 +1435,11 @@ found, otherwise returns nil."
 (defun my-set-venv-flycheck-executable-find ()
   "Set flycheck executabie find."
   (interactive)
-  (when (and (require 'with-venv nil t)
-             ;; Hack not to set when venv dir not found
-             (with-venv-find-venv-dir))
-    (set-variable 'flycheck-executable-find
-                  '(lambda (e)
-                     (with-venv
-                       (executable-find e)))
-                  t)))
+  (set-variable 'flycheck-executable-find
+                '(lambda (e)
+                   (with-venv
+                     (executable-find e)))
+                t))
 
 (defun my-update-flycheck-flake8-error-level-alist ()
   "Update `flycheck-flake8-error-level-alist'."
