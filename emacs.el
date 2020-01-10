@@ -1417,9 +1417,19 @@ found, otherwise returns nil."
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'blacken-buffer)))
 
-(with-eval-after-load 'isortify
-  (when (require 'with-venv nil t)
-    (with-venv-advice-add 'isortify-buffer)))
+;; isortify-buffer breaks buffer when it contains japanese text
+(defun my-isortify ()
+  (interactive)
+  (cl-assert buffer-file-name)
+  (cl-assert (not (buffer-modified-p)))
+  (with-venv
+    (call-process "python" ;; PROGRAM
+                  nil  ;; INFILE
+                  nil  ;; DESTINATION
+                  nil  ;; DISPLAY
+                  "-m" "isort" buffer-file-name))
+  (message "isortify done")
+  (revert-buffer nil t))
 
 ;; https://github.com/lunaryorn/old-emacs-configuration/blob/master/lisp/flycheck-virtualenv.el
 (defun my-set-venv-flycheck-executable-find ()
