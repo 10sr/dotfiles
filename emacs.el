@@ -2509,14 +2509,14 @@ Any output will be written to current buffer."
   ;;        (counsel-fzf)))))
   )
 
-(when (eval-and-compile (require 'counsel nil t))
-
-  (defvar counsel-describe-map)
+(when (and (fboundp 'ivy-read)
+           (locate-library "counsel"))
 
   (defun my-counsel-describe-symbol ()
     "Forwaord to `describe-symbol'."
     (interactive)
     (eval-and-compile (require 'help-mode))  ;; describe-symbol-backends
+    (eval-and-compile (require 'counsel))
     (ivy-read "Describe symbol: " obarray
               ;; From describe-symbol definition
               :predicate (lambda (vv)
@@ -2530,10 +2530,12 @@ Any output will be written to current buffer."
                         (describe-symbol (intern x)))
               :caller 'my-counsel-describe-symbol))
 
+  (define-key help-map "o" 'my-counsel-describe-symbol)
+  )
+
+(with-eval-after-load 'ivy
   (ivy-configure 'my-counsel-describe-symbol
     :sort-fn #'ivy-string<)
-
-  (define-key help-map "o" 'my-counsel-describe-symbol)
   )
 
 
