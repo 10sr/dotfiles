@@ -951,6 +951,12 @@ found, otherwise returns nil."
 (when (safe-require-or-eval 'recently)
   (define-key ctl-x-map (kbd "C-r") 'recently-show)
   (set-variable 'recently-max 1000)
+  (defvar recently-excludes)
+  (add-to-list 'recently-excludes
+               (rx-to-string (list 'and
+                                   'string-start
+                                   (expand-file-name package-user-dir))
+                             t))
   (recently-mode 1))
 
 (when (safe-require-or-eval 'editorconfig)
