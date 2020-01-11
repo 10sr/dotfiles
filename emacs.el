@@ -2644,6 +2644,23 @@ Any output will be written to current buffer."
 ;; (setq mozc-candidate-style 'overlay)
 ;; (setq mozc-candidate-style 'echo-area)
 
+(defvar my-cousel-recently-history nil "History of `my-counsel-recently'.")
+
+(when (and (require 'recently nil t)
+           (fboundp 'ivy-read))
+  (defun my-counsel-recently ()
+    "Consel `recently'."
+    (interactive)
+    (ivy-read "Recently: " (recently-list)
+              :require-match t
+              :history 'my-cousel-recently-history
+              :preselect default-directory
+              :action (lambda (x) (find-file x))
+              :caller 'my-counsel-recently))
+
+  (define-key ctl-x-map (kbd "C-r") 'my-counsel-recently)
+  )
+
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
