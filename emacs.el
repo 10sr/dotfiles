@@ -147,6 +147,7 @@ found, otherwise returns nil."
        swoop
        color-identifiers-mode
        dired-k
+       blacken
 
        editorconfig
        editorconfig-custom-majormode
