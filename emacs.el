@@ -1414,19 +1414,21 @@ found, otherwise returns nil."
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'blacken-buffer)))
 
-;; isortify-buffer breaks buffer when it contains japanese text
+;; `isortify-buffer' breaks buffer when it contains japanese text
 (defun my-isortify ()
   (interactive)
   (cl-assert buffer-file-name)
   (cl-assert (not (buffer-modified-p)))
-  (with-venv
-    (call-process "python" ;; PROGRAM
-                  nil  ;; INFILE
-                  nil  ;; DESTINATION
-                  nil  ;; DISPLAY
-                  "-m" "isort" buffer-file-name))
+  (call-process "python" ;; PROGRAM
+                nil  ;; INFILE
+                nil  ;; DESTINATION
+                nil  ;; DISPLAY
+                "-m" "isort" buffer-file-name)
   (message "isortify done")
   (revert-buffer nil t))
+(when (fboundp 'with-venv-advice-add)
+  ;; TODO: Lazy load with-venv
+  (with-venv-advice-add 'my-isortify))
 
 ;; https://github.com/lunaryorn/old-emacs-configuration/blob/master/lisp/flycheck-virtualenv.el
 (defun my-set-venv-flycheck-executable-find ()
