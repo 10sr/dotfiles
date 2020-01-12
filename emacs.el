@@ -1402,15 +1402,6 @@ found, otherwise returns nil."
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'pydoc)))
 
-
-(when (autoload-eval-lazily 'pipenv)
-  ;; (declare-function pipenv-projectile-after-switch-default "pipenv")
-  ;; (add-hook 'python-mode-hook
-  ;;           (lambda ()
-  ;;             (pipenv-mode 1)
-  ;;             (pipenv-projectile-after-switch-default)))
-  )
-
 (set-variable 'flycheck-python-mypy-ini ".mypy.ini")
 (set-variable 'flycheck-flake8rc "setup.cfg")
 
@@ -1460,6 +1451,10 @@ found, otherwise returns nil."
           'my-set-venv-flycheck-executable-find)
 (add-hook 'python-mode-hook
           'my-update-flycheck-flake8-error-level-alist)
+(when (fboundp 'with-venv-info-mode)
+  (add-hook 'python-mode-hook
+            'with-venv-info-mode))
+
 ;; Run multiple chekcers
 ;; https://github.com/flycheck/flycheck/issues/186
 
