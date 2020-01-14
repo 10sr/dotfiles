@@ -2514,8 +2514,8 @@ Any output will be written to current buffer."
   (defun my-counsel-describe-symbol ()
     "Forwaord to `describe-symbol'."
     (interactive)
-    (eval-and-compile (require 'help-mode nil t))  ;; describe-symbol-backends
-    (eval-and-compile (require 'counsel nil t))
+    (cl-assert (eval-and-compile (require 'help-mode nil t)))  ;; describe-symbol-backends
+    (cl-assert (eval-and-compile (require 'counsel nil t)))
     (ivy-read "Describe symbol: " obarray
               ;; From describe-symbol definition
               :predicate (lambda (vv)
