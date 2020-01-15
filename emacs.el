@@ -2656,10 +2656,10 @@ Any output will be written to current buffer."
   (set-variable 'mozc-candidate-style 'popup)
 
   ;; これいる？
-  ;; (require 'mozc-im)
-  ;; (setq default-input-method "japanese-mozc-im")
-  ;; (global-set-key (kbd "C-j") 'toggle-input-method)
-  ;; 日本語
+  (when (require 'mozc-im nil t)
+    (setq default-input-method "japanese-mozc-im")
+    ;; (global-set-key (kbd "C-j") 'toggle-input-method)
+    )
   )
 
 
