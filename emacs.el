@@ -960,6 +960,23 @@ found, otherwise returns nil."
                              t))
   (recently-mode 1))
 
+(defvar my-cousel-recently-history nil "History of `my-counsel-recently'.")
+
+(when (and (require 'recently nil t)
+           (fboundp 'ivy-read))
+  (defun my-counsel-recently ()
+    "Consel `recently'."
+    (interactive)
+    (ivy-read "Recently: " (recently-list)
+              :require-match t
+              :history 'my-cousel-recently-history
+              :preselect default-directory
+              :action (lambda (x) (find-file x))
+              :caller 'my-counsel-recently))
+
+  (define-key ctl-x-map (kbd "C-r") 'my-counsel-recently)
+  )
+
 (when (safe-require-or-eval 'editorconfig)
   (set-variable 'editorconfig-get-properties-function
                 'editorconfig-core-get-properties-hash)
@@ -2623,7 +2640,7 @@ Any output will be written to current buffer."
     ;; (define-key mozc-mode-map (kbd "C-p") (kbd "<up>"))
     ;; (define-key mozc-mode-map (kbd "C-n") (kbd "SPC"))
     )
-  ;; (setq default-input-method "japanese-mozc")
+  (setq default-input-method "japanese-mozc")
   (custom-set-variables '(mozc-leim-title "あ"))
   (defun turn-on-input-method ()
     (interactive)
@@ -2639,28 +2656,12 @@ Any output will be written to current buffer."
   (set-variable 'mozc-candidate-style 'popup)
 
   ;; これいる？
-  (require 'mozc-im)
-  (setq default-input-method "japanese-mozc-im")
-  (global-set-key (kbd "C-j") 'toggle-input-method)
-
+  ;; (require 'mozc-im)
+  ;; (setq default-input-method "japanese-mozc-im")
+  ;; (global-set-key (kbd "C-j") 'toggle-input-method)
+  ;; 日本語
   )
 
-(defvar my-cousel-recently-history nil "History of `my-counsel-recently'.")
-
-(when (and (require 'recently nil t)
-           (fboundp 'ivy-read))
-  (defun my-counsel-recently ()
-    "Consel `recently'."
-    (interactive)
-    (ivy-read "Recently: " (recently-list)
-              :require-match t
-              :history 'my-cousel-recently-history
-              :preselect default-directory
-              :action (lambda (x) (find-file x))
-              :caller 'my-counsel-recently))
-
-  (define-key ctl-x-map (kbd "C-r") 'my-counsel-recently)
-  )
 
 
 ;; Local Variables:
