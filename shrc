@@ -28,6 +28,7 @@ __match(){
 __lf=$'\n'
 __cr=$'\r'
 
+# For normal cases TMP is set in ./profile
 test -n "$TMP" || export TMP=/tmp/${USER}-tmp
 mkdir -p "$TMP"
 
