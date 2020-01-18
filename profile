@@ -149,7 +149,7 @@ case "`hostname`" in
     #     _HOSTCOLOR_1=magenta
     #     _HOSTCOLOR_2=white
     #     ;;
-    debian-vb-win7-opti)
+    win7-i7-opti)
         _HOSTCOLOR_1=red
         _HOSTCOLOR_2=white
         ;;
