@@ -24,7 +24,9 @@ export RUBYLIB="$RUBYLIB:$HOME/.local/lib/gems/lib"
 
 
 # in my environment powerdown does not work
-test -z "$DISPLAY" && test -z "$SSH_CONNECTION" && \
+test -z "$DISPLAY" && \
+    test -z "$SSH_CONNECTION" && \
+    ! (uname -r | grep Microsoft >/dev/null)  &&\
     type setterm >/dev/null 2>&1 && \
     setterm -blank 30 -powersave on # -powerdown 10
 
