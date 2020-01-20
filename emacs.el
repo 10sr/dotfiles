@@ -2505,11 +2505,24 @@ Any output will be written to current buffer."
 
 (defvar ivy-re-builders-alist)
 (set-variable 'ivy-re-builders-alist
-              '((t . (lambda (s)
-                       ;; Ignore whitespace
-                       (ivy--regex-fuzzy (replace-regexp-in-string (rx space)
-                                                                   ""
-                                                                   s))))))
+              '((t . my--ivy-regex-fuzzy-ignore-order)))
+
+(defun my--ivy-regex-fuzzy-ignore-order (str)
+  "Re-build regex from STR for ignore-order fuzzy match."
+  (let ((re-list (ivy--regex-ignore-order str)))
+    (if (listp re-list)
+        (mapcar (lambda (e)
+                  (let ((head (car e))
+                        (tail (cdr e)))
+                    (if tail
+                        (cons (ivy--regex-fuzzy head)
+                              tail)
+                      (cons head tail))))
+                re-list)
+      (ivy--regex-fuzzy re-list))))
+;; (my--ivy-regex-fuzzy-ignore-order  "ab  bc !cee")
+;; (ivy--regex-fuzzy "ab")
+;; (ivy--regex-ignore-order "a b")
 
 (with-eval-after-load 'ivy
   (defvar ivy-minibuffer-map)
