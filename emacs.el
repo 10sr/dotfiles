@@ -1432,6 +1432,10 @@ found, otherwise returns nil."
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'blacken-buffer)))
 
+(with-eval-after-load 'ansible-doc
+  (when (require 'with-venv nil t)
+    (with-venv-advice-add 'ansible-doc)))
+
 ;; `isortify-buffer' breaks buffer when it contains japanese text
 (defun my-isortify ()
   (interactive)
