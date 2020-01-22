@@ -51,14 +51,13 @@ Otherwize hook it."
                (lambda ()
                  ,@body))))
 
-;; TODO: Remove: Just checking fboundp should be enough for most cases
-(defmacro safe-require-or-eval (feature)
-  "Require FEATURE if available.
+;; (defmacro safe-require-or-eval (feature)
+;;   "Require FEATURE if available.
 
-At compile time the feature will be loaded immediately."
-  `(eval-and-compile
-     (message "safe-require-or-eval: Trying to require %s" ,feature)
-     (require ,feature nil t)))
+;; At compile time the feature will be loaded immediately."
+;;   `(eval-and-compile
+;;      (message "safe-require-or-eval: Trying to require %s" ,feature)
+;;      (require ,feature nil t)))
 
 ;; TODO: Remove: Defining autoload is no more needed for most cases
 (defmacro autoload-eval-lazily (feature &optional functions &rest body)
@@ -189,23 +188,22 @@ found, otherwise returns nil."
 
        ))
 
-(when (safe-require-or-eval 'package)
-  (setq package-archives
-        `(,@package-archives
-          ("melpa" . "https://melpa.org/packages/")
-          ;; Somehow fails to download via https
-          ("10sr-el" . "http://10sr.github.io/emacs-lisp/elpa/")))
-  (package-initialize)
+(require 'package)
+(set-variable 'package-archives
+              `(,@package-archives
+                ("melpa" . "https://melpa.org/packages/")
+                ;; Somehow fails to download via https
+                ("10sr-el" . "http://10sr.github.io/emacs-lisp/elpa/")))
+(package-initialize)
 
-  (defun my-auto-install-package ()
-    "Install packages semi-automatically."
-    (interactive)
-    (package-refresh-contents)
-    (mapc (lambda (pkg)
-            (or (package-installed-p pkg)
-                (package-install pkg)))
-          10sr-package-list))
-  )
+(defun my-auto-install-package ()
+  "Install packages semi-automatically."
+  (interactive)
+  (package-refresh-contents)
+  (mapc (lambda (pkg)
+          (or (package-installed-p pkg)
+              (package-install pkg)))
+        10sr-package-list))
 
 ;; (lazy-load-eval 'sudoku)
 
@@ -300,7 +298,7 @@ found, otherwise returns nil."
              (file-readable-p user-init-file))
     (load-file user-init-file)))
 
-(safe-require-or-eval 'session)
+(require 'session nil t)
 
 ;; server
 
@@ -365,7 +363,7 @@ found, otherwise returns nil."
 ;; Interactively evaluate Emacs Lisp expressions
 (define-key ctl-x-map "i" 'ielm)
 
-(when (safe-require-or-eval 'which-key)
+(when (fboundp 'which-key-mode)
   (which-key-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -465,10 +463,14 @@ found, otherwise returns nil."
 
 (require 'page-ext nil t)
 
-(when (safe-require-or-eval 'page-break-lines)
-  (global-page-break-lines-mode 1))
+(when (fboundp 'global-page-break-lines-mode)
+  (add-hook 'after-first-visit-hook
+            'global-page-break-lines-mode))
 
-(when (safe-require-or-eval 'git-gutter)
+(when (fboundp 'global-git-gutter-mode)
+  (add-hook 'after-first-visit-hook
+            'global-git-gutter-mode))
+(with-eval-after-load 'git-gutter
   (declare-function global-git-gutter-mode "git-gutter")
   (custom-set-variables
    '(git-gutter:lighter " Gttr"))
@@ -482,17 +484,16 @@ found, otherwise returns nil."
       (set-face-background 'git-gutter:modified c)
       (set-face-background 'git-gutter:added c)
       (set-face-background 'git-gutter:deleted c)
-      (set-face-background 'git-gutter:unchanged c)))
-  (global-git-gutter-mode 1)
-  )
+      (set-face-background 'git-gutter:unchanged c))))
 
-;; (when (safe-require-or-eval 'fancy-narrow)
-;;   (fancy-narrow-mode 1))
+;; (when (fboundp 'fancy-narrow-mode)
+;;   (add-hook 'after-first-visit-hook
+;;             'fancy-narrow-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-(when (safe-require-or-eval 'terminal-title)
+(when (require 'terminal-title nil t)
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
@@ -540,7 +541,7 @@ found, otherwise returns nil."
                         "")
                       )))
 
-(when (safe-require-or-eval 'diminish)
+(when (require 'diminish nil t)
   ;; FIXME: Eval after enabling mode
   (eval-after-init
     (diminish 'recently-mode)
@@ -633,7 +634,7 @@ found, otherwise returns nil."
 (define-key minibuffer-local-map (kbd "C-p") (kbd "ESC p"))
 (define-key minibuffer-local-map (kbd "C-n") (kbd "ESC n"))
 
-(when (safe-require-or-eval 'minibuffer-line)
+(when (require 'minibuffer-line nil t)
   (set-face-underline 'minibuffer-line nil)
   (set-variable 'minibuffer-line-refresh-interval
                 25)
@@ -668,7 +669,7 @@ found, otherwise returns nil."
   (minibuffer-line-mode 1)
   )
 
-(when (safe-require-or-eval 'prompt-text)
+(when (require 'prompt-text nil t)
 
   (set-variable 'prompt-text-format
                 `(,(concat ""
@@ -727,18 +728,18 @@ found, otherwise returns nil."
   (add-hook 'input-method-inactivate-hook
             (lambda () (set-cursor-color "black"))))
 
-(when (safe-require-or-eval 'paren)
-  (show-paren-mode 1)
-  (setq show-paren-delay 0.5
-        show-paren-style 'parenthesis)    ; mixed is hard to read
-  ;; (set-face-background 'show-paren-match
-  ;;                      "black")
-  ;;                      ;; (face-foreground 'default))
-  ;; (set-face-foreground 'show-paren-match
-  ;;                      "white")
-  ;; (set-face-inverse-video-p 'show-paren-match
-  ;;                           t)
-  )
+(when (fboundp 'show-paren-mode)
+  (add-hook 'after-first-visit-hook
+            'show-paren-mode))
+(set-variable 'show-paren-delay 0.5)
+(set-variable 'show-paren-style 'parenthesis)    ; mixed is hard to read
+;; (set-face-background 'show-paren-match
+;;                      "black")
+;;                      ;; (face-foreground 'default))
+;; (set-face-foreground 'show-paren-match
+;;                      "white")
+;; (set-face-inverse-video-p 'show-paren-match
+;;                           t)
 
 (transient-mark-mode 1)
 
@@ -767,25 +768,31 @@ found, otherwise returns nil."
             (font-lock-add-keywords nil my-jspace-face)
             ))
 
-(when (safe-require-or-eval 'whitespace)
+(when (fboundp 'global-whitespace-mode)
+  (add-hook 'after-first-visit-hook
+            'global-whitespace-mode))
+
+(with-eval-after-load 'whitespace
+  (defvar whitespace-display-mappings)
+  (defvar whitespace-mode)
   (add-to-list 'whitespace-display-mappings
                ;; We need t since last one takes precedence
                `(tab-mark ?\t ,(vconcat "|>\t")) t)
   ;; (add-to-list 'whitespace-display-mappings
   ;;              `(newline-mark ?\n ,(vconcat "$\n")))
-  (setq whitespace-style '(face
-                           trailing     ; trailing blanks
-                           ;; tabs
-                           ;; spaces
-                           ;; lines
-                           lines-tail  ; lines over 80
-                           newline      ; newlines
-                           ;; empty        ; empty lines at beg or end of buffer
-                           ;; big-indent
-                           ;; space-mark
-                           tab-mark
-                           newline-mark ; use display table for newline
-                           ))
+  (set-variable 'whitespace-style '(face
+                                    trailing     ; trailing blanks
+                                    ;; tabs
+                                    ;; spaces
+                                    ;; lines
+                                    lines-tail  ; lines over 80
+                                    newline      ; newlines
+                                    ;; empty        ; empty lines at beg or end of buffer
+                                    ;; big-indent
+                                    ;; space-mark
+                                    tab-mark
+                                    newline-mark ; use display table for newline
+                                    ))
   ;; (setq whitespace-newline 'font-lock-comment-face)
   ;; (setq whitespace-style (delq 'newline-mark whitespace-style))
   (defun my-whitesspace-mode-reload ()
@@ -796,10 +803,9 @@ found, otherwise returns nil."
       (whitespace-mode 1)))
 
   (set-variable 'whitespace-line-column nil)
-  (global-whitespace-mode t)
   (add-hook 'dired-mode-hook
             (lambda ()
-              (set (make-local-variable 'whitespace-style) nil)))
+              (set-variable 'whitespace-style nil t)))
   (if (>= (display-color-cells)
           256)
       (set-face-foreground 'whitespace-newline "color-109")
@@ -808,7 +814,7 @@ found, otherwise returns nil."
     ;;                      t))
     ))
 (and nil
-     '(safe-require-or-eval 'fill-column-indicator)
+     '(require 'fill-column-indicator nil t)
      (setq fill-column-indicator))
 
 (defun my-gen-hl-line-color-dark ()
@@ -850,7 +856,7 @@ found, otherwise returns nil."
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
 
-;;(safe-require-or-eval 'set-modeline-color)
+;;(require 'set-modeline-color nil t)
 
 ;; (let ((fg (face-foreground 'default))
 ;;       (bg (face-background 'default)))
@@ -863,7 +869,7 @@ found, otherwise returns nil."
 ;; (set-face-underline 'vertical-border
 ;;                     nil)
 
-;; (when (safe-require-or-eval 'end-mark)
+;; (when (require 'end-mark nil t)
 ;;   (global-end-mark-mode))
 
 ;; M-x highlight-* to highlight things
@@ -877,13 +883,13 @@ found, otherwise returns nil."
                                                                     end)))
     (setq deactivate-mark t)))
 
-(when (safe-require-or-eval 'auto-highlight-symbol)
-  (set-variable 'ahs-idle-interval 0.6)
-  (global-auto-highlight-symbol-mode 1))
+(when (fboundp 'global-auto-highlight-symbol-mode)
+  (add-hook 'after-first-visit-hook
+            'global-auto-highlight-symbol-mode))
+(set-variable 'ahs-idle-interval 0.6)
 
 
-(when (safe-require-or-eval 'highlight-indentation)
-  (set-face-background 'highlight-indentation-face "color-236")
+(when (fboundp 'highlight-indentation-mode)
   (dolist (hook
            '(
              prog-mode-hook
@@ -891,6 +897,8 @@ found, otherwise returns nil."
              ))
     (add-hook hook
               'highlight-indentation-mode)))
+(with-eval-after-load 'highlight-indentation
+  (set-face-background 'highlight-indentation-face "color-236"))
 ;; (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
 
 (when (fboundp 'fic-mode)
@@ -965,7 +973,8 @@ found, otherwise returns nil."
 
 ;; recently
 
-(when (safe-require-or-eval 'recently)
+;; TODO: Enable after first visit file?
+(when (require 'recently nil t)
   (define-key ctl-x-map (kbd "C-r") 'recently-show)
   (set-variable 'recently-max 1000)
   (defvar recently-excludes)
@@ -1042,10 +1051,11 @@ found, otherwise returns nil."
 (setq revert-without-query '(".+"))
 
 ;; save cursor position
-(when (safe-require-or-eval 'saveplace)
-  (setq-default save-place t)
-  (setq save-place-file (concat user-emacs-directory
-                                "places")))
+(when (fboundp 'save-place-mode)
+  (add-hook 'after-first-visit-hook
+            'save-place-mode))
+(set-variable 'save-place-file (concat user-emacs-directory
+                                       "places"))
 
 ;; http://www.bookshelf.jp/soft/meadow_24.html#SEC260
 (setq make-backup-files t)
@@ -1089,12 +1099,12 @@ found, otherwise returns nil."
   (add-to-list 'recentf-exclude
                (regexp-quote bookmark-default-file)))
 
-(when (safe-require-or-eval 'smart-revert)
+(when (fboundp 'smart-revert-on)
   (smart-revert-on))
 
 ;; autosave
 ;; auto-save-visited-mode can be used instead?
-;; (when (safe-require-or-eval 'autosave)
+;; (when (require 'autosave nil t)
 ;;   (autosave-set 8))
 
 
@@ -1122,12 +1132,12 @@ found, otherwise returns nil."
      (not (equal (getenv "DISPLAY") ""))
      (executable-find "xclip")
      ;; (< emacs-major-version 24)
-     '(safe-require-or-eval 'xclip)
+     '(require 'xclip nil t)
      nil
      (turn-on-xclip))
 
 (and (eq system-type 'darwin)
-     (safe-require-or-eval 'pasteboard)
+     (require 'pasteboard nil t)
      (turn-on-pasteboard))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1252,18 +1262,20 @@ found, otherwise returns nil."
   (add-to-list 'auto-mode-alist
                `(,git-rebase-filename-regexp . text-mode)))
 
-(when (safe-require-or-eval 'aggressive-indent)
+(when (fboundp 'global-aggressive-indent-mode)
+  (add-hook 'after-first-visit-hook
+            'global-aggressive-indent-mode))
+(with-eval-after-load 'aggressive-indent
   (defvar aggressive-indent-excluded-modes)
-  (setq aggressive-indent-excluded-modes
-        `(web-mode
-          diff-mode
-          toml-mode
-          conf-mode
-          dockerfile-mode
-          groovy-mode
-          scala-mode
-          ,@aggressive-indent-excluded-modes))
-  (global-aggressive-indent-mode 1))
+  (set-variable 'aggressive-indent-excluded-modes
+                `(web-mode
+                  diff-mode
+                  toml-mode
+                  conf-mode
+                  dockerfile-mode
+                  groovy-mode
+                  scala-mode
+                  ,@aggressive-indent-excluded-modes)))
 
 (when (fboundp 'ggtags-mode)
   (add-hook 'c-mode-common-hook
@@ -1314,10 +1326,12 @@ found, otherwise returns nil."
                '("^\\([^ \n]+\\):\\([0-9]+\\) " 1 2))
   )
 
-(when (safe-require-or-eval 'company)
+(when (fboundp 'global-company-mode)
+  (add-hook 'after-first-visit-hook
+            'global-company-mode))
+(with-eval-after-load 'company
   ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
   ;; https://qiita.com/yuze/items/a145b1e3edb6d0c24cbf
-  (global-company-mode)
   (set-variable 'company-idle-delay nil)
   (set-variable 'company-minimum-prefix-length 2)
   (set-variable 'company-selection-wrap-around t)
@@ -1399,8 +1413,9 @@ found, otherwise returns nil."
 ;; https://github.com/lunaryorn/flycheck
 ;; TODO: Any way to disable auto check?
 ;; Update flycheck-hooks-alist?
-(when (safe-require-or-eval 'flycheck)
-  (eval-after-init (global-flycheck-mode)))
+(when (fboundp 'global-flycheck-mode)
+  (add-hook 'after-first-visit-hook
+            'global-flycheck-mode))
 ;; (set-variable 'flycheck-display-errors-delay 2.0)
 ;; (fset 'flycheck-display-error-at-point-soon 'ignore)
 
@@ -1501,7 +1516,7 @@ found, otherwise returns nil."
 
 
 ;; http://fukuyama.co/foreign-regexp
-'(and (safe-require-or-eval 'foreign-regexp)
+'(and (require 'foreign-regexp nil t)
       (progn
         (setq foreign-regexp/regexp-type 'perl)
         '(setq reb-re-syntax 'foreign-regexp)
@@ -1520,8 +1535,9 @@ found, otherwise returns nil."
 ;;   (define-key ctl-x-map (kbd "C-g") 'gited-list))
 (defalias 'gited 'gited-list)
 
-(when (safe-require-or-eval 'git-commit)
-  (global-git-commit-mode 1))
+(when (fboundp 'global-git-commit-mode)
+  (add-hook 'after-first-visit-hook
+            'global-git-commit-mode))
 (with-eval-after-load 'git-commit
   (add-hook 'git-commit-setup-hook
             'turn-off-auto-fill t))
@@ -1544,7 +1560,7 @@ found, otherwise returns nil."
 ;; (when (autoload-eval-lazily 'malabar-mode)
 ;;   (add-to-list 'load-path
 ;;                (expand-file-name (concat user-emacs-directory "/cedet")))
-;;   (safe-require-or-eval 'cedet-devel-load)
+;;   (require 'cedet-devel-load nil t)
 ;;   (eval-after-init (activate-malabar-mode)))
 
 (with-eval-after-load 'make-mode
@@ -2066,7 +2082,7 @@ ARG is num to show, or defaults to 7."
 ;;           'my-replace-nasi-none)
 
 (with-eval-after-load 'dired
-  (safe-require-or-eval 'ls-lisp)
+  (require 'ls-lisp nil t)
   (defvar dired-mode-map (make-sparse-keymap))
   ;; dired-do-chgrp sometimes cause system hung
   (define-key dired-mode-map "G" 'ignore)
@@ -2300,7 +2316,7 @@ and search from projectile root (if projectile is available)."
                    (error "My-Rgrep: Command for rgrep not found")
                    )))
   (if (and current-prefix-arg
-           (safe-require-or-eval 'projectile)
+           (eval-and-compile (require 'projectile nil t))
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
         (compilation-start command-args
@@ -2319,7 +2335,7 @@ and search from projectile root (if projectile is available)."
                       (or (thing-at-point 'symbol t)
                           (error "No symbol at point")))
             (error "My-Rgrep: Command for rgrep not found"))))
-    (if (safe-require-or-eval 'projectile)
+    (if (eval-and-compile (require 'projectile nil t))
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
           (compilation-start command-args
