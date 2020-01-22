@@ -23,6 +23,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
+(defvar after-first-visit-hook nil
+  "Run only once at the first visit of file.")
+
+(defvar after-first-visit-hook--done nil
+  "Non-nil when `after-first-visit-hook' has already been called.")
+
+(defun after-first-visit-hook-run ()
+  "Run `after-first-visit-hook' and clear its config."
+  (when (not after-first-visit-hook--done)
+    (run-hooks 'after-first-visit-hook))
+  (setq after-first-visit-hook--done t)
+  (remove-hook 'find-file-hook
+               'after-first-visit-hook-run))
+(add-hook 'find-file-hook
+          'after-first-visit-hook-run)
+
 (defmacro eval-after-init (&rest body)
   "If `after-init-hook' has been run, run BODY immediately.
 Otherwize hook it."
