@@ -993,18 +993,19 @@ found, otherwise returns nil."
   (define-key ctl-x-map (kbd "C-r") 'my-counsel-recently)
   )
 
-(when (safe-require-or-eval 'editorconfig)
-  (set-variable 'editorconfig-get-properties-function
-                'editorconfig-core-get-properties-hash)
-  (editorconfig-mode 1)
-  (set-variable 'editorconfig-mode-lighter "")
-  (when (fboundp 'ws-butler-mode)
-    (set-variable 'editorconfig-trim-whitespaces-mode
-                  'ws-butler-mode))
-  (with-eval-after-load 'org-src
-    ;; [*.org\[\*Org Src*\[ c \]*\]]
-    (add-hook 'org-src-mode-hook
-              'editorconfig-mode-apply t)))
+(when (fboundp 'editorconfig-mode)
+  (add-hook 'after-first-visit-hook
+            'editorconfig-mode))
+(set-variable 'editorconfig-get-properties-function
+              'editorconfig-core-get-properties-hash)
+(set-variable 'editorconfig-mode-lighter "")
+(when (fboundp 'ws-butler-mode)
+  (set-variable 'editorconfig-trim-whitespaces-mode
+                'ws-butler-mode))
+(with-eval-after-load 'org-src
+  ;; [*.org\[\*Org Src*\[ c \]*\]]
+  (add-hook 'org-src-mode-hook
+            'editorconfig-mode-apply t))
 
 (when (fboundp 'editorconfig-custom-majormode)
   (add-hook 'editorconfig-after-apply-functions
