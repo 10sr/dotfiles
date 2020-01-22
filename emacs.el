@@ -59,41 +59,40 @@ Otherwize hook it."
 ;;      (message "safe-require-or-eval: Trying to require %s" ,feature)
 ;;      (require ,feature nil t)))
 
-;; TODO: Remove: Defining autoload is no more needed for most cases
-(defmacro autoload-eval-lazily (feature &optional functions &rest body)
-  "Define autoloading FEATURE that defines FUNCTIONS.
-FEATURE is a symbol.  FUNCTIONS is a list of symbols.  If FUNCTIONS is nil,
-the function same as FEATURE is defined as autoloaded function.  BODY is passed
- to `eval-after-load'.
-After this macro is expanded, this returns the path to library if FEATURE
-found, otherwise returns nil."
-  (declare (indent 2) (debug t))
-  (let* ((libname (symbol-name (eval feature)))
-         (libpath (locate-library libname)))
-    `(progn
-       (when (locate-library ,libname)
-         ,@(mapcar (lambda (f)
-                     `(unless (fboundp ',f)
-                        (progn
-                          (message "Autoloaded function `%S' defined (%s)"
-                                   (quote ,f)
-                                   ,libpath)
-                          (autoload (quote ,f)
-                            ,libname
-                            ,(concat "Autoloaded function defined in \""
-                                     libpath
-                                     "\".")
-                            t))))
-                   (or (eval functions)
-                       `(,(eval feature)))))
-       (eval-after-load ,feature
-         (quote (progn
-                  ,@body)))
-       (locate-library ,libname))))
+;; (defmacro autoload-eval-lazily (feature &optional functions &rest body)
+;;   "Define autoloading FEATURE that defines FUNCTIONS.
+;; FEATURE is a symbol.  FUNCTIONS is a list of symbols.  If FUNCTIONS is nil,
+;; the function same as FEATURE is defined as autoloaded function.  BODY is passed
+;;  to `eval-after-load'.
+;; After this macro is expanded, this returns the path to library if FEATURE
+;; found, otherwise returns nil."
+;;   (declare (indent 2) (debug t))
+;;   (let* ((libname (symbol-name (eval feature)))
+;;          (libpath (locate-library libname)))
+;;     `(progn
+;;        (when (locate-library ,libname)
+;;          ,@(mapcar (lambda (f)
+;;                      `(unless (fboundp ',f)
+;;                         (progn
+;;                           (message "Autoloaded function `%S' defined (%s)"
+;;                                    (quote ,f)
+;;                                    ,libpath)
+;;                           (autoload (quote ,f)
+;;                             ,libname
+;;                             ,(concat "Autoloaded function defined in \""
+;;                                      libpath
+;;                                      "\".")
+;;                             t))))
+;;                    (or (eval functions)
+;;                        `(,(eval feature)))))
+;;        (eval-after-load ,feature
+;;          (quote (progn
+;;                   ,@body)))
+;;        (locate-library ,libname))))
 
-(when (autoload-eval-lazily 'tetris nil
-        (message "Tetris loaded!"))
-  (message "Tetris found!"))
+;; (when (autoload-eval-lazily 'tetris nil
+;;         (message "Tetris loaded!"))
+;;   (message "Tetris found!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
@@ -689,7 +688,7 @@ found, otherwise returns nil."
                   ": "))
   (prompt-text-mode 1))
 
-(autoload-eval-lazily 'helm nil
+(with-eval-after-load 'helm
   (defvar helm-map)
   (define-key helm-map (kbd "C-h") (kbd "DEL")))
 
@@ -1175,7 +1174,7 @@ found, otherwise returns nil."
                '("\\.dtl\\'" . web-mode))
   )
 
-(when (autoload-eval-lazily 'wgrep)
+(when (locate-library "wgrep")
   (set-variable 'wgrep-auto-save-buffer t)
   (with-eval-after-load 'grep
     (defvar grep-mode-map)
@@ -1306,7 +1305,7 @@ found, otherwise returns nil."
           (lambda ()
             (setq imenu-generic-expression
                   `(("Sections" ";;;\+\n;; \\(.*\\)\n" 1)
-                    ,@imenu-generic-expression))))
+                  ,@imenu-generic-expression))))
 ;; TODO: Try paraedit http://daregada.blogspot.com/2012/03/paredit.html
 
 (with-eval-after-load 'compile
@@ -1423,12 +1422,12 @@ found, otherwise returns nil."
 ;;   (when (fboundp 'flycheck-black-check-setup)
 ;;     (flycheck-black-check-setup)))
 
-(when (autoload-eval-lazily 'ilookup)
+(when (fboundp 'ilookup-open-word)
   (define-key ctl-x-map "d" 'ilookup-open-word))
 
 (set-variable 'ac-ignore-case nil)
 
-(when (autoload-eval-lazily 'term-run '(term-run-shell-command term-run))
+(when (fboundp 'term-run-shell-command)
   (define-key ctl-x-map "t" 'term-run-shell-command))
 
 (add-to-list 'safe-local-variable-values
@@ -1522,18 +1521,16 @@ found, otherwise returns nil."
         '(setq reb-re-syntax 'foreign-regexp)
         ))
 
-(autoload-eval-lazily 'sql '(sql-mode)
+(with-eval-after-load 'sql
   (require 'sql-indent nil t))
 (add-to-list 'auto-mode-alist
              '("\\.hql\\'" . sql-mode))
 
-(when (autoload-eval-lazily 'git-command)
+(when (fboundp 'git-command)
   (define-key ctl-x-map "g" 'git-command))
 
-;; This keybind cause unexpected call really many many times
-;; (when (autoload-eval-lazily 'gited)
-;;   (define-key ctl-x-map (kbd "C-g") 'gited-list))
-(defalias 'gited 'gited-list)
+(when (fboundp 'gited-list)
+  (defalias 'gited 'gited-list))
 
 (when (fboundp 'global-git-commit-mode)
   (add-hook 'after-first-visit-hook
@@ -1541,8 +1538,6 @@ found, otherwise returns nil."
 (with-eval-after-load 'git-commit
   (add-hook 'git-commit-setup-hook
             'turn-off-auto-fill t))
-
-(autoload-eval-lazily 'sl)
 
 (with-eval-after-load 'rst
   (defvar rst-mode-map)
@@ -1557,7 +1552,7 @@ found, otherwise returns nil."
 
 ;; Cannot enable error thrown. Why???
 ;; https://github.com/m0smith/malabar-mode#Installation
-;; (when (autoload-eval-lazily 'malabar-mode)
+;; (when (require 'malabar-mode nil t)
 ;;   (add-to-list 'load-path
 ;;                (expand-file-name (concat user-emacs-directory "/cedet")))
 ;;   (require 'cedet-devel-load nil t)
@@ -1622,10 +1617,10 @@ found, otherwise returns nil."
 
 (set-variable 'sh-here-document-word "__EOC__")
 
-(when (autoload-eval-lazily 'adoc-mode
-          nil
-        (defvar adoc-mode-map (make-sparse-keymap))
-        (define-key adoc-mode-map (kbd "C-m") 'newline))
+(with-eval-after-load 'adoc-mode
+  (defvar adoc-mode-map)
+  (define-key adoc-mode-map (kbd "C-m") 'newline))
+(when (fboundp 'adoc-mode)
   (setq auto-mode-alist
         `(("\\.adoc\\'" . adoc-mode)
           ("\\.asciidoc\\'" . adoc-mode)
@@ -1640,12 +1635,13 @@ found, otherwise returns nil."
   )
 
 ;; TODO: check if this is required
-(when (autoload-eval-lazily 'groovy-mode nil
-        (defvar groovy-mode-map (make-sparse-keymap))
-        (define-key groovy-mode-map "(" 'self-insert-command)
-        (define-key groovy-mode-map ")" 'self-insert-command)
-        (define-key groovy-mode-map (kbd "C-m") 'newline-and-indent)
-        )
+(with-eval-after-load 'groovy-mode
+  (defvar groovy-mode-map)
+  (define-key groovy-mode-map "(" 'self-insert-command)
+  (define-key groovy-mode-map ")" 'self-insert-command)
+  (define-key groovy-mode-map (kbd "C-m") 'newline-and-indent)
+  )
+(when (fboundp 'groovy-mode)
   (add-to-list 'auto-mode-alist
                '("build\\.gradle\\'" . groovy-mode)))
 
@@ -1664,7 +1660,7 @@ found, otherwise returns nil."
 (with-eval-after-load 'text-mode
   (define-key text-mode-map (kbd "C-m") 'newline))
 
-(autoload-eval-lazily 'info nil
+(with-eval-after-load 'info
   (defvar Info-additional-directory-list)
   (dolist (dir (directory-files (concat user-emacs-directory
                                         "info")
@@ -1713,16 +1709,13 @@ found, otherwise returns nil."
 (add-to-list 'auto-mode-alist (cons "\\.ol\\'" 'outline-mode))
 
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
-(when (autoload-eval-lazily 'markdown-mode
-          '(markdown-mode gfm-mode)
-        (defvar gfm-mode-map (make-sparse-keymap))
-        (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline)
-        (define-key gfm-mode-map "`" nil)  ;; markdown-electric-backquote
-        )
+(with-eval-after-load 'markdown-mode
+  (defvar gfm-mode-map)
+  (define-key gfm-mode-map (kbd "C-m") 'electric-indent-just-newline)
+  (define-key gfm-mode-map "`" nil)  ;; markdown-electric-backquote
+  )
+(when (fboundp 'gfm-mode)
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'gfm-mode))
-  (set-variable 'markdown-command (or (executable-find "markdown")
-                                      (executable-find "markdown.pl")
-                                      ""))
   (add-hook 'markdown-mode-hook
             (lambda ()
               (outline-minor-mode 1)
@@ -1742,7 +1735,7 @@ found, otherwise returns nil."
   (add-to-list 'c-default-style
                '(c++-mode . "k&r")))
 
-(autoload-eval-lazily 'js2-mode nil
+(with-eval-after-load 'js2-mode
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
   ;; (add-to-list 'auto-mode-alist '("\\.jsm\\'" . js2-mode))
@@ -1822,7 +1815,7 @@ found, otherwise returns nil."
 (add-to-list 'auto-mode-alist
              '("tox\\.ini\\'" . conf-unix-mode))
 
-(when (autoload-eval-lazily 'toml-mode)
+(when (fboundp 'toml-mode)
   (add-to-list 'auto-mode-alist
                '("/tox\\.ini\\'" . toml-mode))
   (add-to-list 'auto-mode-alist
@@ -1831,7 +1824,7 @@ found, otherwise returns nil."
                '("/poetry\\.lock\\'" . toml-mode))
   )
 
-(when (autoload-eval-lazily 'json-mode)
+(when (fboundp 'json-mode)
   (add-to-list 'auto-mode-alist
                '("/Pipfile\\.lock\\'" . json-mode)))
 
@@ -1841,7 +1834,7 @@ found, otherwise returns nil."
             (add-hook 'before-save-hook' 'gofmt-before-save nil t)
             (define-key go-mode-map (kbd "M-.") 'godef-jump)))
 
-(when (autoload-eval-lazily 'k8s-mode)
+(when (fboundp 'k8s-mode)
   (add-to-list 'auto-mode-alist
                '("\\.k8s\\'" . k8s-mode)))
 
@@ -1854,29 +1847,30 @@ found, otherwise returns nil."
 (declare-function bs-refresh "bs")
 (declare-function bs-message-without-log "bs")
 (declare-function bs--current-config-message "bs")
-(when (autoload-eval-lazily 'bs '(bs-show)
-        (add-to-list 'bs-configurations
-                     '("specials" "^\\*" nil ".*" nil nil))
-        (add-to-list 'bs-configurations
-                     '("files-and-specials" "^\\*" buffer-file-name ".*" nil nil))
-        (defvar bs-mode-map)
-        (defvar bs-current-configuration)
-        (define-key bs-mode-map (kbd "t")
-          ;; TODO: fix toggle feature
-          (lambda ()
-            (interactive)
-            (if (string= "specials"
-                         bs-current-configuration)
-                (bs-set-configuration "files")
-              (bs-set-configuration "specials"))
-            (bs-refresh)
-            (bs-message-without-log "%s"
-                                    (bs--current-config-message))))
-        ;; (setq bs-configurations (list
-        ;; '("processes" nil get-buffer-process ".*" nil nil)
-        ;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
-        ;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
-        )
+(with-eval-after-load 'bs
+  (add-to-list 'bs-configurations
+               '("specials" "^\\*" nil ".*" nil nil))
+  (add-to-list 'bs-configurations
+               '("files-and-specials" "^\\*" buffer-file-name ".*" nil nil))
+  (defvar bs-mode-map)
+  (defvar bs-current-configuration)
+  (define-key bs-mode-map (kbd "t")
+    ;; TODO: fix toggle feature
+    (lambda ()
+      (interactive)
+      (if (string= "specials"
+                   bs-current-configuration)
+          (bs-set-configuration "files")
+        (bs-set-configuration "specials"))
+      (bs-refresh)
+      (bs-message-without-log "%s"
+                              (bs--current-config-message))))
+  ;; (setq bs-configurations (list
+  ;; '("processes" nil get-buffer-process ".*" nil nil)
+  ;; '("files-and-scratch" "^\\*scratch\\*$" nil nil
+  ;; bs-visits-non-file bs-sort-buffer-interns-are-last)))
+  )
+(when (fboundp 'bs-show)
   (defalias 'list-buffers 'bs-show)
   (set-variable 'bs-default-configuration "files-and-specials")
   (set-variable 'bs-default-sort-name "by nothing")
@@ -2132,12 +2126,12 @@ ARG is num to show, or defaults to 7."
     (with-eval-after-load 'dired
       (define-key dired-mode-map "P" 'pack-dired-dwim)))
 
-  (when (autoload-eval-lazily 'dired-list-all-mode)
+  (when (fboundp 'dired-list-all-mode)
     (setq dired-listing-switches "-lhF")
     (with-eval-after-load 'dired
       (define-key dired-mode-map "a" 'dired-list-all-mode))))
 
-(when (autoload-eval-lazily 'dired-filter)
+(when (fboundp 'dired-filter-mode)
   (add-hook 'dired-mode-hook
             'dired-filter-mode))
 (set-variable 'dired-filter-stack nil)
