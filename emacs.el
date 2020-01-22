@@ -1539,7 +1539,9 @@ Otherwize hook it."
 
 (when (fboundp 'global-git-commit-mode)
   (add-hook 'after-first-visit-hook
-            'global-git-commit-mode))
+            'global-git-commit-mode)
+  (add-hook 'after-first-visit-hook
+            'git-commit-setup-check-buffer))
 (with-eval-after-load 'git-commit
   (add-hook 'git-commit-setup-hook
             'turn-off-auto-fill t))
