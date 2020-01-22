@@ -1052,8 +1052,12 @@ Otherwize hook it."
 
 ;; save cursor position
 (when (fboundp 'save-place-mode)
+  (autoload 'save-place-find-file-hook "saveplace")
   (add-hook 'after-first-visit-hook
-            'save-place-mode))
+            'save-place-mode)
+  (add-hook 'after-first-visit-hook
+            'save-place-find-file-hook
+            t))
 (set-variable 'save-place-file (concat user-emacs-directory
                                        "places"))
 
