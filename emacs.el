@@ -770,6 +770,9 @@ Otherwize hook it."
 (when (fboundp 'global-whitespace-mode)
   (add-hook 'after-first-visit-hook
             'global-whitespace-mode))
+(add-hook 'dired-mode-hook
+          ;; Other way to disable in dired buffers?
+          (lambda () (set-variable 'whitespace-style nil t)))
 
 (with-eval-after-load 'whitespace
   (defvar whitespace-display-mappings)
@@ -802,9 +805,6 @@ Otherwize hook it."
       (whitespace-mode 1)))
 
   (set-variable 'whitespace-line-column nil)
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (set-variable 'whitespace-style nil t)))
   (if (>= (display-color-cells)
           256)
       (set-face-foreground 'whitespace-newline "color-109")
@@ -812,6 +812,7 @@ Otherwize hook it."
     ;;   (set-face-bold-p 'whitespace-newline
     ;;                      t))
     ))
+
 (and nil
      '(require 'fill-column-indicator nil t)
      (setq fill-column-indicator))
