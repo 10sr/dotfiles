@@ -1572,7 +1572,7 @@ Otherwize hook it."
 
 
 (setq diff-switches "-u")
-(autoload 'diff-goto-source "diff-mode")
+(autoload 'diff-goto-source "diff-mode" nil t)
 (with-eval-after-load 'diff-mode
   ;; (when (and (eq major-mode
   ;;                'diff-mode)
