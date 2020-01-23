@@ -465,6 +465,10 @@ Otherwize hook it."
 (when (fboundp 'global-page-break-lines-mode)
   (add-hook 'after-first-visit-hook
             'global-page-break-lines-mode))
+(defun my-insert-page-break ()
+  "Insert ^L."
+  (interactive)
+  (insert "\^L\n"))
 
 (when (fboundp 'global-git-gutter-mode)
   (add-hook 'after-first-visit-hook
@@ -2633,6 +2637,8 @@ Any output will be written to current buffer."
 (with-eval-after-load 'ivy
   (ivy-configure 'my-counsel-describe-symbol
     :sort-fn #'ivy-string<)
+  (ivy-configure 'counsel-M-x
+    :initial-input "")
   )
 
 
