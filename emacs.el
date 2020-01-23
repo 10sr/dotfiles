@@ -1710,10 +1710,9 @@ Otherwize hook it."
 (add-hook 'outline-mode-hook
           (lambda ()
             (when (string-match "\\.md\\'" buffer-file-name)
-              (set (make-local-variable 'outline-regexp) "#+ "))))
+              (setq-local outline-regexp "#+ "))))
 (add-hook 'outline-mode-hook
           'outline-show-all)
-(add-to-list 'auto-mode-alist (cons "\\.ol\\'" 'outline-mode))
 
 (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'outline-mode))
 (with-eval-after-load 'markdown-mode
@@ -1724,9 +1723,10 @@ Otherwize hook it."
 (when (fboundp 'gfm-mode)
   (add-to-list 'auto-mode-alist (cons "\\.md\\'" 'gfm-mode))
   (add-hook 'markdown-mode-hook
+            'outline-minor-mode)
+  (add-hook 'markdown-mode-hook
             (lambda ()
-              (outline-minor-mode 1)
-              (set (make-local-variable 'comment-start) ";")))
+              (setq-local comment-start ";")))
   )
 
 ;; http://keisanbutsuriya.hateblo.jp/entry/2015/02/10/152543
