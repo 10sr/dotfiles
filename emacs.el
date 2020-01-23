@@ -118,6 +118,7 @@ Otherwize hook it."
        scala-mode
        web-mode
        toml-mode
+       json-mode
 
 
        color-moccur
