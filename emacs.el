@@ -2642,6 +2642,8 @@ Any output will be written to current buffer."
 (with-eval-after-load 'ivy
   (ivy-configure 'my-counsel-describe-symbol
     :sort-fn #'ivy-string<)
+  )
+(with-eval-after-load 'counsel
   (ivy-configure 'counsel-M-x
     :initial-input "")
   )
