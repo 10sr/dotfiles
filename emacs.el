@@ -2582,8 +2582,18 @@ Any output will be written to current buffer."
 ;; (defvar ivy-re-builders-alist)
 (set-variable 'ivy-re-builders-alist
               '((t . my--ivy-regex-fuzzy-ignore-order)))
+;; (set-variable 'ivy-format-functions-alist
+;;               '((t . ivy-format-function-arrow)))
 (set-variable 'ivy-format-functions-alist
-              '((t . ivy-format-function-arrow)))
+              '((t . (lambda (cands)  (ivy--format-function-generic
+                                       (lambda (str)
+                                         (concat "-> "
+                                                 (ivy--add-face str 'ivy-current-match)
+                                                 ))
+                                       (lambda (str)
+                                         (concat "|  " str))
+                                       cands
+                                       "\n")))))
 
 (defun my--ivy-regex-fuzzy-ignore-order (str)
   "Re-build regex from STR for ignore-order fuzzy match."
