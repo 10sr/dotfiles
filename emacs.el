@@ -2594,6 +2594,8 @@ Any output will be written to current buffer."
                                          (concat "|  " str))
                                        cands
                                        "\n")))))
+(when (fboundp 'ivy-rich-mode)
+  (ivy-rich-mode 1))
 
 (defun my--ivy-regex-fuzzy-ignore-order (str)
   "Re-build regex from STR for ignore-order fuzzy match."
@@ -2629,6 +2631,8 @@ Any output will be written to current buffer."
   ;;        (setenv "FZF_DEFAULT_COMMAND" nil)
   ;;        (counsel-fzf)))))
   )
+(when (fboundp 'counsel-switch-buffer)
+  (define-key ctl-x-map (kbd "C-b") 'counsel-switch-buffer))
 
 (when (and (fboundp 'ivy-read)
            (locate-library "counsel"))
