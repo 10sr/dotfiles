@@ -1310,7 +1310,7 @@ Otherwize hook it."
           (lambda ()
             (setq imenu-generic-expression
                   `(("Sections" ";;;\+\n;; \\(.*\\)\n" 1)
-                  ,@imenu-generic-expression))))
+                    ,@imenu-generic-expression))))
 ;; TODO: Try paraedit http://daregada.blogspot.com/2012/03/paredit.html
 
 (with-eval-after-load 'compile
@@ -2574,6 +2574,7 @@ Any output will be written to current buffer."
   (defvar ivy-minibuffer-map)
   (define-key ivy-minibuffer-map (kbd "C-u")
     (lambda () (interactive) (delete-region (point-at-bol) (point)))))
+(set-variable 'ivy-on-del-error-function 'ignore)
 
 (when (fboundp 'counsel-M-x)
   (define-key esc-map "x" 'counsel-M-x)
