@@ -2578,9 +2578,11 @@ Any output will be written to current buffer."
 
 ;; ivy
 
-(defvar ivy-re-builders-alist)
+;; (defvar ivy-re-builders-alist)
 (set-variable 'ivy-re-builders-alist
               '((t . my--ivy-regex-fuzzy-ignore-order)))
+(set-variable 'ivy-format-functions-alist
+              '((t . ivy-format-function-arrow)))
 
 (defun my--ivy-regex-fuzzy-ignore-order (str)
   "Re-build regex from STR for ignore-order fuzzy match."
