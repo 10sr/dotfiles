@@ -2664,13 +2664,21 @@ Any output will be written to current buffer."
   (define-key help-map "o" 'my-counsel-describe-symbol)
   )
 
+(defun my-ivy-length (x y)
+  "Ivy sort to order by string length."
+  (<= (length (if (consp x) (car x) x))
+      (length (if (consp y) (car y) y))))
+;; (my-ivy-length "a" (cons "bc" t))
+;; (my-ivy-length "a" (cons "c" t))
+
 (with-eval-after-load 'ivy
   (ivy-configure 'my-counsel-describe-symbol
-    :sort-fn #'ivy-string<)
+    :sort-fn 'my-ivy-length)
   )
 (with-eval-after-load 'counsel
   (ivy-configure 'counsel-M-x
-    :initial-input "")
+    :initial-input ""
+    :sort-fn 'my-ivy-length)
   )
 
 
