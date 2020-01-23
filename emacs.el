@@ -947,31 +947,29 @@ Otherwize hook it."
 (defvar my-fzf-default-command nil
   "My fzf FZF_DEFAULT_COMMAND.")
 (set-variable 'my-fzf-default-command
-              (let* ((find (if (executable-find "bfs")
-                               ;; Breadth-first find https://github.com/tavianator/bfs
-                               "bfs"
-                             ;; Use gfind if available?
-                             "find"))
-                     (findcmd (concat "set -eu; set -o pipefail; "
-                                      "echo .; "
-                                      "echo ..; "
-                                      "command " find " -L . "
-                                      "-mindepth 1 "
-                                      "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-                                      "-o -print "
-                                      "2> /dev/null "
-                                      "| "
-                                      "cut -b3-"))
-                     (fdcmd (concat "set -eu; set -o pipefail; "
-                                    "echo .; "
-                                    "echo ..; "
-                                    "command fd "
-                                    "--follow --hidden --no-ignore "
-                                    "--color always "
-                                    "2>/dev/null")))
-                (if (executable-find "fd")
-                    fdcmd
-                  findcmd)))
+              (let ((find (or (executable-find "bfs")  ;; Breadth-first find https://github.com/tavianator/bfs
+                              ;; Use gfind if available?
+                              "find"))
+                    (fd (or (executable-find "fdfind")
+                            (executable-find "fd"))))
+                (if fd
+                    (concat "set -eu; set -o pipefail; "
+                            "echo .; "
+                            "echo ..; "
+                            "command " fd " "
+                            "--follow --hidden --no-ignore "
+                            "--color always "
+                            "2>/dev/null")
+                  (concat "set -eu; set -o pipefail; "
+                          "echo .; "
+                          "echo ..; "
+                          "command " find " -L . "
+                          "-mindepth 1 "
+                          "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+                          "-o -print "
+                          "2> /dev/null "
+                          "| "
+                          "cut -b3-"))))
 (set-variable 'fzf/window-height 45)
 (set-variable 'fzf/args "--print-query --ansi --color='bg+:-1' --inline-info --cycle")
 ;; (set-variable 'fzf/args "--print-query --ansi --inline-info --cycle")
