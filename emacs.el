@@ -977,7 +977,7 @@ Otherwize hook it."
 
 (declare-function fzf "fzf" t)
 (defun my-fzf-or-find-file ()
-  "Call fzf if usable or call find-file."
+  "Call fzf if usable or call `find-file'."
   (declare (interactive-only t))
   (interactive)
   (if (and (executable-find "fzf")
