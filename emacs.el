@@ -1020,7 +1020,7 @@ Otherwize hook it."
   (defun my-counsel-recently ()
     "Consel `recently'."
     (interactive)
-    (ivy-read "Recently: " (recently-list)
+    (ivy-read "Recently: " (mapcar 'abbreviate-file-name (recently-list))
               :require-match t
               :history 'my-cousel-recently-history
               :preselect default-directory
