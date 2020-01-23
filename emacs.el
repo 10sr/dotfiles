@@ -1146,6 +1146,9 @@ Otherwize hook it."
 (set-variable 'vc-rcs-checkin-switches "-l")
 (set-variable 'vc-command-messages t)
 
+(when (fboundp 'neotree)
+  (define-key ctl-x-map (kbd "C-n") 'neotree))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; share clipboard with x
 
