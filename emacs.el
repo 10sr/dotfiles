@@ -541,17 +541,22 @@ Otherwize hook it."
                       )))
 
 (when (require 'diminish nil t)
-  ;; FIXME: Eval after enabling mode
   (eval-after-init
     (diminish 'recently-mode)
     (diminish 'editorconfig-mode)
-    (diminish 'auto-highlight-symbol-mode)
-    (diminish 'global-whitespace-mode)
     (diminish 'which-key-mode)
-    (diminish 'page-break-lines-mode)
-    (diminish 'highlight-indentation-mode)
-    (diminish 'color-identifiers-mode)
-    ))
+    )
+  (with-eval-after-load 'whitespace
+    (diminish 'global-whitespace-mode))
+  (with-eval-after-load 'page-break-lines
+    (diminish 'page-break-lines-mode))
+  (with-eval-after-load 'auto-highlight-symbol
+    (diminish 'auto-highlight-symbol-mode))
+  (with-eval-after-load 'color-identifiers-mode
+    (diminish 'color-identifiers-mode))
+  (with-eval-after-load 'highlight-indentation
+    (diminish 'highlight-indentation-mode))
+  )
 
 (setq mode-line-front-space "")
 ;; (setq mode-line-end-spaces "")
@@ -1730,6 +1735,8 @@ Otherwize hook it."
   )
 
 ;; http://keisanbutsuriya.hateblo.jp/entry/2015/02/10/152543
+;; M-$ to ispell word
+;; M-x flyspell-buffer to highlight all suspicious words
 (when (executable-find "aspell")
   (setq-default ispell-program-name "aspell"))
 (with-eval-after-load 'ispell
