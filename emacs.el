@@ -465,10 +465,15 @@ Otherwize hook it."
 (when (fboundp 'global-page-break-lines-mode)
   (add-hook 'after-first-visit-hook
             'global-page-break-lines-mode))
+(with-eval-after-load 'page-break-lines
+  (set-face-foreground 'page-break-lines
+                       "cyan")
+  )
 (defun my-insert-page-break ()
   "Insert ^L."
   (interactive)
   (insert "\^L\n"))
+
 
 (when (fboundp 'global-git-gutter-mode)
   (add-hook 'after-first-visit-hook
