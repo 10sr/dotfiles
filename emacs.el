@@ -492,7 +492,7 @@ Otherwize hook it."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
-(when (require 'terminal-title nil t)
+(when (fboundp 'terminal-title-mode)
   ;; if TERM is not screen use default value
   (if (getenv "TMUX")
       ;; if use tmux locally just basename of current dir
@@ -540,7 +540,7 @@ Otherwize hook it."
                         "")
                       )))
 
-(when (require 'diminish nil t)
+(when (fboundp 'diminish)
   (eval-after-init
     (diminish 'recently-mode)
     (diminish 'editorconfig-mode)
@@ -638,8 +638,10 @@ Otherwize hook it."
 (define-key minibuffer-local-map (kbd "C-p") (kbd "ESC p"))
 (define-key minibuffer-local-map (kbd "C-n") (kbd "ESC n"))
 
-(when (require 'minibuffer-line nil t)
+(with-eval-after-load 'minibuffer-line
   (set-face-underline 'minibuffer-line nil)
+  )
+(when (fboundp 'minibuffer-line-mode)
   (set-variable 'minibuffer-line-refresh-interval
                 25)
 
@@ -673,7 +675,7 @@ Otherwize hook it."
   (minibuffer-line-mode 1)
   )
 
-(when (require 'prompt-text nil t)
+(when (fboundp 'prompt-text-mode)
 
   (set-variable 'prompt-text-format
                 `(,(concat ""
@@ -888,9 +890,13 @@ Otherwize hook it."
                                                                     end)))
     (setq deactivate-mark t)))
 
-(when (fboundp 'global-auto-highlight-symbol-mode)
-  (add-hook 'after-first-visit-hook
-            'global-auto-highlight-symbol-mode))
+(when (fboundp 'auto-highlight-symbol-mode)
+  (add-hook 'prog-mode-hook
+            'auto-highlight-symbol-mode))
+;; Not work in combination with flyspell-mode
+;; (when (fboundp 'global-auto-highlight-symbol-mode)
+;;   (add-hook 'after-first-visit-hook
+;;             'global-auto-highlight-symbol-mode))
 (set-variable 'ahs-idle-interval 0.6)
 
 
@@ -957,6 +963,7 @@ Otherwize hook it."
 ;; (set-variable 'fzf/args "--print-query --ansi --inline-info --cycle")
 ;; (set-variable 'fzf/args "--print-query --ansi --color=bw --inline-info --cycle")
 
+(declare-function fzf "fzf" t)
 (defun my-fzf-or-find-file ()
   "Call fzf if usable or call find-file."
   (declare (interactive-only t))
@@ -979,19 +986,21 @@ Otherwize hook it."
 ;; recently
 
 ;; TODO: Enable after first visit file?
-(when (require 'recently nil t)
-  (define-key ctl-x-map (kbd "C-r") 'recently-show)
-  (set-variable 'recently-max 1000)
+(with-eval-after-load 'recently
   (defvar recently-excludes)
   (add-to-list 'recently-excludes
                (rx-to-string (list 'and
                                    'string-start
                                    (expand-file-name package-user-dir))
-                             t))
+                             t)))
+(when (fboundp 'recently-mode)
+  (define-key ctl-x-map (kbd "C-r") 'recently-show)
+  (set-variable 'recently-max 1000)
   (recently-mode 1))
 
 (defvar my-cousel-recently-history nil "History of `my-counsel-recently'.")
 
+(declare-function recently-list "recently" t)
 (when (and (require 'recently nil t)
            (fboundp 'ivy-read))
   (defun my-counsel-recently ()
@@ -1981,6 +1990,7 @@ Otherwize hook it."
 ;; (apply 'concat (my-file-head "./shrc" 10)
 
 
+(declare-function dired-get-filename "dired" t)
 (defun my-dired-echo-file-head (arg)
   "Echo head of current file.
 
