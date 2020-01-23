@@ -1726,9 +1726,21 @@ Otherwize hook it."
   (add-hook 'markdown-mode-hook
             (lambda ()
               (outline-minor-mode 1)
-              (flyspell-mode)
               (set (make-local-variable 'comment-start) ";")))
   )
+
+;; http://keisanbutsuriya.hateblo.jp/entry/2015/02/10/152543
+(when (executable-find "aspell")
+  (setq-default ispell-program-name "aspell"))
+(with-eval-after-load 'ispell
+  (add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
+
+(when (fboundp 'flyspell-mode)
+  (add-hook 'text-mode-hook
+            'flyspell-mode))
+(when (fboundp 'flyspell-prog-mode)
+  (add-hook 'prog-mode-hook
+            'flyspell-prog-mode))
 
 ;; c-mode
 ;; http://www.emacswiki.org/emacs/IndentingC
