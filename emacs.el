@@ -1759,7 +1759,8 @@ Otherwize hook it."
 ;; M-$ to ispell word
 ;; M-x flyspell-buffer to highlight all suspicious words
 (when (executable-find "aspell")
-  (setq-default ispell-program-name "aspell"))
+  (set-variable 'ispell-program-name "aspell")
+  (set-variable 'ispell-extra-args '("--lang=en_US")))
 (with-eval-after-load 'ispell
   (add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
 
