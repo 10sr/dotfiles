@@ -942,31 +942,34 @@ Otherwize hook it."
 ;;  - parent directory (..)
 ;; ripgrep cannot list directories...
 ;; (setenv "FZF_DEFAULT_COMMAND" "rg --files --hidden --follow --glob '!.git/*' --no-ignore")
-(let* ((find (if (executable-find "bfs")
-                 ;; Breadth-first find https://github.com/tavianator/bfs
-                 "bfs"
-               ;; Use gfind if available?
-               "find"))
-       (findcmd (concat "set -eu; set -o pipefail; "
-                        "echo .; "
-                        "echo ..; "
-                        "command " find " -L . "
-                        "-mindepth 1 "
-                        "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
-                        "-o -print "
-                        "2> /dev/null "
-                        "| "
-                        "cut -b3-"))
-       (fdcmd (concat "set -eu; set -o pipefail; "
-                      "echo .; "
-                      "echo ..; "
-                      "command fd "
-                      "--follow --hidden --no-ignore "
-                      "--color always "
-                      "2>/dev/null")))
-  (if (executable-find "fd")
-      (setenv "FZF_DEFAULT_COMMAND" fdcmd)
-    (setenv "FZF_DEFAULT_COMMAND" findcmd)))
+(defvar my-fzf-default-command nil
+  "My fzf FZF_DEFAULT_COMMAND.")
+(set-variable 'my-fzf-default-command
+              (let* ((find (if (executable-find "bfs")
+                               ;; Breadth-first find https://github.com/tavianator/bfs
+                               "bfs"
+                             ;; Use gfind if available?
+                             "find"))
+                     (findcmd (concat "set -eu; set -o pipefail; "
+                                      "echo .; "
+                                      "echo ..; "
+                                      "command " find " -L . "
+                                      "-mindepth 1 "
+                                      "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+                                      "-o -print "
+                                      "2> /dev/null "
+                                      "| "
+                                      "cut -b3-"))
+                     (fdcmd (concat "set -eu; set -o pipefail; "
+                                    "echo .; "
+                                    "echo ..; "
+                                    "command fd "
+                                    "--follow --hidden --no-ignore "
+                                    "--color always "
+                                    "2>/dev/null")))
+                (if (executable-find "fd")
+                    fdcmd
+                  findcmd)))
 (set-variable 'fzf/window-height 45)
 (set-variable 'fzf/args "--print-query --ansi --color='bg+:-1' --inline-info --cycle")
 ;; (set-variable 'fzf/args "--print-query --ansi --inline-info --cycle")
@@ -980,7 +983,9 @@ Otherwize hook it."
   (if (and (executable-find "fzf")
            (fboundp 'fzf)
            (not (file-remote-p default-directory)))
-      (fzf)
+      (let ((process-environment (cl-copy-list process-environment)))
+        (setenv "FZF_DEFAULT_COMMAND" my-fzf-default-command)
+        (fzf))
     (call-interactively 'find-file)))
 (define-key ctl-x-map "f" 'my-fzf-or-find-file)
 
