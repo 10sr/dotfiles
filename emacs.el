@@ -117,6 +117,7 @@ Otherwize hook it."
        gosh-mode
        scala-mode
        web-mode
+       toml-mode
 
 
        color-moccur
