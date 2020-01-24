@@ -1129,6 +1129,20 @@ Otherwize hook it."
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
+
+(when (fboundp 'smart-revert-on)
+  (smart-revert-on))
+
+;; autosave
+;; auto-save-visited-mode can be used instead?
+;; (when (require 'autosave nil t)
+;;   (autosave-set 8))
+
+
+;; bookmarks
+;; Bookmark feature does not work well with multiple emacs instances...
+
+;; (define-key ctl-x-map "m" 'list-bookmarks)
 (set-variable 'bookmark-default-file
               (expand-file-name (concat user-emacs-directory
                                         "bmk")))
@@ -1155,19 +1169,6 @@ Otherwize hook it."
   (defvar bookmark-default-file)
   (add-to-list 'recentf-exclude
                (regexp-quote bookmark-default-file)))
-
-(when (fboundp 'smart-revert-on)
-  (smart-revert-on))
-
-;; autosave
-;; auto-save-visited-mode can be used instead?
-;; (when (require 'autosave nil t)
-;;   (autosave-set 8))
-
-
-;; bookmarks
-
-;; (define-key ctl-x-map "m" 'list-bookmarks)
 
 ;; vc
 
