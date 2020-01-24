@@ -420,6 +420,7 @@ Otherwize hook it."
 (cua-mode 0)
 (setq line-move-visual nil)
 (setq create-lockfiles nil)
+(setq set-mark-command-repeat-pop t)
 
 (add-hook 'before-save-hook
           'time-stamp)
@@ -499,6 +500,14 @@ Otherwize hook it."
 ;; (when (fboundp 'fancy-narrow-mode)
 ;;   (add-hook 'after-first-visit-hook
 ;;             'fancy-narrow-mode))
+
+;; https://solist.work/blog/posts/mark-ring/
+(defun my-exchange-point-and-mark ()
+  "`exchange-point-and-mark' without mark activation."
+  (interactive)
+  (exchange-point-and-mark)
+  (deactivate-mark))
+(define-key ctl-x-map (kbd "C-x") 'my-exchange-point-and-mark)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
@@ -2637,7 +2646,7 @@ Any output will be written to current buffer."
                                        cands
                                        "\n")))))
 (set-variable 'ivy-wrap t)
-(set-variable 'ivy-sort-max-size 50)
+(set-variable 'ivy-sort-max-size 500)
 
 (when (fboundp 'ivy-rich-mode)
   (ivy-rich-mode 1))
