@@ -460,8 +460,17 @@ Otherwize hook it."
 (define-key esc-map "u" 'undo)
 (define-key esc-map "i" (kbd "ESC TAB"))
 ;; (global-set-key (kbd "C-r") 'query-replace-regexp)
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+
+;; (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+;; (global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(set-variable 'search-default-mode t)
+;; TODO: Do not depend on ivy function
+(set-variable 'search-default-mode
+              (lambda (str lax)
+                (ivy--regex-fuzzy (replace-regexp-in-string (rx (one-or-more whitespace))
+                                                            ""
+                                                            str))))
+;; (isearch-symbol-regexp "a")
 
 (when (fboundp 'undo-fu-only-undo)
   (global-set-key (kbd "C-_") 'undo-fu-only-undo))
