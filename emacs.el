@@ -511,6 +511,12 @@ Otherwize hook it."
 (define-key ctl-x-map (kbd "C-x") 'my-exchange-point-and-mark)
 (when (fboundp 'counsel-mark-ring)
   (define-key ctl-x-map "m" 'counsel-mark-ring))
+(with-eval-after-load 'ivy
+  (defvar ivy-sort-functions-alist)
+  (add-to-list 'ivy-sort-functions-alist
+               '(counsel-mark-ring)))
+  (run-with-idle-timer 5 t
+                       'push-mark)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
