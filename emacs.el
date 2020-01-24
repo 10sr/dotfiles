@@ -515,8 +515,8 @@ Otherwize hook it."
   (defvar ivy-sort-functions-alist)
   (add-to-list 'ivy-sort-functions-alist
                '(counsel-mark-ring)))
-  (run-with-idle-timer 5 t
-                       'push-mark)
+(run-with-idle-timer 10 t
+                     'push-mark)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
@@ -1149,12 +1149,11 @@ Otherwize hook it."
 
 
 ;; bookmarks
-;; Bookmark feature does not work well with multiple emacs instances...
 
-;; (define-key ctl-x-map "m" 'list-bookmarks)
 (set-variable 'bookmark-default-file
               (expand-file-name (concat user-emacs-directory
                                         "bmk")))
+(set-variable 'bookmark-sort-flag nil)
 
 (defun my-bookmark-set ()
   "My `bookmark-set'."
@@ -1171,13 +1170,32 @@ Otherwize hook it."
                           name linenum linetext)
                   nil)))
 
-(set-variable 'bookmark-save-flag
-              1)
+;; Done by advice instead
+;; (set-variable 'bookmark-save-flag
+;;               1)
 (with-eval-after-load 'recentf
   (defvar recentf-exclude)
   (defvar bookmark-default-file)
   (add-to-list 'recentf-exclude
                (regexp-quote bookmark-default-file)))
+
+(defvar bookmark-default-file)
+(defun my-bookmark-set--advice (orig-func &rest args)
+  "Function for `bookmark-set-internal'.
+
+ORIG-FUNC is the target function, and ARGS is the argument when it is called."
+  (bookmark-load bookmark-default-file)
+  (apply orig-func args)
+  (bookmark-save))
+
+(with-eval-after-load 'bookmark
+  (advice-add 'bookmark-set-internal
+              :around
+              'my-bookmark-set--advice))
+(define-key ctl-x-map "b" 'list-bookmarks)
+(when (fboundp 'counsel-bookmark)
+  (define-key ctl-x-map "b" 'counsel-bookmark))
+(define-key ctl-x-map "B" 'my-bookmark-set)
 
 ;; vc
 
