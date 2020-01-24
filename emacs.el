@@ -248,7 +248,7 @@ Otherwize hook it."
      (tool-bar-mode 0))
 (and (fboundp 'set-scroll-bar-mode)
      (set-scroll-bar-mode nil))
-?\C-h
+
 (eval-after-init
   (message "%s %s" invocation-name emacs-version)
   (message "Invocation directory: %s" default-directory)
