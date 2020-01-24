@@ -1123,6 +1123,22 @@ Otherwize hook it."
 (set-variable 'bookmark-default-file
               (expand-file-name (concat user-emacs-directory
                                         "bmk")))
+
+(defun my-bookmark-set ()
+  "My `bookmark-set'."
+  (interactive)
+  (cl-assert (or buffer-file-name
+                 default-directory))
+  (let ((name (file-name-nondirectory (or buffer-file-name
+                                          (directory-file-name default-directory))))
+        (linenum (count-lines (point-min)
+                              (point)))
+        (linetext (buffer-substring-no-properties (point-at-bol)
+                                                  (point-at-eol))))
+    (bookmark-set (format "%s:%d:%s"
+                          name linenum linetext)
+                  nil)))
+
 (set-variable 'bookmark-save-flag
               1)
 (with-eval-after-load 'recentf
@@ -2582,6 +2598,7 @@ Any output will be written to current buffer."
 (define-key ctl-x-map "R" 'remember)
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ivy
 
 ;; (set-variable 'enable-recursive-minibuffers t)
@@ -2731,6 +2748,8 @@ Any output will be written to current buffer."
 
   )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; dired-k
 ;; なんかよくわからないけど頻繁に index.lock を残してしまう
 (when (fboundp 'dired-k)
   (set-variable 'dired-k-style 'git)
@@ -2765,6 +2784,7 @@ Any output will be written to current buffer."
 (define-key input-decode-map "\e[1;5C" [C-right])
 (define-key input-decode-map "\e[1;5D" [C-left])
 
+;;;;;;;;;;;;;;;;;;;;;;;;
 ;; mozc
 
 (global-set-key (kbd "C-c m e") 'ignore)
