@@ -2584,23 +2584,8 @@ Any output will be written to current buffer."
 
 ;; ivy
 
-;; (defvar ivy-re-builders-alist)
-(set-variable 'ivy-re-builders-alist
-              '((t . my--ivy-regex-fuzzy-ignore-order)))
-;; (set-variable 'ivy-format-functions-alist
-;;               '((t . ivy-format-function-arrow)))
-(set-variable 'ivy-format-functions-alist
-              '((t . (lambda (cands)  (ivy--format-function-generic
-                                       (lambda (str)
-                                         (concat "-> "
-                                                 (ivy--add-face str 'ivy-current-match)
-                                                 ))
-                                       (lambda (str)
-                                         (concat "|  " str))
-                                       cands
-                                       "\n")))))
-(when (fboundp 'ivy-rich-mode)
-  (ivy-rich-mode 1))
+;; (set-variable 'enable-recursive-minibuffers t)
+;; (minibuffer-depth-indicate-mode 1)
 
 (defun my--ivy-regex-fuzzy-ignore-order (str)
   "Re-build regex from STR for ignore-order fuzzy match."
@@ -2618,6 +2603,26 @@ Any output will be written to current buffer."
 ;; (my--ivy-regex-fuzzy-ignore-order  "ab  bc !cee")
 ;; (ivy--regex-fuzzy "ab")
 ;; (ivy--regex-ignore-order "a b")
+
+(set-variable 'ivy-re-builders-alist
+              '((t . my--ivy-regex-fuzzy-ignore-order)))
+
+;; (set-variable 'ivy-format-functions-alist
+;;               '((t . ivy-format-function-arrow)))
+(set-variable 'ivy-format-functions-alist
+              '((t . (lambda (cands)  (ivy--format-function-generic
+                                       (lambda (str)
+                                         (concat "-> "
+                                                 (ivy--add-face str 'ivy-current-match)
+                                                 ))
+                                       (lambda (str)
+                                         (concat "|  " str))
+                                       cands
+                                       "\n")))))
+(set-variable 'ivy-wrap t)
+
+(when (fboundp 'ivy-rich-mode)
+  (ivy-rich-mode 1))
 
 (with-eval-after-load 'ivy
   (defvar ivy-minibuffer-map)
@@ -2664,21 +2669,25 @@ Any output will be written to current buffer."
   (define-key help-map "o" 'my-counsel-describe-symbol)
   )
 
-(defun my-ivy-length (x y)
-  "Ivy sort to order by string length."
-  (<= (length (if (consp x) (car x) x))
-      (length (if (consp y) (car y) y))))
+;; (defun my-ivy-length (x y)
+;;   "Ivy sort to order by string length."
+;;   (<= (length (if (consp x) (car x) x))
+;;       (length (if (consp y) (car y) y))))
 ;; (my-ivy-length "a" (cons "bc" t))
 ;; (my-ivy-length "a" (cons "c" t))
 
 (with-eval-after-load 'ivy
-  (ivy-configure 'my-counsel-describe-symbol
-    :sort-fn 'my-ivy-length)
-  )
-(with-eval-after-load 'counsel
+  ;; (ivy-configure 'my-counsel-describe-symbol
+  ;;   :sort-fn 'my-ivy-length)
   (ivy-configure 'counsel-M-x
     :initial-input ""
-    :sort-fn 'my-ivy-length)
+    ;; :sort-fn 'my-ivy-length
+    )
+  (defvar ivy-sort-matches-functions-alist)
+  (add-to-list 'ivy-sort-matches-functions-alist
+               '(my-counsel-describe-symbol . ivy--shorter-matches-first))
+  (add-to-list 'ivy-sort-matches-functions-alist
+               '(counsel-M-x . ivy--shorter-matches-first))
   )
 
 
