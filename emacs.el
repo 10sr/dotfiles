@@ -2641,8 +2641,8 @@ Any output will be written to current buffer."
   ;;        (setenv "FZF_DEFAULT_COMMAND" nil)
   ;;        (counsel-fzf)))))
   )
-(when (fboundp 'counsel-switch-buffer)
-  (define-key ctl-x-map (kbd "C-b") 'counsel-switch-buffer))
+;; (when (fboundp 'counsel-switch-buffer)
+;;   (define-key ctl-x-map (kbd "C-b") 'counsel-switch-buffer))
 
 (when (and (fboundp 'ivy-read)
            (locate-library "counsel"))
