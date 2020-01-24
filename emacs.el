@@ -518,6 +518,8 @@ Otherwize hook it."
 (run-with-idle-timer 10 t
                      'push-mark)
 
+(when (fboundp 'back-button-mode)
+  (back-button-mode 1))
 (when (fboundp 'back-button-local-forward)
   (global-set-key (kbd "<right>") 'back-button-local-forward))
 (when (fboundp 'back-button-local-backward)
