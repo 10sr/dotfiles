@@ -538,6 +538,23 @@ Otherwize hook it."
 (when (fboundp 'back-button-local-backward)
   (global-set-key (kbd "<left>") 'back-button-local-backward))
 
+(when (fboundp 'global-visible-mark-mode)
+  (set-variable 'visible-mark-max 2)
+  (set-variable 'visible-mark-faces '(visible-mark-face1 visible-mark-face2))
+
+  ;; http://emacs.rubikitch.com/visible-mark/
+  ;; transient-mark-modeでC-SPC C-SPC、あるいはC-SPC C-gすると消えるバグ修正
+  (defun visible-mark-move-overlays--avoid-disappear (&rest them)
+    "Fix.
+
+THEM are function and its args."
+    (let ((mark-active t)) (apply them)))
+  (advice-add 'visible-mark-move-overlays
+              :around
+              'visible-mark-move-overlays--avoid-disappear)
+
+  (global-visible-mark-mode 1))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
