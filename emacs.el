@@ -242,12 +242,13 @@ Otherwize hook it."
   )
 ;; (add-to-list 'default-frame-alist '(cursor-type . box))
 (menu-bar-mode 1)
-(define-key ctl-x-map "m" 'menu-bar-open)
+(define-key ctl-x-map "M" 'menu-bar-open)
+(defalias 'menu 'menu-bar-open)
 (and (fboundp 'tool-bar-mode)
      (tool-bar-mode 0))
 (and (fboundp 'set-scroll-bar-mode)
      (set-scroll-bar-mode nil))
-
+?\C-h
 (eval-after-init
   (message "%s %s" invocation-name emacs-version)
   (message "Invocation directory: %s" default-directory)
@@ -508,6 +509,8 @@ Otherwize hook it."
   (exchange-point-and-mark)
   (deactivate-mark))
 (define-key ctl-x-map (kbd "C-x") 'my-exchange-point-and-mark)
+(when (fboundp 'counsel-mark-ring)
+  (define-key ctl-x-map "m" 'counsel-mark-ring))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
