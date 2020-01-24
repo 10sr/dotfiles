@@ -164,6 +164,7 @@ Otherwize hook it."
        color-identifiers-mode
        dired-k
        blacken
+       back-button
 
        editorconfig
        editorconfig-custom-majormode
@@ -344,9 +345,12 @@ Otherwize hook it."
 (global-set-key (kbd "<right>") 'scroll-up)
 
 ;; (define-key my-prefix-map (kbd "C-h") help-map)
-(global-set-key (kbd "C-\\") help-map)
+;; (global-set-key (kbd "C-\\") help-map)
+
 (define-key ctl-x-map (kbd "DEL") help-map)
 (define-key ctl-x-map (kbd "C-h") help-map)
+;; This is often fired mistakenly
+(define-key ctl-x-map "h" 'ignore)  ;; Previously mark-whole-buffer
 (define-key help-map "a" 'apropos)
 
 ;; disable annoying keys
@@ -1586,7 +1590,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   (set-variable 'flycheck-executable-find
                 '(lambda (e)
                    (with-venv
-                     (executable-find e)))
+                    (executable-find e)))
                 t))
 
 (defun my-update-flycheck-flake8-error-level-alist ()
@@ -2427,8 +2431,8 @@ and search from projectile root (if projectile is available)."
            (eval-and-compile (require 'projectile nil t))
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-        (compilation-start command-args
-                           'grep-mode))
+                                   (compilation-start command-args
+                                                      'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -2446,8 +2450,8 @@ and search from projectile root (if projectile is available)."
     (if (eval-and-compile (require 'projectile nil t))
         (projectile-with-default-dir (or (projectile-project-root)
                                          default-directory)
-          (compilation-start command-args
-                             'grep-mode))
+                                     (compilation-start command-args
+                                                        'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
