@@ -2620,6 +2620,7 @@ Any output will be written to current buffer."
                                        cands
                                        "\n")))))
 (set-variable 'ivy-wrap t)
+(set-variable 'ivy-sort-max-size 50)
 
 (when (fboundp 'ivy-rich-mode)
   (ivy-rich-mode 1))
