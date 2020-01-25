@@ -529,7 +529,10 @@ Otherwize hook it."
   (add-to-list 'ivy-sort-functions-alist
                '(counsel-mark-ring)))
 (run-with-idle-timer 10 t
-                     'push-mark)
+                     (lambda ()
+                       (push-mark)
+                       (when (fboundp 'visible-mark-move-overlays)
+                         (visible-mark-move-overlays))))
 
 (when (fboundp 'back-button-mode)
   (back-button-mode 1))
@@ -540,7 +543,7 @@ Otherwize hook it."
 
 (when (fboundp 'global-visible-mark-mode)
   (set-variable 'visible-mark-max 2)
-  (set-variable 'visible-mark-faces '(visible-mark-face1 visible-mark-face2))
+  ;; (set-variable 'visible-mark-faces '(visible-mark-face1 visible-mark-face2))
 
   ;; http://emacs.rubikitch.com/visible-mark/
   ;; transient-mark-modeでC-SPC C-SPC、あるいはC-SPC C-gすると消えるバグ修正
@@ -554,6 +557,11 @@ THEM are function and its args."
               'visible-mark-move-overlays--avoid-disappear)
 
   (global-visible-mark-mode 1))
+
+;; visible-mark-mode
+;; visible-mark-overlays
+;; mark-ring
+;; (equal mark-ring (cl-copy-list mark-ring))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
