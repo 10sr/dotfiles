@@ -1624,11 +1624,12 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (defun my-set-venv-flycheck-executable-find ()
   "Set flycheck executabie find."
   (interactive)
-  (set-variable 'flycheck-executable-find
-                '(lambda (e)
-                   (with-venv
-                    (executable-find e)))
-                t))
+  (when (fboundp 'with-venv)
+    (set-variable 'flycheck-executable-find
+                  '(lambda (e)
+                     (with-venv
+                       (executable-find e)))
+                  t)))
 
 (defun my-update-flycheck-flake8-error-level-alist ()
   "Update `flycheck-flake8-error-level-alist'."
