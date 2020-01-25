@@ -165,6 +165,7 @@ Otherwize hook it."
        dired-k
        blacken
        back-button
+       with-venv
 
        editorconfig
        editorconfig-custom-majormode
