@@ -631,6 +631,8 @@ THEM are function and its args."
     (diminish 'color-identifiers-mode))
   (with-eval-after-load 'highlight-indentation
     (diminish 'highlight-indentation-mode))
+  (with-eval-after-load 'back-button
+    (diminish 'back-button-mode))
   )
 
 (setq mode-line-front-space "")
