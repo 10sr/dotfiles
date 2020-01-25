@@ -2903,6 +2903,19 @@ Any output will be written to current buffer."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; highlight-mark
 
+(defvar-local highlight-mark-last-mark-position nil
+  "Last mark object.")
+
+(defun highlight-mark-post-command ()
+  "Update highlight mark on mark change."
+  (unless (eq (mark t)
+              highlight-mark-last-mark-position)
+    (setq highlight-mark-last-mark-position (mark t))
+    (message "Mark changed! %S"
+             highlight-mark-last-mark-position)))
+
+(add-hook 'post-command-hook
+          'highlight-mark-post-command)
 
 
 ;; Local Variables:
