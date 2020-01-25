@@ -634,6 +634,8 @@ THEM are function and its args."
     (diminish 'highlight-indentation-mode))
   (with-eval-after-load 'back-button
     (diminish 'back-button-mode))
+  (with-eval-after-load 'git-gutter
+    (diminish 'git-gutter-mode))
   )
 
 (setq mode-line-front-space "")
