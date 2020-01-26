@@ -166,6 +166,7 @@ Otherwize hook it."
        blacken
        back-button
        with-venv
+       nyan-mode
 
        editorconfig
        editorconfig-custom-majormode
