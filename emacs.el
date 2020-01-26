@@ -2933,12 +2933,12 @@ Any output will be written to current buffer."
 ;;;; mark visible'.) By Patrick Gundlach, Teemu Leisti, and Stefan.
 
 (defvar mmv-face-foreground
-  (face-foreground 'highlight)
+  (face-foreground 'hi-yellow)
   "Foreground color for `mmv-face'.")
 
 (defvar mmv-face-background
-  (face-background 'highlight)
-  "Gackground color for `mmv-face'.")
+  (face-background 'hi-yellow)
+  "Background color for `mmv-face'.")
 
 (defface mmv-face
   `((t :background ,mmv-face-background :foreground ,mmv-face-foreground))
