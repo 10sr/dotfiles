@@ -785,6 +785,24 @@ THEM are function and its args."
                         (when f
                           (abbreviate-file-name f)))))
 
+(when (eval-and-compile (require 'nyan-mode nil t))
+  (setq-default header-line-format
+                '(
+                  ;; (:eval (file-name-nondirectory(directory-file-name (or buffer-file-name
+                  ;;                                                        default-directory))))
+                  ;; "["
+                  (:eval (progn
+                           (set-variable 'nyan-bar-length
+                                         (- (window-size nil t) 4)
+                                         t)
+                           (list (nyan-create))))
+                  ;; "]"
+                  ;; (:eval (let ((f (or (buffer-file-name)
+                  ;;                     default-directory)))
+                  ;;          (when f
+                  ;;            (abbreviate-file-name f))))
+                  )))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
 
