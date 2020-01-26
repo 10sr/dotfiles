@@ -800,11 +800,16 @@ THEM are function and its args."
                   ;;          (when f
                   ;;            (abbreviate-file-name f))))
                   ))
+  (defun my-nyan-set-length (&rest _)
+    "Set `nyan-mode' length to window width."
+    (set-variable 'nyan-bar-length
+                  (- (window-size nil t) 4)
+                  t))
   (add-hook 'window-configuration-change-hook
-            (lambda ()
-              (set-variable 'nyan-bar-length
-                            (- (window-size nil t) 4)
-                            t))))
+            'my-nyan-set-length)
+  (add-hook 'switch-buffer-functions
+            'my-nyan-set-length)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
