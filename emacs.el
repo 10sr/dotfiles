@@ -2932,8 +2932,16 @@ Any output will be written to current buffer."
 ;;;; Make the mark visible, and the visibility toggleable. ('mmv' means 'make
 ;;;; mark visible'.) By Patrick Gundlach, Teemu Leisti, and Stefan.
 
+(defvar mmv-face-foreground
+  (face-foreground 'highlight)
+  "Foreground color for `mmv-face'.")
+
+(defvar mmv-face-background
+  (face-background 'highlight)
+  "Gackground color for `mmv-face'.")
+
 (defface mmv-face
-  '((t :background "maroon2" :foreground "white"))
+  `((t :background ,mmv-face-background :foreground ,mmv-face-foreground))
   "Face used for showing the mark's position.")
 
 (defvar-local mmv-mark-overlay nil
@@ -2971,7 +2979,7 @@ Any output will be written to current buffer."
   (interactive)
   (setq mmv-is-mark-visible (not mmv-is-mark-visible))
   (if mmv-is-mark-visible
-      (set-face-attribute 'mmv-face nil :background "maroon2" :foreground "white")
+      (set-face-attribute 'mmv-face nil :background mmv-face-background :foreground mmv-face-foreground)
     (set-face-attribute 'mmv-face nil :background 'unspecified :foreground 'unspecified))
   (mmv-draw-mark))
 
