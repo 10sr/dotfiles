@@ -793,16 +793,18 @@ THEM are function and its args."
                   ;;                                                        default-directory))))
                   ;; "["
                   (:eval (progn
-                           (set-variable 'nyan-bar-length
-                                         (- (window-size nil t) 4)
-                                         t)
                            (list (nyan-create))))
                   ;; "]"
                   ;; (:eval (let ((f (or (buffer-file-name)
                   ;;                     default-directory)))
                   ;;          (when f
                   ;;            (abbreviate-file-name f))))
-                  )))
+                  ))
+  (add-hook 'window-configuration-change-hook
+            (lambda ()
+              (set-variable 'nyan-bar-length
+                            (- (window-size nil t) 4)
+                            t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
