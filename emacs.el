@@ -2055,7 +2055,10 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   (set-variable 'bs-default-sort-name "by nothing")
   (add-hook 'bs-mode-hook
             (lambda ()
-              (set (make-local-variable 'scroll-margin) 0))))
+              (set (make-local-variable 'scroll-margin) 0)
+              (setq-local header-line-format nil)
+              (setq-local mode-line-format nil)
+              )))
 
 ;;(iswitchb-mode 1)
 (icomplete-mode)
