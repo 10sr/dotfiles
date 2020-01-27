@@ -1680,6 +1680,13 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 ;; Run multiple chekcers
 ;; https://github.com/flycheck/flycheck/issues/186
 
+(add-hook 'python-mode-hook
+          (lambda ()
+            ;; Currently on python-mode eldoc-mode sometimes print
+            ;; wired message on "from" keyword:
+            ;;var from = require("./from")
+            (eldoc-mode -1)))
+
 
 ;; http://fukuyama.co/foreign-regexp
 '(and (require 'foreign-regexp nil t)
@@ -2890,13 +2897,6 @@ Any output will be written to current buffer."
   ;;             (when (derived-mode-p 'dired-mode)
   ;;               (dired-k-no-revert))))
   )
-
-(add-hook 'python-mode-hook
-          (lambda ()
-            ;; Currently on python-mode eldoc-mode sometimes print
-            ;; wired message on "from" keyword:
-            ;;var from = require("./from")
-            (eldoc-mode -1)))
 
 ;; ?
 (define-key input-decode-map "\e[1;5C" [C-right])
