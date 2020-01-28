@@ -2837,11 +2837,14 @@ Any output will be written to current buffer."
 (when (fboundp 'counsel-imenu)
   (define-key ctl-x-map "l" 'counsel-imenu))
 
+(when (fboundp 'swiper)
+  (define-key esc-map (kbd "C-s") 'swiper))
+
 (when (fboundp 'swoop)
   ;; (global-set-key (kbd "C-s") 'swoop)
   ;; (global-set-key (kbd "C-r") 'swoop)
   ;; (define-key esc-map (kbd "C-s") 'swoop-multi)
-  (define-key esc-map (kbd "C-s") 'swoop)
+  ;; (define-key esc-map (kbd "C-s") 'swoop)
   (with-eval-after-load 'swoop-lib
     (defvar swoop-map)
     (define-key swoop-map (kbd "C-s") 'swoop-action-goto-line-next)
