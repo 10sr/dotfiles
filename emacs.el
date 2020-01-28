@@ -2754,7 +2754,7 @@ Any output will be written to current buffer."
 (set-variable 'ivy-format-functions-alist
               '((t . (lambda (cands)  (ivy--format-function-generic
                                        (lambda (str)
-                                         (concat "-> "
+                                         (concat "+> "
                                                  (ivy--add-face str 'ivy-current-match)
                                                  ))
                                        (lambda (str)
