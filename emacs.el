@@ -160,7 +160,6 @@ Otherwize hook it."
        fic-mode
        term-cursor
        pydoc
-       swoop
        color-identifiers-mode
        dired-k
        blacken
@@ -2840,41 +2839,6 @@ Any output will be written to current buffer."
 (when (fboundp 'swiper)
   (define-key esc-map (kbd "C-s") 'swiper))
 
-(when (fboundp 'swoop)
-  ;; (global-set-key (kbd "C-s") 'swoop)
-  ;; (global-set-key (kbd "C-r") 'swoop)
-  ;; (define-key esc-map (kbd "C-s") 'swoop-multi)
-  ;; (define-key esc-map (kbd "C-s") 'swoop)
-  (with-eval-after-load 'swoop-lib
-    (defvar swoop-map)
-    (define-key swoop-map (kbd "C-s") 'swoop-action-goto-line-next)
-    (define-key swoop-map (kbd "C-r") 'swoop-action-goto-line-prev)
-    )
-  ;; TODO: case sensitive swoop
-  ;; Wrap swoop-async-get-match-lines-list?
-  ;; (with-eval-after-load 'swoop-lib
-  ;;   (defun my-swoop-advice-smart-case (orig-func &rest args)
-  ;;     "Function to wrap swoop function."
-  ;;     (message "args: %S" args)
-  ;;     (let* (
-  ;;            (query (car args))
-  ;;            ;; (query (plist-get args
-  ;;            ;;                   :$query))
-  ;;            (case-fold-search
-  ;;             (let ((case-fold-search nil))
-  ;;               (not (string-match-p (rx upper) query))))
-  ;;            )
-  ;;       ;; (message "case-fold-search: %S" case-fold-search)
-  ;;       ;; (message "query: %S" query)
-  ;;       (apply orig-func args)))
-  ;;   (advice-add 'swoop-async-get-match-lines-list
-  ;;               :around
-  ;;               'my-swoop-advice-smart-case)
-  ;;   (set-variable 'swoop-async-get-match-lines-list
-  ;;                 (byte-compile 'swoop-async-get-match-lines-list))
-  ;;   )
-
-  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired-k
