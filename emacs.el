@@ -2858,12 +2858,10 @@ Any output will be written to current buffer."
   ;; always execute dired-k when dired buffer is opened and reverted
   (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
 
-  ;; This causes:
-  ;; fatal: Unable to create '.git/index.lock': File exist.s
-  ;; (add-hook 'switch-buffer-functions
-  ;;           (lambda (prev cur)
-  ;;             (when (derived-mode-p 'dired-mode)
-  ;;               (dired-k-no-revert))))
+  (add-hook 'switch-buffer-functions
+            (lambda (prev cur)
+              (when (derived-mode-p 'dired-mode)
+                (dired-k-no-revert))))
   )
 
 ;; ?
