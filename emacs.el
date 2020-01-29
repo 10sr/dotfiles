@@ -534,6 +534,9 @@ Otherwize hook it."
                        ;; (when (fboundp 'visible-mark-move-overlays)
                        ;;   (visible-mark-move-overlays))
                        ))
+(add-hook 'find-file-hook
+          'push-mark
+          t)
 
 (when (fboundp 'back-button-mode)
   (back-button-mode 1))
