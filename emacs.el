@@ -2581,7 +2581,7 @@ and search from projectile root (if projectile is available)."
 (define-key ctl-x-map "." 'my-rgrep-thing-at-point-projectile-root)
 
 (defun my-occur (regexp &optional region)
-  "My occur command to search REGEXP."
+  "My occur command to search REGEXP to search REGION."
   (interactive (list (read-string "List lines matching regexp: "
                                   (thing-at-point 'symbol t))))
   (occur regexp nil region))
@@ -2593,7 +2593,7 @@ and search from projectile root (if projectile is available)."
 (define-key ctl-x-map "c" 'compile)
 
 (defun my-pushbullet-note (text &optional title)
-  "Push TEXT."
+  "Push TEXT with optional TITLE."
   (interactive "sText to Push: ")
   (pb/push-item '("") text "note" (or title "")))
 
