@@ -2369,6 +2369,30 @@ ARG is num to show, or defaults to 7."
   )
 
 
+;; dired-k
+;; Current HEAD of original repo is broken
+;; https://github.com/syohex/emacs-dired-k/issues/45
+(when (fboundp 'dired-k)
+  (set-variable 'dired-k-style 'git)
+
+  ;; What is the best way of doing this?
+  (with-eval-after-load 'dired-k
+    (fset 'dired-k--highlight-by-file-attribyte 'ignore))
+  ;; (set-variable 'dired-k-size-colors
+  ;;               `((,most-positive-fixnum)))
+  ;; (set-variable 'dired-k-date-colors
+  ;;               `((,most-positive-fixnum)))
+
+  ;; always execute dired-k when dired buffer is opened and reverted
+  (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
+
+  (add-hook 'switch-buffer-functions
+            (lambda (prev cur)
+              (when (derived-mode-p 'dired-mode)
+                (dired-k-no-revert))))
+  )
+
+
 ;; (define-minor-mode my-dired-glob-filter)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2839,30 +2863,6 @@ Any output will be written to current buffer."
 (when (fboundp 'swiper)
   (define-key esc-map (kbd "C-s") 'swiper))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; dired-k
-;; Current HEAD of original repo is broken
-;; https://github.com/syohex/emacs-dired-k/issues/45
-(when (fboundp 'dired-k)
-  (set-variable 'dired-k-style 'git)
-
-  ;; What is the best way of doing this?
-  (with-eval-after-load 'dired-k
-    (fset 'dired-k--highlight-by-file-attribyte 'ignore))
-  ;; (set-variable 'dired-k-size-colors
-  ;;               `((,most-positive-fixnum)))
-  ;; (set-variable 'dired-k-date-colors
-  ;;               `((,most-positive-fixnum)))
-
-  ;; always execute dired-k when dired buffer is opened and reverted
-  (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
-
-  (add-hook 'switch-buffer-functions
-            (lambda (prev cur)
-              (when (derived-mode-p 'dired-mode)
-                (dired-k-no-revert))))
-  )
 
 ;; ?
 (define-key input-decode-map "\e[1;5C" [C-right])
