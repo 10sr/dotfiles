@@ -2413,10 +2413,11 @@ ARG is num to show, or defaults to 7."
       ;; always execute dired-k when dired buffer is opened and reverted
       (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
 
-      (add-hook 'switch-buffer-functions
-                (lambda (prev cur)
-                  (when (derived-mode-p 'dired-mode)
-                    (dired-k-no-revert))))
+      ;; This still create index.lock files...........................
+      ;; (add-hook 'switch-buffer-functions
+      ;;           (lambda (prev cur)
+      ;;             (when (derived-mode-p 'dired-mode)
+      ;;               (dired-k-no-revert))))
       )))
 
 
