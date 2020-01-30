@@ -509,7 +509,11 @@ Otherwize hook it."
       (set-face-background 'git-gutter:modified c)
       (set-face-background 'git-gutter:added c)
       (set-face-background 'git-gutter:deleted c)
-      (set-face-background 'git-gutter:unchanged c))))
+      (set-face-background 'git-gutter:unchanged c)))
+  (set-face-background 'git-gutter:modified "magenta")
+  (set-face-background 'git-gutter:added "green")
+  (set-face-background 'git-gutter:deleted "red")
+  )
 
 ;; (when (fboundp 'fancy-narrow-mode)
 ;;   (add-hook 'after-first-visit-hook
