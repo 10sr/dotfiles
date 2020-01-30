@@ -640,6 +640,8 @@ THEM are function and its args."
     (diminish 'back-button-mode))
   (with-eval-after-load 'git-gutter
     (diminish 'git-gutter-mode))
+  (with-eval-after-load 'autorevert
+    (diminish 'auto-revert-mode))
   )
 
 (setq mode-line-front-space "")
