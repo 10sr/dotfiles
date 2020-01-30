@@ -2409,7 +2409,22 @@ ARG is num to show, or defaults to 7."
   )
 
 
-;; (define-minor-mode my-dired-glob-filter)
+
+;; (when (eval-and-compile (require 'dired-rainbow nil t))
+;;   (dired-rainbow-define gtags "brightblack" "GTAGS"))
+
+;; ?
+;; (set-variable 'dired-omit-files
+;;               (rx (or (regexp "^\\.?#")
+;;                       (regexp "^\\.$")
+;;                       (regexp "^\\.\\.$")
+;;                       (regexp "^GPATH$")
+;;                       (regexp "^GRTAGS$")
+;;                       (regexp "^GTAGS$")
+;;                       )))
+(with-eval-after-load 'diredfl
+  (set-face-foreground 'diredfl-file-name nil)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; misc funcs
