@@ -1306,6 +1306,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
      nil
      (turn-on-xclip))
 
+(declare-function turn-on-pasteboard "pasteboard")
 (and (eq system-type 'darwin)
      (require 'pasteboard nil t)
      (turn-on-pasteboard))
@@ -1362,6 +1363,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (set-variable 'remember-notes-initial-major-mode
               'change-log-mode)
 
+(declare-function global-magit-file-mode "magit-files")
 (with-eval-after-load 'magit-files
   ;; `global-magit-file-mode' is enabled by default and this mode overwrites
   ;; existing keybindings.
@@ -1396,6 +1398,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   (set-face-background 'magit-diff-lines-boundary "blue")
   )
 
+(declare-function magit-show-commit "magit")
 (defun my-magit-messenger (file line)
   "Magit messenger."
   (interactive (list buffer-file-name
@@ -1482,7 +1485,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (with-eval-after-load 'compile
   (defvar compilation-filter-start)
   (defvar compilation-error-regexp-alist)
-  (require 'ansi-color)
+  (eval-and-compile (require 'ansi-color))
   (add-hook 'compilation-filter-hook
             (lambda ()
               (let ((inhibit-read-only t))
@@ -1500,6 +1503,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (when (fboundp 'global-company-mode)
   (add-hook 'after-first-visit-hook
             'global-company-mode))
+(declare-function company-manual-begin "company")
 (with-eval-after-load 'company
   ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
   ;; https://qiita.com/yuze/items/a145b1e3edb6d0c24cbf
@@ -1619,6 +1623,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 ;;               'one-level-to-beginning-of-statement)
 (set-variable 'pydoc-command
               "python3 -m pydoc")
+(declare-function with-venv-advice-add "with-venv")
 (with-eval-after-load 'pydoc
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'pydoc)))
@@ -2382,6 +2387,7 @@ ARG is num to show, or defaults to 7."
 ;; dired-k
 ;; Current HEAD of original repo is broken
 ;; https://github.com/syohex/emacs-dired-k/issues/45
+(declare-function dired-k-no-revert "dired-k")
 (when (fboundp 'dired-k)
   (set-variable 'dired-k-style 'git)
 
@@ -2522,6 +2528,9 @@ Commands are searched from ALIST."
     ;; if alist is not given set default value
     (my-rgrep-grep-command name my-rgrep-alist)))
 
+(declare-function projectile-project-p "projectile")
+(declare-function projectile-with-default-dir "projectile")
+(declare-function projectile-project-root "projectile")
 (defun my-rgrep (command-args)
   "My recursive grep.  Run COMMAND-ARGS.
 If prefix argument is given, use current symbol as default search target
@@ -2541,8 +2550,8 @@ and search from projectile root (if projectile is available)."
            (eval-and-compile (require 'projectile nil t))
            (projectile-project-p))
       (projectile-with-default-dir (projectile-project-root)
-                                   (compilation-start command-args
-                                                      'grep-mode))
+        (compilation-start command-args
+                           'grep-mode))
     (compilation-start command-args
                        'grep-mode)))
 
@@ -2830,6 +2839,7 @@ Any output will be written to current buffer."
 ;; (when (fboundp 'counsel-switch-buffer)
 ;;   (define-key ctl-x-map (kbd "C-b") 'counsel-switch-buffer))
 
+(declare-function ivy-thing-at-point "ivy")
 (when (and (fboundp 'ivy-read)
            (locate-library "counsel"))
   (defvar counsel-describe-map)
@@ -2862,13 +2872,14 @@ Any output will be written to current buffer."
 ;; (my-ivy-length "a" (cons "bc" t))
 ;; (my-ivy-length "a" (cons "c" t))
 
+(declare-function ivy-configure "ivy")
 (with-eval-after-load 'ivy
   ;; (ivy-configure 'my-counsel-describe-symbol
   ;;   :sort-fn 'my-ivy-length)
   (ivy-configure 'counsel-M-x
-    :initial-input ""
-    ;; :sort-fn 'my-ivy-length
-    )
+                 :initial-input ""
+                 ;; :sort-fn 'my-ivy-length
+                 )
   (defvar ivy-sort-matches-functions-alist)
   (add-to-list 'ivy-sort-matches-functions-alist
                '(my-counsel-describe-symbol . ivy--shorter-matches-first))
