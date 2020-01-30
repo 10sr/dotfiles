@@ -534,9 +534,10 @@ Otherwize hook it."
                        ;; (when (fboundp 'visible-mark-move-overlays)
                        ;;   (visible-mark-move-overlays))
                        ))
-(add-hook 'find-file-hook
-          'push-mark
-          t)
+(add-hook 'switch-buffer-functions
+          (lambda (&rest _)
+            (unless (mark t)
+              (push-mark))))
 
 (when (fboundp 'back-button-mode)
   (back-button-mode 1))
