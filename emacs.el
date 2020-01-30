@@ -1493,6 +1493,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
                '("^\\([^ \n]+\\):\\([0-9]+\\) " 1 2))
   )
 
+(declare-function company-cancel "company")
 (when (fboundp 'global-company-mode)
   (add-hook 'after-first-visit-hook
             'global-company-mode))
@@ -2163,6 +2164,7 @@ ARG is num to show, or defaults to 7."
                     (my-file-head f
                                   7)))))
 
+(declare-function dired-get-marked-files "dired")
 (defun my-dired-diff ()
   "Show diff of marked file and file of current line."
   (interactive)
@@ -2203,6 +2205,8 @@ ARG is num to show, or defaults to 7."
 ;;   ""
 ;;   (interactive "p"))
 
+(declare-function dired-get-subdir "dired")
+(declare-function dired-move-to-filename "dired")
 (defun my-dired-previous-line (arg)
   "Move ARG lines up."
   (interactive "p")
@@ -2595,6 +2599,7 @@ and search from projectile root (if projectile is available)."
 (defalias 'make 'compile)
 (define-key ctl-x-map "c" 'compile)
 
+(autoload 'pb/push-item "pushbullet")
 (defun my-pushbullet-note (text &optional title)
   "Push TEXT with optional TITLE."
   (interactive "sText to Push: ")
@@ -2626,6 +2631,7 @@ and search from projectile root (if projectile is available)."
   "Regexp to parse line of output of git-bug ls.
 Used by `git-bug-ls'.")
 
+(declare-function string-trim "subr-x")
 (defun git-bug-bugs ()
   "Get list of git-bug bugs."
   (with-temp-buffer
@@ -2652,6 +2658,12 @@ Used by `git-bug-ls'.")
   "Open and select git bug list buffer."
   (interactive)
   (pop-to-buffer (git-bug-ls-noselect)))
+
+(defun git-bug-ls--set-tabulated-list-mode-variables ()
+  "Not implemented.")
+
+(defun git-bug-ls-mode ()
+  "Not implemented.")
 
 (defun git-bug-ls-noselect (&optional directory)
   "Open git bug list buffer.
@@ -2755,6 +2767,8 @@ Any output will be written to current buffer."
 ;; (set-variable 'enable-recursive-minibuffers t)
 ;; (minibuffer-depth-indicate-mode 1)
 
+(declare-function ivy--regex-ignore-order "ivy")
+(declare-function ivy--regex-fuzzy "ivy")
 (defun my--ivy-regex-fuzzy-ignore-order (str)
   "Re-build regex from STR for ignore-order fuzzy match."
   (let ((re-list (ivy--regex-ignore-order str)))
@@ -2913,6 +2927,10 @@ Any output will be written to current buffer."
 ;;;; Make the mark visible, and the visibility toggleable. ('mmv' means 'make
 ;;;; mark visible'.) By Patrick Gundlach, Teemu Leisti, and Stefan.
 
+(defgroup mmv nil
+  "Make mark visible."
+  :group 'tools)
+
 (defvar mmv-face-foreground
   (face-foreground 'hi-yellow)
   "Foreground color for `mmv-face'.")
@@ -2923,7 +2941,8 @@ Any output will be written to current buffer."
 
 (defface mmv-face
   `((t :background ,mmv-face-background :foreground ,mmv-face-foreground))
-  "Face used for showing the mark's position.")
+  "Face used for showing the mark's position."
+  :group 'mmv)
 
 (defvar-local mmv-mark-overlay nil
   "The overlay for showing the mark's position.")
