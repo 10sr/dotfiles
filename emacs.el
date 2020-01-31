@@ -540,7 +540,8 @@ Otherwize hook it."
                        ))
 (add-hook 'switch-buffer-functions
           (lambda (&rest _)
-            (unless (mark t)
+            (unless (or (mark t)
+                        (minibufferp))
               (push-mark))))
 
 (when (fboundp 'back-button-mode)
