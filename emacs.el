@@ -2900,13 +2900,13 @@ Any output will be written to current buffer."
 ;; (my-ivy-length "a" (cons "c" t))
 
 (declare-function ivy-configure "ivy")
-(with-eval-after-load 'ivy
+(with-eval-after-load 'counsel  ;; Hook to counsel, not ivy
   ;; (ivy-configure 'my-counsel-describe-symbol
   ;;   :sort-fn 'my-ivy-length)
   (ivy-configure 'counsel-M-x
-                 :initial-input ""
-                 ;; :sort-fn 'my-ivy-length
-                 )
+    :initial-input ""
+    ;; :sort-fn 'my-ivy-length
+    )
   (defvar ivy-sort-matches-functions-alist)
   (add-to-list 'ivy-sort-matches-functions-alist
                '(my-counsel-describe-symbol . ivy--shorter-matches-first))
