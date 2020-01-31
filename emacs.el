@@ -2998,7 +2998,8 @@ Any output will be written to current buffer."
    invisible."
   (unless mmv-mark-overlay
     (setq mmv-mark-overlay (make-overlay 0 0 nil t))
-    (overlay-put mmv-mark-overlay 'face 'mmv-face))
+    (overlay-put mmv-mark-overlay 'face 'mmv-face)
+    (overlay-put mmv-mark-overlay 'priority 10))  ;; bigger than highlight-indentation-current-column-overlay-priority
   (let ((mark-position (mark t)))
     (cond
      ((null mark-position) (delete-overlay mmv-mark-overlay))
