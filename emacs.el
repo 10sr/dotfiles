@@ -1139,7 +1139,8 @@ THEM are function and its args."
   (add-hook 'after-first-visit-hook
             'editorconfig-mode)
   (add-hook 'after-first-visit-hook
-            'editorconfig-mode-apply))
+            'editorconfig-mode-apply
+            t))  ;; Do after enabling editorconfig-mode
 (set-variable 'editorconfig-get-properties-function
               'editorconfig-core-get-properties-hash)
 (set-variable 'editorconfig-mode-lighter "")
