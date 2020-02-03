@@ -543,6 +543,11 @@ Otherwize hook it."
             (unless (or (mark t)
                         (minibufferp))
               (push-mark))))
+(add-hook 'switch-buffer-functions
+          (lambda (&rest _)
+            (when (minibufferp)
+              ;; Remove mark in minibuffer
+              (set-mark nil))))
 
 (when (fboundp 'back-button-mode)
   (back-button-mode 1))
