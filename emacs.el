@@ -1137,7 +1137,9 @@ THEM are function and its args."
 
 (when (fboundp 'editorconfig-mode)
   (add-hook 'after-first-visit-hook
-            'editorconfig-mode))
+            'editorconfig-mode)
+  (add-hook 'after-first-visit-hook
+            'editorconfig-mode-apply))
 (set-variable 'editorconfig-get-properties-function
               'editorconfig-core-get-properties-hash)
 (set-variable 'editorconfig-mode-lighter "")
