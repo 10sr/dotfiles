@@ -2959,6 +2959,8 @@ Any output will be written to current buffer."
   ;; (setq mozc-candidate-style 'echo-area)
   (global-set-key (kbd "C-c m e") 'turn-on-input-method)
   (global-set-key (kbd "C-c m d") 'turn-off-input-method)
+  (global-set-key (kbd "<f7>") 'turn-off-input-method)
+  (global-set-key (kbd "<f8>") 'turn-on-input-method)
 
   (require 'mozc-popup)
   (set-variable 'mozc-candidate-style 'popup)

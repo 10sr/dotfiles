@@ -17,16 +17,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "c",
+                            "key_code": "f8",
                             "modifiers": [
-                                "left_control"
+                                "fn"
                             ]
-                        },
-                        {
-                            "key_code": "m"
-                        },
-                        {
-                            "key_code": "e"
                         }
                     ],
                     "conditions": [
@@ -56,16 +50,10 @@
                     },
                     "to": [
                         {
-                            "key_code": "c",
+                            "key_code": "f7",
                             "modifiers": [
-                                "left_control"
+                                "fn"
                             ]
-                        },
-                        {
-                            "key_code": "m"
-                        },
-                        {
-                            "key_code": "d"
                         }
                     ],
                     "conditions": [
