@@ -166,6 +166,7 @@ Otherwize hook it."
        back-button
        with-venv
        nyan-mode
+       diredfl
 
        editorconfig
        editorconfig-custom-majormode
