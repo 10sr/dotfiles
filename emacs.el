@@ -144,7 +144,7 @@ Otherwize hook it."
        pipenv
        imenu-list
        page-break-lines
-       aggressive-indent
+       ;; aggressive-indent
        dired-filter
        wgrep
        magit
@@ -1448,21 +1448,6 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (when (boundp 'git-rebase-filename-regexp)
   (add-to-list 'auto-mode-alist
                `(,git-rebase-filename-regexp . text-mode)))
-
-(when (fboundp 'global-aggressive-indent-mode)
-  (add-hook 'after-first-visit-hook
-            'global-aggressive-indent-mode))
-(with-eval-after-load 'aggressive-indent
-  (defvar aggressive-indent-excluded-modes)
-  (set-variable 'aggressive-indent-excluded-modes
-                `(web-mode
-                  diff-mode
-                  toml-mode
-                  conf-mode
-                  dockerfile-mode
-                  groovy-mode
-                  scala-mode
-                  ,@aggressive-indent-excluded-modes)))
 
 (when (fboundp 'ggtags-mode)
   (add-hook 'c-mode-common-hook
