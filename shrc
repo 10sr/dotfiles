@@ -131,6 +131,15 @@ then
     # stty erase '^h'
 fi
 
+if $inbash
+then
+    # https://unix.stackexchange.com/questions/1288/preserve-bash-history-in-multiple-terminal-windows
+    # Avoid duplicates
+    HISTCONTROL=ignoredups:erasedups
+    # When the shell exits, append to the history file instead of overwriting it
+    shopt -s histappend
+fi
+
 # Zsh specific preferences
 # http://www.clear-code.com/blog/2011/9/5.html
 if $inzsh
