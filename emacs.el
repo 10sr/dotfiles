@@ -722,6 +722,7 @@ THEM are function and its args."
 (when (require 'sky-color-clock nil t)
   (sky-color-clock-initialize 35) ; Tokyo, Japan
   (set-variable 'sky-color-clock-format " %H:%M ")
+  ;; (set-variable 'sky-color-clock-enable-emoji-icon nil)
   (setq mode-line-end-spaces '(:eval (sky-color-clock--form))))
 
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
