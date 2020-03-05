@@ -707,6 +707,23 @@ THEM are function and its args."
 (set-face-background 'header-line
                      my-mode-line-background-default)
 
+;;  sky-color-clock
+;; https://tsuu32.hatenablog.com/entry/2019/11/07/020005
+(declare-function sky-color-clock "sky-color-clock")
+(declare-function sky-color-clock-initialize "sky-color-clock")
+
+(defun sky-color-clock--form ()
+  "Gen string for right aligned form."
+  (let* ((sky-color-clock-str
+          (propertize (sky-color-clock) 'help-echo (format-time-string "Sky color clock\n%F (%a)")))
+         (mode-line-right-margin
+          (propertize " " 'display `(space :align-to (- right-fringe ,(length sky-color-clock-str))))))
+    (concat mode-line-right-margin sky-color-clock-str)))
+(when (require 'sky-color-clock nil t)
+  (sky-color-clock-initialize 35) ; Tokyo, Japan
+  (set-variable 'sky-color-clock-format " %H:%M ")
+  (setq mode-line-end-spaces '(:eval (sky-color-clock--form))))
+
 ;; http://www.geocities.jp/simizu_daisuke/bunkei-meadow.html#frame-title
 
 
