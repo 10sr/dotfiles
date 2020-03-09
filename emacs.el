@@ -102,101 +102,6 @@ Otherwize hook it."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
 
-(set (defvar 10sr-package-list)
-     '(
-       vimrc-mode
-       markdown-mode
-       yaml-mode
-       gnuplot-mode
-       php-mode
-       erlang
-       js2-mode
-       js-doc
-       git-commit
-       gitignore-mode
-       adoc-mode
-       go-mode
-       ;; It seems malabar has been merged into jdee and this package
-       ;; already removed
-       ;; malabar-mode
-       gosh-mode
-       scala-mode
-       web-mode
-       toml-mode
-       json-mode
-
-
-       color-moccur
-       ggtags
-       flycheck
-       auto-highlight-symbol
-       hl-todo
-       ;; Currently not available
-       ;; pp-c-l
-       xclip
-       foreign-regexp
-       multi-term
-       term-run
-       editorconfig
-       git-ps1-mode
-       restart-emacs
-       fill-column-indicator
-       pkgbuild-mode
-       minibuffer-line
-       which-key
-       ;; I think this works in place of my autosave lib
-       super-save
-       pipenv
-       imenu-list
-       page-break-lines
-       ;; aggressive-indent
-       dired-filter
-       wgrep
-       magit
-       git-gutter
-       end-mark
-       sl
-       ;; TODO: Configure pony-tpl-mode
-       pony-mode
-       gited
-       highlight-indentation
-       diminish
-       fzf
-       fic-mode
-       term-cursor
-       pydoc
-       color-identifiers-mode
-       dired-k
-       blacken
-       back-button
-       with-venv
-       nyan-mode
-       diredfl
-
-       editorconfig
-       editorconfig-custom-majormode
-
-       git-command
-
-       prompt-text
-
-       ;; 10sr repository
-       ;; 10sr-extras
-       terminal-title
-       dired-list-all-mode
-       pack
-       set-modeline-color
-       read-only-only-mode
-       smart-revert
-       autosave
-       ;;window-organizer
-       ilookup
-       pasteboard
-       awk-preview
-       recently
-
-       ))
-
 (require 'package)
 (set-variable 'package-archives
               `(,@package-archives
@@ -205,16 +110,104 @@ Otherwize hook it."
                 ("10sr-el" . "http://10sr.github.io/emacs-lisp/elpa/")))
 (package-initialize)
 
-(defun my-auto-install-package ()
-  "Install packages semi-automatically."
-  (interactive)
-  (package-refresh-contents)
-  (mapc (lambda (pkg)
-          (or (package-installed-p pkg)
-              (package-install pkg)))
-        10sr-package-list))
+;; Use package-install-selected-packages to install these
+(let ((my '(
+            vimrc-mode
+            markdown-mode
+            yaml-mode
+            gnuplot-mode
+            php-mode
+            erlang
+            js2-mode
+            js-doc
+            git-commit
+            gitignore-mode
+            adoc-mode
+            go-mode
+            ;; It seems malabar has been merged into jdee and this package
+            ;; already removed
+            ;; malabar-mode
+            gosh-mode
+            scala-mode
+            web-mode
+            toml-mode
+            json-mode
 
-;; (lazy-load-eval 'sudoku)
+
+            color-moccur
+            ggtags
+            flycheck
+            auto-highlight-symbol
+            hl-todo
+            ;; Currently not available
+            ;; pp-c-l
+            xclip
+            foreign-regexp
+            multi-term
+            term-run
+            editorconfig
+            git-ps1-mode
+            restart-emacs
+            fill-column-indicator
+            pkgbuild-mode
+            minibuffer-line
+            which-key
+            ;; I think this works in place of my autosave lib
+            super-save
+            pipenv
+            imenu-list
+            page-break-lines
+            ;; aggressive-indent
+            dired-filter
+            wgrep
+            magit
+            git-gutter
+            end-mark
+            sl
+            ;; TODO: Configure pony-tpl-mode
+            pony-mode
+            gited
+            highlight-indentation
+            diminish
+            fzf
+            fic-mode
+            term-cursor
+            pydoc
+            color-identifiers-mode
+            dired-k
+            blacken
+            back-button
+            with-venv
+            nyan-mode
+            diredfl
+
+            editorconfig
+            editorconfig-custom-majormode
+
+            git-command
+
+            prompt-text
+
+            ;; 10sr repository
+            ;; 10sr-extras
+            terminal-title
+            dired-list-all-mode
+            pack
+            set-modeline-color
+            read-only-only-mode
+            smart-revert
+            autosave
+            ;;window-organizer
+            ilookup
+            pasteboard
+            awk-preview
+            recently
+
+            )))
+  (set-variable 'package-selected-packages
+                (cl-remove-duplicates (append package-selected-packages
+                                              my
+                                              ()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; my-idle-hook
