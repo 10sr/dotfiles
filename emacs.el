@@ -15,6 +15,11 @@
 (unless (file-directory-p (expand-file-name user-emacs-directory))
   (make-directory (expand-file-name user-emacs-directory)))
 
+;; Custom file
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-readable-p custom-file)
+  (load custom-file))
+
 (require 'cl-lib)
 (require 'simple)
 
