@@ -672,58 +672,6 @@ tx(){
     fi
 }
 
-__dsession(){
-    # dt [-h] [<name>] [<command ...>]
-    __dtach_dir="${TMP}/dtach"
-    mkdir -p "${__dtach_dir}"
-
-    if test -n "${__MY_DTACH}"
-    then
-        # if already in dtach session print current session
-        soc_name="`basename "$__MY_DTACH"`"
-        echo "Current session: ${soc_name}"
-    fi
-
-    if test -z "$1"
-    then
-        # if no arg given show list of sessions
-        echo "Usage: ds [<session>]"
-        echo "Sessions:"
-        ls "${__dtach_dir}"
-        return 0
-    elif test "$1" = "-h"
-    then
-        echo "dt: usage: dt [-h] [<name>] [<command ...>]" 1>&2
-        return 1
-    fi
-
-    # set socket name
-    soc_name="${__dtach_dir}/$1"
-    shift
-
-    if test -n "$__MY_DTACH"
-    then
-        echo "dtach session cannot be nested." 1>&2
-        return 1
-    elif test -S "$soc_name"
-    then
-        dtach -a "$soc_name" -e ^^
-    elif test -e "$soc_name"
-    then
-        echo "dt: File named $soc_name already exists."
-        return 1
-    elif test -z "$1"
-    then
-        # if no command given invoke current shell
-        __MY_DTACH="$soc_name" dtach -c "$soc_name" -e ^^ sh -c "$SHELL"
-        # echo "dt: Socket named $soc_name not exists and no command specified."
-        # return 1
-    else
-        __MY_DTACH="$soc_name" dtach -c "$soc_name" -e ^^ "$@"
-    fi
-}
-null type dtach && alias ds=__dsession
-
 scr(){
     test -n "$1" && pf="${1}-"
     ___tformat="%Y%m%d-%H%M%S%z"
