@@ -1135,7 +1135,7 @@ fi
 
 __my_ps1_info1(){
     # first line of PS1
-    echo "${__my_ps1_sh}$(__my_ps1_scale)$(__my_ps1_git)$(__my_ps1_bttry)$(__my_ps1_moc)"
+    echo "${__my_ps1_sh}$(__my_ps1_scale)$(__my_ps1_git)"
 }
 
 test -n "$__MY_SCRIPT" && \
@@ -1145,7 +1145,7 @@ test -n "$SSH_CONNECTION" && \
     __my_ps1_str_ssh="SSH"
 
 test -n "$__MY_DTACH" && \
-    __my_ps1_str_dt="DT:`basename "$__MY_DTACH$"`"
+    __my_ps1_str_dt="DT:`basename "$__MY_DTACH"`"
 
 __my_ps1_info2(){
     # second line of PS1
