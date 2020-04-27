@@ -519,6 +519,7 @@ Otherwize hook it."
 ;;             'fancy-narrow-mode))
 
 ;; https://solist.work/blog/posts/mark-ring/
+(set-variable 'mark-ring-max 32)
 (defun my-exchange-point-and-mark ()
   "`exchange-point-and-mark' without mark activation."
   (interactive)
