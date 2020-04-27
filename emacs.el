@@ -1488,7 +1488,9 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
       (imenu-list-minor-mode 1)))
   ;; (set-variable 'imenu-list-auto-resize t)
   (set-variable 'imenu-list-focus-after-activation t)
-  (define-key ctl-x-map (kbd "C-l") 'my-imenu-list-toggle))
+  ;; (define-key ctl-x-map (kbd "C-l") 'my-imenu-list-toggle)
+  (define-key ctl-x-map (kbd "C-l") 'imenu-list-smart-toggle)
+  )
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
