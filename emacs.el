@@ -426,6 +426,7 @@ Otherwize hook it."
 (setq line-move-visual nil)
 (setq create-lockfiles nil)
 (setq set-mark-command-repeat-pop t)
+(setq-default fill-column 80)
 
 (add-hook 'before-save-hook
           'time-stamp)
