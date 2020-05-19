@@ -551,7 +551,7 @@ Otherwize hook it."
               (set-mark nil))))
 
 (when (fboundp 'back-button-mode)
-  (back-button-mode 1))
+  (back-button-mode))
 (when (fboundp 'back-button-local-forward)
   (global-set-key (kbd "<right>") 'back-button-local-forward))
 (when (fboundp 'back-button-local-backward)
