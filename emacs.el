@@ -787,6 +787,23 @@ THEM are function and its args."
                               (git-ps1-mode-get-current " [GIT:%s]")))
                   " "
                   (:eval (format-time-string display-time-format))))
+
+  (when (eval-and-compile (require 'nyan-mode nil t))
+    (set-variable 'minibuffer-line-format
+                  '((:eval (progn
+                             (list (nyan-create))))))
+    (defun my-nyan-set-length (&rest _)
+      "Set `nyan-mode' length to window width."
+      (set-variable 'nyan-bar-length
+                    (- (frame-parameter nil 'width) 4)))
+    ;; (my-nyan-set-length)
+    ;; (add-hook 'after-init-hook
+    ;;           'my-nyan-set-length)
+    (add-hook 'window-configuration-change-hook
+              'my-nyan-set-length)
+    (add-hook 'switch-buffer-functions
+              'my-nyan-set-length)
+    )
   (minibuffer-line-mode 1)
   )
 
@@ -819,31 +836,6 @@ THEM are function and its args."
                                    default-directory)))
                         (when f
                           (abbreviate-file-name f)))))
-
-(when (eval-and-compile (require 'nyan-mode nil t))
-  (setq-default header-line-format
-                '(
-                  ;; (:eval (file-name-nondirectory(directory-file-name (or buffer-file-name
-                  ;;                                                        default-directory))))
-                  ;; "["
-                  (:eval (progn
-                           (list (nyan-create))))
-                  ;; "]"
-                  ;; (:eval (let ((f (or (buffer-file-name)
-                  ;;                     default-directory)))
-                  ;;          (when f
-                  ;;            (abbreviate-file-name f))))
-                  ))
-  (defun my-nyan-set-length (&rest _)
-    "Set `nyan-mode' length to window width."
-    (set-variable 'nyan-bar-length
-                  (- (window-size nil t) 4)
-                  t))
-  (add-hook 'window-configuration-change-hook
-            'my-nyan-set-length)
-  (add-hook 'switch-buffer-functions
-            'my-nyan-set-length)
-  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
