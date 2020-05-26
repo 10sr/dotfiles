@@ -1038,8 +1038,10 @@ THEM are function and its args."
              prog-mode-hook
              text-mode-hook
              ))
-    (add-hook hook
-              'highlight-indentation-mode)))
+    ;; Makes display slow?
+    ;; (add-hook hook
+    ;;           'highlight-indentation-mode)
+    ))
 (with-eval-after-load 'highlight-indentation
   (set-face-background 'highlight-indentation-face "color-236"))
 ;; (set-face-background 'highlight-indentation-current-column-face "#c3b3b3")
@@ -3023,6 +3025,7 @@ Any output will be written to current buffer."
                    (propertize " " 'face (overlay-get mmv-mark-overlay 'face)))
       (move-overlay mmv-mark-overlay mark-position mark-position)))))
 
+;; Makes display very slow?
 (add-hook 'pre-redisplay-functions #'mmv-draw-mark)
 
 (defun mmv-toggle-mark-visibility ()
