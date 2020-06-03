@@ -180,6 +180,7 @@ Otherwize hook it."
             with-venv
             nyan-mode
             diredfl
+            hardhat
 
             editorconfig
             editorconfig-custom-majormode
@@ -579,6 +580,13 @@ THEM are function and its args."
 ;; visible-mark-overlays
 ;; mark-ring
 ;; (equal mark-ring (cl-copy-list mark-ring))
+
+(when (fboundp 'global-hardhat-mode)
+  (with-eval-after-load 'hardhat
+    (defvar hardhat-fullpath-protected-regexps)
+    (add-to-list 'hardhat-fullpath-protected-regexps
+                 "/.venv/"))
+  (global-hardhat-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
