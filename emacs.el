@@ -906,6 +906,12 @@ THEM are function and its args."
             (font-lock-add-keywords nil my-jspace-face)
             ))
 
+(set-variable 'font-lock-maximum-decoration
+              '(
+                ;; (python-mode . 2)
+                (t . 2)
+                ))
+
 (when (fboundp 'global-whitespace-mode)
   (add-hook 'after-first-visit-hook
             'global-whitespace-mode))
