@@ -121,6 +121,7 @@ export PYTHONUSERBASE=$HOME/.pip
 export PATH="$PYTHONUSERBASE/bin:$PATH"
 # Enable --user by default when running pip install
 export PIP_USER=1
+alias pipenv="env -u PIP_USER  pipenv"
 
 export PIPENV_VENV_IN_PROJECT=1
 export PIPENV_MAX_DEPTH=10  # Defaults to 3
