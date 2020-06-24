@@ -588,6 +588,16 @@ THEM are function and its args."
                  "/.venv/"))
   (global-hardhat-mode 1))
 
+(with-eval-after-load 'ignoramus
+  (defvar ignoramus-file-basename-exact-names)
+  (set-variable 'ignoramus-file-basename-exact-names
+                (delete "profile"
+                        ignoramus-file-basename-exact-names))
+  (set-variable 'ignoramus-file-basename-exact-names
+                (delete "Profile"
+                        ignoramus-file-basename-exact-names))
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
@@ -711,6 +721,9 @@ THEM are function and its args."
 (advice-add 'wgrep-to-original-mode
             :after
             'my-mode-line-color-update)
+(with-eval-after-load 'hardhat
+  ;; TODO: Add hook to hardhat-local-hook
+  ())
 
 (set-face-background 'header-line
                      my-mode-line-background-default)
