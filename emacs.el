@@ -722,8 +722,10 @@ THEM are function and its args."
             :after
             'my-mode-line-color-update)
 (with-eval-after-load 'hardhat
-  ;; TODO: Add hook to hardhat-local-hook
-  ())
+  ;; hardhat-mode-hook does not work as expected...
+  (advice-add 'hardhat-local-hook
+              :after
+              'my-mode-line-color-update))
 
 (set-face-background 'header-line
                      my-mode-line-background-default)
