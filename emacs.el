@@ -585,7 +585,14 @@ THEM are function and its args."
   (with-eval-after-load 'hardhat
     (defvar hardhat-fullpath-protected-regexps)
     (add-to-list 'hardhat-fullpath-protected-regexps
-                 "/.venv/"))
+                 "/\\.venv/")
+    (defvar hardhat-fullpath-editable-regexps)
+    (add-to-list 'hardhat-fullpath-editable-regexps
+                 "/\\.git/DIFF_INDEX\\'")
+    (defvar hardhat-basename-editable-regexps)
+    (add-to-list 'hardhat-basename-editable-regexps
+                 "\\`Pipfile.lock\\'")
+    )
   (global-hardhat-mode 1))
 
 (with-eval-after-load 'ignoramus
