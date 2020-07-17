@@ -232,7 +232,7 @@ Otherwize hook it."
 (setq inhibit-startup-message t)
 (setq initial-buffer-choice 'messages-buffer)
 (setq confirm-kill-emacs 'y-or-n-p)
-(setq gc-cons-threshold (* 1024 1024 16))
+;; (setq gc-cons-threshold (* 1024 1024 16))
 (setq garbage-collection-messages nil)
 
 (when window-system
@@ -588,7 +588,7 @@ THEM are function and its args."
                  "/\\.venv/")
     (defvar hardhat-fullpath-editable-regexps)
     (add-to-list 'hardhat-fullpath-editable-regexps
-                 "/\\.git/DIFF_INDEX\\'")
+                 "/\\.git/EDIT_INDEX\\.diff\\'")
     (defvar hardhat-basename-editable-regexps)
     (add-to-list 'hardhat-basename-editable-regexps
                  "\\`Pipfile.lock\\'")
