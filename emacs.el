@@ -1677,8 +1677,8 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   (when (require 'with-venv nil t)
     (with-venv-advice-add 'pydoc)))
 
-(set-variable 'flycheck-python-mypy-ini ".mypy.ini")
-(set-variable 'flycheck-flake8rc "setup.cfg")
+(set-variable 'flycheck-python-mypy-config '("mypy.ini" ".mypy.ini" "setup.cfg"))
+(set-variable 'flycheck-flake8rc '("setup.cfg" "tox.ini" ".flake8rc"))
 
 (set-variable 'flycheck-python-pylint-executable "python3")
 (set-variable 'flycheck-python-pycompile-executable "python3")
@@ -2064,11 +2064,15 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (defalias 'man 'woman)
 
 (add-to-list 'auto-mode-alist
-             '("tox\\.ini\\'" . conf-unix-mode))
+             '("/tox\\.ini\\'" . conf-unix-mode))
+(add-to-list 'auto-mode-alist
+             '("/setup\\.cfg\\'" . conf-unix-mode))
 
 (when (fboundp 'toml-mode)
   (add-to-list 'auto-mode-alist
                '("/tox\\.ini\\'" . toml-mode))
+  (add-to-list 'auto-mode-alist
+               '("/setup\\.cfg\\'" . toml-mode))
   (add-to-list 'auto-mode-alist
                '("/Pipfile\\'" . toml-mode))
   (add-to-list 'auto-mode-alist
