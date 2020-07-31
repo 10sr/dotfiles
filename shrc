@@ -327,6 +327,7 @@ alias pu=pushd
 __safe_alias sudoe="sudoedit"
 
 __safe_alias ge="git exec"
+
 __safe_alias make="nice make"
 __safe_alias brew="nice brew"
 __safe_alias gcc="nice gcc"
@@ -336,7 +337,6 @@ __safe_alias javac="nice javac -J-Duser.language=en"
 __safe_alias ansible-playbook="nice ansible-playbook"
 
 alias rand="echo \$RANDOM"
-alias pycalc="python -i -c 'from math import *' "
 __safe_alias py3=python3
 __safe_alias py2=python2
 __safe_alias ipy=ipython
@@ -345,8 +345,8 @@ __safe_alias ipy2=ipython2
 __safe_alias rl=rlwrap
 __safe_alias igosh=gosh-rl
 
-__safe_alias pipenv="env -u PIP_USER  pipenv"
-__safe_alias pipx="env -u PIP_USER  pipx"
+__safe_alias pipenv="env -u PIP_USER pipenv"
+__safe_alias pipx="env -u PIP_USER pipx"
 
 
 # Sometimes SHELL cannot be used. For example, when running bash inside zsh
@@ -378,12 +378,6 @@ __safe_alias rs="rsync --progress --itemize-changes --compress"
 __safe_alias vagr=vagrant
 
 __safe_alias ztw='twitter set "`zenity --entry --title ztw --text Status:`"'
-
-if $iscygwin
-then
-    __my_wget_options=" --no-check-certificate"
-    __safe_alias wget="wget $__my_wget_options"
-fi
 
 if $isdarwin
 then
