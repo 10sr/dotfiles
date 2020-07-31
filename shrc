@@ -344,6 +344,11 @@ __safe_alias ipy3=ipython3
 __safe_alias ipy2=ipython2
 __safe_alias rl=rlwrap
 __safe_alias igosh=gosh-rl
+
+__safe_alias pipenv="env -u PIP_USER  pipenv"
+__safe_alias pipx="env -u PIP_USER  pipx"
+
+
 # Sometimes SHELL cannot be used. For example, when running bash inside zsh
 # SHELL is set to be /bin/zsh
 if $inbash
