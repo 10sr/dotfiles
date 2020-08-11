@@ -1164,7 +1164,8 @@ THEM are function and its args."
                           "--color='bg+:-1' "
                           "--inline-info "
                           "--cycle "
-                          "--reverse "
+                          ;; TODO: fix
+                          ;; "--reverse "
                           (format "--prompt='[%s]> ' "
                                   dir)))
     (fzf/start dir)
