@@ -1144,8 +1144,49 @@ THEM are function and its args."
            (not (file-remote-p default-directory)))
       (let ((process-environment (cl-copy-list process-environment)))
         (setenv "FZF_DEFAULT_COMMAND" my-fzf-default-command)
-        (fzf))
+        (my-fzf))
     (call-interactively 'find-file)))
+
+(defvar fzf/position-bottom)
+(defun my-fzf ()
+  "Invoke `fzf' with my configurations."
+  (require 'fzf)
+  (let ((dir (or (ignore-errors
+                   (require 'projectile)
+                   (projectile-project-root))
+                 default-directory)))
+    (set-variable 'fzf/window-height 12)
+    (set-variable 'fzf/args
+                  (concat "--print-query "
+                          "--ansi "
+                          "--color='bg+:-1' "
+                          "--inline-info "
+                          "--cycle "
+                          "--reverse "
+                          (format "--prompt='[%s]> ' "
+                                  dir)))
+    (fzf/start dir)
+    (let* ((buf (or (get-buffer "*fzf*")
+                    (error "FZF buffer not found")))
+           (current-window (or (get-buffer-window buf)
+                               (error "FZF window not found")))
+           (height (window-height current-window))
+           (root-window nil)
+           (new-window nil))
+      (with-current-buffer buf
+        (setq mode-line-format nil))
+      (jump-to-register :fzf-windows)
+      ;; (delete-window current-window)
+      (setq root-window (frame-root-window))
+      (setq new-window (split-window root-window
+                                     (- height)
+                                     'below))
+      (select-window new-window)
+      (switch-to-buffer buf)
+      (term-reset-size (window-height)
+                       (window-width))
+      )))
+
 (define-key ctl-x-map "f" 'my-fzf-or-find-file)
 
 (defun my-fzf-all-lines ()
