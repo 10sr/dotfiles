@@ -1148,6 +1148,8 @@ THEM are function and its args."
     (call-interactively 'find-file)))
 
 (defvar fzf/position-bottom)
+(declare-function fzf/start "fzf")
+(declare-function term-reset-size "term")
 (defun my-fzf ()
   "Invoke `fzf' with my configurations."
   (require 'fzf)
