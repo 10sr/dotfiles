@@ -1151,6 +1151,8 @@ THEM are function and its args."
 (defun my-fzf-all-lines ()
   "Fzf all lines."
   (interactive)
+  (unless (executable-find "rg")
+    (error "rg not found"))
   (let ((process-environment (cl-copy-list process-environment)))
     (setenv "FZF_DEFAULT_COMMAND" "rg -nH --no-heading --hidden --follow --glob '!.git/*' --color=always ^")
     (fzf)))
