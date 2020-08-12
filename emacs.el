@@ -1159,13 +1159,14 @@ THEM are function and its args."
                  default-directory)))
     (set-variable 'fzf/window-height 12)
     (set-variable 'fzf/args
-                  (concat "--print-query "
+                  (concat ;; "--print-query "
                           "--ansi "
                           "--color='bg+:-1' "
                           "--inline-info "
                           "--cycle "
                           ;; TODO: fix
-                          ;; "--reverse "
+                          "--reverse "
+                          ;; "--print0 "
                           (format "--prompt='[%s]> ' "
                                   dir)))
     (fzf/start dir)
