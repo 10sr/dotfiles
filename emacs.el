@@ -182,6 +182,9 @@ Otherwize hook it."
             diredfl
             hardhat
 
+            counsel
+            ivy-prescient
+
             editorconfig
             editorconfig-custom-majormode
 
@@ -2899,33 +2902,6 @@ Any output will be written to current buffer."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ivy
 
-;; (set-variable 'enable-recursive-minibuffers t)
-;; (minibuffer-depth-indicate-mode 1)
-
-(declare-function ivy--regex-ignore-order "ivy")
-(declare-function ivy--regex-fuzzy "ivy")
-(defun my--ivy-regex-fuzzy-ignore-order (str)
-  "Re-build regex from STR for ignore-order fuzzy match."
-  (let ((re-list (ivy--regex-ignore-order str)))
-    (if (listp re-list)
-        (mapcar (lambda (e)
-                  (let ((head (car e))
-                        (tail (cdr e)))
-                    (if tail
-                        (cons (ivy--regex-fuzzy head)
-                              tail)
-                      (cons head tail))))
-                re-list)
-      (ivy--regex-fuzzy re-list))))
-;; (my--ivy-regex-fuzzy-ignore-order  "ab  bc !cee")
-;; (ivy--regex-fuzzy "ab")
-;; (ivy--regex-ignore-order "a b")
-
-(set-variable 'ivy-re-builders-alist
-              '((t . my--ivy-regex-fuzzy-ignore-order)))
-
-;; (set-variable 'ivy-format-functions-alist
-;;               '((t . ivy-format-function-arrow)))
 (set-variable 'ivy-format-functions-alist
               '((t . (lambda (cands)  (ivy--format-function-generic
                                        (lambda (str)
@@ -2950,17 +2926,7 @@ Any output will be written to current buffer."
 
 (when (fboundp 'counsel-M-x)
   (define-key esc-map "x" 'counsel-M-x)
-  ;; (counsel-mode 1)
-  ;; counsel-fzf executes fzf -f QUERY for each input
-  ;; (define-key ctl-x-map "f"
-  ;;   (lambda ()
-  ;;     (interactive
-  ;;      (let ((process-environment (cl-copy-list process-environment)))
-  ;;        (setenv "FZF_DEFAULT_COMMAND" nil)
-  ;;        (counsel-fzf)))))
   )
-;; (when (fboundp 'counsel-switch-buffer)
-;;   (define-key ctl-x-map (kbd "C-b") 'counsel-switch-buffer))
 
 (declare-function ivy-thing-at-point "ivy")
 (when (and (fboundp 'ivy-read)
@@ -2988,12 +2954,6 @@ Any output will be written to current buffer."
   (define-key help-map "o" 'my-counsel-describe-symbol)
   )
 
-;; (defun my-ivy-length (x y)
-;;   "Ivy sort to order by string length."
-;;   (<= (length (if (consp x) (car x) x))
-;;       (length (if (consp y) (car y) y))))
-;; (my-ivy-length "a" (cons "bc" t))
-;; (my-ivy-length "a" (cons "c" t))
 
 (declare-function ivy-configure "ivy")
 (with-eval-after-load 'counsel  ;; Hook to counsel, not ivy
@@ -3003,11 +2963,6 @@ Any output will be written to current buffer."
     :initial-input ""
     ;; :sort-fn 'my-ivy-length
     )
-  (defvar ivy-sort-matches-functions-alist)
-  (add-to-list 'ivy-sort-matches-functions-alist
-               '(my-counsel-describe-symbol . ivy--shorter-matches-first))
-  (add-to-list 'ivy-sort-matches-functions-alist
-               '(counsel-M-x . ivy--shorter-matches-first))
   )
 
 
@@ -3016,6 +2971,14 @@ Any output will be written to current buffer."
 
 (when (fboundp 'swiper)
   (define-key esc-map (kbd "C-s") 'swiper))
+
+(with-eval-after-load 'ivy
+  ;; ivy-prescient requires counsel already loaded
+  (require 'counsel nil t)
+  (when (require 'ivy-prescient nil t)
+    (set-variable 'prescient-filter-method
+                  '(fuzzy literal regexp initialism))
+    (ivy-prescient-mode 1)))
 
 
 ;; ?
