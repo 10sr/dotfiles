@@ -169,7 +169,6 @@ Otherwize hook it."
             gited
             highlight-indentation
             diminish
-            fzf
             fic-mode
             term-cursor
             pydoc
@@ -206,6 +205,7 @@ Otherwize hook it."
             pasteboard
             awk-preview
             recently
+            fuzzy-finder
 
             )))
   (set-variable 'package-selected-packages
@@ -1194,7 +1194,7 @@ THEM are function and its args."
                        (window-width))
       )))
 
-(define-key ctl-x-map "f" 'my-fzf-or-find-file)
+;; (define-key ctl-x-map "f" 'my-fzf-or-find-file)
 
 (defun my-fzf-all-lines ()
   "Fzf all lines."
@@ -1204,7 +1204,63 @@ THEM are function and its args."
   (let ((process-environment (cl-copy-list process-environment)))
     (setenv "FZF_DEFAULT_COMMAND" "rg -nH --no-heading --hidden --follow --glob '!.git/*' --color=always ^")
     (fzf)))
-(define-key ctl-x-map "S" 'my-fzf-all-lines)
+;; (define-key ctl-x-map "S" 'my-fzf-all-lines)
+
+;; fuzzy-finder
+
+(set-variable 'fuzzy-finder-default-command
+              (concat "fzf "
+                      "--ansi "
+                      "--color='bg+:-1' "
+                      "--inline-info "
+                      "--cycle "
+                      "--reverse "
+                      "--prompt=\"[`pwd`]> \" "))
+
+(set-variable 'fuzzy-finder-default-input-command
+              (let ((find (or (executable-find "bfs")  ;; Breadth-first find https://github.com/tavianator/bfs
+                              ;; Use gfind if available?
+                              "find"))
+                    (fd (or (executable-find "fdfind")
+                            (executable-find "fd"))))
+                (if fd
+                    (concat "set -eu; set -o pipefail; "
+                            "echo .; "
+                            "echo ..; "
+                            "command " fd " "
+                            "--follow --hidden --no-ignore "
+                            "--color always "
+                            "2>/dev/null")
+                  (concat "set -eu; set -o pipefail; "
+                          "echo .; "
+                          "echo ..; "
+                          "command " find " -L . "
+                          "-mindepth 1 "
+                          "\\( -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune "
+                          "-o -print "
+                          "2> /dev/null "
+                          "| "
+                          "cut -b3-"))))
+
+(defun my-fuzzy-finder-or-find-file ()
+  "Call `fuzzy-finder' if usable or call `find-file'."
+  (declare (interactive-only t))
+  (interactive)
+  (if (and (executable-find "fzf")
+           (fboundp 'fuzzy-finder)
+           (not (file-remote-p default-directory)))
+      ;; TODO: Use projectile version
+      (fuzzy-finder)
+    (call-interactively 'find-file)))
+(define-key ctl-x-map "f" 'my-fuzzy-finder-or-find-file)
+
+(defun my-fuzzy-finder-ripgrep-lines ()
+  "Fzf all lines."
+  (interactive)
+  (unless (executable-find "rg")
+    (error "rg not found"))
+  (fuzzy-finder :input-command "rg -nH --no-heading --hidden --follow --glob '!.git/*' --color=always ^"))
+(define-key ctl-x-map "S" 'my-fuzzy-finder-ripgrep-lines)
 
 ;; recently
 
