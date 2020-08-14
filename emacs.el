@@ -1898,8 +1898,9 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 
 ;; (ffap-bindings)
 
-(set-variable 'browse-url-browser-function
-              'eww-browse-url)
+(with-eval-after-load 'browse-url
+  (set-variable 'browse-url-browser-function
+                'eww-browse-url))
 
 (set-variable 'sh-here-document-word "__EOC__")
 
