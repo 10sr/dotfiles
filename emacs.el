@@ -1166,6 +1166,13 @@ THEM are function and its args."
                                       (back-to-indentation)))))))
 (define-key ctl-x-map "S" 'my-fuzzy-finder-ripgrep-lines)
 
+(defun my-fuzzy-finder-dired ()
+  "Fuzzy finder directory."
+  (interactive)
+  (fuzzy-finder :input-command "fd --hidden --no-ignore --type directory"
+                :directory (expand-file-name "~")))
+(define-key ctl-x-map "d" 'my-fuzzy-finder-dired)
+
 ;; (set-variable 'fuzzy-finder-default-command "selecta")
 ;; (set-variable 'fuzzy-finder-default-command "peco")
 ;; (set-variable 'fuzzy-finder-default-command "percol")
@@ -1664,8 +1671,9 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 ;;   (when (fboundp 'flycheck-black-check-setup)
 ;;     (flycheck-black-check-setup)))
 
-(when (fboundp 'ilookup-open-word)
-  (define-key ctl-x-map "d" 'ilookup-open-word))
+;; (when (fboundp 'ilookup-open-word)
+;;   (define-key ctl-x-map "d" 'ilookup-open-word)
+;;   )
 
 (set-variable 'ac-ignore-case nil)
 
