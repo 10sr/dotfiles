@@ -1103,6 +1103,7 @@ THEM are function and its args."
                       "--inline-info "
                       "--cycle "
                       "--reverse "
+                      "--multi "
                       "--prompt=\"[`pwd`]> \" "))
 
 (set-variable 'fuzzy-finder-default-input-command
@@ -1129,6 +1130,12 @@ THEM are function and its args."
                           "2> /dev/null "
                           "| "
                           "cut -b3-"))))
+
+(add-hook 'fuzzy-finder-init-hook
+          (lambda ()
+            (when (and (boundp 'company-mode)
+                       company-mode)
+              (company-mode -1))))
 
 (defun my-fuzzy-finder-or-find-file ()
   "Call `fuzzy-finder' if usable or call `find-file'."
@@ -1159,7 +1166,12 @@ THEM are function and its args."
                                       (back-to-indentation)))))))
 (define-key ctl-x-map "S" 'my-fuzzy-finder-ripgrep-lines)
 
-;; (fuzzy-finder :command "selecta")
+;; (set-variable 'fuzzy-finder-default-command "selecta")
+;; (set-variable 'fuzzy-finder-default-command "peco")
+;; (set-variable 'fuzzy-finder-default-command "percol")
+;; (set-variable 'fuzzy-finder-default-command "fzy")
+;; (set-variable 'fuzzy-finder-default-command "sk --ansi --no-hscroll --reverse")
+;; (set-variable 'fuzzy-finder-default-command "pick")
 
 ;; recently
 
