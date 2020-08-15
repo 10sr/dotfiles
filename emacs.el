@@ -1249,8 +1249,7 @@ THEM are function and its args."
   (if (and (executable-find "fzf")
            (fboundp 'fuzzy-finder)
            (not (file-remote-p default-directory)))
-      ;; TODO: Use projectile version
-      (fuzzy-finder)
+      (fuzzy-finder-find-files-projectile)
     (call-interactively 'find-file)))
 (define-key ctl-x-map "f" 'my-fuzzy-finder-or-find-file)
 
@@ -1259,8 +1258,20 @@ THEM are function and its args."
   (interactive)
   (unless (executable-find "rg")
     (error "rg not found"))
-  (fuzzy-finder :input-command "rg -nH --no-heading --hidden --follow --glob '!.git/*' --color=always ^"))
+  (fuzzy-finder :input-command "rg -nH --no-heading --hidden --follow --glob '!.git/*' --color=always ^"
+                :action (lambda (results)
+                            (dolist (result results)
+                              (let* ((fields (split-string result ":"))
+                                     (file (pop fields))
+                                     (linenumber (pop fields)))
+                                (find-file (expand-file-name file))
+                                    (when linenumber
+                                      (goto-char (point-min))
+                                      (forward-line (- (string-to-number linenumber) 1))
+                                      (back-to-indentation)))))))
 (define-key ctl-x-map "S" 'my-fuzzy-finder-ripgrep-lines)
+
+;; (fuzzy-finder :command "selecta")
 
 ;; recently
 
