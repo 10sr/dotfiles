@@ -1131,12 +1131,6 @@ THEM are function and its args."
                           "| "
                           "cut -b3-"))))
 
-(add-hook 'fuzzy-finder-init-hook
-          (lambda ()
-            (when (and (boundp 'company-mode)
-                       company-mode)
-              (company-mode -1))))
-
 (defun my-fuzzy-finder-or-find-file ()
   "Call `fuzzy-finder' if usable or call `find-file'."
   (declare (interactive-only t))
