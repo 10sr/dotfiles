@@ -1155,15 +1155,19 @@ THEM are function and its args."
     (error "rg not found"))
   (fuzzy-finder :input-command "rg -nH --no-heading --hidden --follow --glob '!.git/*' --color=always ^"
                 :action (lambda (results)
+                          (let ((results (mapcar (lambda (result)
+                                                   (let* ((fields (split-string result ":"))
+                                                          (file (pop fields))
+                                                          (linenumber (pop fields)))
+                                                     (list :file file
+                                                           :linenumber linenumber)))
+                                                results)))
                             (dolist (result results)
-                              (let* ((fields (split-string result ":"))
-                                     (file (pop fields))
-                                     (linenumber (pop fields)))
-                                (find-file (expand-file-name file))
-                                    (when linenumber
-                                      (goto-char (point-min))
-                                      (forward-line (- (string-to-number linenumber) 1))
-                                      (back-to-indentation)))))))
+                              (find-file (plist-get result :file))
+                              (when (plist-get result :linenumber)
+                                (goto-char (point-min))
+                                (forward-line (- (string-to-number (plist-get result :linenumber)) 1))
+                                (back-to-indentation)))))))
 (define-key ctl-x-map "S" 'my-fuzzy-finder-ripgrep-lines)
 
 (defun my-fuzzy-finder-dired ()
@@ -2952,7 +2956,7 @@ Any output will be written to current buffer."
   (require 'counsel nil t)
   (when (require 'ivy-prescient nil t)
     (set-variable 'prescient-filter-method
-                  '(fuzzy literal regexp initialism))
+                  '(literal regexp initialism fuzzy prefix))
     (ivy-prescient-mode 1)))
 
 
