@@ -1574,13 +1574,15 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (when (fboundp 'global-company-mode)
   (add-hook 'after-first-visit-hook
             'global-company-mode))
+;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
+;; https://qiita.com/yuze/items/a145b1e3edb6d0c24cbf
+(set-variable 'company-idle-delay nil)
+(set-variable 'company-minimum-prefix-length 2)
+(set-variable 'company-selection-wrap-around t)
+(set-variable 'company-global-modes '(not term-char-mode
+                                          term-line-mode))
 (declare-function company-manual-begin "company")
 (with-eval-after-load 'company
-  ;; http://qiita.com/sune2/items/b73037f9e85962f5afb7
-  ;; https://qiita.com/yuze/items/a145b1e3edb6d0c24cbf
-  (set-variable 'company-idle-delay nil)
-  (set-variable 'company-minimum-prefix-length 2)
-  (set-variable 'company-selection-wrap-around t)
 
   (defvar company-mode-map)
   (define-key company-mode-map (kbd "C-i") 'company-indent-or-complete-common)
