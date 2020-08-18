@@ -1104,7 +1104,10 @@ THEM are function and its args."
                       "--cycle "
                       "--reverse "
                       "--multi "
+                      "--print0 "
                       "--prompt=\"[`pwd`]> \" "))
+(set-variable 'fuzzy-finder-default-output-delimiter
+              "\0")
 
 (set-variable 'fuzzy-finder-default-input-command
               (let ((find (or (executable-find "bfs")  ;; Breadth-first find https://github.com/tavianator/bfs
