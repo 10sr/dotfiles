@@ -1134,6 +1134,10 @@ THEM are function and its args."
                           "| "
                           "cut -b3-"))))
 
+(declare-function fuzzy-finder
+                  "fuzzy-finder")
+(declare-function fuzzy-finder-find-files-projectile
+                  "fuzzy-finder")
 (defun my-fuzzy-finder-or-find-file ()
   "Call `fuzzy-finder' if usable or call `find-file'."
   (declare (interactive-only t))
@@ -1145,26 +1149,16 @@ THEM are function and its args."
     (call-interactively 'find-file)))
 (define-key ctl-x-map "f" 'my-fuzzy-finder-or-find-file)
 
+(declare-function fuzzy-finder-action-find-files-goto-line
+                  "fuzzy-finder")
 (defun my-fuzzy-finder-ripgrep-lines ()
   "Fzf all lines."
   (interactive)
   (unless (executable-find "rg")
     (error "rg not found"))
   (fuzzy-finder :input-command "rg -nH --no-heading --hidden --follow --glob '!.git/*' --color=always ^"
-                :action (lambda (results)
-                          (let ((results (mapcar (lambda (result)
-                                                   (let* ((fields (split-string result ":"))
-                                                          (file (pop fields))
-                                                          (linenumber (pop fields)))
-                                                     (list :file file
-                                                           :linenumber linenumber)))
-                                                results)))
-                            (dolist (result results)
-                              (find-file (plist-get result :file))
-                              (when (plist-get result :linenumber)
-                                (goto-char (point-min))
-                                (forward-line (1- (string-to-number (plist-get result :linenumber))))
-                                (back-to-indentation)))))))
+                :action 'fuzzy-finder-action-find-files-goto-line))
+
 (define-key ctl-x-map "S" 'my-fuzzy-finder-ripgrep-lines)
 
 (defun my-fuzzy-finder-dired ()
@@ -2953,7 +2947,7 @@ Any output will be written to current buffer."
 (with-eval-after-load 'ivy
   ;; ivy-prescient requires counsel already loaded
   (require 'counsel nil t)
-  (when (require 'ivy-prescient nil t)
+  (when (fboundp 'ivy-prescient-mode)
     (set-variable 'prescient-filter-method
                   '(literal regexp initialism fuzzy prefix))
     (ivy-prescient-mode 1)))
