@@ -416,7 +416,7 @@ Otherwize hook it."
 (setq-default major-mode 'text-mode)
 (setq next-line-add-newlines nil)
 (setq kill-read-only-ok t)
-(setq truncate-partial-width-windows nil) ; when splitted horizontally
+;; (setq truncate-partial-width-windows nil) ; when splitted horizontally
 ;; (setq-default line-spacing 0.2)
 (setq-default indicate-empty-lines t)   ; when using x indicate empty line
 ;; (setq-default tab-width 4)
@@ -1096,9 +1096,9 @@ THEM are function and its args."
 
 ;; fuzzy-finder
 
-(set-variable 'fuzzy-finder-default-command
-              (concat "fzf "
-                      "--ansi "
+(set-variable 'fuzzy-finder-executable "fzf")
+(set-variable 'fuzzy-finder-default-arguments
+              (concat "--ansi "
                       "--color='bg+:-1' "
                       "--inline-info "
                       "--cycle "
@@ -1163,7 +1163,7 @@ THEM are function and its args."
                               (find-file (plist-get result :file))
                               (when (plist-get result :linenumber)
                                 (goto-char (point-min))
-                                (forward-line (- (string-to-number (plist-get result :linenumber)) 1))
+                                (forward-line (1- (string-to-number (plist-get result :linenumber))))
                                 (back-to-indentation)))))))
 (define-key ctl-x-map "S" 'my-fuzzy-finder-ripgrep-lines)
 
