@@ -494,7 +494,9 @@ Otherwize hook it."
   "Insert ^L."
   (interactive)
   (insert "\^L\n"))
+(define-key esc-map (kbd "C-m") 'my-insert-page-break)
 
+
 
 (when (fboundp 'global-git-gutter-mode)
   (add-hook 'after-first-visit-hook
