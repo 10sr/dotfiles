@@ -293,6 +293,7 @@ else
 	$(git_conf) core.autocrlf false
 	$(git_conf) core.excludesfile '~/.gitignore'
 	$(git_conf) core.commentChar ";"
+	$(git_conf) core.notesRef true
 	$(git_conf) color.ui auto
 	$(git_conf) status.relativePaths false
 	$(git_conf) status.showUntrackedFiles normal

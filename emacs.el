@@ -1865,6 +1865,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
                       :inverse-video t)
   ;; Annoying !
   ;;(diff-auto-refine-mode)
+  (set-variable 'diff-refine nil)
   )
 
 ;; (ffap-bindings)
