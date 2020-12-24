@@ -148,7 +148,6 @@ Otherwize hook it."
             editorconfig
             git-ps1-mode
             restart-emacs
-            fill-column-indicator
             pkgbuild-mode
             minibuffer-line
             which-key
@@ -1000,10 +999,6 @@ THEM are function and its args."
     ;;   (set-face-bold-p 'whitespace-newline
     ;;                      t))
     ))
-
-(and nil
-     '(require 'fill-column-indicator nil t)
-     (setq fill-column-indicator))
 
 (defun my-gen-hl-line-color-dark ()
   "Generate color for current line in black background."
