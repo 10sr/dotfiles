@@ -988,10 +988,14 @@ THEM are function and its args."
       (whitespace-mode 0)
       (whitespace-mode 1)))
 
-  (set-variable 'whitespace-line-column nil)
-  (if (>= (display-color-cells)
+  (set-variable 'whitespace-line-column nil)  ; Use value of `fill-column'
+  (when (>= (display-color-cells)
           256)
-      (set-face-foreground 'whitespace-newline "color-109")
+    (set-face-foreground 'whitespace-newline "color-109")
+    (set-face-foreground 'whitespace-line
+                         nil)
+    (set-face-background 'whitespace-line
+                         "gray35")
     ;; (progn
     ;;   (set-face-bold-p 'whitespace-newline
     ;;                      t))
