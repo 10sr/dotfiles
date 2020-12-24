@@ -430,7 +430,6 @@ Otherwize hook it."
 (setq line-move-visual nil)
 (setq create-lockfiles nil)
 (setq set-mark-command-repeat-pop t)
-(setq-default fill-column 80)
 
 (add-hook 'before-save-hook
           'time-stamp)
@@ -609,6 +608,11 @@ THEM are function and its args."
                 (delete "Profile"
                         ignoramus-file-basename-exact-names))
   )
+
+
+;; Fill column
+(setq-default fill-column 80)
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
