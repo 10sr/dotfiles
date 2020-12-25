@@ -25,6 +25,8 @@
 
 
 
+;; (profiler-start 'cpu)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
 
@@ -108,7 +110,8 @@ Otherwize hook it."
                 ("melpa" . "https://melpa.org/packages/")
                 ;; Somehow fails to download via https
                 ("10sr-el" . "http://10sr.github.io/emacs-lisp/elpa/")))
-(package-initialize)
+(when (< emacs-major-version 27)
+  (package-initialize))
 
 ;; Use package-install-selected-packages to install these
 (let ((my '(
@@ -373,7 +376,8 @@ Otherwize hook it."
 (define-key ctl-x-map "i" 'ielm)
 
 (when (fboundp 'which-key-mode)
-  (which-key-mode))
+  (set-variable 'which-key-idle-delay 0.3)
+  (which-key-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; editor
@@ -554,12 +558,12 @@ Otherwize hook it."
               ;; Remove mark in minibuffer
               (set-mark nil))))
 
-(when (fboundp 'back-button-mode)
-  (back-button-mode 1))
-(when (fboundp 'back-button-local-forward)
-  (global-set-key (kbd "<right>") 'back-button-local-forward))
-(when (fboundp 'back-button-local-backward)
-  (global-set-key (kbd "<left>") 'back-button-local-backward))
+;; (when (fboundp 'back-button-mode)
+;;   (back-button-mode 1))
+;; (when (fboundp 'back-button-local-forward)
+;;   (global-set-key (kbd "<right>") 'back-button-local-forward))
+;; (when (fboundp 'back-button-local-backward)
+;;   (global-set-key (kbd "<left>") 'back-button-local-backward))
 
 (when (fboundp 'global-visible-mark-mode)
   (set-variable 'visible-mark-max 2)
@@ -650,7 +654,8 @@ THEM are function and its args."
 (setq eol-mnemonic-mac "\\r")
 (setq eol-mnemonic-unix "")
 
-(which-function-mode 1)
+(add-hook 'after-first-visit-hook
+          'which-function-mode)
 
 (line-number-mode 0)
 (column-number-mode 0)
@@ -3063,9 +3068,12 @@ Any output will be written to current buffer."
   (mmv-draw-mark))
 
 
+
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
 ;; End:
+
+;; (profiler-report)
 
 ;;; emancs.el ends here
