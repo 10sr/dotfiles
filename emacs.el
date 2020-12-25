@@ -68,48 +68,6 @@ Otherwize hook it."
                (lambda ()
                  ,@body))))
 
-;; (defmacro safe-require-or-eval (feature)
-;;   "Require FEATURE if available.
-
-;; At compile time the feature will be loaded immediately."
-;;   `(eval-and-compile
-;;      (message "safe-require-or-eval: Trying to require %s" ,feature)
-;;      (require ,feature nil t)))
-
-;; (defmacro autoload-eval-lazily (feature &optional functions &rest body)
-;;   "Define autoloading FEATURE that defines FUNCTIONS.
-;; FEATURE is a symbol.  FUNCTIONS is a list of symbols.  If FUNCTIONS is nil,
-;; the function same as FEATURE is defined as autoloaded function.  BODY is passed
-;;  to `eval-after-load'.
-;; After this macro is expanded, this returns the path to library if FEATURE
-;; found, otherwise returns nil."
-;;   (declare (indent 2) (debug t))
-;;   (let* ((libname (symbol-name (eval feature)))
-;;          (libpath (locate-library libname)))
-;;     `(progn
-;;        (when (locate-library ,libname)
-;;          ,@(mapcar (lambda (f)
-;;                      `(unless (fboundp ',f)
-;;                         (progn
-;;                           (message "Autoloaded function `%S' defined (%s)"
-;;                                    (quote ,f)
-;;                                    ,libpath)
-;;                           (autoload (quote ,f)
-;;                             ,libname
-;;                             ,(concat "Autoloaded function defined in \""
-;;                                      libpath
-;;                                      "\".")
-;;                             t))))
-;;                    (or (eval functions)
-;;                        `(,(eval feature)))))
-;;        (eval-after-load ,feature
-;;          (quote (progn
-;;                   ,@body)))
-;;        (locate-library ,libname))))
-
-;; (when (autoload-eval-lazily 'tetris nil
-;;         (message "Tetris loaded!"))
-;;   (message "Tetris found!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package
