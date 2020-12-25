@@ -11,6 +11,18 @@
 
 (setq debug-on-error t)
 
+(when (getenv "_EMACS_EL_PROFILE")
+  (eval-and-compile
+    (require 'profiler))
+  (profiler-start 'cpu))
+
+;; https://emacs-jp.github.io/tips/startup-optimization
+;; Temporarily change values to speed up initialization
+(defconst my-orig-file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+(defconst my-orig-gc-cons-threshold gc-cons-threshold)
+(setq gc-cons-threshold most-positive-fixnum)
+
 ;; make directories
 (unless (file-directory-p (expand-file-name user-emacs-directory))
   (make-directory (expand-file-name user-emacs-directory)))
@@ -24,8 +36,6 @@
 (require 'simple)
 
 
-
-;; (profiler-start 'cpu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Some macros for internals
@@ -3068,12 +3078,18 @@ Any output will be written to current buffer."
   (mmv-draw-mark))
 
 
+;; https://emacs-jp.github.io/tips/startup-optimization
+;; Restore to original value
+(setq gc-cons-threshold my-orig-gc-cons-threshold)
+(setq file-name-handler-alist my-orig-file-name-handler-alist)
+
+(when (getenv "_EMACS_EL_PROFILE")
+  (profiler-report)
+  (profiler-stop))
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
 ;; flycheck-checker: emacs-lisp
 ;; End:
-
-;; (profiler-report)
 
 ;;; emancs.el ends here
