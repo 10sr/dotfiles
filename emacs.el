@@ -2828,6 +2828,16 @@ Any output will be written to current buffer."
         (when peek-file-mode
           (kill-buffer))))))
 
+(with-eval-after-load 'dired
+  (defun dired-peek-file (&rest files)
+    "Dired `peak-file' FILES."
+    (interactive (list (dired-get-file-for-visit)))
+    (message "AAA %S" files)
+    (dolist (file files)
+      (peek-file file)))
+  (defvar dired-mode-map (make-sparse-keymap))
+  (define-key dired-mode-map "v" 'dired-peek-file))
+
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; remember-projectile
