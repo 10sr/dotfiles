@@ -563,6 +563,8 @@ THEM are function and its args."
                  "/\\.venv/")
     (defvar hardhat-fullpath-editable-regexps)
     (add-to-list 'hardhat-fullpath-editable-regexps
+                 "/\\.git/hooks/.*'")
+    (add-to-list 'hardhat-fullpath-editable-regexps
                  "/\\.git/EDIT_INDEX\\.diff\\'")
     (defvar hardhat-basename-editable-regexps)
     (add-to-list 'hardhat-basename-editable-regexps
