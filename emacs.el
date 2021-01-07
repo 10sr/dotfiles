@@ -2438,8 +2438,6 @@ ARG is num to show, or defaults to 7."
 
 
 ;; dired-k
-;; Current HEAD of original repo is broken
-;; https://github.com/syohex/emacs-dired-k/issues/45
 (declare-function dired-k-no-revert "dired-k")
 (when (fboundp 'dired-k)
   (set-variable 'dired-k-style 'git)
