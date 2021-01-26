@@ -585,7 +585,7 @@ THEM are function and its args."
 
 ;; Fill column
 (setq-default fill-column 80)
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
@@ -3040,6 +3040,10 @@ Any output will be written to current buffer."
 (when (getenv "_EMACS_EL_PROFILE")
   (profiler-report)
   (profiler-stop))
+
+;; (setq vterm-shell "bash -l")
+;; (setq vterm-kill-buffer-on-exit nil)
+;; ;; (setq vterm-term-environment-variable "screen-256color")
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
