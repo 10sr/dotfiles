@@ -1673,8 +1673,12 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
               "python3 -m pydoc")
 (declare-function with-venv-advice-add "with-venv")
 (with-eval-after-load 'pydoc
+  ;; pydoc depends on python-shell-interpreter but it does not load this
+  (require 'python)
   (when (require 'with-venv nil t)
-    (with-venv-advice-add 'pydoc)))
+    (with-venv-advice-add 'pydoc)
+    ;; Used in interactive function of pydoc
+    (with-venv-advice-add 'pydoc-all-modules)))
 
 (set-variable 'flycheck-python-mypy-config '("mypy.ini" ".mypy.ini" "setup.cfg"))
 (set-variable 'flycheck-flake8rc '("setup.cfg" "tox.ini" ".flake8rc"))
