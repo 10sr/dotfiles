@@ -37,3 +37,6 @@ aaa=b
 
 [indent6.js]
 indent_size = 6
+
+[utf16be.txt]
+charset = utf-16be
