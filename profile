@@ -126,6 +126,10 @@ export PIPENV_VENV_IN_PROJECT=1
 export PIPENV_MAX_DEPTH=10  # Defaults to 3
 # Required when pipenv has been installed within pipx environment
 export PIPENV_IGNORE_VIRTUALENVS=1
+if test -f "$HOME"/.brew/bin/python3
+then
+    export PIPX_DEFAULT_PYTHON="$HOME"/.brew/bin/python3
+fi
 
 export STARDICT_DATA_DIR=$HOME/.brew/share/sdcv-dict-oxford
 

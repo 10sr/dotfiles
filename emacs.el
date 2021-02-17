@@ -387,14 +387,14 @@ Otherwize hook it."
 (setq-default major-mode 'text-mode)
 (setq next-line-add-newlines nil)
 (setq kill-read-only-ok t)
-;; (setq truncate-partial-width-windows nil) ; when splitted horizontally
 ;; (setq-default line-spacing 0.2)
 (setq-default indicate-empty-lines t)   ; when using x indicate empty line
 ;; (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function 'indent-to-left-margin)
 ;; (setq-default indent-line-function nil)
-(setq-default truncate-lines nil)
+(setq-default truncate-lines t)
+;; (setq truncate-partial-width-windows nil) ; when splitted horizontally
 ;; (pc-selection-mode 1) ; make some already defined keybind back to default
 (delete-selection-mode 1)
 (cua-mode 0)
