@@ -2824,6 +2824,7 @@ Any output will be written to current buffer."
         (when peek-file-mode
           (kill-buffer))))))
 
+(declare-function dired-get-file-for-visit "dired")
 (with-eval-after-load 'dired
   (defun dired-peek-file (&rest files)
     "Dired `peak-file' FILES."
