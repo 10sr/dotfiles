@@ -295,7 +295,7 @@ Otherwize hook it."
           (lambda ()
             (use-local-map (copy-keymap (current-local-map)))
             (local-set-key (kbd "C-c C-c") 'server-edit)
-            (message "server-visit-hook %S" buffer-file-name)))
+            ))
 
 ;; MSYS2 fix
 
