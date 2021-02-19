@@ -1194,12 +1194,14 @@ THEM are function and its args."
   (define-key ctl-x-map (kbd "C-r") 'my-counsel-recently)
   )
 
-(when (fboundp 'editorconfig-mode)
-  (add-hook 'after-first-visit-hook
-            'editorconfig-mode)
-  (add-hook 'after-first-visit-hook
-            'editorconfig-mode-apply
-            t))  ;; Do after enabling editorconfig-mode
+;; (when (fboundp 'editorconfig-mode)
+;;   (add-hook 'after-first-visit-hook
+;;             'editorconfig-mode)
+;;   (add-hook 'after-first-visit-hook
+;;             'editorconfig-mode-apply
+;;             t))  ;; Do after enabling editorconfig-mode
+(when (eval-and-compile (require 'editorconfig))
+  (editorconfig-2-mode 1))
 (set-variable 'editorconfig-get-properties-function
               'editorconfig-core-get-properties-hash)
 (set-variable 'editorconfig-mode-lighter "")
