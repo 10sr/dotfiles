@@ -40,3 +40,6 @@ indent_size = 6
 
 [utf16be.txt]
 charset = utf-16be
+
+[latin1*.txt]
+charset = latin1
