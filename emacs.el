@@ -1777,7 +1777,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (when (fboundp 'gited-list)
   (defalias 'gited 'gited-list))
 
-(when (require 'git-commit nil t)
+(when (eval-and-compile (require 'git-commit nil t))
   ;; git-commit is defined badly and breaks the convention that only loading a
   ;; library should not change the Emacs behavior:
   ;; anyway I enable this manually here.
