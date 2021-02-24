@@ -432,6 +432,11 @@ Otherwize hook it."
 ;; C-h and DEL
 (global-set-key (kbd "C-h") (kbd "DEL"))
 ;; (normal-erase-is-backspace-mode 1)
+;; M-SPC fixup-whitespace]
+(when (fboundp 'global-hungry-delete-mode)
+  (set-variable 'hungry-delete-join-reluctantly t)
+  (add-hook 'after-first-visit-hook
+            'global-hungry-delete-mode))
 
 ;;(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
 (global-set-key (kbd "C-m") 'newline-and-indent)

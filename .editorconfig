@@ -43,3 +43,8 @@ charset = utf-16be
 
 [latin1*.txt]
 charset = latin1
+
+[tabindent.js]
+indent_style = tab
+indent_size = 5
+tab_width = 5
