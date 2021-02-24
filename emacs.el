@@ -150,6 +150,7 @@ Otherwize hook it."
             nyan-mode
             diredfl
             hardhat
+            hungry-delete
 
             counsel
             ivy-prescient
