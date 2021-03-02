@@ -400,7 +400,7 @@ Otherwize hook it."
 (setq-default indent-tabs-mode nil)
 (setq-default indent-line-function 'indent-to-left-margin)
 ;; (setq-default indent-line-function nil)
-(setq-default truncate-lines t)
+;; (setq-default truncate-lines t)
 ;; (setq truncate-partial-width-windows nil) ; when splitted horizontally
 ;; (pc-selection-mode 1) ; make some already defined keybind back to default
 (delete-selection-mode 1)
@@ -1080,6 +1080,15 @@ THEM are function and its args."
 (when (fboundp 'fic-mode)
   (add-hook 'prog-mode-hook
             'fic-mode))
+
+(when (fboundp 'global-tree-sitter-mode)
+  (add-hook 'after-init-hook
+            'global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook
+            #'tree-sitter-hl-mode))
+
+(with-eval-after-load 'tree-sitter
+  (require 'tree-sitter-langs nil t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; file handling
