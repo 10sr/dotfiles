@@ -3061,6 +3061,17 @@ Any output will be written to current buffer."
   (mmv-draw-mark))
 
 
+(defun browse-url-macosx-vivaldi-browser (url &rest args)
+  "Invoke the macOS Vlvaldi Web browser with URL.
+ARGS are not used."
+  (interactive (browse-url-interactive-arg "URL: "))
+  (start-process (concat "vivaldi " url)
+                 nil
+                 "/Applications/Vivaldi.app/Contents/MacOS/Vivaldi"
+                 url))
+
+
+
 ;; https://emacs-jp.github.io/tips/startup-optimization
 ;; Restore to original value
 (setq gc-cons-threshold my-orig-gc-cons-threshold)
