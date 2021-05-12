@@ -856,11 +856,42 @@ THEM are function and its args."
   (defvar helm-map)
   (define-key helm-map (kbd "C-h") (kbd "DEL")))
 
+(defun my-shrink-path-width (path width)
+  "Shrink PATH to be same or shorter than WIDTH."
+  (setq path (abbreviate-file-name path))
+  (if (file-remote-p path)
+      (let* ((remote (file-remote-p path))
+             (localname (file-remote-p path 'localname))
+
+             (remote-length (length remote))
+             (width-localname (- width remote-length))
+
+             (localname-shrinked (my-shrink-path-width localname width-localname)))
+        (concat remote localname-shrinked))
+    (let ((yet (split-string path "/"))
+          (done nil)
+          (result path))
+      (while (and yet
+                  (< width (length result)))
+        (let ((current (pop yet)))
+          (unless (string= "" current)
+            (setq current (substring current 0 1)))
+          (setq done
+                (append done (list current))))
+        (setq result
+              (concat (mapconcat 'identity
+                                 (append done yet)
+                                 "/"))))
+      result)))
+;; (my-shrink-path-width "/Applications/Vivaldi.app/Contents/MacOS/Vivaldi" 20)
+;; (my-shrink-path-width "/scp:sakura:/Applications/Vivaldi.app/Contents/MacOS/Vivaldi" 30)
+;; (my-shrink-path-width "/scp:sakura:/Applications/Vivaldi.app/Contents/MacOS/Vivaldi" 20)
+
 (setq-default header-line-format
               '(:eval (let ((f (or (buffer-file-name)
                                    default-directory)))
                         (when f
-                          (abbreviate-file-name f)))))
+                          (my-shrink-path-width f (window-width))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; letters, font-lock mode and fonts
@@ -3069,8 +3100,6 @@ ARGS are not used."
                  nil
                  "/Applications/Vivaldi.app/Contents/MacOS/Vivaldi"
                  url))
-
-
 
 ;; https://emacs-jp.github.io/tips/startup-optimization
 ;; Restore to original value
