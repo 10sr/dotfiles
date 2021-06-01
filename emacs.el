@@ -434,10 +434,10 @@ Otherwize hook it."
 (global-set-key (kbd "C-h") (kbd "DEL"))
 ;; (normal-erase-is-backspace-mode 1)
 ;; M-SPC fixup-whitespace]
-(when (fboundp 'global-hungry-delete-mode)
-  (set-variable 'hungry-delete-join-reluctantly t)
-  (add-hook 'after-first-visit-hook
-            'global-hungry-delete-mode))
+;; (when (fboundp 'global-hungry-delete-mode)
+;;   (set-variable 'hungry-delete-join-reluctantly t)
+;;   (add-hook 'after-first-visit-hook
+;;             'global-hungry-delete-mode))
 
 ;;(global-set-key (kbd "C-m") 'reindent-then-newline-and-indent)
 (global-set-key (kbd "C-m") 'newline-and-indent)
@@ -3100,6 +3100,18 @@ ARGS are not used."
                  nil
                  "/Applications/Vivaldi.app/Contents/MacOS/Vivaldi"
                  url))
+
+
+(defun my-vterm-cmd (command)
+  "Start arbitrary command in vterm buffer."
+  (interactive "sCommand: ")
+  (let ((vterm-shell command)
+        (vterm-buffer-name "*vterm-cmd*")
+        (vterm-kill-buffer-on-exit nil))
+    (when (get-buffer vterm-buffer-name)
+      (kill-buffer (get-buffer vterm-buffer-name)))
+    (vterm)))
+
 
 ;; https://emacs-jp.github.io/tips/startup-optimization
 ;; Restore to original value

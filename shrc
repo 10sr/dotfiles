@@ -348,6 +348,8 @@ __safe_alias igosh=gosh-rl
 __safe_alias pipenv="env -u PIP_USER pipenv"
 __safe_alias pipx="env -u PIP_USER pipx"
 
+alias f='less `fzf`'
+
 
 # Sometimes SHELL cannot be used. For example, when running bash inside zsh
 # SHELL is set to be /bin/zsh
