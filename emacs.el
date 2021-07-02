@@ -3079,8 +3079,8 @@ Any output will be written to current buffer."
                    (propertize " " 'face (overlay-get mmv-mark-overlay 'face)))
       (move-overlay mmv-mark-overlay mark-position mark-position)))))
 
-;; Makes display very slow?
-(add-hook 'pre-redisplay-functions #'mmv-draw-mark)
+;; ;; Makes display very slow?
+;; (add-hook 'pre-redisplay-functions #'mmv-draw-mark)
 
 (defun mmv-toggle-mark-visibility ()
   "Toggles the mark's visiblity and redraws it (whether invisible or visible)."
