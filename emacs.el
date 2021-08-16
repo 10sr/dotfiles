@@ -91,7 +91,7 @@ Otherwize hook it."
             erlang
             js2-mode
             js-doc
-            git-commit
+            ;; git-commit
             gitignore-mode
             adoc-mode
             go-mode
