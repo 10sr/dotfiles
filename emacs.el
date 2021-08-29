@@ -1113,10 +1113,10 @@ THEM are function and its args."
             'fic-mode))
 
 (when (fboundp 'global-tree-sitter-mode)
-  (add-hook 'after-init-hook
+  (add-hook 'after-first-visit-hook
             'global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook
-            #'tree-sitter-hl-mode))
+            'tree-sitter-hl-mode))
 
 (with-eval-after-load 'tree-sitter
   (require 'tree-sitter-langs nil t))
@@ -1272,15 +1272,15 @@ THEM are function and its args."
                          (not buffer-read-only))
                 (read-only-mode 1)))))
 
-(add-hook 'editorconfig-hack-properties-functions
-          '(lambda (props)
-             (when (derived-mode-p 'makefile-mode)
-               (puthash 'indent_style "tab" props))
-             (when (derived-mode-p 'diff-mode)
-               (puthash 'trim_trailing_whitespace "false" props)
-               (puthash 'insert_final_newline "false" props)
-               )
-             ))
+(add-hook 'editorconfig-after-apply-functions
+          (lambda (props)
+            (when (derived-mode-p 'makefile-mode)
+              (setq indent-tabs-mode t))
+            (when (derived-mode-p 'diff-mode)
+              (editorconfig-set-trailing-ws "false")
+              (editorconfig-set-trailing-nl "false")
+              )
+            ))
 
 (when (fboundp 'editorconfig-auto-apply-enable)
   (add-hook 'editorconfig-conf-mode-hook
@@ -1824,11 +1824,12 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (when (fboundp 'gited-list)
   (defalias 'gited 'gited-list))
 
-(when (eval-and-compile (require 'git-commit nil t))
+(when (and (eval-and-compile (require 'git-commit nil t))
+           (fboundp 'global-git-commit-mode))
   ;; git-commit is defined badly and breaks the convention that only loading a
   ;; library should not change the Emacs behavior:
   ;; anyway I enable this manually here.
-  (global-git-commit-mode 1))
+    (global-git-commit-mode 1))
 (with-eval-after-load 'git-commit
   (add-hook 'git-commit-setup-hook
             'turn-off-auto-fill t))
