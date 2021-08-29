@@ -2046,6 +2046,8 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   (add-to-list 'c-default-style
                '(c++-mode . "k&r")))
 
+(add-to-list 'auto-mode-alist
+             '("\\.gs\\'" . js-mode))
 (with-eval-after-load 'js2-mode
   ;; currently do not use js2-mode
   ;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
