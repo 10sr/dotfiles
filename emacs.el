@@ -3115,6 +3115,12 @@ ARGS are not used."
       (kill-buffer (get-buffer vterm-buffer-name)))
     (vterm)))
 
+;; (setq vterm-shell "bash -l")
+;; (setq vterm-kill-buffer-on-exit nil)
+;; ;; (setq vterm-term-environment-variable "screen-256color")
+
+(message "Emacs started at %s"
+         (current-time-string))
 
 ;; https://emacs-jp.github.io/tips/startup-optimization
 ;; Restore to original value
@@ -3124,10 +3130,6 @@ ARGS are not used."
 (when (getenv "_EMACS_EL_PROFILE")
   (profiler-report)
   (profiler-stop))
-
-;; (setq vterm-shell "bash -l")
-;; (setq vterm-kill-buffer-on-exit nil)
-;; ;; (setq vterm-term-environment-variable "screen-256color")
 
 ;; Local Variables:
 ;; flycheck-disabled-checkers: (emacs-lisp-checkdoc)
