@@ -207,17 +207,12 @@ else
     alias __safe_cowsay=cat
 fi
 
-command -v fortune >/dev/null && {
-    fortune | __safe_cowsay | __safe_lolcat
-    echo
-    fortune -o | __safe_cowsay | __safe_lolcat
-    echo
-}
-
-uname -a
-$iswindows && alias tty="echo cmd.exe"
-echo TERM $TERM with $(tput colors) colors using $(tty)
-echo umask: `umask -S`
+# command -v fortune >/dev/null && {
+#     fortune | __safe_cowsay | __safe_lolcat
+#     echo
+#     fortune -o | __safe_cowsay | __safe_lolcat
+#     echo
+# }
 
 # if null type figlet && null type lolcat
 # then
@@ -233,11 +228,15 @@ then
     screenfetch
 fi
 
+uname -a
+$iswindows && alias tty="echo cmd.exe"
+echo TERM $TERM with $(tput colors) colors using $(tty)
+echo umask: `umask -S`
+
 __safe_run id `whoami`
 # echo
 ## A bit heavy command
 # finger `whoami`
-echo
 __safe_run w `whoami`
 
 # if null type tmux
