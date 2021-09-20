@@ -1246,7 +1246,7 @@ THEM are function and its args."
 ;;   (add-hook 'after-first-visit-hook
 ;;             'editorconfig-mode-apply
 ;;             t))  ;; Do after enabling editorconfig-mode
-(when (eval-and-compile (require 'editorconfig))
+(when (eval-and-compile (require 'editorconfig nil t))
   (set-variable 'editorconfig--enable-20210221-testing t)
   (editorconfig-mode 1))
 (set-variable 'editorconfig-get-properties-function
