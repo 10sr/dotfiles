@@ -450,16 +450,19 @@ Otherwize hook it."
 
 ;; (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 ;; (global-set-key (kbd "C-r") 'isearch-backward-regexp)
-(set-variable 'search-default-mode t)
-(set-variable 'search-whitespace-regexp ".*?")
-(set-variable 'isearch-regexp-lax-whitespace t)
+(if (eval-and-compile (require 'prescient nil t))
+    (set-variable 'search-default-mode
+                  (lambda (orig lax)
+                    (prescient-fuzzy-regexp orig)))
+  (set-variable 'search-default-mode t))
+;; (set-variable 'search-whitespace-regexp ".*?")
+;; (set-variable 'isearch-regexp-lax-whitespace t)
 ;; (replace-regexp-in-string "\n" "" (prescient-fuzzy-regexp "abc"))
-;; TODO: Do not depend on ivy function
-;; (set-variable 'search-default-mode
-;;               (lambda (str lax)
-;;                 (ivy--regex-fuzzy (replace-regexp-in-string (rx (one-or-more whitespace))
-;;                                                             ""
-;;                                                             str))))
+;; (string-match-p (prescient-fuzzy-regexp "abc") "aaa\nbc")
+;; (isearch-symbol-regexp "abc def" nil)
+;; (isearch-symbol-regexp "abc def" t)
+;; (word-search-regexp "abc def" nil)
+;; (word-search-regexp "abc def" t)
 
 (when (fboundp 'undo-fu-only-undo)
   (global-set-key (kbd "C-_") 'undo-fu-only-undo))
