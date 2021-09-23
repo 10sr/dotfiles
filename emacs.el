@@ -451,6 +451,9 @@ Otherwize hook it."
 ;; (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 ;; (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (set-variable 'search-default-mode t)
+(set-variable 'search-whitespace-regexp ".*?")
+(set-variable 'isearch-regexp-lax-whitespace t)
+;; (replace-regexp-in-string "\n" "" (prescient-fuzzy-regexp "abc"))
 ;; TODO: Do not depend on ivy function
 ;; (set-variable 'search-default-mode
 ;;               (lambda (str lax)
@@ -2581,7 +2584,7 @@ condition to choose COMMAND when evaluated.")
        ;; ripgrep
        ("rg"
         (executable-find "rg")
-        "rg -nH --no-heading --hidden --glob '!.git/' --smart-case -M 1280 ")
+        "rg -nH --no-heading --hidden --no-ignore-parent --glob '!.git/' --smart-case -M 1280 ")
 
        ;; git grep
        ("gitgrep"
