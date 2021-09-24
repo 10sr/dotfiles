@@ -3141,6 +3141,13 @@ ARGS are not used."
 (when (fboundp 'projectile-mode)
   (projectile-mode 1))
 
+(with-eval-after-load 'eglot
+  (when (fboundp 'with-venv-advice-add)
+    (with-venv-advice-add 'eglot--executable-find))
+  (set-variable 'eldoc-echo-area-use-multiline-p nil))
+
+
+
 (message "Emacs started at %s"
          (current-time-string))
 (run-with-idle-timer (* 3 60 60)  ;; 3 hours
