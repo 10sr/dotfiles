@@ -1239,7 +1239,7 @@ THEM are function and its args."
 (when (and (require 'recently nil t)
            (fboundp 'ivy-read))
   (defun my-counsel-recently ()
-    "Consel `recently'."
+    "Counsel `recently'."
     (interactive)
     (ivy-read "Recently: " (mapcar 'abbreviate-file-name (recently-list))
               :require-match t
@@ -1745,6 +1745,17 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
     (with-venv-advice-add 'pydoc)
     ;; Used in interactive function of pydoc
     (with-venv-advice-add 'pydoc-all-modules)))
+
+(defvar my-cousel-pydoc-history nil "History of `my-counsel-pydoc'.")
+(defun my-counsel-pydoc ()
+    "Counsel `pydoc'."
+    (interactive)
+    (eval-and-compile (require 'pydoc nil t))
+    (ivy-read "Recently: " (pydoc-all-modules)
+              :require-match t
+              :history 'my-cousel-pydoc-history
+              :action (lambda (x) (pydoc x))
+              :caller 'my-counsel-pydoc))
 
 (set-variable 'flycheck-python-mypy-config '("mypy.ini" ".mypy.ini" "setup.cfg"))
 (set-variable 'flycheck-flake8rc '("setup.cfg" "tox.ini" ".flake8rc"))
@@ -3144,7 +3155,8 @@ ARGS are not used."
 (with-eval-after-load 'eglot
   (when (fboundp 'with-venv-advice-add)
     (with-venv-advice-add 'eglot--executable-find))
-  (set-variable 'eldoc-echo-area-use-multiline-p nil))
+  (set-variable 'eldoc-echo-area-use-multiline-p nil)
+  (set-variable 'eglot-extend-to-xref t))
 
 
 
