@@ -450,10 +450,15 @@ Otherwize hook it."
 
 ;; (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 ;; (global-set-key (kbd "C-r") 'isearch-backward-regexp)
-(if (eval-and-compile (require 'prescient nil t))
-    (set-variable 'search-default-mode
-                  (lambda (orig lax)
-                    (prescient-fuzzy-regexp orig)))
+(if (locate-library "prescient")
+    (progn
+      (declare-function prescient-fuzzy-regexp
+                        "prescient")
+      (autoload 'prescient-fuzzy-regexp
+        "prescient")
+      (set-variable 'search-default-mode
+                    (lambda (orig lax)
+                      (prescient-fuzzy-regexp orig))))
   (set-variable 'search-default-mode t))
 ;; (set-variable 'search-whitespace-regexp ".*?")
 ;; (set-variable 'isearch-regexp-lax-whitespace t)
