@@ -3126,6 +3126,15 @@ ARGS are not used."
       (kill-buffer (get-buffer vterm-buffer-name)))
     (vterm)))
 
+;; これいつ動くの？
+;; 自動で pruject を switch させる方法はある？
+(add-hook 'projectile-after-switch-project-hook
+          (lambda ()
+            (message  "Projecttile switched to: %s"
+                      (projectile-project-root))))
+(when (fboundp 'projectile-mode)
+  (projectile-mode 1))
+
 ;; (setq vterm-shell "bash -l")
 ;; (setq vterm-kill-buffer-on-exit nil)
 ;; ;; (setq vterm-term-environment-variable "screen-256color")
