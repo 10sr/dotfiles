@@ -3116,6 +3116,7 @@ ARGS are not used."
                  url))
 
 
+;; 前の実行結果を残したまま次のコマンドを実行する方法はあるだろうか
 (defun my-vterm-cmd (command)
   "Start arbitrary command in vterm buffer."
   (interactive "sCommand: ")
@@ -3126,6 +3127,11 @@ ARGS are not used."
       (kill-buffer (get-buffer vterm-buffer-name)))
     (vterm)))
 
+;; (setq vterm-shell "bash -l")
+;; (setq vterm-kill-buffer-on-exit nil)
+;; ;; (setq vterm-term-environment-variable "screen-256color")
+
+
 ;; これいつ動くの？
 ;; 自動で pruject を switch させる方法はある？
 (add-hook 'projectile-after-switch-project-hook
@@ -3134,10 +3140,6 @@ ARGS are not used."
                       (projectile-project-root))))
 (when (fboundp 'projectile-mode)
   (projectile-mode 1))
-
-;; (setq vterm-shell "bash -l")
-;; (setq vterm-kill-buffer-on-exit nil)
-;; ;; (setq vterm-term-environment-variable "screen-256color")
 
 (message "Emacs started at %s"
          (current-time-string))
