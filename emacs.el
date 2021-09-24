@@ -3133,7 +3133,7 @@ ARGS are not used."
 
 
 ;; これいつ動くの？
-;; 自動で pruject を switch させる方法はある？
+;; 自動で project を switch させる方法はある？
 (add-hook 'projectile-after-switch-project-hook
           (lambda ()
             (message  "Projecttile switched to: %s"
@@ -3143,6 +3143,12 @@ ARGS are not used."
 
 (message "Emacs started at %s"
          (current-time-string))
+(run-with-idle-timer (* 3 60 60)  ;; 3 hours
+                     t
+                     (lambda ()
+                       (message "Emacs does nothing for 3 hours: %s"
+                                (current-time-string))))
+
 
 ;; https://emacs-jp.github.io/tips/startup-optimization
 ;; Restore to original value
