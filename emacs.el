@@ -2167,6 +2167,11 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (when (fboundp 'json-mode)
   (add-to-list 'auto-mode-alist
                '("/Pipfile\\.lock\\'" . json-mode)))
+(add-hook 'json-mode-hook
+          (lambda ()
+            ;; Stop current line highlighting
+            (set-variable 'js-indent-level 2 t)
+            ))
 
 (add-hook 'go-mode-hook
           (lambda()
