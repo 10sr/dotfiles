@@ -2399,10 +2399,10 @@ ARG is num to show, or defaults to 7."
 ;;http://bach.istc.kobe-u.ac.jp/lect/tamlab/ubuntu/emacs.html
 
 (if (eq window-system 'mac)
-    (setq dired-listing-switches "-lhF")
-  (setq dired-listing-switches "-lhF --time-style=long-iso")
+    (setq dired-listing-switches "-lhFA")
+  (setq dired-listing-switches "-lhFA --time-style=long-iso")
   )
-(setq dired-listing-switches "-lhF")
+(setq dired-listing-switches "-lhFA")
 
 ;; when using dired-find-alternate-file
 ;; reuse current dired buffer for the file to open
@@ -2468,6 +2468,9 @@ ARG is num to show, or defaults to 7."
               (when (fboundp 'dired-hide-details-mode)
                 (dired-hide-details-mode t)
                 (local-set-key "l" 'dired-hide-details-mode))
+              (when (fboundp 'dired-omit-mode)
+                (dired-omit-mode 1)
+                (local-set-key "a" 'dired-omit-mode))
               (let ((file "._Icon\015"))
                 (when nil
                   '(file-readable-p file)
@@ -2477,10 +2480,18 @@ ARG is num to show, or defaults to 7."
     (with-eval-after-load 'dired
       (define-key dired-mode-map "P" 'pack-dired-dwim)))
 
-  (when (fboundp 'dired-list-all-mode)
-    (setq dired-listing-switches "-lhF")
+  ;; https://emacs.stackexchange.com/questions/68585/dired-mode-toggle-show-hidden-files-folders-by-keyboard-shortcut
+  (set-variable 'dired-omit-files
+                (rx (or (regexp "\\`[.]?#\\|\\`[.][.]?\\'")
+                        (seq bos "." (not (any "."))))))
+  ;; (string-match-p dired-omit-files ".abc")
+  (when (fboundp 'dired-omit-mode)
     (with-eval-after-load 'dired
-      (define-key dired-mode-map "a" 'dired-list-all-mode))))
+      ))
+  )
+
+
+
 
 (when (fboundp 'dired-filter-mode)
   (add-hook 'dired-mode-hook
