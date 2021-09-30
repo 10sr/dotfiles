@@ -1628,7 +1628,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   (define-key company-mode-map (kbd "C-i") 'company-indent-or-complete-common)
   ;; (with-eval-after-load 'python
   ;;   (defvar python-indent-trigger-commands)
-  ;;   ;; TODO: This disables completion in puthon?
+  ;;   ;; TODO: This disables completion in python?
   ;;   (add-to-list 'python-indent-trigger-commands
   ;;                'company-indent-or-complete-common))
   (define-key ctl-x-map (kbd "C-i") 'company-complete)  ; Originally `indent-rigidly'
@@ -2010,7 +2010,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   'isearch-query-replace-regexp)
 ;; do not cleanup isearch highlight: use `lazy-highlight-cleanup' to remove
 (setq lazy-highlight-cleanup nil)
-;; face for isearch highlighing
+;; face for isearch highlighting
 (set-face-attribute 'lazy-highlight
                     nil
                     :foreground `unspecified
@@ -2558,15 +2558,6 @@ ARG is num to show, or defaults to 7."
 ;; (when (eval-and-compile (require 'dired-rainbow nil t))
 ;;   (dired-rainbow-define gtags "brightblack" "GTAGS"))
 
-;; ?
-;; (set-variable 'dired-omit-files
-;;               (rx (or (regexp "^\\.?#")
-;;                       (regexp "^\\.$")
-;;                       (regexp "^\\.\\.$")
-;;                       (regexp "^GPATH$")
-;;                       (regexp "^GRTAGS$")
-;;                       (regexp "^GTAGS$")
-;;                       )))
 (with-eval-after-load 'diredfl
   (set-face-foreground 'diredfl-file-name nil)
   )
