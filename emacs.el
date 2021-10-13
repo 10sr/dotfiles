@@ -2990,11 +2990,21 @@ ARGS are not used."
 (when (fboundp 'projectile-mode)
   (projectile-mode 1))
 
-(with-eval-after-load 'eglot
-  (when (fboundp 'with-venv-advice-add)
-    (with-venv-advice-add 'eglot--executable-find))
-  (set-variable 'eldoc-echo-area-use-multiline-p nil)
-  (set-variable 'eglot-extend-to-xref t))
+;; (with-eval-after-load 'eglot
+;;   (when (fboundp 'with-venv-advice-add)
+;;     (with-venv-advice-add 'eglot--executable-find))
+;;   (set-variable 'eldoc-echo-area-use-multiline-p nil)
+;;   (set-variable 'eglot-extend-to-xref t))
+
+(set-variable 'lsp-python-ms-auto-install-server t)
+(set-variable 'lsp-python-ms-python-executable-cmd "python3")
+(add-hook 'python-mode-hook #'my-lsp-python-setup)
+
+(defun my-lsp-python-setup ()
+  "Setup python ms."
+  (when (and (fboundp 'lsp)
+             (require 'lsp-python-ms nil t))
+    (lsp)))
 
 
 
