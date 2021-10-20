@@ -2568,6 +2568,13 @@ ARG is num to show, or defaults to 7."
 (define-key ctl-x-map "T" 'git-worktree)
 (define-key ctl-x-map "W" 'git-walktree)
 
+(defun mkcdd ()
+  "Make date directory and open it with dired."
+  (interactive)
+  (let ((d (format-time-string "%Y%m%d-%H%M%S")))
+    (make-directory d)
+    (find-file d)))
+
 (when (fboundp 'browse-url-default-macosx-browser)
   (defalias 'browse-osx 'browse-url-default-macosx-browser))
 
@@ -2997,6 +3004,7 @@ ARGS are not used."
 ;;   (set-variable 'eglot-extend-to-xref t))
 
 (set-variable 'lsp-python-ms-auto-install-server t)
+(set-variable 'lsp-python-ms-parse-dot-env-enabled t)
 (set-variable 'lsp-python-ms-python-executable-cmd "python3")
 (add-hook 'python-mode-hook #'my-lsp-python-setup)
 
