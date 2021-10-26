@@ -341,6 +341,9 @@ __safe_alias py2=python2
 __safe_alias ipy=ipython
 __safe_alias ipy3=ipython3
 __safe_alias ipy2=ipython2
+__safe_alias ipy=ptpython
+__safe_alias ipy3=ptpython3
+
 __safe_alias rl=rlwrap
 __safe_alias igosh=gosh-rl
 
