@@ -3006,7 +3006,7 @@ ARGS are not used."
 (set-variable 'lsp-python-ms-auto-install-server t)
 (set-variable 'lsp-python-ms-parse-dot-env-enabled t)
 (set-variable 'lsp-python-ms-python-executable-cmd "python3")
-(add-hook 'python-mode-hook #'my-lsp-python-setup)
+;; (add-hook 'python-mode-hook #'my-lsp-python-setup)
 
 (defun my-lsp-python-setup ()
   "Setup python ms."
