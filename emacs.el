@@ -2091,6 +2091,13 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (add-to-list 'interpreter-mode-alist
              '("node" . js-mode))
 
+(add-hook 'js-mode-hook
+          (lambda ()
+            ;; Stop current line highlighting
+            (set-variable 'js-indent-level 2 t)
+            ))
+
+
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 (with-eval-after-load 'uniquify
@@ -3013,6 +3020,16 @@ ARGS are not used."
   (when (and (fboundp 'lsp)
              (require 'lsp-python-ms nil t))
     (lsp)))
+
+(set-variable 'awk-preview-default-program
+              "# C-c C-l: Update preview      C-c C-c: Commit and exit
+# C-c C-r: Resest to original  C-c C-k: Abort
+{
+    # Replace string
+    # gsub(BEFORE, AFTER, $0)
+    print NR, $0
+}
+")
 
 
 
