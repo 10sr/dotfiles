@@ -26,6 +26,8 @@
 ;; make directories
 (unless (file-directory-p (expand-file-name user-emacs-directory))
   (make-directory (expand-file-name user-emacs-directory)))
+(unless (file-directory-p (expand-file-name "info" user-emacs-directory))
+  (make-directory (expand-file-name "info" user-emacs-directory)))
 
 ;; Custom file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
