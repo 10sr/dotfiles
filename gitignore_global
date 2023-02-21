@@ -1,3 +1,4 @@
+# ln -s `pwd`/gitignore_global XDG_CONFIG_HOME/git/ignore
 \#*
 *~
 .DS_Store
