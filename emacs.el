@@ -2974,6 +2974,7 @@ ARGS are not used."
                  url))
 
 
+(declare-function vterm "vterm")
 ;; 前の実行結果を残したまま次のコマンドを実行する方法はあるだろうか
 (defun my-vterm-cmd (command)
   "Start arbitrary command in vterm buffer."
