@@ -1489,14 +1489,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (set-variable 'remember-notes-initial-major-mode
               'change-log-mode)
 
-(declare-function global-magit-file-mode "magit-files")
-(with-eval-after-load 'magit-files
-  ;; `global-magit-file-mode' is enabled by default and this mode overwrites
-  ;; existing keybindings.
-  ;; Apparently it is a HARMFUL behavior and it is really awful that I have
-  ;; to disable thie mode here, but do anyway.
-  ;; See also https://github.com/magit/magit/issues/3517
-  (global-magit-file-mode -1))
+(set-variable 'magit-define-global-key-bindings nil)
 
 (with-eval-after-load 'magit-section
   (set-face-background 'magit-section-highlight
