@@ -1046,11 +1046,11 @@ __my_ps1_jobs(){
 }
 
 __my_ps1_dollar(){
-    if test -z "$SHLVL"
+    if test -z "$2"
     then
         printf "$1"
     else
-        perl -e 'while($ARGV[0]-- > 0){print "$ARGV[1]";}' $SHLVL "$1"
+        perl -e 'while($ARGV[0]-- > 0){print "$ARGV[1]";}' "$2" "$1"
     fi
 }
 
@@ -1172,13 +1172,13 @@ if $inzsh
 then
     PROMPT="\
 ${__my_ps1_beg}[${__my_c2}%n@%M${__my_cdef}:${__my_c1}%~/${__my_cdef}]\$(__my_ps1_info1)
-${__my_ps1_beg}\$(__my_ps1_info2) $(__my_ps1_dollar %#) "
+${__my_ps1_beg}\$(__my_ps1_info2) $(__my_ps1_dollar %# $SHLVL) "
     RPROMPT="%D{%Y/%m/%d %H:%M}"
 elif $inbash
 then
     PS1="\
 ${__my_ps1_beg}[${__my_c2}\u@\H${__my_cdef}:${__my_c1}\w/${__my_cdef}]\$(__my_ps1_info1)\n\
-${__my_ps1_beg}\D{%Y/%m/%d %H:%M} \$(__my_ps1_info2)${__my_ps1_right} $(__my_ps1_dollar \\$) "
+${__my_ps1_beg}\D{%Y/%m/%d %H:%M} \$(__my_ps1_info2)${__my_ps1_right} $(__my_ps1_dollar \\$ $SHLVL) "
 else
     true
     # PS1="$(printf $(whoami)@$(hostname)$ )"
