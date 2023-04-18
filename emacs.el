@@ -2727,10 +2727,11 @@ and search from projectile root (if projectile is available)."
                           (error "No symbol at point")))
             (error "My-Rgrep: Command for rgrep not found"))))
     (if (eval-and-compile (require 'projectile nil t))
-        (projectile-with-default-dir (or (projectile-project-root)
-                                         default-directory)
-                                     (compilation-start command-args
-                                                        'grep-mode))
+        (with-temp-buffer
+          (cd (or (projectile-project-root)
+                  default-directory))
+          (compilation-start command-args
+                             'grep-mode))
       (compilation-start command-args
                          'grep-mode))))
 
