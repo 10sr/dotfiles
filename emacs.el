@@ -530,10 +530,11 @@ Otherwize hook it."
 (define-key ctl-x-map (kbd "C-x") 'my-exchange-point-and-mark)
 (when (fboundp 'counsel-mark-ring)
   (define-key ctl-x-map "m" 'counsel-mark-ring))
-(with-eval-after-load 'ivy
-  (defvar ivy-sort-functions-alist)
-  (add-to-list 'ivy-sort-functions-alist
-               '(counsel-mark-ring)))
+;; ?
+;; (with-eval-after-load 'ivy
+;;   (defvar ivy-sort-functions-alist)
+;;   (add-to-list 'ivy-sort-functions-alist
+;;                '(counsel-mark-ring)))
 (run-with-idle-timer 10 t
                      (lambda ()
                        (push-mark)
@@ -1248,6 +1249,7 @@ THEM are function and its args."
               :history 'my-cousel-recently-history
               :preselect default-directory
               :action (lambda (x) (find-file x))
+              :sort nil
               :caller 'my-counsel-recently))
 
   (define-key ctl-x-map (kbd "C-r") 'my-counsel-recently)
