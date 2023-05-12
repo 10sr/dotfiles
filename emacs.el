@@ -795,6 +795,10 @@ THEM are function and its args."
 (with-eval-after-load 'minibuffer-line
   (set-face-underline 'minibuffer-line nil)
   )
+(with-eval-after-load 'git-ps1-mode
+  (defvar git-ps1-mode-ps1-file-candidates-list)
+  (add-to-list 'git-ps1-mode-ps1-file-candidates-list
+               "/Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh"))
 (when (fboundp 'minibuffer-line-mode)
   (set-variable 'minibuffer-line-refresh-interval
                 25)
