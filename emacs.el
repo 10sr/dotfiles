@@ -1837,7 +1837,8 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
         ))
 
 (with-eval-after-load 'sql
-  (require 'sql-indent nil t))
+  (require 'sql-indent nil t)
+  (set-variable 'sqlind-basic-offset 2))
 (add-to-list 'auto-mode-alist
              '("\\.hql\\'" . sql-mode))
 
