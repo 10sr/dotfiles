@@ -1841,6 +1841,8 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (add-to-list 'auto-mode-alist
              '("\\.hql\\'" . sql-mode))
 
+(set-variable 'sqlformat-command 'pgformatter)
+
 (when (fboundp 'git-command)
   (define-key ctl-x-map "g" 'git-command))
 
