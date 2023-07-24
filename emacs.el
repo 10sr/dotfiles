@@ -2187,7 +2187,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (add-hook 'go-mode-hook
           (lambda()
             (defvar go-mode-map)
-            (add-hook 'before-save-hook' 'gofmt-before-save nil t)
+            (add-hook 'before-save-hook 'gofmt-before-save nil t)
             (define-key go-mode-map (kbd "M-.") 'godef-jump)))
 
 (when (fboundp 'k8s-mode)
