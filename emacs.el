@@ -998,7 +998,7 @@ THEM are function and its args."
   (defvar whitespace-mode)
   (add-to-list 'whitespace-display-mappings
                ;; We need t since last one takes precedence
-               `(tab-mark ?\t ,(vconcat "|>\t")) t)
+               `(tab-mark ?\t ,(vconcat ">\t")) t)
   ;; (add-to-list 'whitespace-display-mappings
   ;;              `(newline-mark ?\n ,(vconcat "$\n")))
   (set-variable 'whitespace-style '(face
