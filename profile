@@ -132,7 +132,10 @@ then
     export PIPX_DEFAULT_PYTHON="$HOME"/.brew/bin/python3
 fi
 
-export STARDICT_DATA_DIR=$HOME/.brew/share/sdcv-dict-oxford
+if which brew >/dev/null
+then
+    export STARDICT_DATA_DIR=`brew --prefix`/share/sdcv-dict-oxford
+fi
 
 export HOMEBREW_NO_AUTO_UPDATE=1
 
