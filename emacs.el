@@ -2876,8 +2876,8 @@ and search from projectile root (if projectile is available)."
   (define-key ivy-minibuffer-map (kbd "C-u")
     (lambda () (interactive) (delete-region (point-at-bol) (point))))
   (defvar ivy-sort-matches-functions-alist)
-  (add-to-list 'ivy-sort-matches-functions-alist
-               '(counsel-M-x . ivy--shorter-matches-first))
+  ;; (add-to-list 'ivy-sort-matches-functions-alist
+  ;;              '(counsel-M-x . ivy--shorter-matches-first))
   )
 (set-variable 'ivy-on-del-error-function 'ignore)
 
@@ -2916,10 +2916,10 @@ and search from projectile root (if projectile is available)."
 (with-eval-after-load 'counsel  ;; Hook to counsel, not ivy
   ;; (ivy-configure 'my-counsel-describe-symbol
   ;;   :sort-fn 'my-ivy-length)
-  (ivy-configure 'counsel-M-x
-    ;; :initial-input ""
-    :sort-fn 'ivy-string<
-    )
+  ;; (ivy-configure 'counsel-M-x
+  ;;   ;; :initial-input ""
+  ;;   :sort-fn 'ivy-string<
+  ;;   )
   )
 
 
@@ -2933,10 +2933,10 @@ and search from projectile root (if projectile is available)."
   ;; ivy-prescient requires counsel already loaded
   (require 'counsel nil t)
   (when (fboundp 'ivy-prescient-mode)
-    (set-variable 'prescient-sort-length-enable t)
-    (set-variable 'prescient-sort-full-matches-first t)
-    (set-variable 'ivy-prescient-enable-filtering t)
-    (set-variable 'ivy-prescient-enable-sorting nil)
+    ;; (set-variable 'prescient-sort-length-enable t)
+    ;; (set-variable 'prescient-sort-full-matches-first t)
+    ;; (set-variable 'ivy-prescient-enable-filtering t)
+    ;; (set-variable 'ivy-prescient-enable-sorting nil)
     ;; (set-variable 'ivy-prescient-sort-commands t)
     (set-variable 'prescient-filter-method
                   '(literal prefix literal-prefix regexp initialism fuzzy))
