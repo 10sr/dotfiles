@@ -3030,6 +3030,9 @@ ARGS are not used."
 (set-variable 'awk-preview-default-program
               "# C-c C-l: Update preview      C-c C-c: Commit and exit
 # C-c C-r: Resest to original  C-c C-k: Abort
+BEGIN {
+    # FS = \",\"
+}
 {
     # Replace string
     # gsub(BEFORE, AFTER, $0)
