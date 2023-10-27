@@ -1842,6 +1842,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (set-variable 'sqlind-basic-offset 4)
 (add-to-list 'auto-mode-alist
              '("\\.hql\\'" . sql-mode))
+(set-variable 'sql-product 'postgres)
 
 (set-variable 'sqlformat-command 'pgformatter)
 
