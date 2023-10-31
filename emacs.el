@@ -1851,6 +1851,8 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (set-variable 'sql-product 'postgres)
 
 (set-variable 'sqlformat-command 'pgformatter)
+(set-variable 'sqlformat-args '("--no-extra-line"))
+;; (set-variable 'sqlformat-args '("-L"))
 
 (when (fboundp 'git-command)
   (define-key ctl-x-map "g" 'git-command))
