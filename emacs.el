@@ -1841,9 +1841,11 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
         '(setq reb-re-syntax 'foreign-regexp)
         ))
 
-(with-eval-after-load 'sql
-  (require 'sql-indent nil t))
-(set-variable 'sqlind-basic-offset 4)
+;; sqlind does not support create role so disable it...
+(set-variable 'sql-use-indent-support nil)
+;; (with-eval-after-load 'sql
+;;   (require 'sql-indent nil t))
+;; (set-variable 'sqlind-basic-offset 4)
 (add-to-list 'auto-mode-alist
              '("\\.hql\\'" . sql-mode))
 (set-variable 'sql-product 'postgres)
