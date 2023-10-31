@@ -1367,6 +1367,8 @@ THEM are function and its args."
 
 
 ;; bookmarks
+;; C-x B: Add bookmark
+;; C-x b: List bookmarks
 
 (set-variable 'bookmark-default-file
               (expand-file-name (concat user-emacs-directory
@@ -1404,12 +1406,14 @@ THEM are function and its args."
 ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   (bookmark-load bookmark-default-file)
   (apply orig-func args)
-  (bookmark-save))
+  (bookmark-save nil bookmark-default-file))
 
 (with-eval-after-load 'bookmark
   (advice-add 'bookmark-set-internal
               :around
-              'my-bookmark-set--advice))
+              'my-bookmark-set--advice)
+  (unless (file-readable-p bookmark-default-file)
+    (bookmark-save nil bookmark-default-file)))
 (define-key ctl-x-map "b" 'list-bookmarks)
 (when (fboundp 'counsel-bookmark)
   (define-key ctl-x-map "b" 'counsel-bookmark))
