@@ -1852,7 +1852,13 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 
 (set-variable 'sqlformat-command 'pgformatter)
 (set-variable 'sqlformat-args '("--no-extra-line"))
-;; (set-variable 'sqlformat-args '("-L"))
+;; Hard to use because when failed to format it does not tell how to fix that
+;; (set-variable 'sqlformat-command 'sqlfluff)
+;; (set-variable 'sqlformat-args '("--show-lint-violations" "-vvvv"))
+
+;; (with-eval-after-load 'sqlformat
+;;   (when (fboundp 'with-venv-advice-add)
+;;     (with-venv-advice-add 'sqlformat-region)))
 
 (when (fboundp 'git-command)
   (define-key ctl-x-map "g" 'git-command))
