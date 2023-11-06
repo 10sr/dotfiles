@@ -1851,7 +1851,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (set-variable 'sql-product 'postgres)
 
 (set-variable 'sqlformat-command 'pgformatter)
-(set-variable 'sqlformat-args '("--no-extra-line"))
+(set-variable 'sqlformat-args '("--no-space-function" "--nogrouping"))
 ;; Hard to use because when failed to format it does not tell how to fix that
 ;; (set-variable 'sqlformat-command 'sqlfluff)
 ;; (set-variable 'sqlformat-args '("--show-lint-violations" "-vvvv"))
