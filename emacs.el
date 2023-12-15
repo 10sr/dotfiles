@@ -453,16 +453,20 @@ Otherwize hook it."
 
 ;; (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 ;; (global-set-key (kbd "C-r") 'isearch-backward-regexp)
-(if (locate-library "prescient")
-    (progn
-      (declare-function prescient-fuzzy-regexp
-                        "prescient")
-      (autoload 'prescient-fuzzy-regexp
-        "prescient")
-      (set-variable 'search-default-mode
-                    (lambda (orig lax)
-                      (prescient-fuzzy-regexp orig))))
-  (set-variable 'search-default-mode t))
+;; (if (locate-library "prescient")
+;;     (progn
+;;       (declare-function prescient-fuzzy-regexp
+;;                         "prescient")
+;;       (autoload 'prescient-fuzzy-regexp
+;;         "prescient")
+;;       (set-variable 'search-default-mode
+;;                     (lambda (orig lax)
+;;                       (prescient-fuzzy-regexp orig))))
+;;   (set-variable 'search-default-mode t))
+;; (prescient-fuzzy-regexp "abc")
+;; (string-match-p (prescient-prefix-regexp "abc def") "abc-defghi")
+;; (prescient-initials-regexp "abc def")
+;; (prescient-literal-regexp "abc def")
 ;; (set-variable 'search-whitespace-regexp ".*?")
 ;; (set-variable 'isearch-regexp-lax-whitespace t)
 ;; (replace-regexp-in-string "\n" "" (prescient-fuzzy-regexp "abc"))
@@ -470,7 +474,19 @@ Otherwize hook it."
 ;; (isearch-symbol-regexp "abc def" nil)
 ;; (isearch-symbol-regexp "abc def" t)
 ;; (word-search-regexp "abc def" nil)
-;; (word-search-regexp "abc def" t)
+;; (string-match-p (word-search-regexp "abc def" t) "abcdef-def")
+
+(defun my-regexp-words (query &rest _)
+  "Convert QUERY to expression to search by words."
+  (let ((words (split-string query (rx (+ space)))))
+    (mapconcat 'identity
+               words
+               (rx (* not-newline)))))
+(set-variable 'search-default-mode
+              'my-regexp-words)
+;; (my-regexp-words "abc def   ghi")
+;; (string-match-p (rx (+ space)) "  	")
+;; (string-match-p (rx (+ space)) "	")
 
 (when (fboundp 'undo-fu-only-undo)
   (global-set-key (kbd "C-_") 'undo-fu-only-undo))
