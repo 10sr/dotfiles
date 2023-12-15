@@ -1420,7 +1420,7 @@ THEM are function and its args."
   "Function for `bookmark-set-internal'.
 
 ORIG-FUNC is the target function, and ARGS is the argument when it is called."
-  (bookmark-load bookmark-default-file)
+  (bookmark-load bookmark-default-file t)
   (apply orig-func args)
   (bookmark-save nil bookmark-default-file))
 
