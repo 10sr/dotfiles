@@ -630,6 +630,16 @@ THEM are function and its args."
 (setq-default fill-column 80)
 ;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
+
+;; kill ring
+(defun my-kill-ring-save-buffer-file-name ()
+  "Save current buffer file name to kill ring."
+  (interactive)
+  (let* ((str (or buffer-file-name
+                 default-directory))
+         (str (expand-file-name str)))
+    (kill-new str)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
