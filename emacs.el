@@ -1894,10 +1894,8 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 
 (when (and (eval-and-compile (require 'git-commit nil t))
            (fboundp 'global-git-commit-mode))
-  ;; git-commit is defined badly and breaks the convention that only loading a
-  ;; library should not change the Emacs behavior:
-  ;; anyway I enable this manually here.
-    (global-git-commit-mode 1))
+  ;; Frequently this breaks git commit.
+  (global-git-commit-mode 0))
 (with-eval-after-load 'git-commit
   (add-hook 'git-commit-setup-hook
             'turn-off-auto-fill t))
