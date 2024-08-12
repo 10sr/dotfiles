@@ -229,8 +229,8 @@ Otherwize hook it."
      (set-scroll-bar-mode nil))
 
 (eval-after-init
-  (message "%s %s" invocation-name emacs-version)
-  (message "Invocation directory: %s" default-directory)
+  (message "%s %s" (expand-file-name invocation-name invocation-directory) emacs-version)
+  (message "Current directory: %s" default-directory)
   (message "%s was taken to initialize emacs." (emacs-init-time))
   ;; (view-echo-area-messages)
   ;; (view-emacs-news)
