@@ -1889,8 +1889,10 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 (when (fboundp 'git-command)
   (define-key ctl-x-map "g" 'git-command))
 
-(when (fboundp 'gited-list)
-  (defalias 'gited 'gited-list))
+;; (when (fboundp 'gited-list)
+;;   (defalias 'gited 'gited-list))
+(when (fboundp 'counsel-git-checkout)
+  (defalias 'my-git-si 'counsel-git-checkout))
 
 (when (and (eval-and-compile (require 'git-commit nil t))
            (fboundp 'global-git-commit-mode))
