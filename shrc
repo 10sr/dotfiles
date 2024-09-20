@@ -20,8 +20,8 @@ __safe_run(){
 }
 
 __match(){
-    # __match str word
-    # return 0 if word is found in str
+    # __match str pat
+    # return 0 if pat is found in str
     expr "$1" : ".*$2.*" >/dev/null
 }
 
@@ -890,6 +890,13 @@ convmv_sjis2utf8_test(){
 convmv_sjis2utf8_notest(){
     convmv -r -f sjis -t utf8 * --notest
 }
+
+
+if test -f /Applications/Vivaldi.app/Contents/MacOS/Vivaldi && null type snowsql
+then
+    # Use Vivaldi for snowsql external auth login
+    alias snowsql="BROWSER=/Applications/Vivaldi.app/Contents/MacOS/Vivaldi snowsql"
+fi
 
 
 #################################################
