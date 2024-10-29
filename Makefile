@@ -346,6 +346,7 @@ endif
 	#$(git_conf) alias.snap '! gitdir="`git rev-parse --git-dir`" && export GIT_INDEX_FILE="$$gitdir"/snapshot.index && cp -pf "$$gitdir"/index "$$GIT_INDEX_FILE" && git add -Av && : >>"$$gitdir"/logs/refs/snapshot && git update-ref refs/snapshot $$(git commit-tree $$(git write-tree) -m Snapshot -p HEAD) && git show --stat snapshot'
 	$(git_conf) alias.snap snapshot
 	$(git_conf) alias.pr checkout-pr
+	$(git_conf) alias.sut set-upstream-to
 
 	$(git_conf) alias.setcmd '! f(){ git config alias.$$1 "! $$2"; }; f'
 	$(git_conf) alias.make '!make'
