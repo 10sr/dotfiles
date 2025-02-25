@@ -3100,6 +3100,34 @@ BEGIN {
 }
 ")
 
+'(progn
+   (setq my-ov (make-overlay (pos-bol) (pos-eol)))
+   (let ((ov my-ov)
+         (s (propertize " "
+                        'display
+                        '((margin right-margin) "*"))))
+     (overlay-put ov 'after-string s)
+     ;; (overlay-put ov 'after-string
+     ;;              (concat (propertize " " 'display
+     ;;                                  '(space :align-to (+ left-fringe 1)))
+     ;;                      (propertize "*" 'display
+     ;;                                  '(raise -1))
+     ;;                      ))
+     ;; s
+     ;; (setq left-margin-width 1)
+     ;; (setq right-margin-width 1)
+     ;; (set-window-buffer (get-buffer-window) (current-buffer))
+     ;; (window-margins (get-buffer-window))
+     (let ((win (get-buffer-window)))
+       (set-window-margins (get-buffer-window)
+                           (car (window-margins win))
+                           1))
+    )
+   (progn
+     (overlay-put my-ov 'after-string nil)
+     (overlay-put my-ov 'before-string nil)
+     )
+   )
 
 
 (message "Emacs started at %s"
