@@ -2640,10 +2640,9 @@ ARG is num to show, or defaults to 7."
 (defun memo (&optional dir)
   "Open memo.txt in DIR."
   (interactive)
-  (pop-to-buffer (find-file-noselect (concat (if dir
-                                                 (file-name-as-directory dir)
-                                               "")
-                                             "memo.txt"))))
+  (pop-to-buffer (find-file-noselect (expand-file-name "memo.txt"
+                                                       (or dir
+                                                           default-directory)))))
 
 ;; TODO: remember-projectile
 
