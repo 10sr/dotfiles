@@ -3101,6 +3101,13 @@ BEGIN {
 ")
 
 '(progn
+   ;; https://web.sfc.wide.ad.jp/~sagawa/gnujdoc/elisp-manual-20-2.5/elisp-ja_39.html#SEC629
+   ;; https://emacs.stackexchange.com/questions/15078/inserting-before-an-after-string-overlay
+   ;; https://emacs.stackexchange.com/questions/3030/temporary-text-in-window-location-with-no-text-to-propertize-overlay
+   ;; https://ayatakesi.github.io/lispref/26.3/html/Overlay-Properties.html
+   ;; https://ayatakesi.github.io/lispref/26.3/html/Special-Properties.html#Special-Properties
+   ;; https://ayatakesi.github.io/lispref/28.1/html/Attribute-Functions.html
+   ;; https://ayatakesi.github.io/lispref/26.3/html/Display-Margins.html#Display-Margins
    (setq my-ov (make-overlay (pos-bol) (pos-eol)))
    (defface my-ov-face () "Face for my-ov.")
    (set-face-attribute 'my-ov-face
