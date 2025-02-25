@@ -3102,10 +3102,20 @@ BEGIN {
 
 '(progn
    (setq my-ov (make-overlay (pos-bol) (pos-eol)))
-   (let ((ov my-ov)
-         (s (propertize " "
-                        'display
-                        '((margin right-margin) "*"))))
+   (defface my-ov-face () "Face for my-ov.")
+   (set-face-attribute 'my-ov-face
+                       nil
+                       :background nil)
+   (set-face-attribute 'my-ov-face
+                       nil
+                       :foreground "yellow")
+   (let* ((ov my-ov)
+          (s (propertize "<"
+                         'face
+                         'my-ov-face))
+          (s (propertize " "
+                         'display
+                         `((margin right-margin) ,s))))
      (overlay-put ov 'after-string s)
      ;; (overlay-put ov 'after-string
      ;;              (concat (propertize " " 'display
