@@ -2887,7 +2887,7 @@ and search from projectile root (if projectile is available)."
   "Set `remember-data-file'."
   (when (require 'projectile nil t)
     (setq-local remember-data-file
-                (expand-file-name ".remember.notes"
+                (expand-file-name "remember.notes"
                                   (projectile-project-root)))))
 
 (add-hook 'after-change-major-mode-hook
