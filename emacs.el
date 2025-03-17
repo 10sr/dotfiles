@@ -1186,6 +1186,12 @@ THEM are function and its args."
 (set-variable 'fuzzy-finder-default-output-delimiter
               "\0")
 
+(when (executable-find "sk")  ;; skim
+  (set-variable 'fuzzy-finder-executable "sk")
+  (set-variable 'fuzzy-finder-default-arguments "--ansi --cycle --multi --reverse --print0 --prompt=\"[`pwd`]> \" ")
+  (set-variable 'fuzzy-finder-default-output-delimiter "\0")
+  )
+
 (set-variable 'fuzzy-finder-default-input-command
               (let ((find (or (executable-find "bfs")  ;; Breadth-first find https://github.com/tavianator/bfs
                               ;; Use gfind if available?
@@ -1219,7 +1225,7 @@ THEM are function and its args."
   "Call `fuzzy-finder' if usable or call `find-file'."
   (declare (interactive-only t))
   (interactive)
-  (if (and (executable-find "fzf")
+  (if (and (executable-find fuzzy-finder-executable)
            (fboundp 'fuzzy-finder)
            (not (file-remote-p default-directory)))
       (fuzzy-finder-find-files-projectile)
