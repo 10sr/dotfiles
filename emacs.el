@@ -1182,13 +1182,13 @@ THEM are function and its args."
                       "--reverse "
                       "--multi "
                       "--print0 "
-                      "--prompt=\"[`pwd`]> \" "))
+                      "--prompt=\"[`pwd`]FZF:> \" "))
 (set-variable 'fuzzy-finder-default-output-delimiter
               "\0")
 
 (when (executable-find "sk")  ;; skim
   (set-variable 'fuzzy-finder-executable "sk")
-  (set-variable 'fuzzy-finder-default-arguments "--ansi --cycle --multi --reverse --print0 --prompt=\"[`pwd`]> \" ")
+  (set-variable 'fuzzy-finder-default-arguments "--ansi --cycle --multi --reverse --print0 --prompt=\"[`pwd`]SK:> \" ")
   (set-variable 'fuzzy-finder-default-output-delimiter "\0")
   )
 
