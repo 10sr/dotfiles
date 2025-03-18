@@ -1188,7 +1188,7 @@ THEM are function and its args."
 
 (when (executable-find "sk")  ;; skim
   (set-variable 'fuzzy-finder-executable "sk")
-  (set-variable 'fuzzy-finder-default-arguments "--ansi --cycle --multi --reverse --print0 --prompt=\"[`pwd`]SK:> \" ")
+  (set-variable 'fuzzy-finder-default-arguments "--ansi --inline-info --cycle --multi --reverse --print0 --prompt=\"[`pwd`]SK:> \" ")
   (set-variable 'fuzzy-finder-default-output-delimiter "\0")
   )
 
