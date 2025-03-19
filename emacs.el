@@ -1173,24 +1173,26 @@ THEM are function and its args."
 
 ;; fuzzy-finder
 
-(set-variable 'fuzzy-finder-executable "fzf")
-(set-variable 'fuzzy-finder-default-arguments
-              (concat "--ansi "
-                      "--color='bg+:-1' "
-                      "--inline-info "
-                      "--cycle "
-                      "--reverse "
-                      "--multi "
-                      "--print0 "
-                      "--prompt=\"[`pwd`]FZF:> \" "))
-(set-variable 'fuzzy-finder-default-output-delimiter
-              "\0")
+(progn
+  (set-variable 'fuzzy-finder-executable "fzf")
+  (set-variable 'fuzzy-finder-default-arguments
+                (concat "--ansi "
+                        "--color='bg+:-1' "
+                        "--inline-info "
+                        "--cycle "
+                        "--reverse "
+                        "--multi "
+                        "--print0 "
+                        "--prompt=\"[`pwd`]FZF: \" "))
+  (set-variable 'fuzzy-finder-default-output-delimiter
+                "\0"))
 
-(when (executable-find "sk")  ;; skim
-  (set-variable 'fuzzy-finder-executable "sk")
-  (set-variable 'fuzzy-finder-default-arguments "--ansi --inline-info --cycle --multi --reverse --print0 --prompt=\"[`pwd`]SK:> \" ")
-  (set-variable 'fuzzy-finder-default-output-delimiter "\0")
-  )
+;; I like fzf because it has --cycle option
+;; (when (executable-find "sk")  ;; skim
+;;   (set-variable 'fuzzy-finder-executable "sk")
+;;   (set-variable 'fuzzy-finder-default-arguments "--ansi --inline-info --cycle --multi --reverse --print0 --prompt=\"[`pwd`]SK: \" ")
+;;   (set-variable 'fuzzy-finder-default-output-delimiter "\0")
+;;   )
 
 (set-variable 'fuzzy-finder-default-input-command
               (let ((find (or (executable-find "bfs")  ;; Breadth-first find https://github.com/tavianator/bfs
@@ -1198,7 +1200,7 @@ THEM are function and its args."
                               "find"))
                     (fd (or (executable-find "fdfind")
                             (executable-find "fd"))))
-                (if fd
+                (if nil ;; fd
                     (concat "set -eu; set -o pipefail; "
                             "echo .; "
                             "echo ..; "
