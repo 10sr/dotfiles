@@ -1253,7 +1253,7 @@ THEM are function and its args."
                                    "bfs -type d 2>/dev/null"
                                  "fd --hidden --no-ignore --type directory")
                 :directory (expand-file-name "~")))
-(define-key ctl-x-map "d" 'my-fuzzy-finder-dired)
+(define-key ctl-x-map (kbd "C-d") 'my-fuzzy-finder-dired)
 
 ;; (set-variable 'fuzzy-finder-default-command "selecta")
 ;; (set-variable 'fuzzy-finder-default-command "peco")
@@ -2330,6 +2330,14 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; dired
+
+(defun dired-default-directory ()
+  "Open dired `default-directory'."
+  (interactive)
+  (pop-to-buffer (dired-noselect default-directory)))
+
+(define-key ctl-x-map "d" 'dired-default-directory)
+
 
 (defun my-file-head (filename &optional n)
   "Return list of first N lines of file FILENAME."
