@@ -78,8 +78,7 @@ Otherwize hook it."
 (set-variable 'package-archives
               `(,@package-archives
                 ("melpa" . "https://melpa.org/packages/")
-                ;; Somehow fails to download via https
-                ("10sr-el" . "http://10sr.github.io/emacs-lisp/elpa/")))
+                ("10sr-el" . "https://10sr.github.io/emacs-lisp/elpa/")))
 (when (< emacs-major-version 27)
   (package-initialize))
 
