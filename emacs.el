@@ -1249,7 +1249,9 @@ THEM are function and its args."
 (defun my-fuzzy-finder-dired ()
   "Fuzzy finder directory."
   (interactive)
-  (fuzzy-finder :input-command "fd --hidden --no-ignore --type directory"
+  (fuzzy-finder :input-command (if (executable-find "bfs")
+                                   "bfs -type d 2>/dev/null"
+                                 "fd --hidden --no-ignore --type directory")
                 :directory (expand-file-name "~")))
 (define-key ctl-x-map "d" 'my-fuzzy-finder-dired)
 
