@@ -1252,7 +1252,7 @@ THEM are function and its args."
                                    "bfs -type d 2>/dev/null"
                                  "fd --hidden --no-ignore --type directory")
                 :directory (expand-file-name "~")))
-(define-key ctl-x-map (kbd "C-d") 'my-fuzzy-finder-dired)
+(define-key ctl-x-map "D" 'my-fuzzy-finder-dired)
 
 ;; (set-variable 'fuzzy-finder-default-command "selecta")
 ;; (set-variable 'fuzzy-finder-default-command "peco")
