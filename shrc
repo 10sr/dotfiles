@@ -351,7 +351,8 @@ __safe_alias pipenv="env -u PIP_USER pipenv"
 __safe_alias pipx="env -u PIP_USER pipx"
 
 alias f='less `fzf`'
-alias fcd='cd `find . -type d 2>/dev/null | fzf`'
+# TODO: Use find if bfs is not available
+alias fcd='cd `bfs . -type d 2>/dev/null | fzf`'
 
 
 # Sometimes SHELL cannot be used. For example, when running bash inside zsh
