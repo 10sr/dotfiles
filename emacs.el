@@ -2690,13 +2690,13 @@ condition to choose COMMAND when evaluated.")
        ;; ripgrep
        ("rg"
         (executable-find "rg")
-        "rg -nH --no-heading --hidden --no-ignore-parent --glob '!.git/' --smart-case -M 1280 ")
+        "rg -nH --no-heading --color=never --hidden --no-ignore-parent --glob '!.git/' --smart-case -M 1280 ")
 
        ;; git grep
        ("gitgrep"
         (eq 0
             (shell-command "git rev-parse --git-dir"))
-        "git --no-pager grep -nH -e ")
+        "git --no-pager grep -nH --color=never --ignore-case -e ")
 
        ;; sift
        ("sift"
@@ -3115,6 +3115,15 @@ BEGIN {
     print NR, $0
 }
 ")
+
+(defun my-git-info-exclude ()
+  "Open .git/info/exlucde file."
+  (interactive)
+  (if-let* ((dir (locate-dominating-file default-directory
+                                     ".git/info/exclude")))
+      (find-file (expand-file-name ".git/info/exclude"
+                                 dir))
+    (error "No .git/info/exclude file found")))
 
 '(progn
    ;; https://web.sfc.wide.ad.jp/~sagawa/gnujdoc/elisp-manual-20-2.5/elisp-ja_39.html#SEC629
