@@ -206,7 +206,7 @@ Otherwize hook it."
 ;; start and quit
 
 (setq inhibit-startup-message t)
-(setq initial-buffer-choice 'messages-buffer)
+(setq initial-buffer-choice ".")
 (setq confirm-kill-emacs 'y-or-n-p)
 ;; (setq gc-cons-threshold (* 1024 1024 16))
 (setq garbage-collection-messages nil)
@@ -234,8 +234,9 @@ Otherwize hook it."
   ;; (view-echo-area-messages)
   ;; (view-emacs-news)
   )
+(display-buffer (messages-buffer))
 
-(with-current-buffer "*Messages*"
+(with-current-buffer (messages-buffer)
   (emacs-lock-mode 'kill))
 
 (cd ".")  ; when using windows use / instead of \ in `default-directory'
