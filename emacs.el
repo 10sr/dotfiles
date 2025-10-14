@@ -640,6 +640,12 @@ THEM are function and its args."
          (str (expand-file-name str)))
     (kill-new str)))
 
+(defun my-copy-whole-buffer-as-kill ()
+  "Copy whole buffer."
+  (interactive)
+  (copy-region-as-kill (point-min)
+                       (point-max)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; title and mode-line
 
