@@ -370,7 +370,8 @@ endif
 # $(dotfiles_dir).
 # The load codes are appended to $(topfile).
 
-setup_rcs := setup-rc-vimrc setup-rc-tmux.conf setup-rc-emacs.el
+# vimrc has been removed in 26a56d8d36ec2ed04dcbfddd012f32648997883d
+setup_rcs := setup-rc-tmux.conf setup-rc-emacs.el
 setup-rc: $(setup_rcs)  ## Setup initialize files
 .PHONY: $(setup_rcs)
 
