@@ -121,7 +121,9 @@ Otherwize hook it."
             git-ps1-mode
             restart-emacs
             pkgbuild-mode
-            minibuffer-line
+            ;; FIXME: Failed to install:
+            ;; Signature made by expired key 066DAFCB81E42C40 GNU ELPA Signing Agent (2019) <elpasign@elpa.gnu.org>
+            ;; minibuffer-line
             which-key
             ;; I think this works in place of my autosave lib
             super-save
@@ -137,7 +139,9 @@ Otherwize hook it."
             sl
             ;; TODO: Configure pony-tpl-mode
             pony-mode
-            gited
+            ;; FIXME: Failed to install:
+            ;; Debugger entered--Lisp error: (bad-signature "gited-0.6.0.tar.sig")
+            ;; gited
             highlight-indentation
             diminish
             fic-mode
