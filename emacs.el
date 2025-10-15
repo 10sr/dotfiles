@@ -1547,6 +1547,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
               'change-log-mode)
 
 (set-variable 'magit-define-global-key-bindings nil)
+;; (set-variable 'magit-remote-git-executable nil)
 
 (with-eval-after-load 'magit-section
   (set-face-background 'magit-section-highlight
