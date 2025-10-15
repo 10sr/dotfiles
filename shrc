@@ -239,21 +239,21 @@ __safe_run id `whoami`
 # finger `whoami`
 __safe_run w `whoami`
 
-# if null type tmux
-# then
-#     echo
-#     echo tmux sessions:
-#     tmux ls 2>/dev/null| sed -e 's/^/  /g'
-#     echo
-# fi
+if null type tmux
+then
+    echo
+    echo TMUX sessions:
+    tmux ls 2>/dev/null| sed -e 's/^/  /g'
+fi
 
-# if test -n "$TMUX"
-# then
-#     tmux display -p \
-#         'TMUX #S:#I:#W.#P, client TERM: #{client_termname}' \
-#         2>/dev/null
-#     echo
-# fi
+if null type tmux && test -n "$TMUX"
+then
+    tmux display -p \
+        'Current: #S:#I:#W.#P, client TERM: #{client_termname}' \
+        2>/dev/null
+    echo "C-zw: choose-tree C-zc: new-window C-zx: kill-pane C-zC-o: swithc-client" 
+    echo
+fi
 
 if test -n "$__MY_DTACH"
 then
