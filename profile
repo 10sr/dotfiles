@@ -147,7 +147,7 @@ export _HOSTCOLOR_2=
 # black red green yellow blue magenta cyan white
 # Yellow is hard to read strings...
 case "`hostname`" in
-    arch-vb-win8-vaio11)
+    HW136450)
         _HOSTCOLOR_1=magenta
         _HOSTCOLOR_2=white
         ;;
@@ -155,11 +155,7 @@ case "`hostname`" in
         _HOSTCOLOR_1=cyan
         _HOSTCOLOR_2=black
         ;;
-    # newkiwi)
-    #     _HOSTCOLOR_1=magenta
-    #     _HOSTCOLOR_2=white
-    #     ;;
-    win7-i7-opti)
+    tk2-407-44672)
         _HOSTCOLOR_1=red
         _HOSTCOLOR_2=white
         ;;
