@@ -378,6 +378,16 @@ Otherwize hook it."
 (add-hook 'conf-mode-hook
           'my-set-require-final-newline)
 
+(defun my-set-configure-gitconfig ()
+  "Configure .gitconfig and .git/config ."
+  (when (cl-loop for re in '("/.gitconfig\\'" "/.git/config\\'")
+                 if (string-match-p re buffer-file-name) return t
+                 finally return nil)
+    (setq indent-tabs-mode t)))
+
+(add-hook 'conf-mode-hook
+          'my-set-configure-gitconfig)
+
 ;; Used from term-cursor
 ;; hbar is too hard to find...
 (defun my-cursor-type-change (&rest args)
