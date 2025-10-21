@@ -332,6 +332,9 @@ Otherwize hook it."
 (global-set-key (kbd "<left>") 'scroll-down)
 (global-set-key (kbd "<right>") 'scroll-up)
 
+;; YEN SIGN to backslash
+(global-set-key (char-to-string 165) "\\")
+
 ;; (define-key my-prefix-map (kbd "C-h") help-map)
 ;; (global-set-key (kbd "C-\\") help-map)
 
