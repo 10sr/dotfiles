@@ -894,10 +894,11 @@ convmv_sjis2utf8_notest(){
 }
 
 
-if test -f /Applications/Vivaldi.app/Contents/MacOS/Vivaldi && null type snowsql
+if test -f /Applications/Vivaldi.app/Contents/MacOS/Vivaldi
 then
     # Use Vivaldi for snowsql external auth login
-    alias snowsql="BROWSER=/Applications/Vivaldi.app/Contents/MacOS/Vivaldi snowsql"
+    null type snowsql && alias snowsql="BROWSER=/Applications/Vivaldi.app/Contents/MacOS/Vivaldi snowsql"
+    null type snow && alias snow="BROWSER=/Applications/Vivaldi.app/Contents/MacOS/Vivaldi snow"
 fi
 
 
