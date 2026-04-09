@@ -922,7 +922,7 @@ THEM are function and its args."
   (define-key helm-map (kbd "C-h") (kbd "DEL")))
 
 (defun my-shrink-path-width (path width)
-  "Shrink PATH to be same or shorter than WIDTH."
+  "Shrink PATH so that the length is same or shorter than WIDTH."
   (setq path (abbreviate-file-name path))
   (if (file-remote-p path)
       (let* ((remote (file-remote-p path))
