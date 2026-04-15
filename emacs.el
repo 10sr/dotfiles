@@ -962,6 +962,9 @@ THEM are function and its args."
 ;; letters, font-lock mode and fonts
 
 (when (fboundp 'color-identifiers-mode)
+  (set-variable 'color-identifiers:color-luminance 0.8)
+  (set-variable 'color-identifiers:min-color-saturation 0.9)
+  (set-variable 'color-identifiers:max-color-saturation 1.0)
   (add-hook 'prog-mode-hook
             'color-identifiers-mode))
 
@@ -1121,6 +1124,11 @@ THEM are function and its args."
 
 (set-face-foreground 'font-lock-regexp-grouping-backslash "#666")
 (set-face-foreground 'font-lock-regexp-grouping-construct "#f60")
+
+;; (set-face-foreground 'font-lock-variable-name-face "lightyellow")
+;; (defined-colors)
+;; color-name-rgb-alist
+;; (list-colors-display (mapcar 'car color-name-rgb-alist))
 
 ;;(require 'set-modeline-color nil t)
 
@@ -2192,6 +2200,20 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
             (set-variable 'js-indent-level 2 t)
             ))
 
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+;; global-treesit-auto-mode
+
+;; https://zenn.dev/glassonion1/articles/20752bb8d2cf98
+(set-variable 'treesit-language-source-alist
+              '((json "https://github.com/tree-sitter/tree-sitter-json")
+                (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+                (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+                (go "https://github.com/tree-sitter/tree-sitter-go")
+                (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
+                (python "https://github.com/tree-sitter/tree-sitter-python")
+                ))
+;; treesit-install-language-grammar 
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
