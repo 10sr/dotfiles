@@ -1638,6 +1638,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
                                           (one-or-more hex-digit)))
                    (match-string 0))))))
     (magit-show-commit id)))
+(defalias 'my-magit-blame-show-commit-at-point 'my-magit-messenger)
 
 
 (when (boundp 'git-rebase-filename-regexp)
@@ -3163,14 +3164,14 @@ ARGS are not used."
 
 (set-variable 'awk-preview-default-program
               "# C-c C-l: Update preview      C-c C-c: Commit and exit
-# C-c C-r: Resest to original  C-c C-k: Abort
+# C-c C-r: Reset to original  C-c C-k: Abort
 BEGIN {
     # FS = \",\"
 }
 {
     # Replace string
     # gsub(BEFORE, AFTER, $0)
-    print NR, $0
+    print NR, $0 \"EOL\"
 }
 ")
 
@@ -3180,7 +3181,7 @@ BEGIN {
   (if-let* ((dir (locate-dominating-file default-directory
                                      ".git/info/exclude")))
       (find-file (expand-file-name ".git/info/exclude"
-                                 dir))
+                                   dir))
     (error "No .git/info/exclude file found")))
 
 '(progn
